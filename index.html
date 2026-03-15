@@ -61,6 +61,7 @@
         .day-btn.disabled { opacity: 0.35; cursor: not-allowed; }
         .day-btn.disabled:hover { background-color: #495057; }
         .day-btn .tick { color: #28a745; margin-left: 6px; font-weight: bold; }
+        .day-btn .tick.fail { color: #dc3545; }
         
         .settings-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 20px; }
         .settings-group label { font-size: 0.9rem; margin-top: 5px; }
@@ -89,25 +90,27 @@
             justify-content: center; 
             transition: transform 0.1s, border 0.1s; 
             user-select: none; 
-            flex-shrink: 0; 
+            flex-shrink: 0;
+            margin-bottom: 28px;
         }
-        .item.selected { box-shadow: 0 0 0 4px #28a745; }
+        .item.selected { /* no green border */ }
         .item.error { box-shadow: 0 0 0 4px #dc3545 !important; }
 
         .badge { 
             position: absolute; 
-            top: -10px; 
-            right: -10px; 
+            bottom: -26px; 
+            left: 50%; 
+            transform: translateX(-50%);
             background: #28a745; 
             color: white; 
-            width: 24px; 
-            height: 24px; 
+            width: 22px; 
+            height: 22px; 
             border-radius: 50%; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
             font-weight: bold; 
-            font-size: 14px; 
+            font-size: 12px; 
             pointer-events: none; 
             z-index: 10; 
         }
@@ -358,8 +361,8 @@
                 // Add tick if played
                 if (playedDays[day.id]) {
                     const tick = document.createElement('span');
-                    tick.className = 'tick';
-                    tick.textContent = '✓';
+                    tick.className = playedDays[day.id].isWin ? 'tick' : 'tick fail';
+                    tick.textContent = playedDays[day.id].isWin ? '✓' : '✗';
                     btn.appendChild(tick);
                 }
                 btn.addEventListener('click', () => {
@@ -377,13 +380,19 @@
 
             document.querySelectorAll('.day-btn').forEach(btn => {
                 const id = parseInt(btn.dataset.dayId);
-                // Tick
-                const existingTick = btn.querySelector('.tick');
-                if (playedDays[id] && !existingTick) {
-                    const tick = document.createElement('span');
-                    tick.className = 'tick';
-                    tick.textContent = '✓';
-                    btn.appendChild(tick);
+                // Tick / Cross
+                let existingTick = btn.querySelector('.tick');
+                if (playedDays[id]) {
+                    const isWin = playedDays[id].isWin;
+                    if (existingTick) {
+                        existingTick.className = isWin ? 'tick' : 'tick fail';
+                        existingTick.textContent = isWin ? '✓' : '✗';
+                    } else {
+                        const tick = document.createElement('span');
+                        tick.className = isWin ? 'tick' : 'tick fail';
+                        tick.textContent = isWin ? '✓' : '✗';
+                        btn.appendChild(tick);
+                    }
                 }
                 // Enabled/disabled from admin config
                 const cfg = dayConfig[id];
@@ -539,7 +548,7 @@
                 const values = generateValues(day.type, activeItemCount).sort((a, b) => a - b);
                 values.forEach((val, index) => {
                     const item = document.createElement('div');
-                    item.className = `item type-${day.type} selected`; 
+                    item.className = `item type-${day.type}`; 
                     applyStyle(item, day.type, val);
                     const badge = document.createElement('div');
                     badge.className = 'badge';
@@ -670,6 +679,12 @@
             // Browser back = auto fail
             gameInProgress = true;
             history.pushState({ orderixGame: true }, '');
+
+            // Save pending game in case tab is closed
+            setStorage('orderix_pending_game', JSON.stringify({
+                dayId: currentDayConfig.id,
+                itemCount: activeItemCount
+            }));
         }
 
         // Timer increment
@@ -1101,59 +1116,63 @@
                 board.style.flexDirection = 'column';
                 board.style.alignItems = 'center';
 
-                // Player response section
-                const userTitle = document.createElement('h3');
-                userTitle.textContent = 'Votre réponse :';
-                userTitle.style.margin = '0 0 10px 0';
-                board.appendChild(userTitle);
+                // Build sorted solution items
+                const solItems = Array.from(selectionOrder).slice();
+                solItems.sort((a, b) => parseFloat(a.dataset.value) - parseFloat(b.dataset.value));
 
-                const userRow = document.createElement('div');
-                userRow.style.display = 'flex';
-                userRow.style.gap = '20px';
-                userRow.style.flexWrap = 'wrap';
-                userRow.style.justifyContent = 'center';
-                userRow.style.marginBottom = '30px';
+                // Mirror grid: each column = player's pick on top, correct answer below
+                const grid = document.createElement('div');
+                grid.style.cssText = 'display:grid;gap:10px;justify-items:center;margin:10px 0;overflow-x:auto;max-width:100%;padding-bottom:10px;';
+                grid.style.gridTemplateColumns = `repeat(${selectionOrder.length}, 60px)`;
 
+                // Label rows
+                const lblYou = document.createElement('div');
+                lblYou.style.cssText = `grid-column:1/-1;font-weight:bold;font-size:1rem;color:#555;text-align:center;margin-bottom:4px;`;
+                lblYou.textContent = 'Votre réponse :';
+                grid.appendChild(lblYou);
+
+                // Row 1: player's answer
                 selectionOrder.forEach((item, index) => {
+                    const wrap = document.createElement('div');
+                    wrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;';
                     const clone = item.cloneNode(true);
+                    clone.style.marginBottom = '28px';
                     const expectedVal = sortedValues[index];
                     const actualVal = parseFloat(clone.dataset.value);
-                    
                     if (actualVal !== expectedVal) {
                         clone.classList.add('error');
                         const badge = clone.querySelector('.badge');
                         if(badge) badge.classList.add('error');
                     }
-                    userRow.appendChild(clone);
+                    wrap.appendChild(clone);
+                    grid.appendChild(wrap);
                 });
-                board.appendChild(userRow);
 
-                // Solution section
-                const solTitle = document.createElement('h3');
-                solTitle.textContent = 'Solution :';
-                solTitle.style.margin = '0 0 10px 0';
-                board.appendChild(solTitle);
+                // Label solution
+                const lblSol = document.createElement('div');
+                lblSol.style.cssText = `grid-column:1/-1;font-weight:bold;font-size:1rem;color:#555;text-align:center;margin-top:10px;margin-bottom:4px;`;
+                lblSol.textContent = 'Solution :';
+                grid.appendChild(lblSol);
 
-                const solRow = document.createElement('div');
-                solRow.style.display = 'flex';
-                solRow.style.gap = '20px';
-                solRow.style.flexWrap = 'wrap';
-                solRow.style.justifyContent = 'center';
-
-                const items = Array.from(selectionOrder);
-                items.sort((a, b) => parseFloat(a.dataset.value) - parseFloat(b.dataset.value));
-                
-                items.forEach((item, index) => {
+                // Row 2: correct order
+                solItems.forEach((item, index) => {
+                    const wrap = document.createElement('div');
+                    wrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;';
                     const clone = item.cloneNode(true);
-                    clone.className = `item type-${currentDayConfig.type} selected`; 
-                    const badge = clone.querySelector('.badge');
-                    if (badge) {
-                        badge.textContent = index + 1;
-                        badge.className = 'badge'; 
-                    }
-                    solRow.appendChild(clone);
+                    clone.style.marginBottom = '28px';
+                    clone.className = `item type-${currentDayConfig.type}`;
+                    // Remove old badge, add clean one
+                    const oldBadge = clone.querySelector('.badge');
+                    if (oldBadge) oldBadge.remove();
+                    const badge = document.createElement('div');
+                    badge.className = 'badge';
+                    badge.textContent = index + 1;
+                    clone.appendChild(badge);
+                    wrap.appendChild(clone);
+                    grid.appendChild(wrap);
                 });
-                board.appendChild(solRow);
+
+                board.appendChild(grid);
 
                 endGame(`Erreur ! Voici la correction.`, false);
             }
@@ -1168,8 +1187,8 @@
             startBtn.classList.add('hidden');
             menuBtn.classList.remove('hidden'); // Show Retour
 
-            // Add tick to sidebar button
-            refreshSidebar();
+            // Clear pending game marker
+            setStorage('orderix_pending_game', '');
 
             // Save completion safely
             try {
@@ -1177,6 +1196,9 @@
                 playedDays[currentDayConfig.id] = { count: activeItemCount, time: timeElapsed, isWin: isWin };
                 setStorage('orderix_played_days', JSON.stringify(playedDays));
             } catch(e){}
+
+            // Refresh sidebar ticks (after save)
+            refreshSidebar();
 
             const timeStr = isWin ? (timeElapsed / 1000).toFixed(3) : "FAIL";
             resultDisplay.innerHTML = `${message}<br>Temps : ${timeStr}${isWin ? ' secondes' : ''}.`;
@@ -1280,6 +1302,48 @@
                 endGame('Retour détecté ! Partie abandonnée.', false);
             }
         });
+
+        // Tab/window close = warn + save fail locally
+        window.addEventListener('beforeunload', function(e) {
+            if (gameInProgress && currentDayConfig && !isPaused) {
+                // Save fail locally (can't do network calls here)
+                try {
+                    const playedDays = JSON.parse(getStorage('orderix_played_days') || '{}');
+                    playedDays[currentDayConfig.id] = { count: activeItemCount, time: timeElapsed, isWin: false };
+                    setStorage('orderix_played_days', JSON.stringify(playedDays));
+                    // Keep pending marker so score gets submitted on next load
+                } catch(e2){}
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+
+        // On load: check for unsubmitted pending games (tab was closed mid-game)
+        (function recoverPendingFail() {
+            try {
+                const pending = getStorage('orderix_pending_game');
+                if (!pending) return;
+                const data = JSON.parse(pending);
+                if (!data || !data.dayId) return;
+                // Clear it immediately
+                setStorage('orderix_pending_game', '');
+                // Submit the fail score to the server
+                let name = getStorage('orderix_player_name') || '';
+                if (!name) return;
+                fetch(GAS_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        name: name,
+                        time: -1,
+                        day: data.dayId,
+                        itemCount: data.itemCount
+                    })
+                }).catch(() => {});
+                // Refresh sidebar to show the ✗
+                refreshSidebar();
+            } catch(e){}
+        })();
     </script>
 </body>
 </html>
