@@ -1151,7 +1151,7 @@
                 const colW = 70; // 60px item + 10px gap
                 const n = selectionOrder.length;
 
-                // Container (flex column, centered)
+                // Container
                 const container = document.createElement('div');
                 container.style.cssText = 'display:flex;flex-direction:column;align-items:center;width:100%;overflow-x:auto;padding:10px 0;';
 
@@ -1163,7 +1163,7 @@
 
                 // Row 1: player's answer (badges below, red if wrong)
                 const playerRow = document.createElement('div');
-                playerRow.style.cssText = `display:flex;gap:10px;justify-content:center;margin-bottom:10px;`;
+                playerRow.style.cssText = 'display:flex;gap:10px;justify-content:center;position:relative;z-index:1;';
                 selectionOrder.forEach((item, index) => {
                     const clone = item.cloneNode(true);
                     clone.style.marginBottom = '28px';
@@ -1177,13 +1177,14 @@
                 });
                 container.appendChild(playerRow);
 
-                // SVG connecting lines
+                // SVG connecting lines — overlaps badge zones with negative margins
+                // Badge center = 15px from item edge, margin = 28px → 13px from margin edge
+                const svgH = 66; // 13px overlap top + 40px gap + 13px overlap bottom
                 const svgW = n * colW - 10;
-                const svgH = 50;
                 const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                 svg.setAttribute('width', svgW);
                 svg.setAttribute('height', svgH);
-                svg.style.cssText = 'display:block;margin:0 auto;flex-shrink:0;';
+                svg.style.cssText = 'display:block;margin:-13px auto;flex-shrink:0;position:relative;z-index:0;';
 
                 selectionOrder.forEach((item, fromIdx) => {
                     const val = parseFloat(item.dataset.value);
@@ -1197,21 +1198,28 @@
                     line.setAttribute('x2', x2);
                     line.setAttribute('y2', svgH);
                     line.setAttribute('stroke', isWrong ? '#dc3545' : '#28a745');
-                    line.setAttribute('stroke-width', isWrong ? '2' : '1.5');
-                    line.setAttribute('stroke-opacity', isWrong ? '0.7' : '0.4');
+                    line.setAttribute('stroke-width', isWrong ? '2.5' : '1.5');
+                    line.setAttribute('stroke-opacity', isWrong ? '0.8' : '0.4');
                     svg.appendChild(line);
                 });
+
+                // "Solution" label centered inside the SVG
+                const svgTxt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                svgTxt.setAttribute('x', svgW / 2);
+                svgTxt.setAttribute('y', svgH / 2 + 5);
+                svgTxt.setAttribute('text-anchor', 'middle');
+                svgTxt.setAttribute('fill', '#555');
+                svgTxt.setAttribute('font-size', '13');
+                svgTxt.setAttribute('font-weight', 'bold');
+                svgTxt.setAttribute('font-family', 'Arial, sans-serif');
+                svgTxt.textContent = '↓ Solution ↓';
+                svg.appendChild(svgTxt);
+
                 container.appendChild(svg);
 
-                // Label: solution
-                const lblSol = document.createElement('div');
-                lblSol.style.cssText = 'font-weight:bold;font-size:1rem;color:#555;text-align:center;margin-bottom:8px;';
-                lblSol.textContent = 'Solution :';
-                container.appendChild(lblSol);
-
-                // Row 2: correct order (badges ABOVE)
+                // Row 2: correct order (badges ABOVE, z-index above SVG lines)
                 const solRow = document.createElement('div');
-                solRow.style.cssText = `display:flex;gap:10px;justify-content:center;`;
+                solRow.style.cssText = 'display:flex;gap:10px;justify-content:center;position:relative;z-index:1;';
                 solItems.forEach((item, index) => {
                     const clone = item.cloneNode(true);
                     clone.style.marginTop = '28px';
