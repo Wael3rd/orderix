@@ -58,6 +58,9 @@
         }
         .day-btn:hover { background-color: #6c757d; }
         .day-btn.active { background-color: #007bff; font-weight: bold; border-left: 5px solid #80bdff; }
+        .day-btn.disabled { opacity: 0.35; cursor: not-allowed; }
+        .day-btn.disabled:hover { background-color: #495057; }
+        .day-btn .tick { color: #28a745; margin-left: 6px; font-weight: bold; }
         
         .settings-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 20px; }
         .settings-group label { font-size: 0.9rem; margin-top: 5px; }
@@ -132,8 +135,8 @@
             font-weight: bold;
         }
         .action-btn:hover { background-color: #218838; }
-        #menu-btn { background-color: #6c757d; }
-        #menu-btn:hover { background-color: #5a6268; }
+        #menu-btn { background-color: #dc3545; }
+        #menu-btn:hover { background-color: #c82333; }
         
         h1 { font-size: 1.8rem; text-align: center; margin: 0 0 10px 0; color: #333; }
         #level-title { font-size: 1.2rem; font-weight: bold; color: #555; margin: 0 0 10px 0; text-align: center; }
@@ -183,9 +186,6 @@
             </div>
             <div id="locked-name-display" class="hidden" style="padding: 8px; background: #28a745; color: white; border-radius: 4px; font-weight: bold; text-align: center;"></div>
             <div id="name-status" style="font-size: 0.85rem; font-weight: bold; margin-bottom: 5px;"></div>
-            
-            <label for="item-count" style="margin-top: 5px;">Nombre d'éléments (5-20) :</label>
-            <input type="number" id="item-count" min="5" max="20" value="10" style="padding: 8px; font-size: 1rem; border-radius: 4px; border: 1px solid #ccc;">
         </div>
 
         <h3>Jours (Mini-jeux)</h3>
@@ -197,12 +197,12 @@
         <h1>ORDERIX : LE TRI C'EST LA VIE !</h1>
         <h2 id="level-title">Sélectionnez un jour pour commencer</h2>
         
-        <div id="timer-display">0.000</div>
+        <div id="timer-display" class="hidden">0.000</div>
         
         <div id="button-container">
-            <button id="start-btn" class="action-btn hidden">Démarrer</button>
-            <button id="check-btn" class="action-btn hidden">Valider l'ordre</button>
-            <button id="menu-btn" class="action-btn hidden">Fermer le niveau</button>
+            <button id="menu-btn" class="action-btn hidden">Retour</button>
+            <button id="start-btn" class="action-btn hidden">Jouer</button>
+            <button id="check-btn" class="action-btn hidden">Valider</button>
         </div>
         
         <div id="game-board" class="hidden"></div>
@@ -301,7 +301,11 @@
         const resultDisplay = document.getElementById('result');
         const levelTitle = document.getElementById('level-title');
         const dayButtonsContainer = document.getElementById('day-buttons-container');
-        const itemCountInput = document.getElementById('item-count');
+        
+        // Admin config fetched from Google Sheets "config" tab
+        // { dayId: { count: N, enabled: true/false }, ... }
+        let dayConfig = {};
+        let gameInProgress = false;
         
         const playerNameMainInput = document.getElementById('player-name-main');
         const verifyNameBtn = document.getElementById('verify-name-btn');
@@ -338,17 +342,66 @@
             }
         }
 
-        // Initialize Sidebar
+        // Initialize Sidebar (builds buttons, fetches admin config, applies ticks)
         function initSidebar() {
+            // Get played days for tick marks
+            let playedDays = {};
+            try { playedDays = JSON.parse(getStorage('orderix_played_days') || '{}'); } catch(e){}
+
             DAYS.forEach(day => {
                 const btn = document.createElement('button');
                 btn.className = 'day-btn';
-                btn.textContent = `Jour ${day.id}`;
-                btn.addEventListener('click', () => selectDay(day, btn));
+                btn.dataset.dayId = day.id;
+                const label = document.createElement('span');
+                label.textContent = `Jour ${day.id}`;
+                btn.appendChild(label);
+                // Add tick if played
+                if (playedDays[day.id]) {
+                    const tick = document.createElement('span');
+                    tick.className = 'tick';
+                    tick.textContent = '✓';
+                    btn.appendChild(tick);
+                }
+                btn.addEventListener('click', () => {
+                    if (btn.classList.contains('disabled')) return;
+                    selectDay(day, btn);
+                });
                 dayButtonsContainer.appendChild(btn);
             });
         }
+
+        // Refresh sidebar ticks and enabled/disabled state
+        function refreshSidebar() {
+            let playedDays = {};
+            try { playedDays = JSON.parse(getStorage('orderix_played_days') || '{}'); } catch(e){}
+
+            document.querySelectorAll('.day-btn').forEach(btn => {
+                const id = parseInt(btn.dataset.dayId);
+                // Tick
+                const existingTick = btn.querySelector('.tick');
+                if (playedDays[id] && !existingTick) {
+                    const tick = document.createElement('span');
+                    tick.className = 'tick';
+                    tick.textContent = '✓';
+                    btn.appendChild(tick);
+                }
+                // Enabled/disabled from admin config
+                const cfg = dayConfig[id];
+                if (cfg && cfg.enabled === false) {
+                    btn.classList.add('disabled');
+                } else {
+                    btn.classList.remove('disabled');
+                }
+            });
+        }
+
         initSidebar();
+
+        // Fetch admin config from Google Sheets "config" tab
+        fetch(`${GAS_URL}?getConfig=1&nocache=${Date.now()}`)
+            .then(r => r.json())
+            .then(cfg => { dayConfig = cfg; refreshSidebar(); })
+            .catch(() => {});
 
         // Event Listeners
         startBtn.addEventListener('click', startGame);
@@ -406,12 +459,14 @@
 
         // Clear current game and reset to default view
         function returnToMenu() {
+            gameInProgress = false;
             sidebar.classList.remove('hidden'); 
             menuBtn.classList.add('hidden');
             startBtn.classList.add('hidden');
             checkBtn.classList.add('hidden');
             board.classList.add('hidden');
             leaderboardSection.classList.add('hidden'); 
+            timerDisplay.classList.add('hidden');
             
             clearInterval(timerInterval);
             timeElapsed = 0;
@@ -429,6 +484,7 @@
             sidebar.classList.add('hidden'); 
             menuBtn.classList.remove('hidden');
             leaderboardSection.classList.add('hidden'); 
+            timerDisplay.classList.add('hidden');
 
             document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
             btnElement.classList.add('active');
@@ -445,6 +501,10 @@
             currentDayConfig = day;
             levelTitle.textContent = day.title;
             
+            // Get item count from admin config
+            const cfg = dayConfig[day.id];
+            activeItemCount = (cfg && cfg.count) ? cfg.count : 10;
+
             let playedInfo = null;
             try {
                 const playedDays = JSON.parse(getStorage('orderix_played_days') || '{}');
@@ -492,11 +552,9 @@
                 leaderboardSection.classList.remove('hidden');
                 fetchLeaderboard();
             } else {
-                // LEVEL NOT PLAYED YET
+                // LEVEL NOT PLAYED YET — show Retour + Jouer
                 startBtn.classList.remove('hidden');
-                startBtn.textContent = 'Démarrer';
-                let inputVal = parseInt(itemCountInput.value);
-                activeItemCount = (inputVal >= 5 && inputVal <= 20) ? inputVal : 10;
+                startBtn.textContent = 'Jouer';
                 leaderboardTitle.textContent = `Top 10 - ${day.title} (${activeItemCount} éléments)`;
             }
         }
@@ -564,8 +622,8 @@
                 return;
             }
 
-            let inputVal = parseInt(itemCountInput.value);
-            activeItemCount = (inputVal >= 5 && inputVal <= 20) ? inputVal : 10;
+            const cfg = dayConfig[currentDayConfig.id];
+            activeItemCount = (cfg && cfg.count) ? cfg.count : 10;
             leaderboardTitle.textContent = `Top 10 - ${currentDayConfig.title} (${activeItemCount} éléments)`;
             
             timeElapsed = 0;
@@ -574,15 +632,19 @@
             resultDisplay.textContent = '';
             leaderboardSection.classList.add('hidden');
             
+            // Only show Valider button during game
             startBtn.classList.add('hidden');
+            menuBtn.classList.add('hidden');
             checkBtn.classList.remove('hidden');
+            
+            // Show timer
+            timerDisplay.classList.remove('hidden');
+            timerDisplay.style.color = '#333';
             
             board.classList.remove('hidden');
             board.style.flexDirection = 'row';
             board.style.alignItems = 'flex-start';
             board.innerHTML = '';
-            
-            timerDisplay.style.color = '#333';
             
             const values = generateValues(currentDayConfig.type, activeItemCount);
             activeItemCount = values.length;
@@ -603,7 +665,11 @@
 
             clearInterval(timerInterval);
             lastTime = Date.now();
-            timerInterval = setInterval(gameTick, 10); // Run frequently for ms precision
+            timerInterval = setInterval(gameTick, 10);
+
+            // Browser back = auto fail
+            gameInProgress = true;
+            history.pushState({ orderixGame: true }, '');
         }
 
         // Timer increment
@@ -1097,8 +1163,13 @@
         function endGame(message, isWin) {
             clearInterval(timerInterval);
             isPaused = true;
+            gameInProgress = false;
             checkBtn.classList.add('hidden');
-            startBtn.classList.add('hidden'); // Cannot replay
+            startBtn.classList.add('hidden');
+            menuBtn.classList.remove('hidden'); // Show Retour
+
+            // Add tick to sidebar button
+            refreshSidebar();
 
             // Save completion safely
             try {
@@ -1203,6 +1274,12 @@
                     leaderboardList.innerHTML = '<li style="padding: 10px; text-align: center; color: red;">Erreur de chargement.</li>';
                 });
         }
+        // Browser back button = auto fail if game in progress
+        window.addEventListener('popstate', function(e) {
+            if (gameInProgress && currentDayConfig && !isPaused) {
+                endGame('Retour détecté ! Partie abandonnée.', false);
+            }
+        });
     </script>
 </body>
 </html>
