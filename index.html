@@ -309,6 +309,7 @@
         // { dayId: { count: N, enabled: true/false }, ... }
         let dayConfig = {};
         let gameInProgress = false;
+        let serverPlayedDays = {}; // Source of truth from server: { dayId: { time, isWin, count } }
         
         const playerNameMainInput = document.getElementById('player-name-main');
         const verifyNameBtn = document.getElementById('verify-name-btn');
@@ -345,12 +346,23 @@
             }
         }
 
-        // Initialize Sidebar (builds buttons, fetches admin config, applies ticks)
-        function initSidebar() {
-            // Get played days for tick marks
-            let playedDays = {};
-            try { playedDays = JSON.parse(getStorage('orderix_played_days') || '{}'); } catch(e){}
+        // Fetch played days from server for a given player name
+        function fetchPlayedDays(name) {
+            if (!name) return;
+            fetch(`${GAS_URL}?getPlayed=${encodeURIComponent(name)}&nocache=${Date.now()}`)
+                .then(r => r.json())
+                .then(data => {
+                    serverPlayedDays = data || {};
+                    refreshSidebar();
+                })
+                .catch(() => {});
+        }
 
+        // Fetch played days at startup if name is known
+        if (savedName) fetchPlayedDays(savedName);
+
+        // Initialize Sidebar (builds buttons, applies ticks from server data)
+        function initSidebar() {
             DAYS.forEach(day => {
                 const btn = document.createElement('button');
                 btn.className = 'day-btn';
@@ -358,11 +370,11 @@
                 const label = document.createElement('span');
                 label.textContent = `Jour ${day.id}`;
                 btn.appendChild(label);
-                // Add tick if played
-                if (playedDays[day.id]) {
+                // Add tick if played (from server data)
+                if (serverPlayedDays[day.id]) {
                     const tick = document.createElement('span');
-                    tick.className = playedDays[day.id].isWin ? 'tick' : 'tick fail';
-                    tick.textContent = playedDays[day.id].isWin ? '✓' : '✗';
+                    tick.className = serverPlayedDays[day.id].isWin ? 'tick' : 'tick fail';
+                    tick.textContent = serverPlayedDays[day.id].isWin ? '✓' : '✗';
                     btn.appendChild(tick);
                 }
                 btn.addEventListener('click', () => {
@@ -373,17 +385,14 @@
             });
         }
 
-        // Refresh sidebar ticks and enabled/disabled state
+        // Refresh sidebar ticks and enabled/disabled state (from server data)
         function refreshSidebar() {
-            let playedDays = {};
-            try { playedDays = JSON.parse(getStorage('orderix_played_days') || '{}'); } catch(e){}
-
             document.querySelectorAll('.day-btn').forEach(btn => {
                 const id = parseInt(btn.dataset.dayId);
-                // Tick / Cross
+                // Tick / Cross from server data
                 let existingTick = btn.querySelector('.tick');
-                if (playedDays[id]) {
-                    const isWin = playedDays[id].isWin;
+                if (serverPlayedDays[id]) {
+                    const isWin = serverPlayedDays[id].isWin;
                     if (existingTick) {
                         existingTick.className = isWin ? 'tick' : 'tick fail';
                         existingTick.textContent = isWin ? '✓' : '✗';
@@ -393,6 +402,8 @@
                         tick.textContent = isWin ? '✓' : '✗';
                         btn.appendChild(tick);
                     }
+                } else if (existingTick) {
+                    existingTick.remove();
                 }
                 // Enabled/disabled from admin config
                 const cfg = dayConfig[id];
@@ -406,11 +417,17 @@
 
         initSidebar();
 
+        // All day buttons disabled until config loads
+        document.querySelectorAll('.day-btn').forEach(b => b.classList.add('disabled'));
+
         // Fetch admin config from Google Sheets "config" tab
         fetch(`${GAS_URL}?getConfig=1&nocache=${Date.now()}`)
             .then(r => r.json())
             .then(cfg => { dayConfig = cfg; refreshSidebar(); })
-            .catch(() => {});
+            .catch(() => {
+                // On network error, enable all buttons (fallback)
+                document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('disabled'));
+            });
 
         // Event Listeners
         startBtn.addEventListener('click', startGame);
@@ -435,6 +452,7 @@
                 nameStatus.classList.add('hidden');
                 lockedNameDisplay.textContent = name;
                 lockedNameDisplay.classList.remove('hidden');
+                fetchPlayedDays(name);
                 return;
             }
             
@@ -453,6 +471,7 @@
                         nameStatus.classList.add('hidden');
                         lockedNameDisplay.textContent = name;
                         lockedNameDisplay.classList.remove('hidden');
+                        fetchPlayedDays(name);
                     } else {
                         isNameValid = false;
                         nameStatus.textContent = data.reason;
@@ -514,11 +533,8 @@
             const cfg = dayConfig[day.id];
             activeItemCount = (cfg && cfg.count) ? cfg.count : 10;
 
-            let playedInfo = null;
-            try {
-                const playedDays = JSON.parse(getStorage('orderix_played_days') || '{}');
-                playedInfo = playedDays[day.id];
-            } catch(e){}
+            // Check if already played (from server data)
+            const playedInfo = serverPlayedDays[day.id] || null;
 
             if (playedInfo) {
                 // LEVEL ALREADY PLAYED
@@ -526,7 +542,8 @@
                 activeItemCount = playedInfo.count;
                 leaderboardTitle.textContent = `Top 10 - ${day.title} (${activeItemCount} éléments)`;
                 
-                resultDisplay.innerHTML = `Niveau déjà complété.<br>Votre temps : ${playedInfo.isWin ? (playedInfo.time/1000).toFixed(3) + 's' : 'FAIL'}`;
+                const timeDisplay = playedInfo.isWin ? parseFloat(playedInfo.time).toFixed(3) + 's' : 'FAIL';
+                resultDisplay.innerHTML = `Niveau déjà complété.<br>Votre temps : ${timeDisplay}`;
                 resultDisplay.style.color = playedInfo.isWin ? '#28a745' : '#dc3545';
                 
                 board.innerHTML = '';
@@ -1137,13 +1154,6 @@
                     wrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;';
                     const clone = item.cloneNode(true);
                     clone.style.marginBottom = '28px';
-                    const expectedVal = sortedValues[index];
-                    const actualVal = parseFloat(clone.dataset.value);
-                    if (actualVal !== expectedVal) {
-                        clone.classList.add('error');
-                        const badge = clone.querySelector('.badge');
-                        if(badge) badge.classList.add('error');
-                    }
                     wrap.appendChild(clone);
                     grid.appendChild(wrap);
                 });
@@ -1190,14 +1200,14 @@
             // Clear pending game marker
             setStorage('orderix_pending_game', '');
 
-            // Save completion safely
-            try {
-                const playedDays = JSON.parse(getStorage('orderix_played_days') || '{}');
-                playedDays[currentDayConfig.id] = { count: activeItemCount, time: timeElapsed, isWin: isWin };
-                setStorage('orderix_played_days', JSON.stringify(playedDays));
-            } catch(e){}
+            // Optimistic update of server played days (for instant UI)
+            serverPlayedDays[currentDayConfig.id] = {
+                count: activeItemCount,
+                time: isWin ? parseFloat((timeElapsed / 1000).toFixed(3)) : -1,
+                isWin: isWin
+            };
 
-            // Refresh sidebar ticks (after save)
+            // Refresh sidebar ticks
             refreshSidebar();
 
             const timeStr = isWin ? (timeElapsed / 1000).toFixed(3) : "FAIL";
@@ -1303,16 +1313,9 @@
             }
         });
 
-        // Tab/window close = warn + save fail locally
+        // Tab/window close = warn (pending marker already set at startGame)
         window.addEventListener('beforeunload', function(e) {
             if (gameInProgress && currentDayConfig && !isPaused) {
-                // Save fail locally (can't do network calls here)
-                try {
-                    const playedDays = JSON.parse(getStorage('orderix_played_days') || '{}');
-                    playedDays[currentDayConfig.id] = { count: activeItemCount, time: timeElapsed, isWin: false };
-                    setStorage('orderix_played_days', JSON.stringify(playedDays));
-                    // Keep pending marker so score gets submitted on next load
-                } catch(e2){}
                 e.preventDefault();
                 e.returnValue = '';
             }
@@ -1339,9 +1342,10 @@
                         day: data.dayId,
                         itemCount: data.itemCount
                     })
+                }).then(() => {
+                    // Re-fetch played days from server to update sidebar
+                    fetchPlayedDays(name);
                 }).catch(() => {});
-                // Refresh sidebar to show the ✗
-                refreshSidebar();
             } catch(e){}
         })();
     </script>
