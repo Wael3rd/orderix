@@ -58,10 +58,11 @@
         }
         .day-btn:hover { background-color: #6c757d; }
         .day-btn.active { background-color: #007bff; font-weight: bold; border-left: 5px solid #80bdff; }
-        .day-btn.disabled { opacity: 0.35; cursor: not-allowed; }
-        .day-btn.disabled:hover { background-color: #495057; }
         .day-btn .tick { color: #28a745; margin-left: 6px; font-weight: bold; }
         .day-btn .tick.fail { color: #dc3545; }
+        .loader { display: flex; align-items: center; justify-content: center; padding: 20px; gap: 10px; color: #adb5bd; font-size: 0.9rem; }
+        .spinner { width: 20px; height: 20px; border: 3px solid #555; border-top-color: #80bdff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
         
         .settings-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 20px; }
         .settings-group label { font-size: 0.9rem; margin-top: 5px; }
@@ -361,9 +362,19 @@
         // Fetch played days at startup if name is known
         if (savedName) fetchPlayedDays(savedName);
 
-        // Initialize Sidebar (builds buttons, applies ticks from server data)
-        function initSidebar() {
-            DAYS.forEach(day => {
+        // Build sidebar buttons (only enabled days from config)
+        function buildSidebar() {
+            dayButtonsContainer.innerHTML = '';
+            // Filter: hide days explicitly set to enabled=false in config
+            const enabledDays = DAYS.filter(day => {
+                const cfg = dayConfig[day.id];
+                if (cfg && cfg.enabled === false) return false;
+                return true;
+            });
+            // Fallback: if config is empty (error), show all days
+            const daysToShow = Object.keys(dayConfig).length > 0 ? enabledDays : DAYS;
+
+            daysToShow.forEach(day => {
                 const btn = document.createElement('button');
                 btn.className = 'day-btn';
                 btn.dataset.dayId = day.id;
@@ -377,19 +388,15 @@
                     tick.textContent = serverPlayedDays[day.id].isWin ? '✓' : '✗';
                     btn.appendChild(tick);
                 }
-                btn.addEventListener('click', () => {
-                    if (btn.classList.contains('disabled')) return;
-                    selectDay(day, btn);
-                });
+                btn.addEventListener('click', () => selectDay(day, btn));
                 dayButtonsContainer.appendChild(btn);
             });
         }
 
-        // Refresh sidebar ticks and enabled/disabled state (from server data)
+        // Refresh sidebar ticks only (from server data)
         function refreshSidebar() {
             document.querySelectorAll('.day-btn').forEach(btn => {
                 const id = parseInt(btn.dataset.dayId);
-                // Tick / Cross from server data
                 let existingTick = btn.querySelector('.tick');
                 if (serverPlayedDays[id]) {
                     const isWin = serverPlayedDays[id].isWin;
@@ -405,29 +412,17 @@
                 } else if (existingTick) {
                     existingTick.remove();
                 }
-                // Enabled/disabled from admin config
-                const cfg = dayConfig[id];
-                if (cfg && cfg.enabled === false) {
-                    btn.classList.add('disabled');
-                } else {
-                    btn.classList.remove('disabled');
-                }
             });
         }
 
-        initSidebar();
-
-        // All day buttons disabled until config loads
-        document.querySelectorAll('.day-btn').forEach(b => b.classList.add('disabled'));
+        // Show loading spinner until config arrives
+        dayButtonsContainer.innerHTML = '<div class="loader"><div class="spinner"></div>Chargement…</div>';
 
         // Fetch admin config from Google Sheets "config" tab
         fetch(`${GAS_URL}?getConfig=1&nocache=${Date.now()}`)
             .then(r => r.json())
-            .then(cfg => { dayConfig = cfg; refreshSidebar(); })
-            .catch(() => {
-                // On network error, enable all buttons (fallback)
-                document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('disabled'));
-            });
+            .then(cfg => { dayConfig = cfg; buildSidebar(); })
+            .catch(() => { buildSidebar(); });
 
         // Event Listeners
         startBtn.addEventListener('click', startGame);
@@ -596,7 +591,6 @@
                 emojis:     Array.from({length:7},(_,i)=>i+1),
                 animals:    Array.from({length:20},(_,i)=>i+1),
                 ages:       Array.from({length:8},(_,i)=>i+1),
-                wifi:       [1,2,3,4,5],
                 rating:     [1,2,3,4,5],
                 polygons:   [3,4,5,6,7,8,9,10],
                 wordLength: [2,3,4,5,6,7,8,9,10,11,12],
@@ -621,13 +615,13 @@
                 rotation:[0,170], blur:[0,8], borderWidth:[1,15], fontSize:[8,36],
                 shadow:[0,20], centerDot:[4,36], lineLength:[8,55],
                 thermometer:[5,95], battery:[5,100], clocks:[1,12], gauge:[10,170],
-                compass:[0,330], yPosition:[5,55], dots:[1,20], bars:[1,10],
+                compass:[0,330], yPosition:[5,55], wifi:[5,100], dots:[1,20], bars:[1,10],
                 stars:[1,10], numbers:[2,99], roman:[1,30], mathAdd:[3,30],
                 mathSub:[2,20], fractions:[5,90], binary:[1,31],
                 stairs:[1,10], stack:[1,12], target:[1,8], pixels:[2,8],
                 checkers:[2,16], stripes:[1,12]
             };
-            const INT = 'clocks,dots,bars,stars,numbers,roman,mathAdd,mathSub,binary,stairs,stack,target,pixels,checkers,stripes,borderWidth,fontSize,centerDot,lineLength,shadow,gauge,compass'.split(',');
+            const INT = 'clocks,dots,bars,stars,numbers,roman,mathAdd,mathSub,binary,stairs,stack,target,pixels,checkers,stripes,borderWidth,fontSize,centerDot,lineLength,shadow,gauge,compass,wifi'.split(',');
             const range = R[type];
             if (!range) return [];
             const isInt = INT.indexOf(type) !== -1;
@@ -729,7 +723,7 @@
 
         // Helper: display text centered in an item
         function _setText(el, text, size, color) {
-            el.style.cssText += `font-size:${size||14}px;color:${color||'white'};font-weight:bold;text-align:center;line-height:60px;overflow:hidden;`;
+            el.style.cssText += `font-size:${size||14}px;color:${color||'white'};font-weight:bold;text-align:center;line-height:60px;`;
             el.textContent = text;
         }
 
@@ -805,13 +799,16 @@
 
             // ── Jauges & instruments (16-22) ──
             case 'thermometer': {
-                el.style.backgroundColor = '#dee2e6'; el.style.position = 'relative'; el.style.overflow = 'hidden'; el.style.borderRadius = '0 0 8px 8px';
+                el.style.backgroundColor = 'transparent'; el.style.position = 'relative';
+                const tWrap = document.createElement('div');
+                tWrap.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;border-radius:0 0 8px 8px;background:#dee2e6;';
                 const tube = document.createElement('div');
                 tube.style.cssText = `position:absolute;bottom:0;left:30%;width:40%;background:linear-gradient(to top,#dc3545,#ff6b6b);border-radius:0 0 8px 8px;`;
                 tube.style.height = val + '%';
                 const bulb = document.createElement('div');
                 bulb.style.cssText = `position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);width:18px;height:18px;background:#dc3545;border-radius:50%;`;
-                el.appendChild(tube); el.appendChild(bulb); break;
+                tWrap.appendChild(tube); tWrap.appendChild(bulb);
+                el.appendChild(tWrap); break;
             }
             case 'battery': {
                 el.style.backgroundColor = 'transparent'; el.style.position = 'relative';
@@ -863,8 +860,11 @@
                 for (let i = 0; i < maxBars; i++) {
                     const b = document.createElement('div');
                     const bh = 8 + i * 9;
-                    const on = i < val;
-                    b.style.cssText = `position:absolute;bottom:8px;width:7px;background:${on?'#007bff':'#dee2e6'};border-radius:2px;`;
+                    const threshold = (i + 1) * 20;
+                    const on = val >= threshold;
+                    const partial = !on && val > threshold - 20;
+                    const opacity = on ? 1 : (partial ? 0.3 + 0.7 * ((val - (threshold - 20)) / 20) : 0.15);
+                    b.style.cssText = `position:absolute;bottom:8px;width:7px;background:#007bff;border-radius:2px;opacity:${opacity};`;
                     b.style.left = (8 + i * 10) + 'px';
                     b.style.height = bh + 'px';
                     el.appendChild(b);
@@ -1011,7 +1011,9 @@
                 el.style.lineHeight = '60px'; break;
             }
             case 'stairs': {
-                el.style.backgroundColor = 'transparent'; el.style.position = 'relative'; el.style.overflow = 'hidden';
+                el.style.backgroundColor = 'transparent'; el.style.position = 'relative';
+                const sWrap = document.createElement('div');
+                sWrap.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;';
                 const stepW = Math.floor(55/val);
                 for(let i=0;i<val;i++){
                     const step = document.createElement('div');
@@ -1020,20 +1022,24 @@
                     step.style.left = (i*stepW+2)+'px';
                     step.style.width = Math.max(3,stepW-1)+'px';
                     step.style.height = Math.min(58,sh)+'px';
-                    el.appendChild(step);
+                    sWrap.appendChild(step);
                 }
+                el.appendChild(sWrap);
                 break;
             }
             case 'stack': {
-                el.style.backgroundColor = 'transparent'; el.style.position = 'relative'; el.style.overflow = 'hidden';
+                el.style.backgroundColor = 'transparent'; el.style.position = 'relative';
+                const kWrap = document.createElement('div');
+                kWrap.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;';
                 const blockH = Math.min(12, Math.floor(56/val));
                 for(let i=0;i<val;i++){
                     const blk = document.createElement('div');
                     blk.style.cssText = `position:absolute;left:10px;width:40px;background:hsl(${i*30},70%,50%);border-radius:2px;`;
                     blk.style.height = (blockH-1)+'px';
                     blk.style.bottom = (i*blockH+2)+'px';
-                    el.appendChild(blk);
+                    kWrap.appendChild(blk);
                 }
+                el.appendChild(kWrap);
                 break;
             }
             case 'checkers': {
