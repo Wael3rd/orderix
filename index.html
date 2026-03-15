@@ -116,6 +116,7 @@
             z-index: 10; 
         }
         .badge.error { background: #dc3545 !important; }
+        .badge.top { bottom: auto; top: -26px; }
         
         .hidden { display: none !important; }
         #timer-display { font-size: 3rem; font-weight: bold; color: #333; margin: 10px 0; }
@@ -1143,59 +1144,90 @@
                 const solItems = Array.from(selectionOrder).slice();
                 solItems.sort((a, b) => parseFloat(a.dataset.value) - parseFloat(b.dataset.value));
 
-                // Mirror grid: each column = player's pick on top, correct answer below
-                const grid = document.createElement('div');
-                grid.style.cssText = 'display:grid;gap:10px;justify-items:center;margin:10px 0;overflow-x:auto;max-width:100%;padding-bottom:10px;';
-                grid.style.gridTemplateColumns = `repeat(${selectionOrder.length}, 60px)`;
+                // Build value-to-solution-index mapping for connecting lines
+                const solValueToIndex = {};
+                solItems.forEach((item, idx) => { solValueToIndex[parseFloat(item.dataset.value)] = idx; });
 
-                // Label rows
+                const colW = 70; // 60px item + 10px gap
+                const n = selectionOrder.length;
+
+                // Container (flex column, centered)
+                const container = document.createElement('div');
+                container.style.cssText = 'display:flex;flex-direction:column;align-items:center;width:100%;overflow-x:auto;padding:10px 0;';
+
+                // Label: your answer
                 const lblYou = document.createElement('div');
-                lblYou.style.cssText = `grid-column:1/-1;font-weight:bold;font-size:1rem;color:#555;text-align:center;margin-bottom:4px;`;
+                lblYou.style.cssText = 'font-weight:bold;font-size:1rem;color:#555;text-align:center;margin-bottom:8px;';
                 lblYou.textContent = 'Votre réponse :';
-                grid.appendChild(lblYou);
+                container.appendChild(lblYou);
 
-                // Row 1: player's answer (red badge if wrong position)
+                // Row 1: player's answer (badges below, red if wrong)
+                const playerRow = document.createElement('div');
+                playerRow.style.cssText = `display:flex;gap:10px;justify-content:center;margin-bottom:10px;`;
                 selectionOrder.forEach((item, index) => {
-                    const wrap = document.createElement('div');
-                    wrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;';
                     const clone = item.cloneNode(true);
                     clone.style.marginBottom = '28px';
-                    // Color badge red if this item is in the wrong position
                     const actualVal = parseFloat(clone.dataset.value);
                     const expectedVal = sortedValues[index];
                     if (actualVal !== expectedVal) {
                         const badge = clone.querySelector('.badge');
                         if (badge) badge.classList.add('error');
                     }
-                    wrap.appendChild(clone);
-                    grid.appendChild(wrap);
+                    playerRow.appendChild(clone);
                 });
+                container.appendChild(playerRow);
 
-                // Label solution
+                // SVG connecting lines
+                const svgW = n * colW - 10;
+                const svgH = 50;
+                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.setAttribute('width', svgW);
+                svg.setAttribute('height', svgH);
+                svg.style.cssText = 'display:block;margin:0 auto;flex-shrink:0;';
+
+                selectionOrder.forEach((item, fromIdx) => {
+                    const val = parseFloat(item.dataset.value);
+                    const toIdx = solValueToIndex[val];
+                    const x1 = fromIdx * colW + 30;
+                    const x2 = toIdx * colW + 30;
+                    const isWrong = fromIdx !== toIdx;
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', x1);
+                    line.setAttribute('y1', 0);
+                    line.setAttribute('x2', x2);
+                    line.setAttribute('y2', svgH);
+                    line.setAttribute('stroke', isWrong ? '#dc3545' : '#28a745');
+                    line.setAttribute('stroke-width', isWrong ? '2' : '1.5');
+                    line.setAttribute('stroke-opacity', isWrong ? '0.7' : '0.4');
+                    svg.appendChild(line);
+                });
+                container.appendChild(svg);
+
+                // Label: solution
                 const lblSol = document.createElement('div');
-                lblSol.style.cssText = `grid-column:1/-1;font-weight:bold;font-size:1rem;color:#555;text-align:center;margin-top:10px;margin-bottom:4px;`;
+                lblSol.style.cssText = 'font-weight:bold;font-size:1rem;color:#555;text-align:center;margin-bottom:8px;';
                 lblSol.textContent = 'Solution :';
-                grid.appendChild(lblSol);
+                container.appendChild(lblSol);
 
-                // Row 2: correct order
+                // Row 2: correct order (badges ABOVE)
+                const solRow = document.createElement('div');
+                solRow.style.cssText = `display:flex;gap:10px;justify-content:center;`;
                 solItems.forEach((item, index) => {
-                    const wrap = document.createElement('div');
-                    wrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;';
                     const clone = item.cloneNode(true);
-                    clone.style.marginBottom = '28px';
+                    clone.style.marginTop = '28px';
+                    clone.style.marginBottom = '0';
                     clone.className = `item type-${currentDayConfig.type}`;
-                    // Remove old badge, add clean one
                     const oldBadge = clone.querySelector('.badge');
                     if (oldBadge) oldBadge.remove();
                     const badge = document.createElement('div');
-                    badge.className = 'badge';
+                    badge.className = 'badge top';
                     badge.textContent = index + 1;
                     clone.appendChild(badge);
-                    wrap.appendChild(clone);
-                    grid.appendChild(wrap);
+                    solRow.appendChild(clone);
                 });
+                container.appendChild(solRow);
 
-                board.appendChild(grid);
+                board.appendChild(container);
 
                 endGame(`Erreur ! Voici la correction.`, false);
             }
