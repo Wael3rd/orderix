@@ -195,6 +195,7 @@
         .peek-hidden * { display: none !important; }
         .blackout-mode { background-color: #000 !important; }
         .blackout-mode .item { opacity: 0 !important; pointer-events: none; }
+		.cursor-active { box-shadow: 0 0 0 6px #ff9800 !important; transform: scale(1.15); z-index: 100; transition: all 0.1s; }
 
         /* Mobile Responsiveness */
         @media (max-width: 768px) {
@@ -303,7 +304,8 @@
             findTargetUI: { name: "Recherche Exacte", isTargetMatch: true },
             gravitySort: { name: "Gravité", isSort: true, order: 1, cssClass: 'gravity-anim' },
             colorSort: { name: "Technicolor", isSort: true, order: 1, cssClass: 'hue-shift' },
-            danceSort: { name: "Danse Macabre", isSort: true, order: 1, cssClass: 'dance-anim' }
+            danceSort: { name: "Danse Macabre", isSort: true, order: 1, cssClass: 'dance-anim' },
+            cursorSort: { name: "Curseur Fou", isSort: true, order: 1, useCursor: true }
         };
 
         // 50 Base Types
@@ -975,33 +977,36 @@
                     
                     let pressTimer, lastTap = 0;
                     
-                    item.addEventListener('click', (e) => {
-                        if (isPaused) return;
-                        if (mode.requireDbTap) { 
-                            let now = Date.now(); 
-                            if (now - lastTap < 300) { clearTimeout(pressTimer); handleLogic(item, val, targetVal, mode, values); } 
-                            else { item.classList.add('error'); setTimeout(() => item.classList.remove('error'), 200); } 
-                            lastTap = now; 
-                            return; 
-                        }
-                        if (mode.requireLong) return; // Handled by mousedown/touchstart
-                        handleLogic(item, val, targetVal, mode, values);
-                    });
-
-                    if (mode.requireLong) {
-                        item.addEventListener('mousedown', () => { pressTimer = setTimeout(() => handleLogic(item, val, targetVal, mode, values), 800); });
-                        item.addEventListener('mouseup', () => clearTimeout(pressTimer)); 
-                        item.addEventListener('mouseleave', () => clearTimeout(pressTimer));
-                        item.addEventListener('touchstart', () => { pressTimer = setTimeout(() => handleLogic(item, val, targetVal, mode, values), 800); }, {passive:true});
-                        item.addEventListener('touchend', () => clearTimeout(pressTimer));
-                    }
-                    
-                    if (mode.runAway) {
-                        item.addEventListener('mousemove', () => { 
-                            if (Math.abs(val - tMin) < 0.0001) {
-                                item.style.transform = `translate(${(Math.random() - 0.5) * 150}px, ${(Math.random() - 0.5) * 150}px)`; 
+                    // Disable direct item clicking if cursor mode is active
+                    if (!mode.useCursor) {
+                        item.addEventListener('click', (e) => {
+                            if (isPaused) return;
+                            if (mode.requireDbTap) { 
+                                let now = Date.now(); 
+                                if (now - lastTap < 300) { clearTimeout(pressTimer); handleLogic(item, val, targetVal, mode, values); } 
+                                else { item.classList.add('error'); setTimeout(() => item.classList.remove('error'), 200); } 
+                                lastTap = now; 
+                                return; 
                             }
+                            if (mode.requireLong) return; // Handled by mousedown/touchstart
+                            handleLogic(item, val, targetVal, mode, values);
                         });
+
+                        if (mode.requireLong) {
+                            item.addEventListener('mousedown', () => { pressTimer = setTimeout(() => handleLogic(item, val, targetVal, mode, values), 800); });
+                            item.addEventListener('mouseup', () => clearTimeout(pressTimer)); 
+                            item.addEventListener('mouseleave', () => clearTimeout(pressTimer));
+                            item.addEventListener('touchstart', () => { pressTimer = setTimeout(() => handleLogic(item, val, targetVal, mode, values), 800); }, {passive:true});
+                            item.addEventListener('touchend', () => clearTimeout(pressTimer));
+                        }
+                        
+                        if (mode.runAway) {
+                            item.addEventListener('mousemove', () => { 
+                                if (Math.abs(val - tMin) < 0.0001) {
+                                    item.style.transform = `translate(${(Math.random() - 0.5) * 150}px, ${(Math.random() - 0.5) * 150}px)`; 
+                                }
+                            });
+                        }
                     }
                     board.appendChild(item);
                 });
@@ -1009,6 +1014,40 @@
                 if (mode.flashHide) setTimeout(() => document.querySelectorAll('.item').forEach(el => el.classList.add('peek-hidden')), 2000);
                 if (mode.shuffleTick) envInterval = setInterval(() => { if (!isPaused) document.querySelectorAll('.item').forEach(el => el.style.order = Math.floor(Math.random() * 100)); }, mode.shuffleTick);
                 if (mode.blackout) envInterval = setInterval(() => { if (!isPaused) board.classList.toggle('blackout-mode'); }, 1500);
+                
+                // Ping-pong cursor logic
+                if (mode.useCursor) {
+                    let cursorIdx = 0;
+                    let cursorDir = 1;
+                    const domItems = Array.from(board.querySelectorAll('.item'));
+                    if (domItems.length > 0) domItems[0].classList.add('cursor-active');
+                    
+                    envInterval = setInterval(() => {
+                        if (isPaused || domItems.length === 0) return;
+                        domItems[cursorIdx].classList.remove('cursor-active');
+                        cursorIdx += cursorDir;
+                        
+                        // Bounce back and forth
+                        if (cursorIdx >= domItems.length) { 
+                            cursorIdx = Math.max(0, domItems.length - 2); 
+                            cursorDir = -1; 
+                        } else if (cursorIdx < 0) { 
+                            cursorIdx = Math.min(1, domItems.length - 1); 
+                            cursorDir = 1; 
+                        }
+                        domItems[cursorIdx].classList.add('cursor-active');
+                    }, 350); // Speed of the cursor (in milliseconds)
+
+                    // Click anywhere on the board to catch the current item
+                    board.onpointerdown = (e) => {
+                        if (isPaused) return;
+                        e.preventDefault(); 
+                        const activeItem = domItems[cursorIdx];
+                        if (activeItem) handleLogic(activeItem, parseFloat(activeItem.dataset.value), targetVal, mode, values);
+                    };
+                } else {
+                    board.onpointerdown = null; // Clean up listener for non-cursor modes
+                }
             }
 
             clearInterval(timerInterval);
@@ -1245,9 +1284,14 @@
                 const cap = document.createElement('div');
                 cap.style.cssText = 'position:absolute;top:16px;right:3px;width:6px;height:14px;background:#6c757d;border-radius:0 2px 2px 0;';
                 const charge = document.createElement('div');
-                const pct = val;
-                charge.style.cssText = `position:absolute;bottom:0;left:0;width:100%;background:${pct>60?'#28a745':pct>20?'#ffc107':'#dc3545'};`;
-                charge.style.height = pct + '%';
+                
+                // Randomize color independently of the fill percentage
+                const colors = ['#28a745', '#ffc107', '#dc3545']; // Green, Yellow, Red
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                charge.style.cssText = `position:absolute;bottom:0;left:0;width:100%;background:${randomColor};`;
+                charge.style.height = val + '%';
+                
                 shell.appendChild(charge); el.appendChild(shell); el.appendChild(cap); break;
             }
             case 'clocks': {
