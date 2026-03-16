@@ -543,10 +543,10 @@
                 let timeDisplay;
                 if (playedInfo.isWin) {
                     timeDisplay = parseFloat(playedInfo.time).toFixed(3) + 's';
-                } else if (playedInfo.time === -999999 || playedInfo.time === -1) {
+                } else if (playedInfo.time === -999999) {
                     timeDisplay = 'RAGE QUIT';
                 } else {
-                    timeDisplay = Math.abs(playedInfo.time).toFixed(3) + 's';
+                    timeDisplay = `FAIL (${Math.abs(playedInfo.time).toFixed(3)}s)`;
                 }
 
                 resultDisplay.innerHTML = `Niveau déjà complété.<br>Votre temps : <span style="color:${playedInfo.isWin ? '#28a745' : '#dc3545'}">${timeDisplay}</span>`;
@@ -1366,8 +1366,8 @@
                         else if (index === 2) rankStyle += " color: #cd7f32;";
 
                         const isWin = entry.time >= 0;
-                        const isRQ = entry.time === -999999 || entry.time === -1;
-                        const timeDisplay = isWin ? `${entry.time.toFixed(3)}s` : (isRQ ? "RAGE QUIT" : `${Math.abs(entry.time).toFixed(3)}s`);
+                        const isRQ = entry.time === -999999; // Strict check for rage quit
+                        const timeDisplay = isWin ? `${entry.time.toFixed(3)}s` : (isRQ ? "RAGE QUIT" : `FAIL (${Math.abs(entry.time).toFixed(3)}s)`);
                         const colorStyle = isWin ? "" : "color: #dc3545;";
 
                         li.innerHTML = `
