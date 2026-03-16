@@ -99,7 +99,7 @@
             /* Prevents double-tap zooming on mobile */
             touch-action: manipulation;
         }
-        .item.selected { box-shadow: 0 0 0 4px #ffc107 !important; }
+        .item.selected { /* no border */ }
         .item.error { box-shadow: 0 0 0 4px #dc3545 !important; z-index: 50; }
         .item.matched { box-shadow: 0 0 0 4px #28a745 !important; pointer-events: none; opacity: 0.6; }
 
@@ -1248,16 +1248,22 @@
                 break;
             }
             case 'mathAdd': {
-                const a1 = Math.max(1, Math.floor(val/2) + (val%3) - 1);
+                // Randomize addition terms to create different visual pairs for the same sum
+                const a1 = Math.max(1, Math.floor(Math.random() * (val - 1)) + 1);
                 const b1 = val - a1;
                 _setText(el, a1+'+'+b1, 14, 'white'); break;
             }
             case 'mathMul': {
-                let a2=2; while(val%a2!==0 && a2<val) a2++;
+                // Find all valid factors, pick a random pair, and randomly swap order
+                let factors = [];
+                for (let f = 1; f <= Math.sqrt(val); f++) if (val % f === 0) factors.push(f);
+                let a2 = factors[Math.floor(Math.random() * factors.length)];
+                if (Math.random() > 0.5) a2 = val / a2;
                 _setText(el, a2+'×'+(val/a2), 14, 'white'); break;
             }
             case 'mathSub': {
-                const offset = (val*3%7)+2;
+                // Randomize subtraction offset
+                const offset = Math.floor(Math.random() * 15) + 1;
                 _setText(el, (val+offset)+'−'+offset, 14, 'white'); break;
             }
             case 'fractions': {
