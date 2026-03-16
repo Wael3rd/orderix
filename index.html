@@ -275,7 +275,7 @@
             findMin: { name: "Chasse au Min", findTarget: 'min' },
             findOdd: { name: "L'Intrus", specialGen: 'odd', winOnOdd: true },
             findPair: { name: "Les Jumeaux", specialGen: 'pair', winOnPairs: true },
-            pairs: { name: "Paires", specialGen: 'pairs', hidden: false },
+			pairs: { name: "Paires", specialGen: 'pairs', isPairsMatch: true },
             reflex: { name: "Cibles Mobiles", isReflex: true },
             flashMax: { name: "Mémoire Flash Max", findTarget: 'max', flashHide: true },
             flashSort: { name: "Tri Flash", isSort: true, order: 1, flashHide: true },
@@ -1039,28 +1039,23 @@
                 }, 1000);
             }
 
-            if (mode.hidden) { // "Pairs" mode handled here
-                item.classList.remove('peek-hidden'); 
-                applyStyle(item, currentDayConfig.type, val); 
+            if (mode.isPairsMatch) {
+                item.style.boxShadow = '0 0 0 4px #007bff';
                 flipped.push(item);
                 
                 if (flipped.length === 2) {
                     if (Math.abs(parseFloat(flipped[0].dataset.value) - parseFloat(flipped[1].dataset.value)) < 0.0001) { 
-                        flipped.forEach(f => f.classList.add('matched')); 
+                        flipped.forEach(f => { f.style.boxShadow = ''; f.classList.add('matched'); }); 
                         matched += 2; 
                         flipped = []; 
                         if (matched >= activeItemCount) endGame('Paires trouvées !', true); 
                     } else { 
-                        flipped.forEach(f => f.classList.add('error'));
+                        flipped.forEach(f => { f.style.boxShadow = ''; f.classList.add('error'); });
                         setTimeout(() => { 
                             if (isPaused) return; 
-                            flipped.forEach(f => {
-                                f.classList.remove('error');
-                                f.innerHTML = ''; 
-                                f.className = `item type-${currentDayConfig.type} peek-hidden`;
-                            }); 
+                            flipped.forEach(f => f.classList.remove('error')); 
                             flipped = []; 
-                        }, 500); 
+                        }, 300); 
                     }
                 } 
                 return;
