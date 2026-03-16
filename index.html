@@ -496,7 +496,27 @@
 
         fetch(`${GAS_URL}?getConfig=1&nocache=${Date.now()}`)
             .then(r => r.json())
-            .then(cfg => { dayConfig = cfg; buildSidebar(); })
+            .then(cfg => { 
+                dayConfig = cfg; 
+                
+                // Apply manual Google Sheets overrides (Col D: modeId, Col E: type)
+                DAYS.forEach(day => {
+                    const c = dayConfig[day.id];
+                    if (c) {
+                        if (c.modeId && GAME_MODES[c.modeId]) day.modeId = c.modeId;
+                        if (c.type) {
+                            const bType = BASE_TYPES.find(b => b.type === c.type);
+                            if (bType) day.type = c.type;
+                        }
+                        // Update title to match manual config
+                        const mName = GAME_MODES[day.modeId].name;
+                        const bName = BASE_TYPES.find(b => b.type === day.type).title;
+                        day.title = `Jour ${day.id} : ${mName} - ${bName}`;
+                    }
+                });
+                
+                buildSidebar(); 
+            })
             .catch(() => { buildSidebar(); });
 
         startBtn.addEventListener('click', startGame);
