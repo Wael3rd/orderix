@@ -807,12 +807,16 @@
                 
                 let values = [];
                 if (mode.specialGen === 'odd') { 
-                    let v = generateValues(currentDayConfig.type, 4); 
-                    for(let i=0; i < activeItemCount - 1; i++) values.push(v[0]); 
-                    values.push(v[v.length-1]); 
+                    // Generate enough values and shuffle them to pick random bases and odd one
+                    let v = generateValues(currentDayConfig.type, Math.max(4, activeItemCount)); 
+                    let shuffledV = [...v].sort(() => Math.random() - 0.5);
+                    for(let i=0; i < activeItemCount - 1; i++) values.push(shuffledV[0]); 
+                    values.push(shuffledV[1]); 
                 } else if (mode.specialGen === 'pair') { 
                     let v = generateValues(currentDayConfig.type, activeItemCount - 1); 
-                    values = [...v]; values.push(v[0]); 
+                    // Pick a random element to duplicate instead of always index 0
+                    let randomDup = v[Math.floor(Math.random() * v.length)];
+                    values = [...v]; values.push(randomDup);
                 } else if (mode.specialGen === 'pairs') { 
                     let pc = Math.floor(activeItemCount / 2); 
                     activeItemCount = pc * 2; 
