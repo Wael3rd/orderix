@@ -245,6 +245,12 @@
         <div id="game-board" class="hidden"></div>
         <div id="result"></div>
         
+        <div id="feedback-container" class="hidden" style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+            <button id="btn-like" class="action-btn" style="background-color: #28a745;">👍 Top</button>
+            <button id="btn-dislike" class="action-btn" style="background-color: #dc3545;">👎 Bof</button>
+            <button id="btn-skip" class="action-btn" style="background-color: #6c757d;">Passer</button>
+        </div>
+        
         <div id="leaderboard-section" class="hidden" style="margin-top: 20px; text-align: center; width: 100%; max-width: 400px;">
             <div id="db-message" style="margin-top: 10px; font-weight: bold;"></div>
             <h3 id="leaderboard-title" style="margin-top: 20px;">Top 10 - Classement</h3>
@@ -388,6 +394,11 @@
         const checkBtn = document.getElementById('check-btn');
         const menuBtn = document.getElementById('menu-btn');
         const resultDisplay = document.getElementById('result');
+		const feedbackContainer = document.getElementById('feedback-container');
+        const btnLike = document.getElementById('btn-like');
+        const btnDislike = document.getElementById('btn-dislike');
+        const btnSkip = document.getElementById('btn-skip');
+        let pendingTimeVal = 0;
         const levelTitle = document.getElementById('level-title');
         const dayButtonsContainer = document.getElementById('day-buttons-container');
         
@@ -582,6 +593,9 @@
             startBtn.classList.add('hidden');
             checkBtn.classList.add('hidden');
             board.classList.add('hidden');
+            board.classList.remove('blackout-mode');
+            feedbackContainer.classList.add('hidden');
+            leaderboardSection.classList.add('hidden');
             board.classList.remove('blackout-mode');
             leaderboardSection.classList.add('hidden'); 
             timerDisplay.classList.add('hidden');
@@ -830,9 +844,14 @@
                 const op = document.createElement('div'); op.style.fontSize = '24px'; op.style.fontWeight = 'bold'; op.style.color = '#333'; op.textContent = mode.isSum ? '+' : '−';
                 const i2 = document.createElement('div'); i2.className = `item type-${day.type}`; applyStyle(i2, day.type, v2);
                 const eq = document.createElement('div'); eq.style.fontSize = '24px'; eq.style.fontWeight = 'bold'; eq.style.color = '#333'; eq.textContent = '=';
-                const res = document.createElement('div'); res.style.fontSize = '20px'; res.style.fontWeight = 'bold'; res.style.color = '#28a745';
                 
-                res.textContent = mode.isSum ? parseFloat((v1+v2).toFixed(4)) : parseFloat((v1-v2).toFixed(4));
+                // Generate visual element for the result
+                const targetVal = mode.isSum ? parseFloat((v1+v2).toFixed(4)) : parseFloat((v1-v2).toFixed(4));
+                const res = document.createElement('div'); 
+                res.className = `item type-${day.type}`; 
+                applyStyle(res, day.type, targetVal);
+                res.style.boxShadow = '0 0 0 4px #28a745'; // Highlight answer
+                
                 row.append(i1, op, i2, eq, res);
             
             } else if (mode.isReflex) {
@@ -1108,8 +1127,23 @@
 
         // Logic Dispatcher for Game Modes
         function handleLogic(item, val, targetVal, mode, values) {
-            if (item.classList.contains('matched') || flipped.includes(item)) return;
+            if (item.classList.contains('matched')) return;
             
+            // --- DE-SELECTION LOGIC ---
+            if (mode.isPairsMatch && flipped.includes(item)) {
+                flipped.splice(flipped.indexOf(item), 1);
+                const b = item.querySelector('.badge'); if (b) b.remove();
+                return;
+            }
+            if ((mode.isSum || mode.isDiff) && selectionOrder.includes(item)) {
+                const index = selectionOrder.indexOf(item);
+                selectionOrder.splice(index, 1);
+                item.classList.remove('selected');
+                renderBadges();
+                return;
+            }
+            // --------------------------
+
             if (mode.peekHide) {
                 item.classList.remove('peek-hidden'); 
                 applyStyle(item, currentDayConfig.type, val);
@@ -1122,20 +1156,31 @@
             }
 
             if (mode.isPairsMatch) {
-                item.style.boxShadow = '0 0 0 4px #007bff';
                 flipped.push(item);
+                
+                // Display badge instead of border (without number)
+                const badge = document.createElement('div');
+                badge.className = 'badge';
+                badge.textContent = ''; 
+                item.appendChild(badge);
                 
                 if (flipped.length === 2) {
                     if (Math.abs(parseFloat(flipped[0].dataset.value) - parseFloat(flipped[1].dataset.value)) < 0.0001) { 
-                        flipped.forEach(f => { f.style.boxShadow = ''; f.classList.add('matched'); }); 
+                        flipped.forEach(f => { 
+                            const b = f.querySelector('.badge'); if (b) b.remove();
+                            f.classList.add('matched'); 
+                        }); 
                         matched += 2; 
                         flipped = []; 
                         if (matched >= activeItemCount) endGame('Paires trouvées !', true); 
                     } else { 
-                        flipped.forEach(f => { f.style.boxShadow = ''; f.classList.add('error'); });
+                        flipped.forEach(f => f.classList.add('error'));
                         setTimeout(() => { 
                             if (isPaused) return; 
-                            flipped.forEach(f => f.classList.remove('error')); 
+                            flipped.forEach(f => {
+                                f.classList.remove('error'); 
+                                const b = f.querySelector('.badge'); if (b) b.remove();
+                            }); 
                             flipped = []; 
                         }, 300); 
                     }
@@ -1167,7 +1212,15 @@
                 let c = values.filter(v => Math.abs(v - val) < 0.0001).length;
                 if (mode.winOnOdd && c === 1) endGame('Intrus trouvé !', true);
                 else if (mode.winOnPairs && c === 2) { 
-                    item.classList.add('matched'); matched++; 
+                    matched++; 
+                    
+                    // Add badge for visual feedback (without number)
+                    const badge = document.createElement('div');
+                    badge.className = 'badge';
+                    badge.textContent = '';
+                    item.appendChild(badge);
+                    
+                    item.classList.add('matched'); 
                     if (matched === 2) endGame('Jumeaux trouvés !', true); 
                 }
                 else { item.classList.add('error'); endGame('Erreur !', false); } 
@@ -1177,6 +1230,10 @@
             if (mode.isSum || mode.isDiff) {
                 item.classList.add('selected'); 
                 selectionOrder.push(item);
+                
+                // Force badge rendering for math target modes
+                renderBadges(); 
+                
                 if (selectionOrder.length === 2) {
                     let v1 = parseFloat(selectionOrder[0].dataset.value);
                     let v2 = parseFloat(selectionOrder[1].dataset.value);
@@ -1625,10 +1682,12 @@
         // Update numbering UI
         function renderBadges() {
             document.querySelectorAll('.badge').forEach(b => b.remove());
+            const mode = GAME_MODES[currentDayConfig.modeId];
             selectionOrder.forEach((item, index) => {
                 const badge = document.createElement('div');
                 badge.className = 'badge';
-                badge.textContent = index + 1;
+                // Only display a number if the mode requires sorting/ordering
+                badge.textContent = (mode && mode.isSort) ? (index + 1) : '';
                 item.appendChild(badge);
             });
         }
@@ -1769,7 +1828,7 @@
             }
         }
 
-        // Wrap up game UI and trigger auto-submit
+// Wrap up game UI and wait for feedback
         function endGame(message, isWin, isRageQuit = false) {
             clearInterval(timerInterval);
             clearTimeout(gameTimeout);
@@ -1780,19 +1839,19 @@
             gameInProgress = false;
             checkBtn.classList.add('hidden');
             startBtn.classList.add('hidden');
-            menuBtn.classList.remove('hidden');
+            // menuBtn remains hidden to force feedback interaction
 
             // Clear pending game marker
             setStorage('orderix_pending_game', '');
 
-            let timeVal = (timeElapsed / 1000).toFixed(3);
-            if (!isWin) timeVal = -timeVal;
-            if (isRageQuit) timeVal = -999999;
+            pendingTimeVal = (timeElapsed / 1000).toFixed(3);
+            if (!isWin) pendingTimeVal = -pendingTimeVal;
+            if (isRageQuit) pendingTimeVal = -999999;
 
             // Optimistic update of server played days (for instant UI)
             serverPlayedDays[currentDayConfig.id] = {
                 count: activeItemCount,
-                time: parseFloat(timeVal),
+                time: parseFloat(pendingTimeVal),
                 isWin: isWin
             };
 
@@ -1807,15 +1866,27 @@
             resultDisplay.innerHTML = `${message}<br>Temps : <span style="color:${isWin ? '#28a745' : '#dc3545'}">${timeStr}</span>`;
             resultDisplay.style.color = '#333';
 
+            // Show feedback UI instead of leaderboard
+            leaderboardSection.classList.add('hidden');
+            feedbackContainer.classList.remove('hidden');
+        }
+
+        // Handle feedback clicks
+        btnLike.onclick = () => handleFeedback('like');
+        btnDislike.onclick = () => handleFeedback('dislike');
+        btnSkip.onclick = () => handleFeedback('none');
+
+        function handleFeedback(feedbackValue) {
+            feedbackContainer.classList.add('hidden');
             leaderboardSection.classList.remove('hidden');
+            menuBtn.classList.remove('hidden'); // Show Return button only after feedback
             dbMessage.textContent = 'Envoi du score en cours...';
             dbMessage.style.color = '#333';
-            
-            submitScore(timeVal);
+            submitScore(pendingTimeVal, feedbackValue);
         }
 
         // Network: Auto Submit score
-        function submitScore(timeVal) {
+        function submitScore(timeVal, feedback) {
             let name = playerNameMainInput.value.trim();
             const storedName = getStorage('orderix_player_name');
             if (storedName) name = storedName;
@@ -1824,7 +1895,8 @@
                 name: name,
                 time: timeVal,
                 day: currentDayConfig.id,
-                itemCount: activeItemCount
+                itemCount: activeItemCount,
+                feedback: feedback // Sending feedback to backend
             };
 
             fetch(GAS_URL, {
