@@ -834,7 +834,7 @@
                 
                 res.textContent = mode.isSum ? parseFloat((v1+v2).toFixed(4)) : parseFloat((v1-v2).toFixed(4));
                 row.append(i1, op, i2, eq, res);
-            }
+            
             } else if (mode.isReflex) {
                 const desc = document.createElement('div'); desc.innerHTML = 'Cliquez vite sur les éléments<br>qui apparaissent !'; desc.style.textAlign = 'center'; desc.style.fontWeight = 'bold'; desc.style.color = '#333';
                 const item = document.createElement('div'); item.className = `item type-${day.type}`; applyStyle(item, day.type, vals[0]); item.style.margin = '0 20px'; item.style.boxShadow = '0 0 0 4px #ffc107';
