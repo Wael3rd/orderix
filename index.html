@@ -101,7 +101,7 @@
         }
         .item.selected { /* no border */ }
         .item.error { box-shadow: 0 0 0 4px #dc3545 !important; z-index: 50; }
-        .item.matched { box-shadow: 0 0 0 4px #28a745 !important; pointer-events: none; opacity: 0.6; }
+        .item.matched { pointer-events: none; opacity: 0.6; }
 
         .badge { 
             position: absolute; 
@@ -275,7 +275,7 @@
             findMin: { name: "Chasse au Min", findTarget: 'min' },
             findOdd: { name: "L'Intrus", specialGen: 'odd', winOnOdd: true },
             findPair: { name: "Les Jumeaux", specialGen: 'pair', winOnPairs: true },
-            pairs: { name: "Paires", specialGen: 'pairs', hidden: true },
+            pairs: { name: "Paires", specialGen: 'pairs', hidden: false },
             reflex: { name: "Cibles Mobiles", isReflex: true },
             flashMax: { name: "Mémoire Flash Max", findTarget: 'max', flashHide: true },
             flashSort: { name: "Tri Flash", isSort: true, order: 1, flashHide: true },
