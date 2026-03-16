@@ -305,7 +305,7 @@
             gravitySort: { name: "Gravité", isSort: true, order: 1, cssClass: 'gravity-anim' },
             colorSort: { name: "Technicolor", isSort: true, order: 1, cssClass: 'hue-shift' },
             danceSort: { name: "Danse Macabre", isSort: true, order: 1, cssClass: 'dance-anim' },
-            cursorSort: { name: "Curseur Fou", isSort: true, order: 1, useCursor: true }
+            cursorSort: { name: "Curseur Fou", isTargetMatch: true, useCursor: true }
         };
 
         // 50 Base Types
@@ -586,6 +586,9 @@
             leaderboardSection.classList.add('hidden'); 
             timerDisplay.classList.add('hidden');
             
+            const dynTarget1 = document.getElementById('dynamic-target-ui');
+            if (dynTarget1) dynTarget1.remove();
+            
             clearInterval(timerInterval);
             clearTimeout(gameTimeout);
             clearInterval(envInterval);
@@ -604,6 +607,9 @@
             menuBtn.classList.remove('hidden');
             leaderboardSection.classList.add('hidden'); 
             timerDisplay.classList.add('hidden');
+
+            const dynTarget2 = document.getElementById('dynamic-target-ui');
+            if (dynTarget2) dynTarget2.remove();
 
             document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
             btnElement.classList.add('active');
@@ -948,18 +954,45 @@
                 
                 let shuf = [...values].sort(() => Math.random() - 0.5);
                 
+                // Clear any existing target UI before creating a new one
+                const existingTargetUI = document.getElementById('dynamic-target-ui');
+                if (existingTargetUI) existingTargetUI.remove();
+
                 if (mode.isSum) { 
                     targetSum = parseFloat((shuf[0] + shuf[1]).toFixed(4)); 
-                    levelTitle.textContent += ` (Cible : ${targetSum})`; 
+                    levelTitle.textContent += ` (Addition)`; 
                 }
                 if (mode.isDiff) { 
                     targetDiff = parseFloat(Math.abs(shuf[0] - shuf[1]).toFixed(4)); 
-                    levelTitle.textContent += ` (Cible Différence : ${targetDiff})`; 
+                    levelTitle.textContent += ` (Soustraction)`; 
                 }
                 if (mode.isTargetMatch) { 
                     exactTarget = shuf[Math.floor(Math.random() * shuf.length)]; 
-                    resultDisplay.textContent = `Cherchez le modèle exact !`; 
+                    resultDisplay.textContent = `Trouvez ce modèle !`; 
                     resultDisplay.style.color = "#333"; 
+                }
+
+                // Inject visual target for math operations and target matching
+                if (mode.isSum || mode.isDiff || mode.isTargetMatch) {
+                    const targetUI = document.createElement('div');
+                    targetUI.id = 'dynamic-target-ui';
+                    targetUI.style.cssText = 'display:flex; justify-content:center; align-items:center; width:100%; margin-bottom:20px; gap:15px; font-weight:bold; font-size:1.2rem; color:#555;';
+                    
+                    const lbl = document.createElement('span');
+                    lbl.textContent = mode.isTargetMatch ? 'Modèle à trouver :' : 'Cible à obtenir :';
+                    targetUI.appendChild(lbl);
+                    
+                    const visualTarget = document.createElement('div');
+                    visualTarget.className = `item type-${currentDayConfig.type}`;
+                    visualTarget.style.margin = '0'; // override default margin
+                    visualTarget.style.pointerEvents = 'none'; // non-clickable
+                    visualTarget.style.boxShadow = '0 0 0 4px #007bff';
+                    
+                    let tVal = mode.isTargetMatch ? exactTarget : (mode.isSum ? targetSum : targetDiff);
+                    applyStyle(visualTarget, currentDayConfig.type, tVal);
+                    
+                    targetUI.appendChild(visualTarget);
+                    board.parentNode.insertBefore(targetUI, board);
                 }
                 
                 let tMax = Math.max(...values);
