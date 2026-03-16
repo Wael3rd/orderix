@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Orderix</title>
     <style>
         /* Layout styling - Natural document flow */
@@ -31,6 +31,8 @@
             box-shadow: 2px 0 5px rgba(0,0,0,0.1);
             box-sizing: border-box;
             flex-shrink: 0;
+            overflow-y: auto; 
+            max-height: 100vh;
         }
 
         .main-content {
@@ -41,6 +43,7 @@
             padding: 30px 10px;
             box-sizing: border-box;
             width: 100%;
+            overflow-x: hidden;
         }
 
         /* Sidebar UI */
@@ -93,6 +96,8 @@
             user-select: none; 
             flex-shrink: 0;
             margin-bottom: 28px;
+            /* Prevents double-tap zooming on mobile */
+            touch-action: manipulation;
         }
         .item.selected { /* no green border */ }
         .item.error { box-shadow: 0 0 0 4px #dc3545 !important; }
@@ -161,17 +166,14 @@
         }
         .dot { width: 8px; height: 8px; background: white; border-radius: 50%; }
         .mini-block { width: 8px; height: 8px; background: white; border-radius: 1px; }
-        #sidebar { overflow-y: auto; max-height: 100vh; }
 
         /* Mobile Responsiveness */
         @media (max-width: 768px) {
             body { flex-direction: column; }
             #sidebar { width: 100%; padding: 15px; max-height: none; }
             #day-buttons-container { flex-direction: row !important; flex-wrap: wrap; justify-content: center; }
-            .day-btn { flex: 1 1 calc(33% - 10px); text-align: center; font-size: 0.9rem; padding: 8px; }
+            .day-btn { flex: 1 1 auto; min-width: 100px; text-align: center; font-size: 0.9rem; padding: 8px; }
             .main-content { padding-top: 20px; }
-            .item { width: 45px; height: 45px; }
-            #game-board { gap: 12px; }
             h1 { font-size: 1.4rem; }
             #level-title { font-size: 1rem; }
             #timer-display { font-size: 2.5rem; }
@@ -195,7 +197,7 @@
 
         <h3>Jours (Mini-jeux)</h3>
         <div id="day-buttons-container" style="display: flex; flex-direction: column; gap: 8px;">
-            </div>
+        </div>
     </div>
 
     <div class="main-content">
@@ -1153,13 +1155,17 @@
 
                 // Container
                 const container = document.createElement('div');
-                container.style.cssText = 'display:flex;flex-direction:column;align-items:center;width:100%;overflow-x:auto;padding:10px 0;';
+                container.style.cssText = 'width:100%;overflow-x:auto;padding:10px 0;';
+                
+                // Inner wrapper for safe scrolling and centering
+                const innerWrap = document.createElement('div');
+                innerWrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;width:max-content;margin:0 auto;padding:0 15px;';
 
                 // Label: your answer
                 const lblYou = document.createElement('div');
                 lblYou.style.cssText = 'font-weight:bold;font-size:1rem;color:#555;text-align:center;margin-bottom:8px;';
                 lblYou.textContent = 'Votre réponse :';
-                container.appendChild(lblYou);
+                innerWrap.appendChild(lblYou);
 
                 // Row 1: player's answer (badges below, red if wrong)
                 const playerRow = document.createElement('div');
@@ -1175,10 +1181,9 @@
                     }
                     playerRow.appendChild(clone);
                 });
-                container.appendChild(playerRow);
+                innerWrap.appendChild(playerRow);
 
-                // SVG connecting lines — overlaps badge zones with negative margins
-                // Badge center = 15px from item edge, margin = 28px → 13px from margin edge
+                // SVG connecting lines
                 const svgH = 66; // 13px overlap top + 40px gap + 13px overlap bottom
                 const svgW = n * colW - 10;
                 const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -1215,7 +1220,7 @@
                 svgTxt.textContent = '↓ Solution ↓';
                 svg.appendChild(svgTxt);
 
-                container.appendChild(svg);
+                innerWrap.appendChild(svg);
 
                 // Row 2: correct order (badges ABOVE, z-index above SVG lines)
                 const solRow = document.createElement('div');
@@ -1233,8 +1238,9 @@
                     clone.appendChild(badge);
                     solRow.appendChild(clone);
                 });
-                container.appendChild(solRow);
+                innerWrap.appendChild(solRow);
 
+                container.appendChild(innerWrap);
                 board.appendChild(container);
 
                 endGame(`Erreur ! Voici la correction.`, false);
