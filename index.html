@@ -238,6 +238,7 @@
         
         <div id="button-container">
             <button id="menu-btn" class="action-btn hidden">Retour</button>
+            <button id="share-btn" class="action-btn hidden" style="background-color: #17a2b8;">PARTAGE</button>
             <button id="start-btn" class="action-btn hidden">Jouer</button>
             <button id="check-btn" class="action-btn hidden">Valider</button>
         </div>
@@ -394,6 +395,7 @@
         const startBtn = document.getElementById('start-btn');
         const checkBtn = document.getElementById('check-btn');
         const menuBtn = document.getElementById('menu-btn');
+		const shareBtn = document.getElementById('share-btn');
         const resultDisplay = document.getElementById('result');
 		const feedbackContainer = document.getElementById('feedback-container');
         const btnLike = document.getElementById('btn-like');
@@ -536,6 +538,30 @@
         startBtn.addEventListener('click', startGame);
         checkBtn.addEventListener('click', verifyOrder);
         menuBtn.addEventListener('click', returnToMenu);
+		
+		shareBtn.addEventListener('click', () => {
+            let isWin = false, timeVal = 0;
+            // Détecte si on partage la partie qui vient de se finir, ou une ancienne partie depuis l'historique
+            if (pendingTimeVal !== 0) {
+                isWin = pendingTimeVal > 0;
+                timeVal = Math.abs(pendingTimeVal);
+            } else if (serverPlayedDays[currentDayConfig.id]) {
+                isWin = serverPlayedDays[currentDayConfig.id].isWin;
+                timeVal = Math.abs(serverPlayedDays[currentDayConfig.id].time);
+            } else return;
+
+            const status = isWin ? "réussi" : "raté";
+            const timeStr = timeVal == 999999 ? "RAGE QUIT" : timeVal;
+            const url = window.location.href.split('?')[0];
+            
+            const textToShare = `J'ai ${status} le jeu ${currentDayConfig.title} avec un temps de ${timeStr}s clique ici ${url} pour essayer de me battre !`;
+            
+            navigator.clipboard.writeText(textToShare).then(() => {
+                shareBtn.textContent = "COPIÉ !";
+                setTimeout(() => shareBtn.textContent = "PARTAGE", 2000);
+            });
+        });
+		
         verifyNameBtn.addEventListener('click', verifyPlayerName);
         
         function verifyPlayerName() {
@@ -591,8 +617,10 @@
             isPaused = true;
             sidebar.classList.remove('hidden'); 
             menuBtn.classList.add('hidden');
+			shareBtn.classList.add('hidden');
             startBtn.classList.add('hidden');
             checkBtn.classList.add('hidden');
+			pendingTimeVal = 0; // Réinitialise le temps en attente
             board.classList.add('hidden');
             board.classList.remove('blackout-mode');
             feedbackContainer.classList.add('hidden');
@@ -620,6 +648,7 @@
         function selectDay(day, btnElement) {
             sidebar.classList.add('hidden'); 
             menuBtn.classList.remove('hidden');
+            shareBtn.classList.add('hidden');
             leaderboardSection.classList.add('hidden'); 
             timerDisplay.classList.add('hidden');
 
@@ -650,6 +679,7 @@
 
             if (playedInfo) {
                 startBtn.classList.add('hidden');
+                shareBtn.classList.remove('hidden'); // Permet de partager un ancien score directement
                 activeItemCount = playedInfo.count;
                 leaderboardTitle.textContent = `Top 10 - ${day.title} (${activeItemCount} éléments)`;
                 
@@ -749,7 +779,7 @@
                 return result;
             }
             const R = {
-                lightness:[15,85], saturation:[5,95], hue:[0,300], opacity:[0.1,1.0],
+                lightness:[15,85], saturation:[5,95], hue:[0,240], opacity:[0.1,1.0],
                 scale:[0.3,1.0], length:[15,100], heightBar:[10,100], radius:[0,50],
                 rotation:[0,170], blur:[0,8], borderWidth:[1,15], fontSize:[8,36],
                 shadow:[0,20], centerDot:[4,36], lineLength:[8,55],
@@ -802,7 +832,18 @@
             
             if(mode.filter === 'even') vals = vals.filter(x => Math.floor(x)%2 === 0);
             if(mode.filter === 'odd') vals = vals.filter(x => Math.floor(x)%2 !== 0);
-            vals = [...new Set(vals)].slice(0, exCount);
+            
+            // Spread selection across the entire range to always include game extremes
+            let uniqueVals = [...new Set(vals)];
+            let spreadVals = [];
+            if (uniqueVals.length <= exCount) {
+                spreadVals = uniqueVals;
+            } else {
+                for (let i = 0; i < exCount; i++) {
+                    spreadVals.push(uniqueVals[Math.round(i * (uniqueVals.length - 1) / (exCount - 1))]);
+                }
+            }
+            vals = spreadVals;
 
             if (mode.isSort) {
                 vals.sort((a, b) => mode.order === 1 ? a - b : b - a);
@@ -1439,7 +1480,7 @@
             case 'saturation':
                 el.style.backgroundColor = `hsl(350,${val}%,50%)`; break;
             case 'hue':
-                el.style.backgroundColor = `hsl(${val},75%,50%)`; break;
+                el.style.backgroundColor = `hsl(${240 - val},75%,50%)`; break;
             case 'opacity':
                 el.style.opacity = val; break;
             case 'scale':
@@ -1993,7 +2034,8 @@
         function handleFeedback(feedbackValue) {
             feedbackContainer.classList.add('hidden');
             leaderboardSection.classList.remove('hidden');
-            menuBtn.classList.remove('hidden'); // Show Return button only after feedback
+            menuBtn.classList.remove('hidden'); 
+            shareBtn.classList.remove('hidden'); // Fait apparaître le bouton Partage
             dbMessage.textContent = 'Envoi du score en cours...';
             dbMessage.style.color = '#333';
             submitScore(pendingTimeVal, feedbackValue);
