@@ -818,13 +818,23 @@
                 });
             } else if (mode.isSum || mode.isDiff) {
                 let v1 = vals[0], v2 = vals[1];
+                
+                // Swap values for subtraction to always show max - min
+                if (mode.isDiff && v1 < v2) {
+                    let temp = v1;
+                    v1 = v2;
+                    v2 = temp;
+                }
+
                 const i1 = document.createElement('div'); i1.className = `item type-${day.type}`; applyStyle(i1, day.type, v1);
-                const op = document.createElement('div'); op.style.fontSize = '24px'; op.style.fontWeight = 'bold'; op.style.color = '#333'; op.textContent = mode.isSum ? '+' : '-';
+                const op = document.createElement('div'); op.style.fontSize = '24px'; op.style.fontWeight = 'bold'; op.style.color = '#333'; op.textContent = mode.isSum ? '+' : '−';
                 const i2 = document.createElement('div'); i2.className = `item type-${day.type}`; applyStyle(i2, day.type, v2);
                 const eq = document.createElement('div'); eq.style.fontSize = '24px'; eq.style.fontWeight = 'bold'; eq.style.color = '#333'; eq.textContent = '=';
                 const res = document.createElement('div'); res.style.fontSize = '20px'; res.style.fontWeight = 'bold'; res.style.color = '#28a745';
-                res.textContent = mode.isSum ? parseFloat((v1+v2).toFixed(4)) : parseFloat(Math.abs(v1-v2).toFixed(4));
+                
+                res.textContent = mode.isSum ? parseFloat((v1+v2).toFixed(4)) : parseFloat((v1-v2).toFixed(4));
                 row.append(i1, op, i2, eq, res);
+            }
             } else if (mode.isReflex) {
                 const desc = document.createElement('div'); desc.innerHTML = 'Cliquez vite sur les éléments<br>qui apparaissent !'; desc.style.textAlign = 'center'; desc.style.fontWeight = 'bold'; desc.style.color = '#333';
                 const item = document.createElement('div'); item.className = `item type-${day.type}`; applyStyle(item, day.type, vals[0]); item.style.margin = '0 20px'; item.style.boxShadow = '0 0 0 4px #ffc107';
@@ -1069,7 +1079,7 @@
                             cursorDir = 1; 
                         }
                         domItems[cursorIdx].classList.add('cursor-active');
-                    }, 175); // Speed of the cursor (in milliseconds)
+                    }, 100); // Speed of the cursor (in milliseconds)
 
                     // Click anywhere on the board to catch the current item
                     board.onpointerdown = (e) => {
