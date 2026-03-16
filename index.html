@@ -272,7 +272,7 @@
         let currentDayConfig = null;
         let activeItemCount = 10;
         let isNameValid = false;
-        let exactTarget = 0, targetSum = 0, targetDiff = 0, flipped = [], matched = 0;
+        let exactTarget = 0, targetSum = 0, targetDiff = 0, flipped = [], matched = 0, targetSequence = [], currentSequenceIdx = 0;
 
         // 35 GAME MODES
         const GAME_MODES = {
@@ -311,7 +311,8 @@
             gravitySort: { name: "Gravité", isSort: true, order: 1, cssClass: 'gravity-anim' },
             colorSort: { name: "Technicolor", isSort: true, order: 1, cssClass: 'hue-shift' },
             danceSort: { name: "Danse Macabre", isSort: true, order: 1, cssClass: 'dance-anim' },
-            cursorSort: { name: "Curseur Fou", isTargetMatch: true, useCursor: true }
+            cursorSort: { name: "Curseur Fou", isTargetMatch: true, useCursor: true },
+            sequenceHunt: { name: "Chasse en Série", isSequence: true, sequenceLength: 5 }
         };
 
         // 50 Base Types
@@ -815,11 +816,12 @@
                     row.appendChild(item);
                 });
             } else if (mode.specialGen === 'odd') {
-                let v = generateValues(day.type, 4);
-                let exVals = [v[0], v[0], v[0], v[v.length-1]].sort(() => Math.random() - 0.5);
+                let v = generateValues(day.type, 5);
+                // Création d'un exemple avec 2 paires distinctes et 1 intrus (5 éléments)
+                let exVals = [v[0], v[0], v[1], v[1], v[2]].sort(() => Math.random() - 0.5);
                 exVals.forEach(val => {
                     const item = document.createElement('div'); item.className = `item type-${day.type}`; applyStyle(item, day.type, val);
-                    if (val === v[v.length-1]) item.style.boxShadow = '0 0 0 4px #28a745';
+                    if (val === v[2]) item.style.boxShadow = '0 0 0 4px #28a745';
                     row.appendChild(item);
                 });
             } else if (mode.specialGen === 'pair' || mode.specialGen === 'pairs') {
@@ -882,6 +884,7 @@
 
         // Initialize game session
         function startGame() {
+
             if (!isNameValid) {
                 alert("Veuillez valider un pseudo disponible dans les paramètres avant de jouer.");
                 returnToMenu();
@@ -959,12 +962,37 @@
                 
                 let values = [];
                 if (mode.specialGen === 'odd') { 
-                    // Generate enough values and shuffle them to pick random bases and odd one
-                    let v = generateValues(currentDayConfig.type, Math.max(4, activeItemCount)); 
+                    // Génère un large panel de valeurs pour piocher dedans
+                    let v = generateValues(currentDayConfig.type, Math.max(10, activeItemCount)); 
                     let shuffledV = [...v].sort(() => Math.random() - 0.5);
-                    for(let i=0; i < activeItemCount - 1; i++) values.push(shuffledV[0]); 
-                    values.push(shuffledV[1]); 
-                } else if (mode.specialGen === 'pair') { 
+                    
+                    // Ajout de l'intrus (Le seul élément unique)
+                    values.push(shuffledV[0]); 
+                    
+                    // Remplissage du reste avec des groupes de 2, 3 ou 4 éléments identiques
+                    let remaining = activeItemCount - 1;
+                    let vIndex = 1;
+                    
+                    if (remaining === 1) {
+                        values.push(shuffledV[1]); // Failsafe au cas où la config demande 2 éléments
+                    } else {
+                        while (remaining > 0) {
+                            let copies;
+                            if (remaining > 5) copies = Math.floor(Math.random() * 3) + 2;
+                            else if (remaining === 5) copies = Math.floor(Math.random() * 2) + 2;
+                            else if (remaining === 4) copies = 2;
+                            else copies = remaining;
+                            
+                            for (let i = 0; i < copies; i++) {
+                                values.push(shuffledV[vIndex]);
+                            }
+                            remaining -= copies;
+                            vIndex++;
+                            // On boucle sur les valeurs si on a besoin de plus de variété sans jamais retoucher l'index 0 (l'intrus)
+                            if (vIndex >= shuffledV.length) vIndex = 1;
+                        }
+                    }
+                } else if (mode.specialGen === 'pair') {
                     let v = generateValues(currentDayConfig.type, activeItemCount - 1); 
                     // Pick a random element to duplicate instead of always index 0
                     let randomDup = v[Math.floor(Math.random() * v.length)];
@@ -1000,15 +1028,23 @@
                     resultDisplay.textContent = `Trouvez ce modèle !`; 
                     resultDisplay.style.color = "#333"; 
                 }
+                if (mode.isSequence) {
+                    let uniqueVals = [...new Set(shuf)];
+                    targetSequence = uniqueVals.slice(0, Math.min(mode.sequenceLength || 5, uniqueVals.length));
+                    currentSequenceIdx = 0;
+                    resultDisplay.textContent = `Trouvez la séquence !`; 
+                    resultDisplay.style.color = "#333"; 
+                }
 
                 // Inject visual target for math operations and target matching
-                if (mode.isSum || mode.isDiff || mode.isTargetMatch) {
+                if (mode.isSum || mode.isDiff || mode.isTargetMatch || mode.isSequence) {
                     const targetUI = document.createElement('div');
                     targetUI.id = 'dynamic-target-ui';
                     targetUI.style.cssText = 'display:flex; justify-content:center; align-items:center; width:100%; margin-bottom:20px; gap:15px; font-weight:bold; font-size:1.2rem; color:#555;';
                     
                     const lbl = document.createElement('span');
-                    lbl.textContent = mode.isTargetMatch ? 'Modèle à trouver :' : 'Cible à obtenir :';
+                    if (mode.isSequence) lbl.textContent = `Étape 1/${targetSequence.length} - Trouvez :`;
+                    else lbl.textContent = mode.isTargetMatch ? 'Modèle à trouver :' : 'Cible à obtenir :';
                     targetUI.appendChild(lbl);
                     
                     const visualTarget = document.createElement('div');
@@ -1017,7 +1053,7 @@
                     visualTarget.style.pointerEvents = 'none'; // non-clickable
                     visualTarget.style.boxShadow = '0 0 0 4px #007bff';
                     
-                    let tVal = mode.isTargetMatch ? exactTarget : (mode.isSum ? targetSum : targetDiff);
+                    let tVal = mode.isSequence ? targetSequence[0] : (mode.isTargetMatch ? exactTarget : (mode.isSum ? targetSum : targetDiff));
                     applyStyle(visualTarget, currentDayConfig.type, tVal);
                     
                     targetUI.appendChild(visualTarget);
@@ -1204,7 +1240,11 @@
 
             if (mode.findTarget) {
                 if (Math.abs(val - targetVal) < 0.0001) endGame('Cible atteinte !', true); 
-                else { item.classList.add('error'); endGame('Mauvaise cible !', false); } 
+                else { 
+                    item.classList.add('error'); 
+                    showSolutionHighlight([targetVal]);
+                    endGame('Mauvaise cible !', false); 
+                } 
                 return;
             }
             
@@ -1213,25 +1253,27 @@
                 if (mode.winOnOdd && c === 1) endGame('Intrus trouvé !', true);
                 else if (mode.winOnPairs && c === 2) { 
                     matched++; 
-                    
-                    // Add badge for visual feedback (without number)
                     const badge = document.createElement('div');
                     badge.className = 'badge';
                     badge.textContent = '';
                     item.appendChild(badge);
-                    
                     item.classList.add('matched'); 
                     if (matched === 2) endGame('Jumeaux trouvés !', true); 
                 }
-                else { item.classList.add('error'); endGame('Erreur !', false); } 
+                else { 
+                    item.classList.add('error'); 
+                    let correctVals = [];
+                    if (mode.winOnOdd) correctVals = [values.find(v => values.filter(x => Math.abs(x - v) < 0.0001).length === 1)];
+                    if (mode.winOnPairs) correctVals = [values.find(v => values.filter(x => Math.abs(x - v) < 0.0001).length === 2)];
+                    showSolutionHighlight(correctVals);
+                    endGame('Erreur !', false); 
+                } 
                 return;
             }
             
             if (mode.isSum || mode.isDiff) {
                 item.classList.add('selected'); 
                 selectionOrder.push(item);
-                
-                // Force badge rendering for math target modes
                 renderBadges(); 
                 
                 if (selectionOrder.length === 2) {
@@ -1241,6 +1283,15 @@
                         endGame('Calcul exact !', true);
                     } else { 
                         selectionOrder.forEach(i => i.classList.add('error')); 
+                        let correctVals = [];
+                        for(let i=0; i<values.length; i++) {
+                            for(let j=i+1; j<values.length; j++) {
+                                if (mode.isSum && Math.abs((values[i]+values[j])-targetSum)<0.001) { correctVals=[values[i], values[j]]; break; }
+                                if (mode.isDiff && Math.abs(Math.abs(values[i]-values[j])-targetDiff)<0.001) { correctVals=[values[i], values[j]]; break; }
+                            }
+                            if(correctVals.length) break;
+                        }
+                        showSolutionHighlight(correctVals);
                         endGame('Erreur de calcul !', false); 
                     }
                 } 
@@ -1250,6 +1301,7 @@
             if (mode.avoidTarget) {
                 if (Math.abs(val - Math.min(...values)) < 0.0001) { 
                     item.classList.add('error'); 
+                    showSolutionHighlight([Math.min(...values)]);
                     endGame('Cible touchée !', false); 
                 } else { 
                     item.classList.add('matched'); matched++; 
@@ -1260,9 +1312,71 @@
             
             if (mode.isTargetMatch) {
                 if (Math.abs(val - exactTarget) < 0.0001) endGame('Correspondance parfaite !', true); 
-                else { item.classList.add('error'); endGame('Erreur !', false); } 
+                else { 
+                    item.classList.add('error'); 
+                    showSolutionHighlight([exactTarget]);
+                    endGame('Erreur !', false); 
+                } 
                 return;
             }
+
+            if (mode.isSequence) {
+                if (Math.abs(val - targetSequence[currentSequenceIdx]) < 0.0001) {
+                    item.classList.add('matched');
+                    currentSequenceIdx++;
+                    
+                    if (currentSequenceIdx >= targetSequence.length) {
+                        endGame('Séquence complétée !', true);
+                    } else {
+                        const targetUI = document.getElementById('dynamic-target-ui');
+                        if (targetUI) {
+                            targetUI.querySelector('span').textContent = `Étape ${currentSequenceIdx + 1}/${targetSequence.length} - Trouvez :`;
+                            const visualTarget = targetUI.querySelector('.item');
+                            visualTarget.innerHTML = '';
+                            visualTarget.className = `item type-${currentDayConfig.type}`;
+                            visualTarget.style.cssText = 'margin:0; pointer-events:none; box-shadow:0 0 0 4px #007bff;';
+                            applyStyle(visualTarget, currentDayConfig.type, targetSequence[currentSequenceIdx]);
+                        }
+                    }
+                } else {
+                    item.classList.add('error');
+                    showSolutionHighlight([targetSequence[currentSequenceIdx]]);
+                    endGame('Erreur de séquence !', false);
+                }
+                return;
+            }
+        } // Fin de la fonction handleLogic
+
+        // --- NOUVELLE FONCTION --- 
+        // Met en évidence la/les bonne(s) réponse(s) en cas d'erreur
+        function showSolutionHighlight(correctValues) {
+            if (!correctValues || correctValues.length === 0) return;
+            const domItems = document.querySelectorAll('#game-board .item');
+            
+            // Copie locale pour gérer les cas de doublons (ex: additions cibles)
+            let valuesToHighlight = [...correctValues]; 
+
+            domItems.forEach(item => {
+                const v = parseFloat(item.dataset.value);
+                const idx = valuesToHighlight.findIndex(cv => Math.abs(cv - v) < 0.0001);
+                
+                if (idx !== -1) {
+                    // C'est une bonne réponse ! On la met en évidence.
+                    item.classList.remove('error');
+                    item.classList.remove('peek-hidden'); 
+                    item.style.boxShadow = '0 0 0 6px #28a745'; 
+                    item.style.transform = 'scale(1.15)'; 
+                    item.style.zIndex = '100';
+                    item.style.opacity = '1';
+                    // Retire la valeur trouvée pour ne pas surligner d'autres copies non nécessaires
+                    valuesToHighlight.splice(idx, 1); 
+                } else {
+                    // C'est une mauvaise réponse. Si ce n'est pas celle cliquée, on l'assombrit.
+                    if (!item.classList.contains('error')) {
+                        item.style.opacity = '0.3'; 
+                    }
+                }
+            });
         }
 
         // Timer increment
