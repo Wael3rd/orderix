@@ -322,7 +322,11 @@
             mathQuizAdd: { name: "Calculs (Additions)", isMathQuiz: true, mathOp: '+' },
             mathQuizSub: { name: "Calculs (Soustractions)", isMathQuiz: true, mathOp: '-' },
             mathQuizMul: { name: "Calculs (Multiplications)", isMathQuiz: true, mathOp: '*' },
-            mathQuizDiv: { name: "Calculs (Divisions)", isMathQuiz: true, mathOp: '/' }
+            mathQuizDiv: { name: "Calculs (Divisions)", isMathQuiz: true, mathOp: '/' },
+            speedLetters: { name: "Lettres Chrono", isSpeedLetters: true },
+            dragDropMath: { name: "Tri Pair/Impair", isDragDrop: true },
+            conveyorBelt: { name: "Tapis Roulant", isConveyor: true },
+            speedQuiz: { name: "Quiz Rapide", isSpeedQuiz: true }
         };
 
         // 50 Base Types
@@ -540,9 +544,19 @@
                     }
                 });
                 
-                buildSidebar(); 
+                buildSidebar();
+                autoSelectDayFromUrl();
             })
-            .catch(() => { buildSidebar(); });
+            .catch(() => { buildSidebar(); autoSelectDayFromUrl(); });
+
+        function autoSelectDayFromUrl() {
+            const urlDay = parseInt(new URLSearchParams(window.location.search).get('day'));
+            if (!urlDay) return;
+            const day = DAYS.find(d => d.id === urlDay);
+            if (!day) return;
+            const btn = document.querySelector(`.day-btn[data-day-id="${urlDay}"]`);
+            if (btn) selectDay(day, btn);
+        }
 
         startBtn.addEventListener('click', startGame);
         checkBtn.addEventListener('click', verifyOrder);
@@ -564,7 +578,7 @@
             
             // Ajout du pseudo dans l'URL partagée pour le tracking
             let currentPlayerName = getStorage('orderix_player_name') || playerNameMainInput.value.trim() || '';
-            const url = window.location.href.split('?')[0] + '?ref=' + encodeURIComponent(currentPlayerName);
+            const url = window.location.href.split('?')[0] + '?ref=' + encodeURIComponent(currentPlayerName) + '&day=' + currentDayConfig.id;
             
             const textToShare = `J'ai ${status} le jeu ${currentDayConfig.title} avec un temps de ${timeStr}s clique ici ${url} pour essayer de me battre !`;
             
@@ -1021,6 +1035,96 @@
                 row.style.flexDirection = 'column';
                 row.append(desc, exContainer);
                 
+            } else if (mode.isSpeedLetters) {
+                const desc = document.createElement('div'); desc.innerHTML = 'Tapez les lettres avant<br>la fin du temps !'; desc.style.textAlign = 'center'; desc.style.fontWeight = 'bold'; desc.style.color = '#333';
+                const ex = document.createElement('div'); ex.style.cssText = 'width:80px; height:10px; background:#dc3545; border-radius:5px; margin: 15px auto;';
+                row.style.flexDirection = 'column'; row.append(desc, ex);
+            } else if (mode.isDragDrop) {
+                const desc = document.createElement('div'); desc.innerHTML = 'Glissez les nombres dans<br>la bonne boîte (Pair/Impair) !'; desc.style.textAlign = 'center'; desc.style.fontWeight = 'bold'; desc.style.color = '#333';
+                const ex = document.createElement('div'); ex.style.cssText = 'width:60px; height:60px; border:2px dashed #666; border-radius:5px; margin: 15px auto; display:flex; align-items:center; justify-content:center; font-weight:bold; color:#666;'; ex.textContent = 'PAIR';
+                row.style.flexDirection = 'column'; row.append(desc, ex);
+            } else if (mode.isConveyor) {
+                // GAME 3 : CONVEYOR BELT
+                board.style.display = 'flex'; board.style.flexDirection = 'column'; board.style.alignItems = 'center'; board.style.overflow = 'hidden'; board.style.width = '100%';
+
+                const tType = currentDayConfig.type || 'numbers';
+                
+                // Forcer 10 éléments minimum et s'assurer que c'est un entier
+                const beltLength = 8; 
+                let pool = generateValues(tType, 5);
+                let vals = []; 
+                for (let i = 0; i < beltLength; i++) {
+                    vals.push(pool[Math.floor(Math.random() * pool.length)]);
+                }
+
+                const beltWrapper = document.createElement('div');
+                // Masque renforcé et conteneur visuellement distinct
+                beltWrapper.style.cssText = 'position:relative; width: 340px; height: 100px; display:flex; justify-content:flex-start; align-items:center; overflow:hidden; margin-bottom:30px; border-radius: 8px; background: rgba(0,0,0,0.05); -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%); mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);';
+
+                const beltContainer = document.createElement('div');
+                // padding-left à 130px aligne mathématiquement le 1er objet (80px) pile au centre des 340px
+                beltContainer.style.cssText = 'display:flex; align-items:center; height: 100%; transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1); width:max-content; padding-left: 130px;';
+
+                const centerMark = document.createElement('div');
+                centerMark.style.cssText = 'position:absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width:64px; height:64px; border:4px solid #ffc107; border-radius:10px; z-index:5; pointer-events:none; box-shadow: 0 0 10px rgba(0,0,0,0.3);';
+
+                vals.forEach((val) => {
+                    const item = document.createElement('div');
+                    item.className = `item type-${tType}`;
+                    item.style.margin = '0 10px'; item.style.flexShrink = '0';
+                    item.style.transition = 'opacity 0.2s, transform 0.2s';
+                    applyStyle(item, tType, val);
+                    beltContainer.appendChild(item);
+                });
+
+                beltWrapper.appendChild(beltContainer); 
+                beltWrapper.appendChild(centerMark); 
+                board.appendChild(beltWrapper);
+
+                const btnContainer = document.createElement('div');
+                btnContainer.style.cssText = 'display:flex; gap:15px; flex-wrap:wrap; justify-content:center; padding: 10px;';
+
+                let cIdx = 0;
+                const uniqueVals = [...new Set(vals)].sort(() => Math.random() - 0.5);
+
+                uniqueVals.forEach(uVal => {
+                    const btn = document.createElement('div');
+                    btn.className = `item type-${tType}`; btn.style.cursor = 'pointer';
+                    applyStyle(btn, tType, uVal);
+
+                    btn.addEventListener('pointerdown', (e) => {
+                        e.preventDefault();
+                        if(isPaused) return;
+                        if(vals[cIdx] === uVal) {
+                            beltContainer.children[cIdx].style.opacity = '0';
+                            beltContainer.children[cIdx].style.transform = 'scale(0.5)';
+                            cIdx++;
+                            beltContainer.style.transform = `translateX(-${cIdx * 80}px)`;
+                            if(cIdx >= vals.length) {
+                                endGame('Tapis vidé !', true);
+                            }
+                        } else {
+                            endGame('Erreur, mauvais objet chargé !', false);
+                        }
+                    });
+                    btnContainer.appendChild(btn);
+                });
+
+                board.appendChild(btnContainer);
+
+            } else if (mode.isSpeedQuiz) {
+                // UI Preview for Speed Quiz in menu (Static text, no game logic)
+                const desc = document.createElement('div'); 
+                desc.innerHTML = 'Trouvez TOUTES les bonnes réponses<br>le plus vite possible !'; 
+                desc.style.textAlign = 'center'; 
+                desc.style.fontWeight = 'bold'; 
+                desc.style.color = '#333';
+                
+                const ex = document.createElement('div'); 
+                
+                row.style.flexDirection = 'column'; 
+                row.append(desc, ex);
+
             } else {
                 let targetVal;
                 if (mode.findTarget === 'max') targetVal = Math.max(...vals);
@@ -1064,6 +1168,7 @@
             flipped = [];
             matched = 0;
             hasSharedThisGame = false;
+			clearInterval(window.speedTimer); // Ensure fast-timer is killed on restart
             resultDisplay.textContent = '';
             leaderboardSection.classList.add('hidden');
             
@@ -1355,6 +1460,370 @@
                 };
                 
                 window.startMathRound();
+
+            } else if (mode.isSpeedLetters) {
+                // GAME 1 : SPEED LETTERS WITH TIMER
+                board.style.display = 'flex'; board.style.flexDirection = 'column'; board.style.alignItems = 'center';
+                currentRound = 1; totalRounds = activeItemCount; 
+                
+                window.startLettersRound = function() {
+                    board.innerHTML = '';
+                    
+                    const barContainer = document.createElement('div');
+                    barContainer.style.cssText = 'width: 80%; height: 20px; background: #ddd; border-radius: 10px; margin-bottom: 20px; overflow: hidden;';
+                    const bar = document.createElement('div');
+                    bar.style.cssText = 'width: 100%; height: 100%; background: #dc3545; transition: width 0.05s linear;';
+                    barContainer.appendChild(bar); board.appendChild(barContainer);
+
+                    const inputContainer = document.createElement('div');
+                    inputContainer.style.cssText = 'display: flex; gap: 5px; justify-content: center;';
+                    
+                    let chars = []; for(let i=0; i<5; i++) chars.push(String.fromCharCode(65 + Math.floor(Math.random() * 26)));
+                    
+                    let localMatched = 0;
+                    chars.forEach((char, idx) => {
+                        const inp = document.createElement('input');
+                        inp.type = 'text'; inp.maxLength = 1; inp.autocomplete = 'off';
+                        inp.style.cssText = 'width: 40px; height: 50px; font-size: 24px; text-align: center; text-transform: uppercase; border: 2px solid #ccc; border-radius: 4px;';
+                        inp.addEventListener('input', (e) => {
+                            if (e.target.value.toUpperCase() === char) {
+                                inp.style.borderColor = '#28a745'; inp.style.backgroundColor = '#d4edda'; inp.disabled = true;
+                                localMatched++;
+                                if (localMatched >= 5) {
+                                    clearInterval(window.speedTimer);
+                                    currentRound++;
+                                    if (currentRound > totalRounds) endGame('Survie réussie !', true);
+                                    else setTimeout(() => window.startLettersRound(), 300);
+                                } else {
+                                    const next = inputContainer.querySelectorAll('input')[idx + 1];
+                                    if (next) next.focus();
+                                }
+                            } else {
+                                inp.value = ''; inp.style.borderColor = '#dc3545';
+                                setTimeout(() => inp.style.borderColor = '#ccc', 300);
+                            }
+                        });
+                        inputContainer.appendChild(inp);
+                    });
+                    board.appendChild(inputContainer);
+                    setTimeout(() => { const first = inputContainer.querySelector('input'); if(first) first.focus(); }, 100);
+
+                    // 5 Seconds Timer Logic
+                    let timeLeft = 5000; const step = 50;
+                    clearInterval(window.speedTimer);
+                    window.speedTimer = setInterval(() => {
+                        if (isPaused) return;
+                        timeLeft -= step;
+                        bar.style.width = `${(timeLeft / 5000) * 100}%`;
+                        if (timeLeft <= 0) { clearInterval(window.speedTimer); endGame('Temps écoulé !', false); }
+                    }, step);
+                };
+                window.startLettersRound();
+
+            } else if (mode.isDragDrop) {
+                // GAME 2 : DRAG & DROP EVEN/ODD
+                board.style.display = 'flex'; board.style.flexDirection = 'column'; board.style.alignItems = 'center'; board.style.width = '100%';
+                
+                const itemsContainer = document.createElement('div');
+                itemsContainer.style.cssText = 'display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom: 40px; min-height: 60px;';
+                board.appendChild(itemsContainer);
+
+                const zonesContainer = document.createElement('div');
+                zonesContainer.style.cssText = 'display:flex; gap:20px; width:100%; justify-content:center;';
+                
+                const createZone = (title, type) => {
+                    const zone = document.createElement('div');
+                    zone.style.cssText = 'width: 120px; height: 120px; border: 3px dashed #666; border-radius: 10px; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:20px; color:#666; transition: background 0.2s;';
+                    zone.textContent = title; zone.dataset.type = type;
+                    
+                    zone.addEventListener('dragover', e => { e.preventDefault(); zone.style.backgroundColor = '#e9ecef'; });
+                    zone.addEventListener('dragleave', () => { zone.style.backgroundColor = 'transparent'; });
+                    zone.addEventListener('drop', e => {
+                        e.preventDefault(); zone.style.backgroundColor = 'transparent';
+                        if (isPaused) return;
+                        const val = parseInt(e.dataTransfer.getData('text/plain'));
+                        const expectedType = (val % 2 === 0) ? 'pair' : 'impair';
+                        
+                        if (zone.dataset.type === expectedType) {
+                            const draggedEl = document.getElementById('drag-' + val);
+                            if (draggedEl) draggedEl.remove();
+                            matched++;
+                            if (matched >= activeItemCount) endGame('Tri terminé !', true);
+                        } else {
+                            endGame('Mauvaise boîte !', false);
+                        }
+                    });
+                    return zone;
+                };
+
+                zonesContainer.appendChild(createZone('PAIR', 'pair'));
+                zonesContainer.appendChild(createZone('IMPAIR', 'impair'));
+                board.appendChild(zonesContainer);
+
+                let vals = []; for(let i=0; i<activeItemCount; i++) vals.push(Math.floor(Math.random()*99)+1);
+                vals.forEach(val => {
+                    const item = document.createElement('div');
+                    item.id = 'drag-' + val; item.className = 'item type-numbers';
+                    item.draggable = true; applyStyle(item, 'numbers', val);
+                    item.style.cursor = 'grab';
+                    
+                    item.addEventListener('dragstart', e => {
+                        e.dataTransfer.setData('text/plain', val);
+                        setTimeout(() => item.style.opacity = '0.5', 0);
+                    });
+                    item.addEventListener('dragend', () => item.style.opacity = '1');
+                    itemsContainer.appendChild(item);
+                });
+
+            } else if (mode.isConveyor) {
+                // GAME 3 : CONVEYOR BELT
+                board.style.display = 'flex'; board.style.flexDirection = 'column'; board.style.alignItems = 'center'; board.style.overflow = 'hidden'; board.style.width = '100%';
+
+                const tType = currentDayConfig.type || 'numbers';
+                
+                // --- NOUVEAUX PARAMÈTRES ---
+                const uniqueValuesCount = 4; // Nombre fixe de valeurs différentes sur le tapis
+                const beltLength = parseInt(activeItemCount) || 50; // Nombre total d'éléments sur le tapis (issu du serveur)
+                
+                // On génère un grand pool, puis on extrait exactement 'uniqueValuesCount' valeurs uniques
+                let hugePool = generateValues(tType, 50);
+                let uniqueChoices = [...new Set(hugePool)].sort(() => Math.random() - 0.5).slice(0, uniqueValuesCount);
+                
+                // On construit le tapis en piochant aléatoirement parmis ces choix limités
+                let vals = []; 
+                for (let i = 0; i < beltLength; i++) {
+                    vals.push(uniqueChoices[Math.floor(Math.random() * uniqueChoices.length)]);
+                }
+
+                // Ajout de l'interface du compteur de progression
+                const progressDiv = document.createElement('div');
+                progressDiv.style.cssText = 'font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; color: #333;';
+                progressDiv.innerHTML = `Objet <span id="conveyor-count" style="color:#007bff;">1</span> / ${vals.length}`;
+                board.appendChild(progressDiv);
+
+                const beltWrapper = document.createElement('div');
+                beltWrapper.style.cssText = 'position:relative; width: 340px; max-width: 100%; height: 100px; display:block; overflow:hidden; margin-bottom:30px; border-radius: 8px; background: rgba(0,0,0,0.05); -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%); mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);';
+
+                const beltContainer = document.createElement('div');
+                beltContainer.style.cssText = 'display:flex; align-items:center; height: 100%; transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1); width:max-content; padding-left: calc(50% - 40px); padding-right: calc(50% - 40px);';
+
+                const centerMark = document.createElement('div');
+                centerMark.style.cssText = 'position:absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width:64px; height:64px; border:4px solid #ffc107; border-radius:10px; z-index:5; pointer-events:none; box-shadow: 0 0 10px rgba(0,0,0,0.3);';
+
+                vals.forEach((val) => {
+                    const item = document.createElement('div');
+                    item.className = `item type-${tType}`;
+                    item.style.margin = '0 10px'; item.style.flexShrink = '0';
+                    item.style.transition = 'opacity 0.2s, transform 0.2s';
+                    applyStyle(item, tType, val);
+                    beltContainer.appendChild(item);
+                });
+
+                beltWrapper.appendChild(beltContainer); 
+                beltWrapper.appendChild(centerMark); 
+                board.appendChild(beltWrapper);
+
+                const btnContainer = document.createElement('div');
+                btnContainer.style.cssText = 'display:flex; gap:15px; flex-wrap:wrap; justify-content:center; padding: 10px; width: 100%; max-width: 500px;';
+
+                let cIdx = 0;
+                
+                // Les boutons correspondent exactement aux valeurs uniques choisies
+                uniqueChoices.forEach(uVal => {
+                    const btn = document.createElement('div');
+                    btn.className = `item type-${tType}`; btn.style.cursor = 'pointer';
+                    applyStyle(btn, tType, uVal);
+
+                    btn.addEventListener('pointerdown', (e) => {
+                        e.preventDefault();
+                        if(isPaused) return;
+                        if(vals[cIdx] === uVal) {
+                            beltContainer.children[cIdx].style.opacity = '0';
+                            beltContainer.children[cIdx].style.transform = 'scale(0.5)';
+                            cIdx++;
+                            
+                            const countSpan = document.getElementById('conveyor-count');
+                            if (countSpan && cIdx < vals.length) {
+                                countSpan.textContent = cIdx + 1;
+                            }
+                            
+                            beltContainer.style.transform = `translateX(-${cIdx * 80}px)`;
+                            if(cIdx >= vals.length) {
+                                if (countSpan) countSpan.textContent = vals.length;
+                                endGame('Tapis vidé !', true);
+                            }
+                        } else {
+                            endGame('Erreur, mauvais objet chargé !', false);
+                        }
+                    });
+                    btnContainer.appendChild(btn);
+                });
+
+                board.appendChild(btnContainer);
+
+            } else if (mode.isSpeedQuiz) {
+                // GAME 4 : SPEED QUIZ (Extraction déterministe)
+                board.style.display = 'flex'; board.style.flexDirection = 'column'; board.style.alignItems = 'center';
+                currentRound = 1; 
+                totalRounds = 5; 
+                
+                const tType = currentDayConfig.type || 'numbers';
+                
+                let availableRules = ['min', 'max', 'start', 'end'];
+                if (tType === 'numbers') availableRules.push('even', 'odd');
+                else availableRules.push('start', 'end'); 
+                let roundQuestions = availableRules.sort(() => Math.random() - 0.5).slice(0, 5);
+                
+                window.startQuizRound = function() {
+                    board.innerHTML = '';
+                    const choicesCount = Math.max(parseInt(activeItemCount) || 20, 6);
+                    const targetK = 5; // Nombre EXACT de bonnes réponses exigées
+                    let qType = roundQuestions[currentRound - 1];
+                    
+                    let vals = [];
+                    let conditionFn;
+                    let qTxt = '';
+                    
+                    // On génère une énorme réserve de valeurs uniques pour piocher avec précision
+                    let bigPool = [...new Set(generateValues(tType, 400))].sort(() => Math.random() - 0.5);
+                    
+                    // FALLBACK: Si le pool est trop petit pour extraire la condition, on bascule sur Min/Max
+                    if (bigPool.length < choicesCount) { qType = 'min'; }
+
+                    if (qType === 'min') {
+                        vals = bigPool.slice(0, choicesCount);
+                        let sorted = [...vals].sort((a, b) => typeof a === 'string' ? a.localeCompare(b) : a - b);
+                        let targets = sorted.slice(0, targetK);
+                        conditionFn = v => targets.includes(v);
+                        qTxt = `Les ${targetK} plus PETITS ?`;
+                        if (tType === 'size') qTxt = `Les ${targetK} plus FINS ?`;
+                        if (tType === 'lightness') qTxt = `Les ${targetK} plus SOMBRES ?`;
+                        if (tType === 'opacity') qTxt = `Les ${targetK} plus TRANSPARENTS ?`;
+                        
+                    } else if (qType === 'max') {
+                        vals = bigPool.slice(0, choicesCount);
+                        let sorted = [...vals].sort((a, b) => typeof a === 'string' ? a.localeCompare(b) : a - b);
+                        let targets = sorted.slice(-targetK);
+                        conditionFn = v => targets.includes(v);
+                        qTxt = `Les ${targetK} plus GRANDS ?`;
+                        if (tType === 'size') qTxt = `Les ${targetK} plus GROS ?`;
+                        if (tType === 'lightness') qTxt = `Les ${targetK} plus CLAIRS ?`;
+                        if (tType === 'opacity') qTxt = `Les ${targetK} plus OPAQUES ?`;
+
+                    } else if (qType === 'even') {
+                        let evens = bigPool.filter(v => !isNaN(v) && parseInt(v) % 2 === 0);
+                        let odds = bigPool.filter(v => !isNaN(v) && parseInt(v) % 2 !== 0);
+                        vals = [...evens.slice(0, targetK), ...odds.slice(0, choicesCount - targetK)];
+                        conditionFn = v => !isNaN(v) && parseInt(v) % 2 === 0;
+                        qTxt = 'Tous les PAIRS ?';
+
+                    } else if (qType === 'odd') {
+                        let odds = bigPool.filter(v => !isNaN(v) && parseInt(v) % 2 !== 0);
+                        let evens = bigPool.filter(v => !isNaN(v) && parseInt(v) % 2 === 0);
+                        vals = [...odds.slice(0, targetK), ...evens.slice(0, choicesCount - targetK)];
+                        conditionFn = v => !isNaN(v) && parseInt(v) % 2 !== 0;
+                        qTxt = 'Tous les IMPAIRS ?';
+
+                    } else if (qType === 'start') {
+                        let byChar = {};
+                        bigPool.forEach(v => {
+                            let c = String(v).replace(/^#/,'')[0].toUpperCase();
+                            if(!byChar[c]) byChar[c] = [];
+                            byChar[c].push(v);
+                        });
+                        let validChars = Object.keys(byChar).filter(c => byChar[c].length >= targetK && bigPool.length - byChar[c].length >= (choicesCount - targetK));
+                        
+                        if(validChars.length === 0) { 
+                            // Secours si impossible de trouver 5 départs identiques
+                            vals = bigPool.slice(0, choicesCount);
+                            let sorted = [...vals].sort((a, b) => typeof a === 'string' ? a.localeCompare(b) : a - b);
+                            let targets = sorted.slice(0, targetK);
+                            conditionFn = v => targets.includes(v);
+                            qTxt = `Les ${targetK} plus PETITS ?`;
+                        } else {
+                            let charTarget = validChars[Math.floor(Math.random() * validChars.length)];
+                            let targets = byChar[charTarget].slice(0, targetK);
+                            let others = bigPool.filter(v => String(v).replace(/^#/,'')[0].toUpperCase() !== charTarget).slice(0, choicesCount - targetK);
+                            vals = [...targets, ...others];
+                            conditionFn = v => String(v).replace(/^#/,'')[0].toUpperCase() === charTarget;
+                            qTxt = `Commencent par "${charTarget}" ?`;
+                        }
+                    } else if (qType === 'end') {
+                        let byChar = {};
+                        bigPool.forEach(v => {
+                            let c = String(v).slice(-1).toUpperCase();
+                            if(!byChar[c]) byChar[c] = [];
+                            byChar[c].push(v);
+                        });
+                        let validChars = Object.keys(byChar).filter(c => byChar[c].length >= targetK && bigPool.length - byChar[c].length >= (choicesCount - targetK));
+                        
+                        if(validChars.length === 0) { 
+                            vals = bigPool.slice(0, choicesCount);
+                            let sorted = [...vals].sort((a, b) => typeof a === 'string' ? a.localeCompare(b) : a - b);
+                            let targets = sorted.slice(0, targetK);
+                            conditionFn = v => targets.includes(v);
+                            qTxt = `Les ${targetK} plus PETITS ?`;
+                        } else {
+                            let charTarget = validChars[Math.floor(Math.random() * validChars.length)];
+                            let targets = byChar[charTarget].slice(0, targetK);
+                            let others = bigPool.filter(v => String(v).slice(-1).toUpperCase() !== charTarget).slice(0, choicesCount - targetK);
+                            vals = [...targets, ...others];
+                            conditionFn = v => String(v).slice(-1).toUpperCase() === charTarget;
+                            qTxt = `Terminent par "${charTarget}" ?`;
+                        }
+                    }
+                    
+                    let foundCount = 0;
+
+                    const qDiv = document.createElement('div');
+                    qDiv.style.cssText = 'font-size: 1.5rem; font-weight: bold; margin-bottom: 20px; color: #333; text-align: center;';
+                    qDiv.innerHTML = `Round ${currentRound}/${totalRounds}<br><span style="color:#007bff">${qTxt}</span><br><span id="quiz-counter" style="font-size:1.1rem; color:#dc3545; display:inline-block; margin-top:5px;">${targetK} à trouver</span>`;
+                    board.appendChild(qDiv);
+
+                    const itemsCont = document.createElement('div');
+                    itemsCont.style.cssText = 'display:flex; gap:15px; flex-wrap:wrap; justify-content:center; max-width: 600px;';
+                    
+                    vals.sort(() => Math.random() - 0.5); 
+                    vals.forEach(val => {
+                        const item = document.createElement('div');
+                        item.className = `item type-${tType}`; item.style.cursor = 'pointer';
+                        applyStyle(item, tType, val);
+                        
+                        item.addEventListener('pointerdown', (e) => {
+                            e.preventDefault();
+                            if(isPaused || item.dataset.found) return; 
+                            
+                            if(conditionFn(val)) {
+                                item.style.boxShadow = '0 0 0 4px #28a745';
+                                item.dataset.found = 'true';
+                                item.style.transform = 'scale(0.9)'; 
+                                foundCount++;
+                                
+                                const counterSpan = document.getElementById('quiz-counter');
+                                if (counterSpan) {
+                                    let rem = targetK - foundCount;
+                                    counterSpan.textContent = rem > 0 ? `${rem} à trouver` : 'Parfait !';
+                                    counterSpan.style.color = rem > 0 ? '#ff9800' : '#28a745';
+                                }
+                                
+                                if(foundCount >= targetK) {
+                                    currentRound++;
+                                    if(currentRound > totalRounds) {
+                                        setTimeout(() => endGame('Quiz terminé !', true), 300);
+                                    } else {
+                                        setTimeout(() => window.startQuizRound(), 400); 
+                                    }
+                                }
+                            } else {
+                                item.style.boxShadow = '0 0 0 4px #dc3545';
+                                endGame('Mauvaise réponse !', false);
+                            }
+                        });
+                        itemsCont.appendChild(item);
+                    });
+                    board.appendChild(itemsCont);
+                };
+                window.startQuizRound();
 
             } else {
                 board.style.flexDirection = 'row';
