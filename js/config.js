@@ -1,0 +1,131 @@
+// ── Backend URL ──
+export const GAS_URL = "https://script.google.com/macros/s/AKfycbwdBn3nmfJzB-uNlGGQ2_u5-6hqRy4urDKOWRTQWmclVwnmjE5NCE8TYPu6Saelwu_y6g/exec";
+
+// ── 35+ Game Modes ──
+export const GAME_MODES = {
+    sortAsc:       { name: "Tri Croissant",            isSort: true, order: 1 },
+    sortDesc:      { name: "Tri Décroissant",           isSort: true, order: -1 },
+    findMax:       { name: "Chasse au Max",             findTarget: 'max' },
+    findMin:       { name: "Chasse au Min",             findTarget: 'min' },
+    findOdd:       { name: "L'Intrus",                  specialGen: 'odd',   winOnOdd: true },
+    findPair:      { name: "Les Jumeaux",               specialGen: 'pair',  winOnPairs: true },
+    pairs:         { name: "Paires",                    specialGen: 'pairs', isPairsMatch: true },
+    reflex:        { name: "Cibles Mobiles",            isReflex: true },
+    flashMax:      { name: "Mémoire Flash Max",         findTarget: 'max', flashHide: true },
+    flashSort:     { name: "Tri Flash",                 isSort: true, order: 1, flashHide: true },
+    spinSort:      { name: "Tourbillon",                isSort: true, order: 1, cssClass: 'spin-anim' },
+    blurMax:       { name: "Myope Max",                 findTarget: 'max', cssClass: 'blur-hard' },
+    invertMin:     { name: "Inversion Min",             findTarget: 'min', cssClass: 'invert-color' },
+    hideHover:     { name: "Fantômes",                  isSort: true, order: 1, cssClass: 'hide-until-hover' },
+    sumTarget:     { name: "Addition Cible",            isSum: true },
+    evensAsc:      { name: "Pairs Uniquement",          isSort: true, order: 1,  filter: 'even' },
+    oddsDesc:      { name: "Impairs Uniquement",        isSort: true, order: -1, filter: 'odd' },
+    median:        { name: "La Médiane",                findTarget: 'median' },
+    shuffleSort:   { name: "Tremblement Spatial",       isSort: true, order: 1, shuffleTick: 2500 },
+    blackout:      { name: "Coupure de Courant",        isSort: true, order: 1, blackout: true },
+    chaseMin:      { name: "Le Fuyard",                 findTarget: 'min', runAway: true },
+    shrinkSort:    { name: "Rétrécissement",            isSort: true, order: 1, cssClass: 'shrink-anim' },
+    flickerMax:    { name: "Stroboscope Max",           findTarget: 'max', cssClass: 'flicker-anim' },
+    mirrorSort:    { name: "Monde Miroir",              isSort: true, order: 1, cssClass: 'mirror-view' },
+    doubleTapMax:  { name: "Double Frappe Max",         findTarget: 'max', requireDbTap: true },
+    longPressMin:  { name: "Pression Longue Min",       findTarget: 'min', requireLong: true },
+    blindSort:     { name: "Tri à l'aveugle",           isSort: true, order: 1, peekHide: true },
+    mathDiff:      { name: "Soustraction Cible",        isDiff: true },
+    avoidMin:      { name: "Survie (Éviter Min)",       avoidTarget: 'min' },
+    pulseSort:     { name: "Pulsation",                 isSort: true, order: 1, cssClass: 'pulse-anim' },
+    wobbleMax:     { name: "Instabilité Max",           findTarget: 'max', cssClass: 'wobble-anim' },
+    findTargetUI:  { name: "Recherche Exacte",          isTargetMatch: true },
+    gravitySort:   { name: "Gravité",                   isSort: true, order: 1, cssClass: 'gravity-anim' },
+    colorSort:     { name: "Technicolor",               isSort: true, order: 1, cssClass: 'hue-shift' },
+    danceSort:     { name: "Danse Macabre",             isSort: true, order: 1, cssClass: 'dance-anim' },
+    cursorSort:    { name: "Curseur Fou",               isTargetMatch: true, useCursor: true },
+    sequenceHunt:  { name: "Chasse en Série",           isSequence: true, sequenceLength: 5 },
+    typingTest:    { name: "Dactylographie",            isTyping: true },
+    connectDots:   { name: "Relier les points",         isConnectDots: true },
+    mathQuizAdd:   { name: "Calculs (Additions)",       isMathQuiz: true, mathOp: '+' },
+    mathQuizSub:   { name: "Calculs (Soustractions)",   isMathQuiz: true, mathOp: '-' },
+    mathQuizMul:   { name: "Calculs (Multiplications)", isMathQuiz: true, mathOp: '*' },
+    mathQuizDiv:   { name: "Calculs (Divisions)",       isMathQuiz: true, mathOp: '/' },
+    speedLetters:  { name: "Lettres Chrono",            isSpeedLetters: true },
+    dragDropMath:  { name: "Tri Pair/Impair",           isDragDrop: true },
+    conveyorBelt:  { name: "Tapis Roulant",             isConveyor: true },
+    speedQuiz:     { name: "Quiz Rapide",               isSpeedQuiz: true },
+};
+
+// ── 50 Base Types ──
+export const BASE_TYPES = [
+    { id:  1, title: "Luminosité",       type: "lightness"   },
+    { id:  2, title: "Saturation",       type: "saturation"  },
+    { id:  3, title: "Teinte",           type: "hue"         },
+    { id:  4, title: "Opacité",          type: "opacity"     },
+    { id:  5, title: "Taille",           type: "scale"       },
+    { id:  6, title: "Largeur",          type: "length"      },
+    { id:  7, title: "Hauteur",          type: "heightBar"   },
+    { id:  8, title: "Arrondi",          type: "radius"      },
+    { id:  9, title: "Rotation",         type: "rotation"    },
+    { id: 10, title: "Flou",             type: "blur"        },
+    { id: 11, title: "Bordure",          type: "borderWidth" },
+    { id: 12, title: "Texte",            type: "fontSize"    },
+    { id: 13, title: "Ombre",            type: "shadow"      },
+    { id: 14, title: "Point central",    type: "centerDot"   },
+    { id: 15, title: "Trait",            type: "lineLength"  },
+    { id: 16, title: "Thermomètre",      type: "thermometer" },
+    { id: 17, title: "Batterie",         type: "battery"     },
+    { id: 18, title: "Horloge",          type: "clocks"      },
+    { id: 19, title: "Jauge",            type: "gauge"       },
+    { id: 20, title: "WiFi",             type: "wifi"        },
+    { id: 21, title: "Boussole",         type: "compass"     },
+    { id: 22, title: "Position Y",       type: "yPosition"   },
+    { id: 23, title: "Points",           type: "dots"        },
+    { id: 24, title: "Barres",           type: "bars"        },
+    { id: 25, title: "Étoiles",          type: "stars"       },
+    { id: 26, title: "Nombres",          type: "numbers"     },
+    { id: 27, title: "Chiffres romains", type: "roman"       },
+    { id: 28, title: "Dés",              type: "dice"        },
+    { id: 29, title: "Additions",        type: "mathAdd"     },
+    { id: 30, title: "Multiplications",  type: "mathMul"     },
+    { id: 31, title: "Soustractions",    type: "mathSub"     },
+    { id: 32, title: "Fractions",        type: "fractions"   },
+    { id: 33, title: "Code binaire",     type: "binary"      },
+    { id: 34, title: "Alphabet",         type: "alphabet"    },
+    { id: 35, title: "Mois",             type: "months"      },
+    { id: 36, title: "Planètes",         type: "planets"     },
+    { id: 37, title: "Animaux",          type: "animals"     },
+    { id: 38, title: "Longueur de mot",  type: "wordLength"  },
+    { id: 39, title: "Poids",            type: "weights"     },
+    { id: 40, title: "Durées",           type: "durations"   },
+    { id: 41, title: "Emojis",           type: "emojis"      },
+    { id: 42, title: "Polygones",        type: "polygons"    },
+    { id: 43, title: "Notation",         type: "rating"      },
+    { id: 44, title: "Escalier",         type: "stairs"      },
+    { id: 45, title: "Empilement",       type: "stack"       },
+    { id: 46, title: "Damier",           type: "checkers"    },
+    { id: 47, title: "Rayures",          type: "stripes"     },
+    { id: 48, title: "Cible",            type: "target"      },
+    { id: 49, title: "Pixels",           type: "pixels"      },
+    { id: 50, title: "Ages de la vie",   type: "ages"        },
+];
+
+// ── 365 Days procedural generation ──
+const _all = [];
+BASE_TYPES.forEach(d => _all.push({ id: d.id, title: `Jour ${d.id} : Tri Croissant - ${d.title}`, type: d.type, modeId: 'sortAsc' }));
+const _MKEYS = Object.keys(GAME_MODES);
+let _cId = _all.length + 1, _mIdx = 0;
+while (_all.length < 365) {
+    const base = BASE_TYPES[(_cId * 13) % BASE_TYPES.length];
+    const mKey = _MKEYS[_mIdx % _MKEYS.length];
+    _all.push({ id: _cId, title: `Jour ${_cId} : ${GAME_MODES[mKey].name} - ${base.title}`, type: base.type, modeId: mKey });
+    _cId++; _mIdx++;
+}
+export const DAYS = _all;
+
+// ── Lookup tables ──
+export const ROMAN_TABLE   = ['','I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX','XXI','XXII','XXIII','XXIV','XXV','XXVI','XXVII','XXVIII','XXIX','XXX'];
+export const MONTH_TABLE   = ['','Jan','Fev','Mar','Avr','Mai','Jun','Jul','Aou','Sep','Oct','Nov','Dec'];
+export const PLANET_TABLE  = ['','&#9791;','&#9792;','&#8853;','&#9794;','&#9795;','&#9796;','&#9954;','&#9798;'];
+export const EMOJI_TABLE   = ['','\u{1F622}','\u{1F615}','\u{1F610}','\u{1F642}','\u{1F60A}','\u{1F604}','\u{1F929}'];
+export const ANIMAL_TABLE  = ['','\u{1F41C}','\u{1F40C}','\u{1F401}','\u{1F400}','\u{1F438}','\u{1F407}','\u{1F408}','\u{1F415}','\u{1F416}','\u{1F98A}','\u{1F411}','\u{1F404}','\u{1F40E}','\u{1F43B}','\u{1F981}','\u{1F40A}','\u{1F98F}','\u{1F418}','\u{1F40B}','\u{1F995}'];
+export const AGE_TABLE     = ['','\u{1F476}','\u{1F9D2}','\u{1F466}','\u{1F9D1}','\u{1F468}','\u{1F9D4}','\u{1F468}\u200D\u{1F9B3}','\u{1F474}'];
+export const WORD_TABLE    = {2:'si',3:'eau',4:'lune',5:'avion',6:'jardin',7:'chateau',8:'papillon',9:'crocodile',10:'ordinateur',11:'trampoline',12:'hippopotame'};
+export const ALPHA_TABLE   = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+export const DICE_PATTERNS = { 1:[[3,3]], 2:[[1,1],[5,5]], 3:[[1,1],[3,3],[5,5]], 4:[[1,1],[1,5],[5,1],[5,5]], 5:[[1,1],[1,5],[3,3],[5,1],[5,5]], 6:[[1,1],[1,3],[1,5],[5,1],[5,3],[5,5]] };
