@@ -1,0 +1,48 @@
+﻿        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            #sidebar {
+                width: 100%;
+                padding: 15px;
+                max-height: none;
+            }
+
+            #day-buttons-container {
+                flex-direction: row !important;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .day-btn {
+                flex: 1 1 auto;
+                min-width: 100px;
+                text-align: center;
+                font-size: 0.9rem;
+                padding: 8px;
+            }
+
+            .main-content {
+                padding-top: 20px;
+            }
+
+            h1 {
+                font-size: 1.4rem;
+            }
+
+            #level-title {
+                font-size: 1rem;
+            }
+
+            #timer-display {
+                font-size: 2.5rem;
+            }
+
+            .action-btn {
+                font-size: 1rem;
+                padding: 10px 15px;
+            }
+        }
+    

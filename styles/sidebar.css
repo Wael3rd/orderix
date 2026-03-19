@@ -1,0 +1,86 @@
+﻿        /* Sidebar UI */
+        #sidebar h3 {
+            margin: 0 0 10px 0;
+            border-bottom: 1px solid #555;
+            padding-bottom: 5px;
+            font-size: 1.2rem;
+        }
+
+        .day-btn {
+            background-color: #495057;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            text-align: left;
+            transition: background 0.2s;
+            font-size: 1rem;
+        }
+
+        .day-btn:hover {
+            background-color: #6c757d;
+        }
+
+        .day-btn.active {
+            background-color: #007bff;
+            font-weight: bold;
+            border-left: 5px solid #80bdff;
+        }
+
+        .day-btn .tick {
+            color: #28a745;
+            margin-left: 6px;
+            font-weight: bold;
+        }
+
+        .day-btn .tick.fail {
+            color: #dc3545;
+        }
+
+        .loader {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            gap: 10px;
+            color: #adb5bd;
+            font-size: 0.9rem;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid #555;
+            border-top-color: #80bdff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .settings-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+
+        .settings-group label {
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .settings-group input {
+            padding: 8px;
+            font-size: 1rem;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            width: 100%;
+            box-sizing: border-box;
+        }
+

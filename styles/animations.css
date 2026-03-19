@@ -1,0 +1,166 @@
+﻿        /* Game Modes Animations & Filters */
+        @keyframes shrink {
+            100% {
+                transform: scale(0);
+                opacity: 0;
+            }
+        }
+
+        @keyframes flicker {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.15);
+            }
+        }
+
+        @keyframes wobble {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px) rotate(-5deg);
+            }
+
+            75% {
+                transform: translateX(5px) rotate(5deg);
+            }
+        }
+
+        @keyframes gravity {
+            0% {
+                transform: translateY(-50px);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes hue-shift {
+            100% {
+                filter: hue-rotate(360deg);
+            }
+        }
+
+        @keyframes dance {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0);
+            }
+
+            25% {
+                transform: translateY(-10px) rotate(-10deg);
+            }
+
+            75% {
+                transform: translateY(10px) rotate(10deg);
+            }
+        }
+
+        .spin-anim {
+            animation: spin 2s linear infinite;
+        }
+
+        .shrink-anim {
+            animation: shrink 12s forwards;
+        }
+
+        .flicker-anim {
+            animation: flicker 0.3s infinite;
+        }
+
+        .pulse-anim {
+            animation: pulse 1s infinite;
+        }
+
+        .wobble-anim {
+            animation: wobble 0.5s infinite;
+        }
+
+        .gravity-anim {
+            animation: gravity 0.6s ease-out;
+        }
+
+        .hue-shift {
+            animation: hue-shift 4s linear infinite;
+        }
+
+        .dance-anim {
+            animation: dance 1.5s infinite;
+        }
+
+        .blur-hard {
+            filter: blur(4px);
+            transition: filter 0.2s;
+        }
+
+        .blur-hard:active {
+            filter: blur(0);
+        }
+
+        .invert-color {
+            filter: invert(1);
+        }
+
+        .mirror-view {
+            transform: scaleX(-1);
+        }
+
+        .hide-until-hover {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .hide-until-hover:hover,
+        .hide-until-hover:active {
+            opacity: 1;
+        }
+
+        .peek-hidden {
+            background-color: #222 !important;
+            color: transparent !important;
+            border: 2px solid #555 !important;
+            box-shadow: none;
+        }
+
+        .peek-hidden * {
+            display: none !important;
+        }
+
+        .blackout-mode {
+            background-color: #000 !important;
+        }
+
+        .blackout-mode .item {
+            opacity: 0 !important;
+            pointer-events: none;
+        }
+
+        .cursor-active {
+            box-shadow: 0 0 0 6px #ff9800 !important;
+            transform: scale(1.15);
+            z-index: 100;
+            transition: all 0.1s;
+        }
+
