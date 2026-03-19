@@ -1,4 +1,4 @@
-﻿// Google Apps Script Web App URL - REPLACE THIS BEFORE PUBLISHING
+// Google Apps Script Web App URL - REPLACE THIS BEFORE PUBLISHING
         const GAS_URL = "https://script.google.com/macros/s/AKfycbwdBn3nmfJzB-uNlGGQ2_u5-6hqRy4urDKOWRTQWmclVwnmjE5NCE8TYPu6Saelwu_y6g/exec";
 
         // Game state variables
@@ -124,7 +124,7 @@
                 if (serverPlayedDays[day.id]) {
                     const tick = document.createElement('span');
                     tick.className = serverPlayedDays[day.id].isWin ? 'tick' : 'tick fail';
-                    tick.textContent = serverPlayedDays[day.id].isWin ? 'âœ“' : 'âœ—';
+                    tick.textContent = serverPlayedDays[day.id].isWin ? 'Ã¢Å“â€œ' : 'Ã¢Å“â€”';
                     btn.appendChild(tick);
                 }
                 btn.addEventListener('click', () => selectDay(day, btn));
@@ -141,11 +141,11 @@
                     const isWin = serverPlayedDays[id].isWin;
                     if (existingTick) {
                         existingTick.className = isWin ? 'tick' : 'tick fail';
-                        existingTick.textContent = isWin ? 'âœ“' : 'âœ—';
+                        existingTick.textContent = isWin ? 'Ã¢Å“â€œ' : 'Ã¢Å“â€”';
                     } else {
                         const tick = document.createElement('span');
                         tick.className = isWin ? 'tick' : 'tick fail';
-                        tick.textContent = isWin ? 'âœ“' : 'âœ—';
+                        tick.textContent = isWin ? 'Ã¢Å“â€œ' : 'Ã¢Å“â€”';
                         btn.appendChild(tick);
                     }
                 } else if (existingTick) {
@@ -154,7 +154,7 @@
             });
         }
 
-        dayButtonsContainer.innerHTML = '<div class="loader"><div class="spinner"></div>Chargementâ€¦</div>';
+        dayButtonsContainer.innerHTML = '<div class="loader"><div class="spinner"></div>ChargementÃ¢â‚¬Â¦</div>';
 
         fetch(`${GAS_URL}?getConfig=1&nocache=${Date.now()}`)
             .then(r => r.json())
@@ -198,7 +198,7 @@
 
         shareBtn.addEventListener('click', () => {
             let isWin = false, timeVal = 0;
-            // DÃ©tecte si on partage la partie qui vient de se finir, ou une ancienne partie depuis l'historique
+            // DÃƒÂ©tecte si on partage la partie qui vient de se finir, ou une ancienne partie depuis l'historique
             if (pendingTimeVal !== 0) {
                 isWin = pendingTimeVal > 0;
                 timeVal = Math.abs(pendingTimeVal);
@@ -207,20 +207,20 @@
                 timeVal = Math.abs(serverPlayedDays[currentDayConfig.id].time);
             } else return;
 
-            const status = isWin ? "rÃ©ussi" : "ratÃ©";
+            const status = isWin ? "rÃƒÂ©ussi" : "ratÃƒÂ©";
             const timeStr = timeVal == 999999 ? "RAGE QUIT" : timeVal;
 
-            // Ajout du pseudo dans l'URL partagÃ©e pour le tracking
+            // Ajout du pseudo dans l'URL partagÃƒÂ©e pour le tracking
             let currentPlayerName = getStorage('orderix_player_name') || playerNameMainInput.value.trim() || '';
             const url = window.location.href.split('?')[0] + '?ref=' + encodeURIComponent(currentPlayerName) + '&day=' + currentDayConfig.id;
 
             const textToShare = `J'ai ${status} le jeu ${currentDayConfig.title} avec un temps de ${timeStr}s clique ici ${url} pour essayer de me battre !`;
 
             navigator.clipboard.writeText(textToShare).then(() => {
-                shareBtn.textContent = "COPIÃ‰ !";
+                shareBtn.textContent = "COPIÃƒâ€° !";
                 setTimeout(() => shareBtn.textContent = "PARTAGE", 2000);
 
-                // Mettre Ã  jour la base de donnÃ©es de maniÃ¨re silencieuse (seulement si on vient de jouer cette partie)
+                // Mettre ÃƒÂ  jour la base de donnÃƒÂ©es de maniÃƒÂ¨re silencieuse (seulement si on vient de jouer cette partie)
                 if (!hasSharedThisGame && pendingTimeVal !== 0) {
                     hasSharedThisGame = true;
                     submitScore(timeVal, '', true); // Lance un update avec isUpdate = true
@@ -233,7 +233,7 @@
         function verifyPlayerName() {
             const name = playerNameMainInput.value.trim();
             if (name.length < 3) {
-                nameStatus.textContent = "3 caractÃ¨res minimum.";
+                nameStatus.textContent = "3 caractÃƒÂ¨res minimum.";
                 nameStatus.style.color = "#dc3545";
                 isNameValid = false;
                 return;
@@ -249,7 +249,7 @@
                 return;
             }
 
-            nameStatus.textContent = "VÃ©rification...";
+            nameStatus.textContent = "VÃƒÂ©rification...";
             nameStatus.style.color = "#333";
             verifyNameBtn.disabled = true;
 
@@ -273,7 +273,7 @@
                 })
                 .catch(err => {
                     verifyNameBtn.disabled = false;
-                    nameStatus.textContent = "Erreur rÃ©seau.";
+                    nameStatus.textContent = "Erreur rÃƒÂ©seau.";
                     nameStatus.style.color = "#dc3545";
                 });
         }
@@ -286,7 +286,7 @@
             shareBtn.classList.add('hidden');
             startBtn.classList.add('hidden');
             checkBtn.classList.add('hidden');
-            pendingTimeVal = 0; // RÃ©initialise le temps en attente
+            pendingTimeVal = 0; // RÃƒÂ©initialise le temps en attente
             board.classList.add('hidden');
             board.classList.remove('blackout-mode');
             feedbackContainer.classList.add('hidden');
@@ -306,7 +306,7 @@
             timerDisplay.style.color = '#333';
             resultDisplay.textContent = '';
             dbMessage.textContent = '';
-            levelTitle.textContent = 'SÃ©lectionnez un jour pour commencer';
+            levelTitle.textContent = 'SÃƒÂ©lectionnez un jour pour commencer';
             document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
             currentDayConfig = null;
         }
@@ -347,7 +347,7 @@
                 startBtn.classList.add('hidden');
                 shareBtn.classList.remove('hidden'); // Permet de partager un ancien score directement
                 activeItemCount = playedInfo.count;
-                leaderboardTitle.textContent = `Top 10 - ${day.title} (${activeItemCount} Ã©lÃ©ments)`;
+                leaderboardTitle.textContent = `Top 10 - ${day.title} (${activeItemCount} ÃƒÂ©lÃƒÂ©ments)`;
 
                 let timeDisplay;
                 if (playedInfo.isWin) {
@@ -358,7 +358,7 @@
                     timeDisplay = `FAIL (${Math.abs(playedInfo.time).toFixed(3)}s)`;
                 }
 
-                resultDisplay.innerHTML = `Niveau dÃ©jÃ  complÃ©tÃ©.<br>Votre rÃ©sultat : <span style="color:${playedInfo.isWin ? '#28a745' : '#dc3545'}">${timeDisplay}</span>`;
+                resultDisplay.innerHTML = `Niveau dÃƒÂ©jÃƒÂ  complÃƒÂ©tÃƒÂ©.<br>Votre rÃƒÂ©sultat : <span style="color:${playedInfo.isWin ? '#28a745' : '#dc3545'}">${timeDisplay}</span>`;
                 resultDisplay.style.color = '#333';
 
                 board.innerHTML = '';
@@ -402,7 +402,7 @@
                     board.style.justifyContent = 'center';
                     const msg = document.createElement('div');
                     msg.style.cssText = 'padding:20px;color:#555;font-weight:bold;text-align:center;';
-                    msg.innerHTML = 'Mode dynamique.<br>Pas de solution fixe Ã  afficher.';
+                    msg.innerHTML = 'Mode dynamique.<br>Pas de solution fixe ÃƒÂ  afficher.';
                     board.appendChild(msg);
                 }
 
@@ -411,7 +411,7 @@
             } else {
                 startBtn.classList.remove('hidden');
                 startBtn.textContent = 'Jouer';
-                leaderboardTitle.textContent = `Top 10 - ${day.title} (${activeItemCount} Ã©lÃ©ments)`;
+                leaderboardTitle.textContent = `Top 10 - ${day.title} (${activeItemCount} ÃƒÂ©lÃƒÂ©ments)`;
 
                 showExample(day, board);
             }
@@ -419,7 +419,7 @@
 
         // generateValues() has been moved to scripts/generators.js
 
-        // Helper: GÃ©nÃ¨re un exemple visuel du gameplay
+        // Helper: GÃƒÂ©nÃƒÂ¨re un exemple visuel du gameplay
         function showExample(day, boardEl) {
             boardEl.innerHTML = '';
             boardEl.classList.remove('hidden');
@@ -474,7 +474,7 @@
                 });
             } else if (mode.specialGen === 'odd') {
                 let v = generateValues(day.type, 5);
-                // CrÃ©ation d'un exemple avec 2 paires distinctes et 1 intrus (5 Ã©lÃ©ments)
+                // CrÃƒÂ©ation d'un exemple avec 2 paires distinctes et 1 intrus (5 ÃƒÂ©lÃƒÂ©ments)
                 let exVals = [v[0], v[0], v[1], v[1], v[2]].sort(() => Math.random() - 0.5);
                 exVals.forEach(val => {
                     const item = document.createElement('div'); item.className = `item type-${day.type}`; applyStyle(item, day.type, val);
@@ -500,7 +500,7 @@
                 }
 
                 const i1 = document.createElement('div'); i1.className = `item type-${day.type}`; applyStyle(i1, day.type, v1);
-                const op = document.createElement('div'); op.style.fontSize = '24px'; op.style.fontWeight = 'bold'; op.style.color = '#333'; op.textContent = mode.isSum ? '+' : 'âˆ’';
+                const op = document.createElement('div'); op.style.fontSize = '24px'; op.style.fontWeight = 'bold'; op.style.color = '#333'; op.textContent = mode.isSum ? '+' : 'Ã¢Ë†â€™';
                 const i2 = document.createElement('div'); i2.className = `item type-${day.type}`; applyStyle(i2, day.type, v2);
                 const eq = document.createElement('div'); eq.style.fontSize = '24px'; eq.style.fontWeight = 'bold'; eq.style.color = '#333'; eq.textContent = '=';
 
@@ -538,7 +538,7 @@
 
                 if (mode.isTargetMatch) {
                     const tg = document.createElement('div'); tg.className = `item type-${day.type}`; applyStyle(tg, day.type, targetVal); tg.style.boxShadow = '0 0 0 4px #007bff';
-                    const arrow = document.createElement('div'); arrow.style.fontSize = '24px'; arrow.style.fontWeight = 'bold'; arrow.textContent = 'âž¡ï¸';
+                    const arrow = document.createElement('div'); arrow.style.fontSize = '24px'; arrow.style.fontWeight = 'bold'; arrow.textContent = 'Ã¢Å¾Â¡Ã¯Â¸Â';
                     row.append(tg, arrow);
                 }
 
@@ -555,7 +555,7 @@
         function startGame() {
 
             if (!isNameValid) {
-                alert("Veuillez valider un pseudo disponible dans les paramÃ¨tres avant de jouer.");
+                alert("Veuillez valider un pseudo disponible dans les paramÃƒÂ¨tres avant de jouer.");
                 returnToMenu();
                 return;
             }
@@ -564,7 +564,7 @@
             activeItemCount = (cfg && cfg.count) ? cfg.count : 10;
             const mode = GAME_MODES[currentDayConfig.modeId];
 
-            leaderboardTitle.textContent = `Top 10 - ${currentDayConfig.title} (${activeItemCount} Ã©lÃ©ments)`;
+            leaderboardTitle.textContent = `Top 10 - ${currentDayConfig.title} (${activeItemCount} ÃƒÂ©lÃƒÂ©ments)`;
 
             timeElapsed = 0;
             isPaused = false;
@@ -619,19 +619,19 @@
 
                 let values = [];
                 if (mode.specialGen === 'odd') {
-                    // GÃ©nÃ¨re un large panel de valeurs pour piocher dedans
+                    // GÃƒÂ©nÃƒÂ¨re un large panel de valeurs pour piocher dedans
                     let v = generateValues(currentDayConfig.type, Math.max(10, activeItemCount));
                     let shuffledV = [...v].sort(() => Math.random() - 0.5);
 
-                    // Ajout de l'intrus (Le seul Ã©lÃ©ment unique)
+                    // Ajout de l'intrus (Le seul ÃƒÂ©lÃƒÂ©ment unique)
                     values.push(shuffledV[0]);
 
-                    // Remplissage du reste avec des groupes de 2, 3 ou 4 Ã©lÃ©ments identiques
+                    // Remplissage du reste avec des groupes de 2, 3 ou 4 ÃƒÂ©lÃƒÂ©ments identiques
                     let remaining = activeItemCount - 1;
                     let vIndex = 1;
 
                     if (remaining === 1) {
-                        values.push(shuffledV[1]); // Failsafe au cas oÃ¹ la config demande 2 Ã©lÃ©ments
+                        values.push(shuffledV[1]); // Failsafe au cas oÃƒÂ¹ la config demande 2 ÃƒÂ©lÃƒÂ©ments
                     } else {
                         while (remaining > 0) {
                             let copies;
@@ -645,7 +645,7 @@
                             }
                             remaining -= copies;
                             vIndex++;
-                            // On boucle sur les valeurs si on a besoin de plus de variÃ©tÃ© sans jamais retoucher l'index 0 (l'intrus)
+                            // On boucle sur les valeurs si on a besoin de plus de variÃƒÂ©tÃƒÂ© sans jamais retoucher l'index 0 (l'intrus)
                             if (vIndex >= shuffledV.length) vIndex = 1;
                         }
                     }
@@ -682,14 +682,14 @@
                 }
                 if (mode.isTargetMatch) {
                     exactTarget = shuf[Math.floor(Math.random() * shuf.length)];
-                    resultDisplay.textContent = `Trouvez ce modÃ¨le !`;
+                    resultDisplay.textContent = `Trouvez ce modÃƒÂ¨le !`;
                     resultDisplay.style.color = "#333";
                 }
                 if (mode.isSequence) {
                     let uniqueVals = [...new Set(shuf)];
                     targetSequence = uniqueVals.slice(0, Math.min(mode.sequenceLength || 5, uniqueVals.length));
                     currentSequenceIdx = 0;
-                    resultDisplay.textContent = `Trouvez la sÃ©quence !`;
+                    resultDisplay.textContent = `Trouvez la sÃƒÂ©quence !`;
                     resultDisplay.style.color = "#333";
                 }
 
@@ -700,8 +700,8 @@
                     targetUI.style.cssText = 'display:flex; justify-content:center; align-items:center; width:100%; margin-bottom:20px; gap:15px; font-weight:bold; font-size:1.2rem; color:#555;';
 
                     const lbl = document.createElement('span');
-                    if (mode.isSequence) lbl.textContent = `Ã‰tape 1/${targetSequence.length} - Trouvez :`;
-                    else lbl.textContent = mode.isTargetMatch ? 'ModÃ¨le Ã  trouver :' : 'Cible Ã  obtenir :';
+                    if (mode.isSequence) lbl.textContent = `Ãƒâ€°tape 1/${targetSequence.length} - Trouvez :`;
+                    else lbl.textContent = mode.isTargetMatch ? 'ModÃƒÂ¨le ÃƒÂ  trouver :' : 'Cible ÃƒÂ  obtenir :';
                     targetUI.appendChild(lbl);
 
                     const visualTarget = document.createElement('div');
@@ -870,7 +870,7 @@
                         });
                         matched += 2;
                         flipped = [];
-                        if (matched >= activeItemCount) endGame('Paires trouvÃ©es !', true);
+                        if (matched >= activeItemCount) endGame('Paires trouvÃƒÂ©es !', true);
                     } else {
                         flipped.forEach(f => f.classList.add('error'));
                         setTimeout(() => {
@@ -912,7 +912,7 @@
 
             if (mode.winOnOdd || mode.winOnPairs) {
                 let c = values.filter(v => Math.abs(v - val) < 0.0001).length;
-                if (mode.winOnOdd && c === 1) endGame('Intrus trouvÃ© !', true);
+                if (mode.winOnOdd && c === 1) endGame('Intrus trouvÃƒÂ© !', true);
                 else if (mode.winOnPairs && c === 2) {
                     matched++;
                     const badge = document.createElement('div');
@@ -920,7 +920,7 @@
                     badge.textContent = '';
                     item.appendChild(badge);
                     item.classList.add('matched');
-                    if (matched === 2) endGame('Jumeaux trouvÃ©s !', true);
+                    if (matched === 2) endGame('Jumeaux trouvÃƒÂ©s !', true);
                 }
                 else {
                     item.classList.add('error');
@@ -964,10 +964,10 @@
                 if (Math.abs(val - Math.min(...values)) < 0.0001) {
                     item.classList.add('error');
                     showSolutionHighlight([Math.min(...values)]);
-                    endGame('Cible touchÃ©e !', false);
+                    endGame('Cible touchÃƒÂ©e !', false);
                 } else {
                     item.classList.add('matched'); matched++;
-                    if (matched >= activeItemCount - 1) endGame('Survie rÃ©ussie !', true);
+                    if (matched >= activeItemCount - 1) endGame('Survie rÃƒÂ©ussie !', true);
                 }
                 return;
             }
@@ -988,11 +988,11 @@
                     currentSequenceIdx++;
 
                     if (currentSequenceIdx >= targetSequence.length) {
-                        endGame('SÃ©quence complÃ©tÃ©e !', true);
+                        endGame('SÃƒÂ©quence complÃƒÂ©tÃƒÂ©e !', true);
                     } else {
                         const targetUI = document.getElementById('dynamic-target-ui');
                         if (targetUI) {
-                            targetUI.querySelector('span').textContent = `Ã‰tape ${currentSequenceIdx + 1}/${targetSequence.length} - Trouvez :`;
+                            targetUI.querySelector('span').textContent = `Ãƒâ€°tape ${currentSequenceIdx + 1}/${targetSequence.length} - Trouvez :`;
                             const visualTarget = targetUI.querySelector('.item');
                             visualTarget.innerHTML = '';
                             visualTarget.className = `item type-${currentDayConfig.type}`;
@@ -1003,7 +1003,7 @@
                 } else {
                     item.classList.add('error');
                     showSolutionHighlight([targetSequence[currentSequenceIdx]]);
-                    endGame('Erreur de sÃ©quence !', false);
+                    endGame('Erreur de sÃƒÂ©quence !', false);
                 }
                 return;
             }
@@ -1013,51 +1013,20 @@
                     item.classList.add('matched');
                     currentRound++;
                     if (currentRound > totalRounds) {
-                        endGame('Calculs validÃ©s !', true);
+                        endGame('Calculs validÃƒÂ©s !', true);
                     } else {
                         // Next round delay for visual feedback
                         setTimeout(() => { if (!isPaused) window.startMathRound(); }, 400);
                     }
                 } else {
                     item.classList.add('error');
-                    showSolutionHighlight([currentMathTarget]);
+                    showSolutionHighlight([currentMathTarget]); 
                     endGame('Erreur de calcul !', false);
                 }
                 return;
             }
         } // Fin de la fonction handleLogic
 
-        // --- NOUVELLE FONCTION --- 
-        // Met en Ã©vidence la/les bonne(s) rÃ©ponse(s) en cas d'erreur
-        function showSolutionHighlight(correctValues) {
-            if (!correctValues || correctValues.length === 0) return;
-            const domItems = document.querySelectorAll('#game-board .item');
-
-            // Copie locale pour gÃ©rer les cas de doublons (ex: additions cibles)
-            let valuesToHighlight = [...correctValues];
-
-            domItems.forEach(item => {
-                const v = parseFloat(item.dataset.value);
-                const idx = valuesToHighlight.findIndex(cv => Math.abs(cv - v) < 0.0001);
-
-                if (idx !== -1) {
-                    // C'est une bonne rÃ©ponse ! On la met en Ã©vidence.
-                    item.classList.remove('error');
-                    item.classList.remove('peek-hidden');
-                    item.style.boxShadow = '0 0 0 6px #28a745';
-                    item.style.transform = 'scale(1.15)';
-                    item.style.zIndex = '100';
-                    item.style.opacity = '1';
-                    // Retire la valeur trouvÃ©e pour ne pas surligner d'autres copies non nÃ©cessaires
-                    valuesToHighlight.splice(idx, 1);
-                } else {
-                    // C'est une mauvaise rÃ©ponse. Si ce n'est pas celle cliquÃ©e, on l'assombrit.
-                    if (!item.classList.contains('error')) {
-                        item.style.opacity = '0.3';
-                    }
-                }
-            });
-        }
 
         // Timer increment
         function gameTick() {
@@ -1071,394 +1040,7 @@
             timerDisplay.textContent = (timeElapsed / 1000).toFixed(3);
         }
 
-        // â”€â”€ Lookup tables for knowledge/text types â”€â”€
-        const ROMAN_TABLE = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX', 'XXI', 'XXII', 'XXIII', 'XXIV', 'XXV', 'XXVI', 'XXVII', 'XXVIII', 'XXIX', 'XXX'];
-        const MONTH_TABLE = ['', 'Jan', 'FÃ©v', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'AoÃ»', 'Sep', 'Oct', 'Nov', 'DÃ©c'];
-        const PLANET_TABLE = ['', 'â˜¿', 'â™€', 'âŠ•', 'â™‚', 'â™ƒ', 'â™„', 'â›¢', 'â™†'];
-        const EMOJI_TABLE = ['', 'ðŸ˜¢', 'ðŸ˜•', 'ðŸ˜', 'ðŸ™‚', 'ðŸ˜Š', 'ðŸ˜„', 'ðŸ¤©'];
-        const ANIMAL_TABLE = ['', 'ðŸœ', 'ðŸŒ', 'ðŸ', 'ðŸ€', 'ðŸ¸', 'ðŸ‡', 'ðŸˆ', 'ðŸ•', 'ðŸ–', 'ðŸ¦Š', 'ðŸ‘', 'ðŸ„', 'ðŸŽ', 'ðŸ»', 'ðŸ¦', 'ðŸŠ', 'ðŸ¦', 'ðŸ˜', 'ðŸ‹', 'ðŸ¦•'];
-        const AGE_TABLE = ['', 'ðŸ‘¶', 'ðŸ§’', 'ðŸ‘¦', 'ðŸ§‘', 'ðŸ‘¨', 'ðŸ§”', 'ðŸ‘¨â€ðŸ¦³', 'ðŸ‘´'];
-        const WORD_TABLE = { 2: 'si', 3: 'eau', 4: 'lune', 5: 'avion', 6: 'jardin', 7: 'chÃ¢teau', 8: 'papillon', 9: 'crocodile', 10: 'ordinateur', 11: 'trampoline', 12: 'hippopotame' };
-        const ALPHA_TABLE = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        const DICE_PATTERNS = { 1: [[3, 3]], 2: [[1, 1], [5, 5]], 3: [[1, 1], [3, 3], [5, 5]], 4: [[1, 1], [1, 5], [5, 1], [5, 5]], 5: [[1, 1], [1, 5], [3, 3], [5, 1], [5, 5]], 6: [[1, 1], [1, 3], [1, 5], [5, 1], [5, 3], [5, 5]] };
-
-        // Helper: display text centered in an item
-        function _setText(el, text, size, color) {
-            el.style.cssText += `font-size:${size || 14}px;color:${color || 'white'};font-weight:bold;text-align:center;line-height:60px;`;
-            el.textContent = text;
-        }
-
-        // Helper: fill with text symbols (for counting types)
-        function _fillText(el, count, char, color) {
-            const c = document.createElement('div');
-            c.style.cssText = `display:flex;flex-wrap:wrap;gap:1px;padding:3px;width:100%;height:100%;box-sizing:border-box;align-content:flex-start;justify-content:center;font-size:12px;line-height:1;color:${color}`;
-            for (let i = 0; i < count; i++) { const s = document.createElement('span'); s.textContent = char; c.appendChild(s); }
-            el.appendChild(c);
-        }
-
-        // Helper: format weight in grams to readable string
-        function _formatWeight(g) {
-            if (g >= 1000) return (g / 1000) + 'kg';
-            return g + 'g';
-        }
-
-        // Helper: format seconds to readable duration
-        function _formatDuration(s) {
-            if (s >= 3600) return (s / 3600) + 'h';
-            if (s >= 60) return (s / 60) + 'min';
-            return s + 's';
-        }
-
-        // Apply dynamic styles for all 50 types
-        function applyStyle(el, type, val) {
-            switch (type) {
-
-                // â”€â”€ Perception visuelle (1-10) â”€â”€
-                case 'lightness':
-                    el.style.backgroundColor = `hsl(210,80%,${val}%)`; break;
-                case 'saturation':
-                    el.style.backgroundColor = `hsl(350,${val}%,50%)`; break;
-                case 'hue':
-                    el.style.backgroundColor = `hsl(${240 - val},75%,50%)`; break;
-                case 'opacity':
-                    el.style.opacity = val; break;
-                case 'scale':
-                    el.style.transform = `scale(${val})`; break;
-                case 'length':
-                    el.style.width = `${val}px`; break;
-                case 'heightBar':
-                    el.style.height = `${val}px`; break;
-                case 'radius':
-                    el.style.borderRadius = `${val}%`; break;
-                case 'rotation':
-                    el.style.backgroundColor = 'transparent'; el.style.position = 'relative';
-                    const arr = document.createElement('div');
-                    arr.style.cssText = `position:absolute;top:50%;left:50%;width:4px;height:30px;background:#007bff;border-radius:2px;transform-origin:bottom center;transform:translate(-50%,-100%) rotate(${val}deg)`;
-                    const tip = document.createElement('div');
-                    tip.style.cssText = `position:absolute;top:50%;left:50%;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:12px solid #007bff;transform-origin:bottom center;transform:translate(-50%,-36px) rotate(${val}deg)`;
-                    el.appendChild(arr); el.appendChild(tip); break;
-                case 'blur':
-                    el.style.filter = `blur(${val}px)`; break;
-
-                // â”€â”€ Ã‰paisseurs (11-15) â”€â”€
-                case 'borderWidth':
-                    el.style.border = `${val}px solid #ffc107`; el.style.boxSizing = 'border-box'; break;
-                case 'fontSize':
-                    el.textContent = 'A'; el.style.fontSize = `${val}px`; el.style.color = 'white'; el.style.fontWeight = 'bold'; break;
-                case 'shadow':
-                    el.style.boxShadow = `0 ${val / 2}px ${val}px rgba(0,0,0,0.6)`; break;
-                case 'centerDot':
-                    el.style.position = 'relative';
-                    const cd = document.createElement('div');
-                    cd.style.cssText = `position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:50%;background:white;width:${val}px;height:${val}px`;
-                    el.appendChild(cd); break;
-                case 'lineLength':
-                    el.style.position = 'relative';
-                    const ln = document.createElement('div');
-                    ln.style.cssText = `position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);height:4px;background:white;border-radius:2px;width:${val}px`;
-                    el.appendChild(ln); break;
-
-                // â”€â”€ Jauges & instruments (16-22) â”€â”€
-                case 'thermometer': {
-                    el.style.backgroundColor = 'transparent'; el.style.position = 'relative';
-                    const tWrap = document.createElement('div');
-                    tWrap.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;border-radius:0 0 8px 8px;background:#dee2e6;';
-                    const tube = document.createElement('div');
-                    tube.style.cssText = `position:absolute;bottom:0;left:30%;width:40%;background:linear-gradient(to top,#dc3545,#ff6b6b);border-radius:0 0 8px 8px;`;
-                    tube.style.height = val + '%';
-                    const bulb = document.createElement('div');
-                    bulb.style.cssText = `position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);width:18px;height:18px;background:#dc3545;border-radius:50%;`;
-                    tWrap.appendChild(tube); tWrap.appendChild(bulb);
-                    el.appendChild(tWrap); break;
-                }
-                case 'battery': {
-                    el.style.backgroundColor = 'transparent'; el.style.position = 'relative';
-                    const shell = document.createElement('div');
-                    shell.style.cssText = 'position:absolute;top:12px;left:10px;width:40px;height:36px;border:3px solid #6c757d;border-radius:4px;overflow:hidden;';
-                    const cap = document.createElement('div');
-                    cap.style.cssText = 'position:absolute;top:16px;right:3px;width:6px;height:14px;background:#6c757d;border-radius:0 2px 2px 0;';
-                    const charge = document.createElement('div');
-
-                    // Randomize color independently of the fill percentage
-                    const colors = ['#28a745', '#ffc107', '#dc3545']; // Green, Yellow, Red
-                    const randomColor = colors[Math.floor(Math.random() * colors.length)];
-
-                    charge.style.cssText = `position:absolute;bottom:0;left:0;width:100%;background:${randomColor};`;
-                    charge.style.height = val + '%';
-
-                    shell.appendChild(charge); el.appendChild(shell); el.appendChild(cap); break;
-                }
-                case 'clocks': {
-                    el.style.backgroundColor = 'transparent'; el.style.position = 'relative';
-                    const face = document.createElement('div');
-                    face.style.cssText = 'position:absolute;top:5px;left:5px;width:50px;height:50px;border:3px solid #343a40;border-radius:50%;background:white;';
-                    // 12 marker
-                    const m12 = document.createElement('div');
-                    m12.style.cssText = 'position:absolute;top:2px;left:50%;transform:translateX(-50%);width:2px;height:6px;background:#343a40;';
-                    face.appendChild(m12);
-                    // Hour hand
-                    const hourAngle = (val % 12) * 30;
-                    const hh = document.createElement('div');
-                    hh.style.cssText = `position:absolute;bottom:50%;left:50%;width:3px;height:15px;background:#343a40;border-radius:2px;transform-origin:bottom center;transform:translateX(-50%) rotate(${hourAngle}deg)`;
-                    face.appendChild(hh);
-                    // Minute hand (always at 12)
-                    const mh = document.createElement('div');
-                    mh.style.cssText = 'position:absolute;bottom:50%;left:50%;width:2px;height:20px;background:#6c757d;border-radius:2px;transform-origin:bottom center;transform:translateX(-50%) rotate(0deg)';
-                    face.appendChild(mh);
-                    // Center dot
-                    const cdot = document.createElement('div');
-                    cdot.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:4px;height:4px;background:#343a40;border-radius:50%';
-                    face.appendChild(cdot);
-                    el.appendChild(face); break;
-                }
-                case 'gauge': {
-                    el.style.backgroundColor = 'transparent'; el.style.position = 'relative';
-                    const arc = document.createElement('div');
-                    arc.style.cssText = 'position:absolute;top:12px;left:5px;width:50px;height:25px;border-top:4px solid #dee2e6;border-left:4px solid #dee2e6;border-right:4px solid #dee2e6;border-radius:30px 30px 0 0;box-sizing:border-box;';
-                    const needle = document.createElement('div');
-                    needle.style.cssText = `position:absolute;bottom:0;left:50%;width:2px;height:22px;background:#dc3545;border-radius:2px;transform-origin:bottom center;transform:translateX(-50%) rotate(${val - 90}deg)`;
-                    arc.appendChild(needle);
-                    el.appendChild(arc); break;
-                }
-                case 'wifi': {
-                    el.style.backgroundColor = 'transparent'; el.style.position = 'relative';
-                    const maxBars = 5;
-                    for (let i = 0; i < maxBars; i++) {
-                        const b = document.createElement('div');
-                        const bh = 8 + i * 9;
-                        const threshold = (i + 1) * 20;
-                        const on = val >= threshold;
-                        const partial = !on && val > threshold - 20;
-                        const opacity = on ? 1 : (partial ? 0.3 + 0.7 * ((val - (threshold - 20)) / 20) : 0.15);
-                        b.style.cssText = `position:absolute;bottom:8px;width:7px;background:#007bff;border-radius:2px;opacity:${opacity};`;
-                        b.style.left = (8 + i * 10) + 'px';
-                        b.style.height = bh + 'px';
-                        el.appendChild(b);
-                    }
-                    break;
-                }
-                case 'compass': {
-                    el.style.backgroundColor = 'transparent'; el.style.position = 'relative';
-                    const ring = document.createElement('div');
-                    ring.style.cssText = 'position:absolute;top:5px;left:5px;width:50px;height:50px;border:2px solid #6c757d;border-radius:50%;';
-                    const nMark = document.createElement('div');
-                    nMark.style.cssText = 'position:absolute;top:1px;left:50%;transform:translateX(-50%);font-size:8px;font-weight:bold;color:#dc3545;';
-                    nMark.textContent = 'N';
-                    ring.appendChild(nMark);
-                    const ndl = document.createElement('div');
-                    ndl.style.cssText = `position:absolute;bottom:50%;left:50%;width:2px;height:18px;background:#dc3545;transform-origin:bottom center;transform:translateX(-50%) rotate(${val}deg);border-radius:2px;`;
-                    ring.appendChild(ndl);
-                    const ndl2 = document.createElement('div');
-                    ndl2.style.cssText = `position:absolute;top:50%;left:50%;width:2px;height:18px;background:#6c757d;transform-origin:top center;transform:translateX(-50%) rotate(${val}deg);border-radius:2px;`;
-                    ring.appendChild(ndl2);
-                    el.appendChild(ring); break;
-                }
-                case 'yPosition': {
-                    el.style.backgroundColor = '#dee2e6'; el.style.position = 'relative';
-                    const axis = document.createElement('div');
-                    axis.style.cssText = 'position:absolute;top:5px;left:50%;width:2px;height:50px;background:#adb5bd;transform:translateX(-50%)';
-                    const dot2 = document.createElement('div');
-                    dot2.style.cssText = `position:absolute;left:50%;transform:translate(-50%,50%);width:12px;height:12px;background:#007bff;border-radius:50%;bottom:${val}px`;
-                    el.appendChild(axis); el.appendChild(dot2); break;
-                }
-
-                // â”€â”€ Comptage (23-25) â”€â”€
-                case 'dots': {
-                    const cont = document.createElement('div'); cont.className = 'dots-container';
-                    for (let i = 0; i < val; i++) { const d = document.createElement('div'); d.className = 'dot'; cont.appendChild(d); }
-                    el.appendChild(cont); break;
-                }
-                case 'bars': {
-                    const cont2 = document.createElement('div');
-                    cont2.style.cssText = 'display:flex;gap:2px;align-items:flex-end;justify-content:center;width:100%;height:100%;padding:4px;box-sizing:border-box;';
-                    const bw = Math.max(2, Math.floor((52 - val * 2) / val));
-                    for (let i = 0; i < val; i++) {
-                        const b = document.createElement('div');
-                        b.style.cssText = `background:white;border-radius:1px;flex-shrink:0;width:${bw}px;height:${15 + Math.round(((i * 7 + 3) % 11) * 3)}px`;
-                        cont2.appendChild(b);
-                    }
-                    el.appendChild(cont2); break;
-                }
-                case 'stars':
-                    _fillText(el, val, 'â˜…', '#ffc107'); break;
-
-                // â”€â”€ Nombres & calcul mental (26-33) â”€â”€
-                case 'numbers':
-                    _setText(el, String(val), 22, 'white'); break;
-                case 'roman':
-                    _setText(el, ROMAN_TABLE[val] || val, val > 10 ? 12 : 16, 'white'); break;
-                case 'dice': {
-                    el.style.backgroundColor = 'white'; el.style.borderRadius = '8px'; el.style.border = '2px solid #343a40'; el.style.position = 'relative';
-                    const pips = DICE_PATTERNS[val] || [];
-                    pips.forEach(([r, c]) => {
-                        const p = document.createElement('div');
-                        p.style.cssText = `position:absolute;width:10px;height:10px;background:#343a40;border-radius:50%;`;
-                        p.style.top = (r * 8 + 2) + 'px';
-                        p.style.left = (c * 8 + 2) + 'px';
-                        el.appendChild(p);
-                    });
-                    break;
-                }
-                case 'mathAdd': {
-                    // Randomize addition terms to create different visual pairs for the same sum
-                    const a1 = Math.max(1, Math.floor(Math.random() * (val - 1)) + 1);
-                    const b1 = val - a1;
-                    _setText(el, a1 + '+' + b1, 14, 'white'); break;
-                }
-                case 'mathMul': {
-                    // Find all valid factors, pick a random pair, and randomly swap order
-                    let factors = [];
-                    for (let f = 1; f <= Math.sqrt(val); f++) if (val % f === 0) factors.push(f);
-                    let a2 = factors[Math.floor(Math.random() * factors.length)];
-                    if (Math.random() > 0.5) a2 = val / a2;
-                    _setText(el, a2 + 'Ã—' + (val / a2), 14, 'white'); break;
-                }
-                case 'mathSub': {
-                    // Randomize subtraction offset
-                    const offset = Math.floor(Math.random() * 15) + 1;
-                    _setText(el, (val + offset) + 'âˆ’' + offset, 14, 'white'); break;
-                }
-                case 'fractions': {
-                    el.style.borderRadius = '50%';
-                    el.style.background = `conic-gradient(#28a745 0deg ${val * 3.6}deg, #dee2e6 ${val * 3.6}deg 360deg)`;
-                    break;
-                }
-                case 'binary': {
-                    el.style.backgroundColor = '#1a1a2e'; el.style.display = 'flex'; el.style.flexWrap = 'wrap';
-                    el.style.alignContent = 'center'; el.style.justifyContent = 'center'; el.style.gap = '3px'; el.style.padding = '8px';
-                    const bits = val.toString(2).padStart(5, '0');
-                    for (let i = 0; i < bits.length; i++) {
-                        const bit = document.createElement('div');
-                        bit.style.cssText = `width:8px;height:8px;border-radius:50%;background:${bits[i] === '1' ? '#00ff88' : '#333'}`;
-                        el.appendChild(bit);
-                    }
-                    break;
-                }
-
-                // â”€â”€ Connaissances & texte (34-40) â”€â”€
-                case 'alphabet':
-                    _setText(el, ALPHA_TABLE[val] || '?', 28, 'white'); break;
-                case 'months':
-                    _setText(el, MONTH_TABLE[val] || '?', 16, 'white'); break;
-                case 'planets':
-                    _setText(el, PLANET_TABLE[val] || '?', 24, 'white'); break;
-                case 'animals':
-                    _setText(el, ANIMAL_TABLE[val] || '?', 28, '#333');
-                    el.style.backgroundColor = '#f8f9fa'; break;
-                case 'wordLength':
-                    _setText(el, WORD_TABLE[val] || '?', Math.max(8, 18 - val), 'white'); break;
-                case 'weights':
-                    _setText(el, _formatWeight(val), 12, 'white'); break;
-                case 'durations':
-                    _setText(el, _formatDuration(val), 12, 'white'); break;
-
-                // â”€â”€ CrÃ©atif & motifs (41-50) â”€â”€
-                case 'emojis':
-                    _setText(el, EMOJI_TABLE[val] || '?', 30, '#333');
-                    el.style.backgroundColor = '#f8f9fa'; break;
-                case 'polygons': {
-                    el.style.backgroundColor = 'transparent'; el.style.position = 'relative';
-                    const n = val;
-                    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-                    svg.setAttribute('viewBox', '0 0 60 60');
-                    svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;';
-                    let pts = [];
-                    for (let i = 0; i < n; i++) {
-                        const angle = (2 * Math.PI * i / n) - Math.PI / 2;
-                        pts.push(`${30 + 24 * Math.cos(angle)},${30 + 24 * Math.sin(angle)}`);
-                    }
-                    const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-                    poly.setAttribute('points', pts.join(' '));
-                    poly.setAttribute('fill', '#007bff');
-                    poly.setAttribute('stroke', '#0056b3');
-                    poly.setAttribute('stroke-width', '2');
-                    svg.appendChild(poly);
-                    el.appendChild(svg); break;
-                }
-                case 'rating': {
-                    el.style.backgroundColor = '#f8f9fa';
-                    let starStr = '';
-                    for (let i = 0; i < 5; i++) starStr += i < val ? 'â˜…' : 'â˜†';
-                    _setText(el, starStr, 11, '#ffc107');
-                    el.style.lineHeight = '60px'; break;
-                }
-                case 'stairs': {
-                    el.style.backgroundColor = 'transparent'; el.style.position = 'relative';
-                    const sWrap = document.createElement('div');
-                    sWrap.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;';
-                    const stepW = Math.floor(55 / val);
-                    for (let i = 0; i < val; i++) {
-                        const step = document.createElement('div');
-                        const sh = (i + 1) * Math.floor(55 / val);
-                        step.style.cssText = `position:absolute;bottom:0;background:#007bff;`;
-                        step.style.left = (i * stepW + 2) + 'px';
-                        step.style.width = Math.max(3, stepW - 1) + 'px';
-                        step.style.height = Math.min(58, sh) + 'px';
-                        sWrap.appendChild(step);
-                    }
-                    el.appendChild(sWrap);
-                    break;
-                }
-                case 'stack': {
-                    el.style.backgroundColor = 'transparent'; el.style.position = 'relative';
-                    const kWrap = document.createElement('div');
-                    kWrap.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;';
-                    const blockH = Math.min(12, Math.floor(56 / val));
-                    for (let i = 0; i < val; i++) {
-                        const blk = document.createElement('div');
-                        blk.style.cssText = `position:absolute;left:10px;width:40px;background:hsl(${i * 30},70%,50%);border-radius:2px;`;
-                        blk.style.height = (blockH - 1) + 'px';
-                        blk.style.bottom = (i * blockH + 2) + 'px';
-                        kWrap.appendChild(blk);
-                    }
-                    el.appendChild(kWrap);
-                    break;
-                }
-                case 'checkers': {
-                    const cs = Math.max(3, Math.round(60 / val));
-                    el.style.backgroundImage = `linear-gradient(45deg,#007bff 25%,transparent 25%),linear-gradient(-45deg,#007bff 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#007bff 75%),linear-gradient(-45deg,transparent 75%,#007bff 75%)`;
-                    el.style.backgroundSize = `${cs}px ${cs}px`;
-                    el.style.backgroundPosition = `0 0,0 ${cs / 2}px,${cs / 2}px -${cs / 2}px,-${cs / 2}px 0`;
-                    el.style.backgroundColor = '#80bdff'; break;
-                }
-                case 'stripes': {
-                    const sw = Math.max(2, Math.round(60 / (val * 2)));
-                    el.style.background = `repeating-linear-gradient(45deg,#007bff,#007bff ${sw}px,#0056b3 ${sw}px,#0056b3 ${sw * 2}px)`;
-                    break;
-                }
-                case 'target': {
-                    el.style.backgroundColor = 'transparent'; el.style.position = 'relative';
-                    for (let i = 0; i < val; i++) {
-                        const ring = document.createElement('div');
-                        const size = 52 - i * Math.floor(48 / (val));
-                        ring.style.cssText = `position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:50%;border:2px solid ${i % 2 === 0 ? '#dc3545' : '#fff'};background:${i === val - 1 ? (val % 2 === 0 ? '#fff' : '#dc3545') : 'transparent'};box-sizing:border-box;`;
-                        ring.style.width = Math.max(6, size) + 'px';
-                        ring.style.height = Math.max(6, size) + 'px';
-                        el.appendChild(ring);
-                    }
-                    break;
-                }
-                case 'pixels': {
-                    el.style.backgroundColor = '#dee2e6'; el.style.display = 'grid'; el.style.padding = '2px'; el.style.gap = '1px';
-                    el.style.gridTemplateColumns = `repeat(${val}, 1fr)`;
-                    el.style.gridTemplateRows = `repeat(${val}, 1fr)`;
-                    for (let i = 0; i < val * val; i++) {
-                        const px = document.createElement('div');
-                        px.style.backgroundColor = ((Math.floor(i / val) + i % val) % 2 === 0) ? '#007bff' : '#28a745';
-                        px.style.borderRadius = '1px';
-                        el.appendChild(px);
-                    }
-                    break;
-                }
-                case 'ages':
-                    _setText(el, AGE_TABLE[val] || '?', 30, '#333');
-                    el.style.backgroundColor = '#f8f9fa'; break;
-
-                default:
-                    el.style.backgroundColor = '#6c757d';
-            }
-        }
-
+        // Ã¢â€â‚¬Ã¢â€â‚¬ Lookup tables for knowledge/text types Ã¢â€â‚¬Ã¢â€â‚¬
         // Handle item clicks
         function handleSelection(item) {
             const index = selectionOrder.indexOf(item);
@@ -1491,7 +1073,7 @@
             if (isPaused) return;
 
             if (selectionOrder.length < activeItemCount) {
-                resultDisplay.textContent = `SÃ©lectionnez les ${activeItemCount} Ã©lÃ©ments d'abord.`;
+                resultDisplay.textContent = `SÃƒÂ©lectionnez les ${activeItemCount} ÃƒÂ©lÃƒÂ©ments d'abord.`;
                 resultDisplay.style.color = '#ff9800';
                 setTimeout(() => { if (!isPaused) resultDisplay.textContent = ''; }, 1500);
                 return;
@@ -1503,7 +1085,7 @@
             const isCorrect = values.every((val, i) => val === sortedValues[i]);
 
             if (isCorrect) {
-                endGame(`Bravo ! Jour terminÃ©.`, true);
+                endGame(`Bravo ! Jour terminÃƒÂ©.`, true);
             } else {
                 isPaused = true;
                 clearInterval(timerInterval);
@@ -1539,7 +1121,7 @@
                 // Label: your answer
                 const lblYou = document.createElement('div');
                 lblYou.style.cssText = 'font-weight:bold;font-size:1rem;color:#555;text-align:center;margin-bottom:8px;';
-                lblYou.textContent = 'Votre rÃ©ponse :';
+                lblYou.textContent = 'Votre rÃƒÂ©ponse :';
                 innerWrap.appendChild(lblYou);
 
                 // Row 1: player's answer (badges below, red if wrong)
@@ -1592,7 +1174,7 @@
                 svgTxt.setAttribute('font-size', '13');
                 svgTxt.setAttribute('font-weight', 'bold');
                 svgTxt.setAttribute('font-family', 'Arial, sans-serif');
-                svgTxt.textContent = 'â†“ Solution â†“';
+                svgTxt.textContent = 'Ã¢â€ â€œ Solution Ã¢â€ â€œ';
                 svg.appendChild(svgTxt);
 
                 innerWrap.appendChild(svg);
@@ -1718,13 +1300,13 @@
                         if (data.message === "Banned word") {
                             dbMessage.textContent = "Ce nom contient un mot interdit.";
                         } else if (data.message === "Name taken for this config") {
-                            dbMessage.textContent = isUpdate ? "" : "Score dÃ©jÃ  enregistrÃ© pour cette difficultÃ©.";
+                            dbMessage.textContent = isUpdate ? "" : "Score dÃƒÂ©jÃƒÂ  enregistrÃƒÂ© pour cette difficultÃƒÂ©.";
                         } else {
                             dbMessage.textContent = "Erreur serveur.";
                         }
                         if (!isUpdate || data.message !== "Name taken for this config") dbMessage.style.color = "#dc3545";
                     } else {
-                        dbMessage.textContent = isUpdate ? "Avis enregistrÃ© !" : "Score enregistrÃ© avec succÃ¨s !";
+                        dbMessage.textContent = isUpdate ? "Avis enregistrÃƒÂ© !" : "Score enregistrÃƒÂ© avec succÃƒÂ¨s !";
                         dbMessage.style.color = "#28a745";
                     }
                     // Only refresh the leaderboard array if it's the initial submission
@@ -1784,14 +1366,14 @@
         // Browser back button = auto fail if game in progress
         window.addEventListener('popstate', function (e) {
             if (gameInProgress && currentDayConfig && !isPaused) {
-                endGame('Retour dÃ©tectÃ© ! Partie abandonnÃ©e.', false, true);
+                endGame('Retour dÃƒÂ©tectÃƒÂ© ! Partie abandonnÃƒÂ©e.', false, true);
             }
         });
 
         // Tab/window close = warn and hide content to prevent cheating
         window.addEventListener('beforeunload', function (e) {
             if (gameInProgress && currentDayConfig && !isPaused) {
-                document.body.style.display = 'none'; // Cache l'Ã©cran pendant la pop-up de confirmation
+                document.body.style.display = 'none'; // Cache l'ÃƒÂ©cran pendant la pop-up de confirmation
                 e.preventDefault();
                 e.returnValue = '';
             }
@@ -1828,3 +1410,4 @@
             } catch (e) { }
         })();
     
+
