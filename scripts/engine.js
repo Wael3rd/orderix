@@ -124,7 +124,7 @@
                 if (serverPlayedDays[day.id]) {
                     const tick = document.createElement('span');
                     tick.className = serverPlayedDays[day.id].isWin ? 'tick' : 'tick fail';
-                    tick.textContent = serverPlayedDays[day.id].isWin ? 'Ã¢Å“â€œ' : 'Ã¢Å“â€”';
+                    tick.textContent = serverPlayedDays[day.id].isWin ? '✓' : '✗';
                     btn.appendChild(tick);
                 }
                 btn.addEventListener('click', () => selectDay(day, btn));
@@ -141,11 +141,11 @@
                     const isWin = serverPlayedDays[id].isWin;
                     if (existingTick) {
                         existingTick.className = isWin ? 'tick' : 'tick fail';
-                        existingTick.textContent = isWin ? 'Ã¢Å“â€œ' : 'Ã¢Å“â€”';
+                        existingTick.textContent = isWin ? '✓' : '✗';
                     } else {
                         const tick = document.createElement('span');
                         tick.className = isWin ? 'tick' : 'tick fail';
-                        tick.textContent = isWin ? 'Ã¢Å“â€œ' : 'Ã¢Å“â€”';
+                        tick.textContent = isWin ? '✓' : '✗';
                         btn.appendChild(tick);
                     }
                 } else if (existingTick) {
@@ -154,7 +154,7 @@
             });
         }
 
-        dayButtonsContainer.innerHTML = '<div class="loader"><div class="spinner"></div>ChargementÃ¢â‚¬Â¦</div>';
+        dayButtonsContainer.innerHTML = '<div class="loader"><div class="spinner"></div>Chargement…</div>';
 
         fetch(`${GAS_URL}?getConfig=1&nocache=${Date.now()}`)
             .then(r => r.json())
@@ -198,7 +198,7 @@
 
         shareBtn.addEventListener('click', () => {
             let isWin = false, timeVal = 0;
-            // DÃƒÂ©tecte si on partage la partie qui vient de se finir, ou une ancienne partie depuis l'historique
+            // Détecte si on partage la partie qui vient de se finir, ou une ancienne partie depuis l'historique
             if (pendingTimeVal !== 0) {
                 isWin = pendingTimeVal > 0;
                 timeVal = Math.abs(pendingTimeVal);
@@ -207,20 +207,20 @@
                 timeVal = Math.abs(serverPlayedDays[currentDayConfig.id].time);
             } else return;
 
-            const status = isWin ? "rÃƒÂ©ussi" : "ratÃƒÂ©";
+            const status = isWin ? "réussi" : "raté";
             const timeStr = timeVal == 999999 ? "RAGE QUIT" : timeVal;
 
-            // Ajout du pseudo dans l'URL partagÃƒÂ©e pour le tracking
+            // Ajout du pseudo dans l'URL partagée pour le tracking
             let currentPlayerName = getStorage('orderix_player_name') || playerNameMainInput.value.trim() || '';
             const url = window.location.href.split('?')[0] + '?ref=' + encodeURIComponent(currentPlayerName) + '&day=' + currentDayConfig.id;
 
             const textToShare = `J'ai ${status} le jeu ${currentDayConfig.title} avec un temps de ${timeStr}s clique ici ${url} pour essayer de me battre !`;
 
             navigator.clipboard.writeText(textToShare).then(() => {
-                shareBtn.textContent = "COPIÃƒâ€° !";
+                shareBtn.textContent = "COPIÉ !";
                 setTimeout(() => shareBtn.textContent = "PARTAGE", 2000);
 
-                // Mettre ÃƒÂ  jour la base de donnÃƒÂ©es de maniÃƒÂ¨re silencieuse (seulement si on vient de jouer cette partie)
+                // Mettre à jour la base de données de manière silencieuse (seulement si on vient de jouer cette partie)
                 if (!hasSharedThisGame && pendingTimeVal !== 0) {
                     hasSharedThisGame = true;
                     submitScore(timeVal, '', true); // Lance un update avec isUpdate = true
@@ -233,7 +233,7 @@
         function verifyPlayerName() {
             const name = playerNameMainInput.value.trim();
             if (name.length < 3) {
-                nameStatus.textContent = "3 caractÃƒÂ¨res minimum.";
+                nameStatus.textContent = "3 caractères minimum.";
                 nameStatus.style.color = "#dc3545";
                 isNameValid = false;
                 return;
@@ -249,7 +249,7 @@
                 return;
             }
 
-            nameStatus.textContent = "VÃƒÂ©rification...";
+            nameStatus.textContent = "Vérification...";
             nameStatus.style.color = "#333";
             verifyNameBtn.disabled = true;
 
@@ -273,7 +273,7 @@
                 })
                 .catch(err => {
                     verifyNameBtn.disabled = false;
-                    nameStatus.textContent = "Erreur rÃƒÂ©seau.";
+                    nameStatus.textContent = "Erreur réseau.";
                     nameStatus.style.color = "#dc3545";
                 });
         }
@@ -286,7 +286,7 @@
             shareBtn.classList.add('hidden');
             startBtn.classList.add('hidden');
             checkBtn.classList.add('hidden');
-            pendingTimeVal = 0; // RÃƒÂ©initialise le temps en attente
+            pendingTimeVal = 0; // Réinitialise le temps en attente
             board.classList.add('hidden');
             board.classList.remove('blackout-mode');
             feedbackContainer.classList.add('hidden');
@@ -306,7 +306,7 @@
             timerDisplay.style.color = '#333';
             resultDisplay.textContent = '';
             dbMessage.textContent = '';
-            levelTitle.textContent = 'SÃƒÂ©lectionnez un jour pour commencer';
+            levelTitle.textContent = 'Sélectionnez un jour pour commencer';
             document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
             currentDayConfig = null;
         }
@@ -347,7 +347,7 @@
                 startBtn.classList.add('hidden');
                 shareBtn.classList.remove('hidden'); // Permet de partager un ancien score directement
                 activeItemCount = playedInfo.count;
-                leaderboardTitle.textContent = `Top 10 - ${day.title} (${activeItemCount} ÃƒÂ©lÃƒÂ©ments)`;
+                leaderboardTitle.textContent = `Top 10 - ${day.title} (${activeItemCount} éléments)`;
 
                 let timeDisplay;
                 if (playedInfo.isWin) {
@@ -358,7 +358,7 @@
                     timeDisplay = `FAIL (${Math.abs(playedInfo.time).toFixed(3)}s)`;
                 }
 
-                resultDisplay.innerHTML = `Niveau dÃƒÂ©jÃƒÂ  complÃƒÂ©tÃƒÂ©.<br>Votre rÃƒÂ©sultat : <span style="color:${playedInfo.isWin ? '#28a745' : '#dc3545'}">${timeDisplay}</span>`;
+                resultDisplay.innerHTML = `Niveau déjà complété.<br>Votre résultat : <span style="color:${playedInfo.isWin ? '#28a745' : '#dc3545'}">${timeDisplay}</span>`;
                 resultDisplay.style.color = '#333';
 
                 board.innerHTML = '';
@@ -402,7 +402,7 @@
                     board.style.justifyContent = 'center';
                     const msg = document.createElement('div');
                     msg.style.cssText = 'padding:20px;color:#555;font-weight:bold;text-align:center;';
-                    msg.innerHTML = 'Mode dynamique.<br>Pas de solution fixe ÃƒÂ  afficher.';
+                    msg.innerHTML = 'Mode dynamique.<br>Pas de solution fixe à afficher.';
                     board.appendChild(msg);
                 }
 
@@ -411,7 +411,7 @@
             } else {
                 startBtn.classList.remove('hidden');
                 startBtn.textContent = 'Jouer';
-                leaderboardTitle.textContent = `Top 10 - ${day.title} (${activeItemCount} ÃƒÂ©lÃƒÂ©ments)`;
+                leaderboardTitle.textContent = `Top 10 - ${day.title} (${activeItemCount} éléments)`;
 
                 showExample(day, board);
             }
@@ -419,7 +419,7 @@
 
         // generateValues() has been moved to scripts/generators.js
 
-        // Helper: GÃƒÂ©nÃƒÂ¨re un exemple visuel du gameplay
+        // Helper: Génère un exemple visuel du gameplay
         function showExample(day, boardEl) {
             boardEl.innerHTML = '';
             boardEl.classList.remove('hidden');
@@ -474,7 +474,7 @@
                 });
             } else if (mode.specialGen === 'odd') {
                 let v = generateValues(day.type, 5);
-                // CrÃƒÂ©ation d'un exemple avec 2 paires distinctes et 1 intrus (5 ÃƒÂ©lÃƒÂ©ments)
+                // Création d'un exemple avec 2 paires distinctes et 1 intrus (5 éléments)
                 let exVals = [v[0], v[0], v[1], v[1], v[2]].sort(() => Math.random() - 0.5);
                 exVals.forEach(val => {
                     const item = document.createElement('div'); item.className = `item type-${day.type}`; applyStyle(item, day.type, val);
@@ -500,7 +500,7 @@
                 }
 
                 const i1 = document.createElement('div'); i1.className = `item type-${day.type}`; applyStyle(i1, day.type, v1);
-                const op = document.createElement('div'); op.style.fontSize = '24px'; op.style.fontWeight = 'bold'; op.style.color = '#333'; op.textContent = mode.isSum ? '+' : 'Ã¢Ë†â€™';
+                const op = document.createElement('div'); op.style.fontSize = '24px'; op.style.fontWeight = 'bold'; op.style.color = '#333'; op.textContent = mode.isSum ? '+' : '−';
                 const i2 = document.createElement('div'); i2.className = `item type-${day.type}`; applyStyle(i2, day.type, v2);
                 const eq = document.createElement('div'); eq.style.fontSize = '24px'; eq.style.fontWeight = 'bold'; eq.style.color = '#333'; eq.textContent = '=';
 
@@ -538,7 +538,7 @@
 
                 if (mode.isTargetMatch) {
                     const tg = document.createElement('div'); tg.className = `item type-${day.type}`; applyStyle(tg, day.type, targetVal); tg.style.boxShadow = '0 0 0 4px #007bff';
-                    const arrow = document.createElement('div'); arrow.style.fontSize = '24px'; arrow.style.fontWeight = 'bold'; arrow.textContent = 'Ã¢Å¾Â¡Ã¯Â¸Â';
+                    const arrow = document.createElement('div'); arrow.style.fontSize = '24px'; arrow.style.fontWeight = 'bold'; arrow.textContent = '➡';
                     row.append(tg, arrow);
                 }
 
@@ -555,7 +555,7 @@
         function startGame() {
 
             if (!isNameValid) {
-                alert("Veuillez valider un pseudo disponible dans les paramÃƒÂ¨tres avant de jouer.");
+                alert("Veuillez valider un pseudo disponible dans les paramètres avant de jouer.");
                 returnToMenu();
                 return;
             }
@@ -564,7 +564,7 @@
             activeItemCount = (cfg && cfg.count) ? cfg.count : 10;
             const mode = GAME_MODES[currentDayConfig.modeId];
 
-            leaderboardTitle.textContent = `Top 10 - ${currentDayConfig.title} (${activeItemCount} ÃƒÂ©lÃƒÂ©ments)`;
+            leaderboardTitle.textContent = `Top 10 - ${currentDayConfig.title} (${activeItemCount} éléments)`;
 
             timeElapsed = 0;
             isPaused = false;
@@ -619,19 +619,19 @@
 
                 let values = [];
                 if (mode.specialGen === 'odd') {
-                    // GÃƒÂ©nÃƒÂ¨re un large panel de valeurs pour piocher dedans
+                    // Génère un large panel de valeurs pour piocher dedans
                     let v = generateValues(currentDayConfig.type, Math.max(10, activeItemCount));
                     let shuffledV = [...v].sort(() => Math.random() - 0.5);
 
-                    // Ajout de l'intrus (Le seul ÃƒÂ©lÃƒÂ©ment unique)
+                    // Ajout de l'intrus (Le seul élément unique)
                     values.push(shuffledV[0]);
 
-                    // Remplissage du reste avec des groupes de 2, 3 ou 4 ÃƒÂ©lÃƒÂ©ments identiques
+                    // Remplissage du reste avec des groupes de 2, 3 ou 4 éléments identiques
                     let remaining = activeItemCount - 1;
                     let vIndex = 1;
 
                     if (remaining === 1) {
-                        values.push(shuffledV[1]); // Failsafe au cas oÃƒÂ¹ la config demande 2 ÃƒÂ©lÃƒÂ©ments
+                        values.push(shuffledV[1]); // Failsafe au cas où la config demande 2 éléments
                     } else {
                         while (remaining > 0) {
                             let copies;
@@ -645,7 +645,7 @@
                             }
                             remaining -= copies;
                             vIndex++;
-                            // On boucle sur les valeurs si on a besoin de plus de variÃƒÂ©tÃƒÂ© sans jamais retoucher l'index 0 (l'intrus)
+                            // On boucle sur les valeurs si on a besoin de plus de variété sans jamais retoucher l'index 0 (l'intrus)
                             if (vIndex >= shuffledV.length) vIndex = 1;
                         }
                     }
@@ -682,14 +682,14 @@
                 }
                 if (mode.isTargetMatch) {
                     exactTarget = shuf[Math.floor(Math.random() * shuf.length)];
-                    resultDisplay.textContent = `Trouvez ce modÃƒÂ¨le !`;
+                    resultDisplay.textContent = `Trouvez ce modèle !`;
                     resultDisplay.style.color = "#333";
                 }
                 if (mode.isSequence) {
                     let uniqueVals = [...new Set(shuf)];
                     targetSequence = uniqueVals.slice(0, Math.min(mode.sequenceLength || 5, uniqueVals.length));
                     currentSequenceIdx = 0;
-                    resultDisplay.textContent = `Trouvez la sÃƒÂ©quence !`;
+                    resultDisplay.textContent = `Trouvez la séquence !`;
                     resultDisplay.style.color = "#333";
                 }
 
@@ -700,8 +700,8 @@
                     targetUI.style.cssText = 'display:flex; justify-content:center; align-items:center; width:100%; margin-bottom:20px; gap:15px; font-weight:bold; font-size:1.2rem; color:#555;';
 
                     const lbl = document.createElement('span');
-                    if (mode.isSequence) lbl.textContent = `Ãƒâ€°tape 1/${targetSequence.length} - Trouvez :`;
-                    else lbl.textContent = mode.isTargetMatch ? 'ModÃƒÂ¨le ÃƒÂ  trouver :' : 'Cible ÃƒÂ  obtenir :';
+                    if (mode.isSequence) lbl.textContent = `Étape 1/${targetSequence.length} - Trouvez :`;
+                    else lbl.textContent = mode.isTargetMatch ? 'Modèle à trouver :' : 'Cible à obtenir :';
                     targetUI.appendChild(lbl);
 
                     const visualTarget = document.createElement('div');
@@ -870,7 +870,7 @@
                         });
                         matched += 2;
                         flipped = [];
-                        if (matched >= activeItemCount) endGame('Paires trouvÃƒÂ©es !', true);
+                        if (matched >= activeItemCount) endGame('Paires trouvées !', true);
                     } else {
                         flipped.forEach(f => f.classList.add('error'));
                         setTimeout(() => {
@@ -912,7 +912,7 @@
 
             if (mode.winOnOdd || mode.winOnPairs) {
                 let c = values.filter(v => Math.abs(v - val) < 0.0001).length;
-                if (mode.winOnOdd && c === 1) endGame('Intrus trouvÃƒÂ© !', true);
+                if (mode.winOnOdd && c === 1) endGame('Intrus trouvé !', true);
                 else if (mode.winOnPairs && c === 2) {
                     matched++;
                     const badge = document.createElement('div');
@@ -920,7 +920,7 @@
                     badge.textContent = '';
                     item.appendChild(badge);
                     item.classList.add('matched');
-                    if (matched === 2) endGame('Jumeaux trouvÃƒÂ©s !', true);
+                    if (matched === 2) endGame('Jumeaux trouvés !', true);
                 }
                 else {
                     item.classList.add('error');
@@ -964,10 +964,10 @@
                 if (Math.abs(val - Math.min(...values)) < 0.0001) {
                     item.classList.add('error');
                     showSolutionHighlight([Math.min(...values)]);
-                    endGame('Cible touchÃƒÂ©e !', false);
+                    endGame('Cible touchée !', false);
                 } else {
                     item.classList.add('matched'); matched++;
-                    if (matched >= activeItemCount - 1) endGame('Survie rÃƒÂ©ussie !', true);
+                    if (matched >= activeItemCount - 1) endGame('Survie réussie !', true);
                 }
                 return;
             }
@@ -988,11 +988,11 @@
                     currentSequenceIdx++;
 
                     if (currentSequenceIdx >= targetSequence.length) {
-                        endGame('SÃƒÂ©quence complÃƒÂ©tÃƒÂ©e !', true);
+                        endGame('Séquence complétée !', true);
                     } else {
                         const targetUI = document.getElementById('dynamic-target-ui');
                         if (targetUI) {
-                            targetUI.querySelector('span').textContent = `Ãƒâ€°tape ${currentSequenceIdx + 1}/${targetSequence.length} - Trouvez :`;
+                            targetUI.querySelector('span').textContent = `Étape ${currentSequenceIdx + 1}/${targetSequence.length} - Trouvez :`;
                             const visualTarget = targetUI.querySelector('.item');
                             visualTarget.innerHTML = '';
                             visualTarget.className = `item type-${currentDayConfig.type}`;
@@ -1003,7 +1003,7 @@
                 } else {
                     item.classList.add('error');
                     showSolutionHighlight([targetSequence[currentSequenceIdx]]);
-                    endGame('Erreur de sÃƒÂ©quence !', false);
+                    endGame('Erreur de séquence !', false);
                 }
                 return;
             }
@@ -1013,14 +1013,14 @@
                     item.classList.add('matched');
                     currentRound++;
                     if (currentRound > totalRounds) {
-                        endGame('Calculs validÃƒÂ©s !', true);
+                        endGame('Calculs validés !', true);
                     } else {
                         // Next round delay for visual feedback
                         setTimeout(() => { if (!isPaused) window.startMathRound(); }, 400);
                     }
                 } else {
                     item.classList.add('error');
-                    showSolutionHighlight([currentMathTarget]); 
+                    showSolutionHighlight([currentMathTarget]);
                     endGame('Erreur de calcul !', false);
                 }
                 return;
@@ -1040,7 +1040,7 @@
             timerDisplay.textContent = (timeElapsed / 1000).toFixed(3);
         }
 
-        // Ã¢â€â‚¬Ã¢â€â‚¬ Lookup tables for knowledge/text types Ã¢â€â‚¬Ã¢â€â‚¬
+        // ——— Lookup tables for knowledge/text types ———
         // Handle item clicks
         function handleSelection(item) {
             const index = selectionOrder.indexOf(item);
@@ -1073,7 +1073,7 @@
             if (isPaused) return;
 
             if (selectionOrder.length < activeItemCount) {
-                resultDisplay.textContent = `SÃƒÂ©lectionnez les ${activeItemCount} ÃƒÂ©lÃƒÂ©ments d'abord.`;
+                resultDisplay.textContent = `Sélectionnez les ${activeItemCount} éléments d'abord.`;
                 resultDisplay.style.color = '#ff9800';
                 setTimeout(() => { if (!isPaused) resultDisplay.textContent = ''; }, 1500);
                 return;
@@ -1085,7 +1085,7 @@
             const isCorrect = values.every((val, i) => val === sortedValues[i]);
 
             if (isCorrect) {
-                endGame(`Bravo ! Jour terminÃƒÂ©.`, true);
+                endGame(`Bravo ! Jour terminé.`, true);
             } else {
                 isPaused = true;
                 clearInterval(timerInterval);
@@ -1121,7 +1121,7 @@
                 // Label: your answer
                 const lblYou = document.createElement('div');
                 lblYou.style.cssText = 'font-weight:bold;font-size:1rem;color:#555;text-align:center;margin-bottom:8px;';
-                lblYou.textContent = 'Votre rÃƒÂ©ponse :';
+                lblYou.textContent = 'Votre réponse :';
                 innerWrap.appendChild(lblYou);
 
                 // Row 1: player's answer (badges below, red if wrong)
@@ -1174,7 +1174,7 @@
                 svgTxt.setAttribute('font-size', '13');
                 svgTxt.setAttribute('font-weight', 'bold');
                 svgTxt.setAttribute('font-family', 'Arial, sans-serif');
-                svgTxt.textContent = 'Ã¢â€ â€œ Solution Ã¢â€ â€œ';
+                svgTxt.textContent = '↓ Solution ↓';
                 svg.appendChild(svgTxt);
 
                 innerWrap.appendChild(svg);
@@ -1300,13 +1300,13 @@
                         if (data.message === "Banned word") {
                             dbMessage.textContent = "Ce nom contient un mot interdit.";
                         } else if (data.message === "Name taken for this config") {
-                            dbMessage.textContent = isUpdate ? "" : "Score dÃƒÂ©jÃƒÂ  enregistrÃƒÂ© pour cette difficultÃƒÂ©.";
+                            dbMessage.textContent = isUpdate ? "" : "Score déjà enregistré pour cette difficulté.";
                         } else {
                             dbMessage.textContent = "Erreur serveur.";
                         }
                         if (!isUpdate || data.message !== "Name taken for this config") dbMessage.style.color = "#dc3545";
                     } else {
-                        dbMessage.textContent = isUpdate ? "Avis enregistrÃƒÂ© !" : "Score enregistrÃƒÂ© avec succÃƒÂ¨s !";
+                        dbMessage.textContent = isUpdate ? "Avis enregistré !" : "Score enregistré avec succès !";
                         dbMessage.style.color = "#28a745";
                     }
                     // Only refresh the leaderboard array if it's the initial submission
@@ -1366,14 +1366,14 @@
         // Browser back button = auto fail if game in progress
         window.addEventListener('popstate', function (e) {
             if (gameInProgress && currentDayConfig && !isPaused) {
-                endGame('Retour dÃƒÂ©tectÃƒÂ© ! Partie abandonnÃƒÂ©e.', false, true);
+                endGame('Retour détecté ! Partie abandonnée.', false, true);
             }
         });
 
         // Tab/window close = warn and hide content to prevent cheating
         window.addEventListener('beforeunload', function (e) {
             if (gameInProgress && currentDayConfig && !isPaused) {
-                document.body.style.display = 'none'; // Cache l'ÃƒÂ©cran pendant la pop-up de confirmation
+                document.body.style.display = 'none'; // Cache l'écran pendant la pop-up de confirmation
                 e.preventDefault();
                 e.returnValue = '';
             }
