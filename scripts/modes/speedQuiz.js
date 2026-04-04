@@ -162,7 +162,17 @@ function startGameSpeedQuiz() {
                         if(currentRound > totalRounds) {
                             setTimeout(() => endGame('Quiz terminé !', true), 300);
                         } else {
-                            setTimeout(() => window.startQuizRound(), 400); 
+                            // Bouton "Suivant" entre les rounds
+                            isPaused = true;
+                            const nextBtn = document.createElement('button');
+                            nextBtn.className = 'action-btn';
+                            nextBtn.style.cssText = 'margin-top: 20px; font-size: 1.2rem; padding: 12px 30px;';
+                            nextBtn.textContent = `Suivant (${currentRound}/${totalRounds})`;
+                            nextBtn.addEventListener('click', () => {
+                                isPaused = false;
+                                window.startQuizRound();
+                            });
+                            board.appendChild(nextBtn);
                         }
                     }
                 } else {

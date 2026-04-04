@@ -102,6 +102,11 @@ function startGameDobble() {
                         item.classList.add('selected');
                         item.style.boxShadow = '0 0 0 4px #007bff';
                     }
+
+                    // Auto-validation quand 4 items sélectionnés (un par colonne)
+                    if (selectionOrder.length === 4) {
+                        setTimeout(() => verifyOrder(), 150);
+                    }
                 });
                 colCont.appendChild(item);
             });

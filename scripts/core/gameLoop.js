@@ -242,7 +242,7 @@ function startGame() {
                     cursorDir = 1;
                 }
                 domItems[cursorIdx].classList.add('cursor-active');
-            }, 100); // Speed of the cursor (in milliseconds)
+            }, 200); // Speed of the cursor (in milliseconds)
 
             // Click anywhere on the board to catch the current item
             board.onpointerdown = (e) => {
@@ -289,7 +289,11 @@ function endGame(message, isWin, isRageQuit = false) {
     clearInterval(timerInterval);
     clearTimeout(gameTimeout);
     clearInterval(envInterval);
+    clearInterval(window.speedTimer);
     board.classList.remove('blackout-mode');
+
+    // Scroll vers le haut pour afficher le résultat
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
     isPaused = true;
     gameInProgress = false;
@@ -338,6 +342,10 @@ function returnToMenu() {
     shareBtn.classList.add('hidden');
     startBtn.classList.add('hidden');
     checkBtn.classList.add('hidden');
+
+    // Nettoyer l'URL pour ne pas garder le lien vers le niveau
+    const cleanUrl = window.location.href.split('?')[0];
+    history.replaceState(null, '', cleanUrl);
     pendingTimeVal = 0; // Réinitialise le temps en attente
     board.classList.add('hidden');
     board.classList.remove('blackout-mode');

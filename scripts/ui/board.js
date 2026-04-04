@@ -61,6 +61,12 @@ function showExample(day, boardEl) {
             row.appendChild(item);
         });
     } else if (mode.specialGen === 'pair' || mode.specialGen === 'pairs') {
+        // Instruction explicite
+        const desc = document.createElement('div');
+        desc.style.cssText = 'width:100%; text-align:center; font-weight:bold; color:#333; margin-bottom:10px;';
+        desc.textContent = mode.specialGen === 'pairs' ? 'Retrouvez toutes les paires identiques !' : 'Trouvez les 2 éléments identiques !';
+        row.appendChild(desc);
+
         let v = generateValues(day.type, 3);
         let exVals = mode.specialGen === 'pair' ? [v[0], v[1], v[2], v[0]] : [v[0], v[0], v[1], v[1]];
         exVals.sort(() => Math.random() - 0.5).forEach(val => {

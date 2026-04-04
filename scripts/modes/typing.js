@@ -36,11 +36,12 @@ function startGameTyping() {
     board.style.flexDirection = 'column';
     board.style.alignItems = 'center';
 
+    const isCompact = activeItemCount > 20;
     const wordContainer = document.createElement('div');
-    wordContainer.style.cssText = 'font-size: 2rem; font-weight: bold; letter-spacing: 5px; margin-bottom: 20px; color: #333; max-width: 100%; word-break: break-all; text-align: center;';
+    wordContainer.style.cssText = `font-size: ${isCompact ? '1.2rem' : '2rem'}; font-weight: bold; letter-spacing: ${isCompact ? '2px' : '5px'}; margin-bottom: ${isCompact ? '10px' : '20px'}; color: #333; max-width: 100%; word-break: break-all; text-align: center;`;
 
     const inputContainer = document.createElement('div');
-    inputContainer.style.cssText = 'display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; width: 100%;';
+    inputContainer.style.cssText = `display: flex; gap: ${isCompact ? '3px' : '5px'}; flex-wrap: wrap; justify-content: center; width: 100%;`;
 
     // Generate characters from a shuffled pool to avoid close repetitions
     let chars = [];
@@ -62,7 +63,9 @@ function startGameTyping() {
         const inp = document.createElement('input');
         inp.type = 'text';
         inp.maxLength = 1;
-        inp.style.cssText = 'width: 35px; height: 45px; font-size: 24px; text-align: center; text-transform: uppercase; border: 2px solid #ccc; border-radius: 4px; padding: 0;';
+        inp.style.cssText = isCompact
+            ? 'width: 25px; height: 32px; font-size: 16px; text-align: center; text-transform: uppercase; border: 2px solid #ccc; border-radius: 4px; padding: 0;'
+            : 'width: 35px; height: 45px; font-size: 24px; text-align: center; text-transform: uppercase; border: 2px solid #ccc; border-radius: 4px; padding: 0;';
         inp.autocomplete = 'off'; // Prevent OS autocomplete
         inp.dataset.char = char;
 
