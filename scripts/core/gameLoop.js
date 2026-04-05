@@ -37,6 +37,7 @@ function startGame() {
     leaderboardList.innerHTML = '<li style="padding: 10px; text-align: center;">Chargement...</li>'; // Clear previous ghost leaderboard
     dbMessage.textContent = ''; // Clear previous messages
     board.className = 'board';
+    board.onpointerdown = null; // Clean up cursor-mode listener from previous game
 
     // Clear any lingering target UI from previous games
     const oldTargetUI = document.getElementById('dynamic-target-ui');
