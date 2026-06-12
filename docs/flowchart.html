@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orderix — Flowchart</title>
+<style>
+:root{--bleu:#4A6CFA;--bleu2:#3553D1;--pale:#EEF2FF;--encre:#23262F;--gris:#8B90A0;
+--fond:#F4F6FA;--ligne:#E8EAF1;--or:#F5B227;--vert:#34B871;--rouge:#E0533D}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Segoe UI',Roboto,sans-serif;background:var(--fond);color:var(--encre)}
+/* fond pointillé façon FigJam */
+#viewport{
+  position:fixed;inset:0;cursor:grab;
+  background-image:radial-gradient(circle, #D8DCE6 1.2px, transparent 1.2px);
+  background-size:26px 26px;
+}
+#viewport.grabbing{cursor:grabbing}
+#canvas{position:absolute;top:0;left:0;width:1300px;height:1760px;transform-origin:0 0}
+#edges{position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible}
+/* nœuds */
+.node{
+  position:absolute;background:#fff;border:1.5px solid var(--ligne);border-radius:12px;
+  padding:10px 14px;font-size:.84rem;font-weight:700;line-height:1.25;
+  box-shadow:0 2px 6px rgba(35,38,47,.08);
+}
+.node small{display:block;font-weight:500;color:var(--gris);font-size:.72rem;margin-top:3px}
+.node.start{background:var(--encre);color:#fff;border-color:var(--encre)}
+.node.start small{color:#B9BDC9}
+.node.screen{background:var(--pale);border-color:var(--bleu);color:var(--bleu2)}
+.node.screen small{color:#7387D8}
+.node.process{border-left:4px solid var(--bleu)}
+.node.win{background:#E3F7ED;border-color:var(--vert);color:#1E7A4A}
+.node.win small{color:#56A87E}
+.node.lose{background:#FCE9E5;border-color:var(--rouge);color:#A93A29}
+.node.lose small{color:#C97A6D}
+.node.info{border-style:dashed;background:#FBFCFE;font-weight:500;color:var(--gris)}
+.node.dashed{border-style:dashed}
+.node.decision{
+  background:#FFF6E3;border:1.5px solid var(--or);color:#8A6310;
+  border-radius:14px;transform:rotate(0);text-align:center;
+}
+/* étiquettes de section */
+.section{
+  position:absolute;font-size:.72rem;font-weight:900;letter-spacing:.22em;
+  text-transform:uppercase;color:#B9BDC9;
+}
+/* étiquettes d'arêtes */
+.elabel{
+  position:absolute;transform:translate(-50%,-50%);
+  background:#fff;border:1px solid var(--ligne);border-radius:999px;
+  padding:2px 9px;font-size:.68rem;font-weight:700;color:var(--gris);
+  white-space:nowrap;box-shadow:0 1px 2px rgba(35,38,47,.06);
+}
+.elabel.yes{color:var(--vert);border-color:var(--vert)}
+.elabel.no{color:var(--rouge);border-color:var(--rouge)}
+.elabel.blue{color:var(--bleu2);border-color:var(--bleu)}
+/* barre d'outils + légende */
+#toolbar{
+  position:fixed;top:14px;left:14px;z-index:10;display:flex;gap:6px;align-items:center;
+  background:#fff;border:1px solid var(--ligne);border-radius:12px;padding:8px 12px;
+  box-shadow:0 4px 14px rgba(35,38,47,.1);font-size:.85rem;font-weight:700;
+}
+#toolbar button{
+  width:30px;height:30px;border-radius:8px;background:var(--pale);color:var(--bleu2);
+  border:none;font-weight:900;font-size:1rem;cursor:pointer;
+}
+#legend{
+  position:fixed;top:14px;right:14px;z-index:10;background:#fff;border:1px solid var(--ligne);
+  border-radius:12px;padding:10px 14px;box-shadow:0 4px 14px rgba(35,38,47,.1);
+  font-size:.72rem;font-weight:600;color:var(--gris);display:grid;gap:5px;
+}
+#legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
+#hint{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);z-index:10;
+  font-size:.72rem;color:var(--gris);background:#fff;border:1px solid var(--ligne);
+  border-radius:999px;padding:4px 14px}
+</style>
+</head>
+<body>
+
+<div id="toolbar">
+  <span style="color:var(--bleu2)">Order<b>ix</b></span>&nbsp;· Flowchart
+  <button id="zout">−</button><button id="zin">+</button><button id="zfit" style="width:auto;padding:0 10px;font-size:.75rem">Ajuster</button>
+</div>
+<div id="legend">
+  <span><i style="background:#23262F"></i>Système / démarrage</span>
+  <span><i style="background:#EEF2FF;border:1px solid #4A6CFA"></i>Écran</span>
+  <span><i style="background:#fff;border-left:4px solid #4A6CFA;border-radius:2px"></i>Processus</span>
+  <span><i style="background:#FFF6E3;border:1px solid #F5B227"></i>Décision</span>
+  <span><i style="background:#E3F7ED;border:1px solid #34B871"></i>Victoire</span>
+  <span><i style="background:#FCE9E5;border:1px solid #E0533D"></i>Défaite / abandon</span>
+  <span style="color:#B9BDC9">‒ ‒ ‒ asynchrone / retour</span>
+</div>
+<div id="hint">Molette = zoom · cliquer-glisser = déplacer</div>
+
+<div id="viewport">
+  <div id="canvas">
+    <svg id="edges"></svg>
+  </div>
+</div>
+
+<script>
+// ─── Données du graphe ───────────────────────────────────────────
+const NODES = [
+  // SECTION DÉMARRAGE
+  { id:'splash', x:60,  y:90,  w:170, t:'start',  l:'Splash natif', s:'Android / Capacitor' },
+  { id:'boot',   x:300, y:90,  w:200, t:'start',  l:'Chargement des scripts', s:'data → modes → state → ui' },
+  { id:'ready',  x:570, y:90,  w:190, t:'screen', l:'ACCUEIL affiché', s:'jamais bloqué par le réseau' },
+  { id:'config', x:300, y:205, w:200, t:'info',   l:'Config des jours', s:'cache local → GAS (timeout 4 s)' },
+  { id:'played', x:570, y:205, w:200, t:'info',   l:'Jours joués (serveur)', s:'si pseudo enregistré' },
+  { id:'pending',x:840, y:205, w:230, t:'info',   l:'Partie interrompue ?', s:'app tuée en plein jeu → abandon' },
+
+  // SECTION NAVIGATION
+  { id:'tabbar', x:430, y:350, w:250, t:'start',  l:'Barre d’onglets', s:'masquée pendant une partie' },
+  { id:'home',   x:60,  y:480, w:190, t:'screen', l:'ACCUEIL', s:'HUD · puzzle du jour · top 3' },
+  { id:'cal',    x:330, y:480, w:170, t:'screen', l:'ANNÉE', s:'calendrier 365 cases' },
+  { id:'league', x:570, y:480, w:180, t:'screen', l:'CLASSEMENT', s:'top 10 du jour' },
+  { id:'profil', x:820, y:480, w:170, t:'screen', l:'PROFIL', s:'pseudo · statistiques' },
+  { id:'origin', x:920, y:740, w:200, t:'screen dashed', l:'Écran d’origine', s:'returnScreen : accueil OU année' },
+
+  // SECTION JOUR
+  { id:'select', x:330, y:660, w:210, t:'process',l:'selectDay(jour)', s:'mémorise l’écran d’origine' },
+  { id:'dejajoue',x:355,y:780, w:160, t:'decision',l:'Déjà joué ?', s:'serveur puis local' },
+  { id:'consult',x:630, y:780, w:210, t:'process',l:'Vue résultat (lecture)', s:'temps · classement — pas de rejeu' },
+  { id:'intro',  x:330, y:920, w:210, t:'process',l:'INTRO', s:'consigne + exemple + « Commencer »' },
+  { id:'start',  x:330, y:1040,w:210, t:'process',l:'startGame()', s:'reset plateau · chrono 10 ms · marqueur' },
+  { id:'dispatch',x:330,y:1160,w:210, t:'process',l:'Aiguillage du mode', s:'selon GAME_MODES[modeId]' },
+  { id:'engines',x:630, y:1160,w:250, t:'info',   l:'10 moteurs dédiés + générique', s:'47 modes : tris, chasses, calcul, lettres…' },
+  { id:'win',    x:90,  y:1300,w:170, t:'win',    l:'VICTOIRE', s:'objectif atteint / tri juste' },
+  { id:'lose',   x:330, y:1300,w:180, t:'lose',   l:'DÉFAITE', s:'1 erreur suffit · correction affichée' },
+  { id:'abandon',x:580, y:1300,w:190, t:'lose',   l:'ABANDON', s:'back confirmé en pleine partie' },
+  { id:'end',    x:330, y:1430,w:210, t:'process',l:'endGame()', s:'sauvegarde locale + envoi score (si pseudo)' },
+  { id:'panel',  x:330, y:1550,w:210, t:'process',l:'Panneau résultat', s:'temps · phrase · confettis si victoire' },
+  { id:'avis',   x:630, y:1550,w:190, t:'process',l:'Avis sur le puzzle', s:'♥ / pas trop / passer — obligatoire' },
+  { id:'actions',x:900, y:1550,w:230, t:'process',l:'Actions finales', s:'Partager · Accueil · Top 10 du jour' },
+];
+
+// from, to, [label, class, fromSide, toSide, dashed]
+const EDGES = [
+  ['splash','boot'], ['boot','ready'],
+  ['boot','config', 'asynchrone','', 'b','t', true],
+  ['boot','played', '','', 'b','t', true],
+  ['boot','pending','','', 'b','t', true],
+
+  ['tabbar','home','⇄','blue','b','t'], ['tabbar','cal','⇄','blue','b','t'],
+  ['tabbar','league','⇄','blue','b','t'], ['tabbar','profil','⇄','blue','b','t'],
+  ['ready','tabbar','','','b','t'],
+  ['home','profil','« + » du HUD','', 'b','b', true],
+
+  ['home','select','« Jouer »','blue','b','l'],
+  ['cal','select','tap sur une case','blue','b','t'],
+  ['select','dejajoue'],
+  ['dejajoue','consult','OUI','yes','r','l'],
+  ['dejajoue','intro','NON','no','b','t'],
+  ['consult','origin','← back','', 'r','b', true],
+  ['intro','origin','← back (sans pénalité)','', 'r','l', true],
+  ['intro','start','« Commencer »','blue'],
+  ['start','dispatch'],
+  ['dispatch','engines','','','r','l'],
+  ['dispatch','win','','','b','t'],
+  ['dispatch','lose','','','b','t'],
+  ['dispatch','abandon','back + confirmation','no','b','t'],
+  ['win','end','','','b','l'],
+  ['lose','end'],
+  ['abandon','end','','','b','r'],
+  ['end','panel'],
+  ['panel','avis','','','r','l'],
+  ['avis','actions','','','r','l'],
+  ['actions','origin','← back','', 't','r', true],
+  ['actions','home','« Accueil »','blue','t','b', true],
+];
+
+const SECTIONS = [
+  { x:60, y:50,  l:'1 · Démarrage' },
+  { x:60, y:330, l:'2 · Navigation' },
+  { x:60, y:625, l:'3 · Cycle d’un puzzle' },
+];
+
+// ─── Rendu ───────────────────────────────────────────────────────
+const canvas = document.getElementById('canvas');
+const svg = document.getElementById('edges');
+svg.innerHTML = `<defs>
+  <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#8B90A0"/>
+  </marker>
+  <marker id="arrb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#4A6CFA"/>
+  </marker>
+</defs>`;
+
+const byId = {};
+NODES.forEach(n => {
+  byId[n.id] = n;
+  const el = document.createElement('div');
+  el.className = 'node ' + n.t;
+  el.style.left = n.x + 'px';
+  el.style.top = n.y + 'px';
+  el.style.width = n.w + 'px';
+  el.innerHTML = n.l + (n.s ? `<small>${n.s}</small>` : '');
+  canvas.appendChild(el);
+  n.el = el;
+});
+SECTIONS.forEach(s => {
+  const el = document.createElement('div');
+  el.className = 'section';
+  el.style.left = s.x + 'px'; el.style.top = s.y + 'px';
+  el.textContent = s.l;
+  canvas.appendChild(el);
+});
+
+// hauteur réelle des nœuds après rendu
+NODES.forEach(n => { n.h = n.el.offsetHeight; });
+
+function anchor(n, side) {
+  if (side === 'l') return [n.x, n.y + n.h / 2];
+  if (side === 'r') return [n.x + n.w, n.y + n.h / 2];
+  if (side === 't') return [n.x + n.w / 2, n.y];
+  return [n.x + n.w / 2, n.y + n.h]; // 'b'
+}
+// côté par défaut : selon la position relative
+function autoSides(a, b) {
+  const dx = (b.x + b.w / 2) - (a.x + a.w / 2);
+  const dy = (b.y + b.h / 2) - (a.y + a.h / 2);
+  if (Math.abs(dy) >= Math.abs(dx)) return dy > 0 ? ['b', 't'] : ['t', 'b'];
+  return dx > 0 ? ['r', 'l'] : ['l', 'r'];
+}
+
+EDGES.forEach(e => {
+  const [fromId, toId, label, cls, fs, ts, dashed] = e;
+  const a = byId[fromId], b = byId[toId];
+  let [s1, s2] = (fs && ts) ? [fs, ts] : autoSides(a, b);
+  const [x1, y1] = anchor(a, s1);
+  const [x2, y2] = anchor(b, s2);
+  const K = 55;
+  const c1 = s1 === 'l' ? [x1 - K, y1] : s1 === 'r' ? [x1 + K, y1] : s1 === 't' ? [x1, y1 - K] : [x1, y1 + K];
+  const c2 = s2 === 'l' ? [x2 - K, y2] : s2 === 'r' ? [x2 + K, y2] : s2 === 't' ? [x2, y2 - K] : [x2, y2 + K];
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', `M${x1},${y1} C${c1[0]},${c1[1]} ${c2[0]},${c2[1]} ${x2},${y2}`);
+  path.setAttribute('fill', 'none');
+  path.setAttribute('stroke', cls === 'blue' ? '#4A6CFA' : '#8B90A0');
+  path.setAttribute('stroke-width', '2');
+  if (dashed) path.setAttribute('stroke-dasharray', '6,5');
+  path.setAttribute('marker-end', cls === 'blue' ? 'url(#arrb)' : 'url(#arr)');
+  svg.appendChild(path);
+
+  if (label) {
+    const mx = (x1 + 3 * c1[0] + 3 * c2[0] + x2) / 8;
+    const my = (y1 + 3 * c1[1] + 3 * c2[1] + y2) / 8;
+    const lab = document.createElement('div');
+    lab.className = 'elabel' + (cls ? ' ' + cls : '');
+    lab.style.left = mx + 'px';
+    lab.style.top = my + 'px';
+    lab.textContent = label;
+    canvas.appendChild(lab);
+  }
+});
+
+// ─── Pan & zoom ──────────────────────────────────────────────────
+const vp = document.getElementById('viewport');
+let scale = 1, tx = 0, ty = 0;
+function apply() { canvas.style.transform = `translate(${tx}px,${ty}px) scale(${scale})`; }
+function fit() {
+  const m = 40;
+  scale = Math.min((innerWidth - m) / 1300, (innerHeight - m) / 1760, 1.4);
+  tx = (innerWidth - 1300 * scale) / 2;
+  ty = m / 2;
+  apply();
+}
+fit();
+addEventListener('resize', fit);
+
+vp.addEventListener('wheel', e => {
+  e.preventDefault();
+  const f = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+  const ns = Math.min(3, Math.max(.25, scale * f));
+  // zoom centré sur le curseur
+  tx = e.clientX - (e.clientX - tx) * (ns / scale);
+  ty = e.clientY - (e.clientY - ty) * (ns / scale);
+  scale = ns;
+  apply();
+}, { passive: false });
+
+let drag = null;
+vp.addEventListener('pointerdown', e => { drag = { x: e.clientX - tx, y: e.clientY - ty }; vp.classList.add('grabbing'); vp.setPointerCapture(e.pointerId); });
+vp.addEventListener('pointermove', e => { if (!drag) return; tx = e.clientX - drag.x; ty = e.clientY - drag.y; apply(); });
+vp.addEventListener('pointerup', () => { drag = null; vp.classList.remove('grabbing'); });
+
+document.getElementById('zin').onclick = () => { scale = Math.min(3, scale * 1.25); apply(); };
+document.getElementById('zout').onclick = () => { scale = Math.max(.25, scale / 1.25); apply(); };
+document.getElementById('zfit').onclick = fit;
+</script>
+</body>
+</html>

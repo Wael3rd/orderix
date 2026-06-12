@@ -1,0 +1,12 @@
+{
+  "appId": "com.orderix.app",
+  "appName": "Orderix",
+  "webDir": "www",
+  "backgroundColor": "#F8F3EB",
+  "android": {
+    "allowMixedContent": false
+  },
+  "server": {
+    "androidScheme": "https"
+  }
+}

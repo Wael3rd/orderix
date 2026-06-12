@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2732" height="2732" viewBox="0 0 2732 2732">
+  <rect width="2732" height="2732" fill="#F4F6FA"/>
+
+  <defs>
+    <radialGradient id="halo" cx="50%" cy="50%" r="40%">
+      <stop offset="0%" stop-color="#EEF2FF"/>
+      <stop offset="100%" stop-color="#F4F6FA"/>
+    </radialGradient>
+  </defs>
+  <rect width="2732" height="2732" fill="url(#halo)"/>
+
+  <!-- Motif de tri centré -->
+  <circle cx="1086" cy="1410" r="56"  fill="#4A6CFA" opacity=".3"/>
+  <circle cx="1244" cy="1396" r="78"  fill="#4A6CFA" opacity=".55"/>
+  <circle cx="1430" cy="1378" r="100" fill="#4A6CFA" opacity=".85"/>
+  <circle cx="1646" cy="1352" r="124" fill="#F5B227"/>
+  <path d="M 1590 1352 L 1632 1396 L 1706 1308" fill="none" stroke="#FFFFFF" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Filet -->
+  <line x1="1186" y1="1640" x2="1330" y2="1640" stroke="#C9D4FD" stroke-width="8" stroke-linecap="round"/>
+  <rect x="1352" y="1626" width="28" height="28" rx="5" fill="#F5B227" transform="rotate(45 1366 1640)"/>
+  <line x1="1402" y1="1640" x2="1546" y2="1640" stroke="#C9D4FD" stroke-width="8" stroke-linecap="round"/>
+</svg>

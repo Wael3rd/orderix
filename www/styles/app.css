@@ -1,0 +1,409 @@
+/* ═══════════════════════════════════════════════════════════════
+   Coquille applicative — layout SNG : HUD, table du jour,
+   classement sur l'accueil, calendrier, profil, 4 onglets
+   ═══════════════════════════════════════════════════════════════ */
+
+#app {
+    max-width: 520px;
+    margin: 0 auto;
+    min-height: 100%;
+    position: relative;
+}
+
+.screen {
+    min-height: 100vh;
+    padding: calc(var(--safe-top) + 16px) 16px calc(var(--safe-bottom) + 96px);
+    animation: screenIn .35s cubic-bezier(.22, .8, .3, 1) both;
+}
+
+@keyframes screenIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: none; }
+}
+
+/* ── HUD joueuse (accueil) ────────────────────────────────── */
+
+.hud {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: riseIn .5s .05s cubic-bezier(.22, .8, .3, 1) both;
+}
+.hud .avatar {
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    border: 2.5px solid var(--bleu);
+    background: var(--bleu-pale);
+    color: var(--bleu-fonce);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    font-weight: 900;
+    flex-shrink: 0;
+}
+.hud .nom { font-weight: 900; font-size: .95rem; line-height: 1.2; }
+.hud .lvl { font-size: .72rem; font-weight: 700; color: var(--bleu); letter-spacing: .04em; }
+.hud .pill {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--carte);
+    border: 1px solid var(--ligne);
+    border-radius: 999px;
+    padding: 6px 8px 6px 8px;
+    font-weight: 900;
+    font-size: .92rem;
+    box-shadow: var(--shadow-tiny);
+}
+.hud .coin {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--or);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .8rem;
+}
+.hud .plus {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--bleu);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900;
+    font-size: .9rem;
+}
+
+@keyframes riseIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: none; }
+}
+
+/* ── Marque + date ────────────────────────────────────────── */
+
+.brand {
+    font-size: 2.7rem;
+    font-weight: 900;
+    letter-spacing: -.02em;
+    text-align: center;
+    line-height: 1.1;
+    margin-top: 14px;
+    animation: riseIn .5s .1s cubic-bezier(.22, .8, .3, 1) both;
+}
+.brand b { color: var(--bleu); }
+
+.home-date {
+    text-align: center;
+    font-weight: 500;
+    font-size: .8rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--gris);
+    animation: riseIn .5s .15s cubic-bezier(.22, .8, .3, 1) both;
+}
+
+/* ── Table « Puzzle du jour » (layout SNG) ────────────────── */
+
+.daily-table {
+    margin-top: 30px;
+    padding: 22px 18px;
+    text-align: center;
+    animation: riseIn .5s .22s cubic-bezier(.22, .8, .3, 1) both;
+}
+.banner {
+    margin: -44px auto 8px;
+    width: fit-content;
+    padding: 9px 28px;
+    border-radius: 999px;
+    position: relative;
+    background: var(--bleu);
+    color: #fff;
+    box-shadow: var(--shadow-cta);
+    font-weight: 700;
+    font-size: .9rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+.daily-num {
+    font-weight: 900;
+    font-size: 4.2rem;
+    line-height: 1;
+    letter-spacing: -.02em;
+    font-variant-numeric: tabular-nums;
+}
+.daily-num small { font-size: 1.1rem; color: var(--gris); font-weight: 500; }
+.daily-mode { font-weight: 900; font-size: 1.5rem; color: var(--bleu); margin-top: 6px; }
+.daily-theme { font-weight: 500; font-size: .9rem; color: var(--gris); }
+.daily-theme b { color: var(--or); font-weight: 700; }
+
+.tiles { display: flex; gap: 6px; justify-content: center; margin-top: 14px; }
+.tile {
+    width: 38px; height: 52px;
+    border-radius: 8px;
+    background: var(--bleu-pale);
+    border: 1.5px solid var(--bleu-bord);
+    color: var(--bleu);
+    font-weight: 900;
+    font-size: 1.3rem;
+    display: flex; align-items: center; justify-content: center;
+}
+.tile.t { background: var(--or-pale); border-color: var(--or-bord); color: var(--or); }
+
+.daily-table .btn { margin-top: 20px; min-width: 220px; }
+
+.daily-done {
+    margin-top: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: .95rem;
+}
+.daily-done.win { background: var(--vert-pale); color: var(--vert); }
+.daily-done.fail { background: var(--rouge-pale); color: var(--rouge); }
+
+/* ── Classement (accueil + écran Ligue) ───────────────────── */
+
+.lead {
+    margin-top: 14px;
+    border-radius: var(--radius-sm);
+    background: var(--carte);
+    padding: 14px 16px;
+    box-shadow: var(--shadow-tiny);
+    animation: riseIn .5s .3s cubic-bezier(.22, .8, .3, 1) both;
+}
+.lead .lt {
+    font-weight: 700;
+    font-size: .82rem;
+    letter-spacing: .12em;
+    color: var(--gris);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    text-align: center;
+}
+.lead ul { list-style: none; }
+.lrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 6px;
+    border-bottom: 1px solid var(--ligne);
+    font-weight: 500;
+    font-size: .95rem;
+}
+.lrow:last-child { border-bottom: none; }
+.lrow .rk { font-weight: 900; width: 24px; color: var(--gris); flex-shrink: 0; }
+.lrow .rk.r1 { color: var(--or); }
+.lrow .rk.r2 { color: var(--gris-clair); }
+.lrow .rk.r3 { color: #CD8B4F; }
+.lrow .av {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--ligne);
+    background: var(--bleu-pale);
+    color: var(--bleu-fonce);
+    display: flex; align-items: center; justify-content: center;
+    font-size: .85rem;
+    font-weight: 900;
+    flex-shrink: 0;
+}
+.lrow .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lrow .sc { margin-left: auto; font-weight: 900; color: var(--vert); font-variant-numeric: tabular-nums; flex-shrink: 0; }
+.lrow .sc.fail { color: var(--rouge); }
+.lrow.me { background: var(--bleu-pale); border-radius: 10px; font-weight: 700; }
+.lrow.me .rk { color: var(--bleu); }
+.lead .empty { text-align: center; color: var(--gris); font-size: .9rem; padding: 12px 0; }
+
+/* ── Écrans secondaires : titres ──────────────────────────── */
+
+.screen-title {
+    font-size: 1.7rem;
+    font-weight: 900;
+    text-align: center;
+    padding-top: 8px;
+}
+.screen-sub {
+    text-align: center;
+    color: var(--gris);
+    font-size: .92rem;
+    margin-top: 2px;
+    margin-bottom: 18px;
+}
+
+/* ── CALENDRIER ───────────────────────────────────────────── */
+
+.month-block { margin-bottom: 20px; }
+
+.month-name {
+    font-weight: 700;
+    font-size: 1.05rem;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+.month-name::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--ligne);
+    transform: translateY(-4px);
+}
+.month-count { font-size: .76rem; font-weight: 700; color: var(--vert); }
+
+.month-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 7px;
+}
+
+.day-chip {
+    aspect-ratio: 1;
+    border-radius: 12px;
+    background: var(--carte);
+    border: 1px solid var(--ligne);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: .92rem;
+    color: var(--gris);
+    transition: transform .12s ease;
+}
+.day-chip:active { transform: scale(.9); }
+.day-chip.win { background: var(--vert); border-color: var(--vert); color: #fff; }
+.day-chip.fail { background: var(--rouge-pale); border-color: var(--rouge-pale); color: var(--rouge); }
+.day-chip.today {
+    border: 2px solid var(--bleu);
+    color: var(--bleu-fonce);
+    background: var(--bleu-pale);
+}
+
+/* ── PROFIL ───────────────────────────────────────────────── */
+
+.profile-card { padding: 20px; margin-bottom: 12px; border-radius: var(--radius-sm); }
+.profile-card h3 { font-size: 1.1rem; margin-bottom: 4px; }
+.profile-card .hint { font-size: .88rem; color: var(--gris); margin-bottom: 14px; }
+
+.stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+}
+.stat {
+    background: var(--fond);
+    border-radius: 10px;
+    text-align: center;
+    padding: 13px 4px 11px;
+}
+.stat b {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--bleu);
+    line-height: 1.2;
+}
+.stat label {
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--gris);
+}
+
+.name-row { display: flex; gap: 8px; }
+.name-row input {
+    flex: 1;
+    min-width: 0;
+    padding: 13px 16px;
+    border: 1.5px solid var(--ligne);
+    border-radius: var(--radius-sm);
+    background: var(--fond);
+    color: var(--encre);
+    outline: none;
+}
+.name-row input:focus { border-color: var(--bleu); }
+.name-row .btn { padding: 13px 20px; font-size: .95rem; }
+
+#name-status { font-size: .85rem; font-weight: 700; margin-top: 8px; min-height: 1.2em; }
+
+.locked-name {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--vert-pale);
+    color: var(--vert);
+    border-radius: var(--radius-sm);
+    padding: 13px 16px;
+    font-weight: 700;
+}
+
+.about-note {
+    text-align: center;
+    color: var(--gris-clair);
+    font-size: .82rem;
+    margin-top: 20px;
+}
+
+/* ── BARRE D'ONGLETS (4 entrées, flat) ────────────────────── */
+
+#tabbar {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(520px, 100%);
+    display: flex;
+    background: var(--carte);
+    border-top: 1px solid var(--ligne);
+    padding: 6px 0 calc(var(--safe-bottom) + 10px);
+    z-index: 50;
+    transition: transform .3s cubic-bezier(.22, .8, .3, 1), opacity .25s ease;
+}
+
+/* Pendant une partie : la barre glisse hors écran */
+#tabbar.away {
+    transform: translate(-50%, 110%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    padding: 6px 0 2px;
+    color: var(--gris);
+    font-size: .68rem;
+    font-weight: 500;
+}
+.tab svg { width: 22px; height: 22px; }
+.tab.active { color: var(--bleu); font-weight: 700; }
+
+/* Loader plein écran initial */
+#boot-loader {
+    position: fixed;
+    inset: 0;
+    background: var(--fond);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    z-index: 200;
+    transition: opacity .4s ease;
+}
+#boot-loader.fade { opacity: 0; pointer-events: none; }
+#boot-loader .brand { margin-top: 0; }
+.boot-spin {
+    width: 26px; height: 26px;
+    border: 3px solid var(--ligne);
+    border-top-color: var(--bleu);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }

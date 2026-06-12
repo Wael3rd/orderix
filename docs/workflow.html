@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orderix — Workflow complet de l'application</title>
+<style>
+:root{--bleu:#4A6CFA;--bleu2:#3553D1;--pale:#EEF2FF;--encre:#23262F;--gris:#8B90A0;
+--fond:#F4F6FA;--carte:#fff;--ligne:#E8EAF1;--or:#F5B227;--vert:#34B871;--rouge:#E0533D}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Roboto,sans-serif;background:var(--fond);color:var(--encre);
+padding:34px 20px 80px;max-width:960px;margin:0 auto;line-height:1.55}
+h1{font-size:1.9rem;font-weight:900}
+h1 b{color:var(--bleu)}
+.sub{color:var(--gris);margin-bottom:26px}
+h2{font-size:1.15rem;font-weight:900;margin:34px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--ligne)}
+h2 .n{display:inline-flex;width:26px;height:26px;border-radius:8px;background:var(--bleu);color:#fff;
+align-items:center;justify-content:center;font-size:.85rem;margin-right:8px;vertical-align:-4px}
+p{margin-bottom:10px}
+code{background:var(--pale);color:var(--bleu2);padding:1px 7px;border-radius:6px;font-size:.86em}
+/* boîtes de flux */
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:14px 0}
+.box{background:var(--carte);border:1.5px solid var(--ligne);border-radius:12px;padding:10px 14px;
+font-weight:700;font-size:.9rem;box-shadow:0 1px 3px rgba(35,38,47,.06)}
+.box small{display:block;font-weight:500;color:var(--gris);font-size:.76rem}
+.box.b{border-color:var(--bleu);background:var(--pale)}
+.box.v{border-color:var(--vert);background:#E3F7ED}
+.box.r{border-color:var(--rouge);background:#FCE9E5}
+.box.o{border-color:var(--or);background:#FFF6E3}
+.arrow{color:var(--gris);font-weight:900;font-size:1.05rem}
+.cond{font-size:.74rem;font-weight:700;color:var(--bleu2);background:var(--pale);
+border-radius:999px;padding:3px 10px}
+.cond.no{color:var(--rouge);background:#FCE9E5}
+/* branches verticales */
+.branch{border-left:3px solid var(--ligne);margin:6px 0 6px 18px;padding:4px 0 4px 16px}
+table{width:100%;border-collapse:collapse;background:var(--carte);border-radius:12px;overflow:hidden;
+box-shadow:0 1px 3px rgba(35,38,47,.06);margin:12px 0;font-size:.9rem}
+th{background:var(--pale);color:var(--bleu2);text-align:left;padding:9px 12px;font-size:.78rem;
+text-transform:uppercase;letter-spacing:.06em}
+td{padding:9px 12px;border-top:1px solid var(--ligne);vertical-align:top}
+td:first-child{font-weight:700;white-space:nowrap}
+.fix{background:#E3F7ED;border:1.5px solid var(--vert);border-radius:12px;padding:12px 16px;margin:12px 0;font-size:.92rem}
+.fix b{color:var(--vert)}
+.warn{background:#FFF6E3;border:1.5px solid var(--or);border-radius:12px;padding:12px 16px;margin:12px 0;font-size:.92rem}
+ul{margin:0 0 10px 22px}
+li{margin-bottom:4px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.8rem;color:var(--gris);margin-top:6px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:5px;vertical-align:-1px}
+</style>
+</head>
+<body>
+
+<h1>Order<b>ix</b> — Workflow complet</h1>
+<p class="sub">Carte logique de l'application (v2, design Easybrain × SNG) — écrans, transitions, cycle de jeu, données.</p>
+
+<!-- ════════════════ 1. DÉMARRAGE ════════════════ -->
+<h2><span class="n">1</span>Démarrage de l'app</h2>
+<div class="flow">
+  <div class="box">Splash natif<small>Android / Capacitor</small></div><span class="arrow">→</span>
+  <div class="box">Boot loader<small>logo + spinner</small></div><span class="arrow">→</span>
+  <div class="box b">Chargement des scripts<small>data → modes → state → ui → main</small></div><span class="arrow">→</span>
+  <div class="box v">ACCUEIL affiché<small>immédiat, jamais bloqué par le réseau</small></div>
+</div>
+<p>En parallèle, sans bloquer l'affichage :</p>
+<ul>
+  <li><b>Config serveur</b> : cache local d'abord (<code>orderix_day_config</code>), puis fetch GAS (timeout 4 s) → nb d'éléments par jour, jours désactivés, overrides mode/type.</li>
+  <li><b>Pseudo sauvegardé ?</b> → verrouille le profil + <code>fetchPlayedDays(pseudo)</code> (jours joués côté serveur).</li>
+  <li><b>Partie interrompue ?</b> (<code>orderix_pending_game</code> non vide = app tuée en plein jeu) → marquée <i>abandonnée</i> en local + envoyée au serveur si pseudo.</li>
+</ul>
+
+<!-- ════════════════ 2. NAVIGATION ════════════════ -->
+<h2><span class="n">2</span>Graphe des écrans &amp; navigation</h2>
+<div class="flow">
+  <div class="box b">ACCUEIL<small>HUD · puzzle du jour · top 3</small></div>
+  <div class="box">ANNÉE<small>calendrier 365 jours</small></div>
+  <div class="box">CLASSEMENT<small>top 10 du jour</small></div>
+  <div class="box">PROFIL<small>pseudo · stats</small></div>
+  <span class="arrow">⇄</span>
+  <span class="cond">barre d'onglets (toujours visible, sauf en jeu)</span>
+</div>
+<div class="flow">
+  <div class="box b">ACCUEIL <small>bouton « Jouer » / « Voir le détail »</small></div>
+  <span class="arrow">→</span>
+  <div class="box o">JOUR (écran de jeu)</div>
+  <span class="arrow">←</span>
+  <span class="cond">back → retour à l'écran d'origine</span>
+</div>
+<div class="flow">
+  <div class="box">ANNÉE <small>tap sur une case</small></div>
+  <span class="arrow">→</span>
+  <div class="box o">JOUR (écran de jeu)</div>
+  <span class="arrow">←</span>
+  <span class="cond">back → retour au CALENDRIER</span>
+</div>
+
+<div class="fix"><b>✓ Corrigé</b> — le bouton retour ramenait toujours à l'accueil, même en venant du calendrier.
+Désormais <code>selectDay()</code> mémorise l'écran d'origine (<code>returnScreen</code>) et le retour
+(<code>goBack()</code>) y ramène. Le bouton « Accueil » du panneau de résultat, lui, va toujours à l'accueil
+(<code>goHome()</code>). Couvert par un test automatique.</div>
+
+<table>
+<tr><th>Déclencheur</th><th>Contexte</th><th>Effet</th></tr>
+<tr><td>Onglet (tabbar)</td><td>partout hors jeu</td><td><code>showScreen(x)</code> — la barre glisse hors écran pendant une partie</td></tr>
+<tr><td>« + » du HUD</td><td>accueil</td><td>ouvre PROFIL</td></tr>
+<tr><td>← (flèche en jeu)</td><td>partie <b>en cours</b></td><td>dialogue de confirmation → <b>abandon</b> (le puzzle est consommé)</td></tr>
+<tr><td>← (flèche en jeu)</td><td>intro ou résultat (pas de chrono)</td><td><code>goBack()</code> → écran d'origine, sans pénalité</td></tr>
+<tr><td>Back Android</td><td>en jeu</td><td>même logique que la flèche (via <code>popstate</code>)</td></tr>
+<tr><td>Back Android</td><td>sur l'accueil</td><td>comportement système (quitte l'app)</td></tr>
+</table>
+
+<!-- ════════════════ 3. CYCLE D'UN PUZZLE ════════════════ -->
+<h2><span class="n">3</span>Cycle de vie d'un puzzle</h2>
+<div class="flow">
+  <div class="box">selectDay(jour)</div><span class="arrow">→</span>
+  <span class="cond">déjà joué ?</span>
+</div>
+<div class="branch">
+  <div class="flow"><span class="cond no">OUI</span><span class="arrow">→</span>
+    <div class="box r">Vue résultat<small>temps, statut, classement — AUCUNE seconde tentative</small></div>
+  </div>
+  <div class="flow"><span class="cond">NON</span><span class="arrow">→</span>
+    <div class="box">INTRO<small>consigne du mode + exemple visuel + « Commencer »</small></div>
+    <span class="arrow">→</span>
+    <div class="box b">startGame()</div>
+  </div>
+</div>
+<p><code>startGame()</code> : remise à zéro centrale (<code>resetBoard()</code> nettoie les styles laissés par le mode précédent),
+chrono lancé (tick 10 ms), marqueur <code>orderix_pending_game</code> posé (filet anti-fermeture), puis aiguillage :</p>
+<div class="flow">
+  <div class="box b">Dispatch du mode</div><span class="arrow">→</span>
+  <div class="box">10 moteurs dédiés<small>reflex · dactylo · points · calcul · lettres · pair/impair · tapis · quiz · juste prix · dobble</small></div>
+  <span class="arrow">+</span>
+  <div class="box">moteur générique<small>~37 modes : tris, chasses, paires, intrus, séquences…</small></div>
+</div>
+<p>Issues possibles — toutes convergent vers <code>endGame(message, isWin, isAbandon)</code> :</p>
+<div class="flow">
+  <div class="box v">VICTOIRE<small>objectif atteint / tri validé juste</small></div>
+  <div class="box r">DÉFAITE<small>mauvaise réponse (1 erreur suffit) / temps écoulé / tri faux → correction affichée</small></div>
+  <div class="box r">ABANDON<small>back confirmé en pleine partie, ou app tuée</small></div>
+</div>
+<div class="flow">
+  <div class="box">endGame()</div><span class="arrow">→</span>
+  <div class="box">Sauvegarde locale<small>+ cache serveur optimiste</small></div><span class="arrow">→</span>
+  <div class="box o">Panneau résultat<small>temps · phrase · confettis si victoire</small></div><span class="arrow">→</span>
+  <div class="box">Avis sur le puzzle<small>♥ / pas trop / passer (obligatoire avant la suite)</small></div><span class="arrow">→</span>
+  <div class="box">Actions + classement<small>Partager · Accueil · top 10 du jour</small></div>
+</div>
+<div class="warn"><b>Règle d'or</b> : un puzzle ne se tente qu'<b>une seule fois</b> (victoire, défaite ou abandon
+le consomment définitivement). La source de vérité est <code>getPlayedInfo(id)</code> = serveur <i>puis</i> local.</div>
+
+<!-- ════════════════ 4. DONNÉES ════════════════ -->
+<h2><span class="n">4</span>Données &amp; réseau</h2>
+<table>
+<tr><th>Donnée</th><th>Où</th><th>Quand</th></tr>
+<tr><td>Progression</td><td><code>orderix_local_results</code> (localStorage + cookie)</td><td>écrite à chaque <code>endGame</code> — fonctionne <b>sans pseudo, hors-ligne</b></td></tr>
+<tr><td>Jours joués (serveur)</td><td>GAS <code>?getPlayed=pseudo</code></td><td>au boot et à la validation du pseudo ; fusionnée avec le local</td></tr>
+<tr><td>Config des jours</td><td>GAS <code>?getConfig=1</code> + cache local</td><td>au boot (timeout 4 s, l'app n'attend jamais le réseau)</td></tr>
+<tr><td>Score</td><td>GAS <code>POST</code></td><td>1× à <code>endGame</code> (si pseudo), puis mise à jour avec l'avis / le partage</td></tr>
+<tr><td>Classements</td><td>GAS <code>?day=N&amp;itemCount=K</code></td><td>accueil (top 3), écran Classement (top 10), fin de partie (top 10)</td></tr>
+<tr><td>Pseudo</td><td><code>orderix_player_name</code> après <code>?checkName</code></td><td>optionnel — requis uniquement pour publier</td></tr>
+</table>
+<p>Dérivés affichés : <b>étoiles</b> = puzzles réussis · <b>niveau</b> = 1 + réussis ÷ 10 ·
+<b>série</b> = jours calendaires consécutifs réussis en remontant depuis aujourd'hui (ou hier si le jour n'est pas encore joué).</p>
+
+<div class="legend">
+  <span><i style="background:#EEF2FF;border:1px solid #4A6CFA"></i>navigation</span>
+  <span><i style="background:#E3F7ED;border:1px solid #34B871"></i>succès / corrigé</span>
+  <span><i style="background:#FCE9E5;border:1px solid #E0533D"></i>échec / fin</span>
+  <span><i style="background:#FFF6E3;border:1px solid #F5B227"></i>écran de jeu / règle</span>
+</div>
+
+</body>
+</html>

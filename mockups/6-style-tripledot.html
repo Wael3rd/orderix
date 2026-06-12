@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orderix — style Tripledot</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── Pastiche Tripledot (Woodoku / Triple Tile) ──
+   Bois chaud, plateau crème, blocs en relief, feuilles,
+   cosy-nature, typographie ronde et rassurante. ── */
+:root{
+  --bois:#A97B4F; --bois-fonce:#7C5633; --bois-clair:#C99B6B;
+  --plateau:#F6ECD9; --case:#EBDCC0; --encre:#5A3E26; --doux:#9A7B5C;
+  --feuille:#7FA85C; --feuille-fonce:#5F8540; --braise:#E2853C;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Nunito',sans-serif;color:var(--encre);min-height:100vh;
+  background:
+    repeating-linear-gradient(92deg, rgba(124,86,51,.10) 0 3px, transparent 3px 26px),
+    repeating-linear-gradient(88deg, rgba(255,235,200,.06) 0 2px, transparent 2px 17px),
+    linear-gradient(170deg,#B8895C, #9C6F44 60%, #8A5F38);
+}
+.phone{max-width:520px;margin:0 auto;padding:24px 18px 116px}
+.titleplank{
+  margin:6px auto 4px;width:fit-content;padding:12px 38px;border-radius:18px;
+  background:linear-gradient(180deg,var(--bois-clair),var(--bois));
+  box-shadow:0 6px 0 var(--bois-fonce), 0 14px 24px rgba(60,38,16,.35), inset 0 2px 0 rgba(255,240,210,.45);
+  text-align:center;
+}
+.titleplank h1{font-family:'Fredoka',sans-serif;font-weight:700;font-size:2.5rem;color:#FFF4DF;
+  text-shadow:0 2.5px 0 var(--bois-fonce);letter-spacing:.02em}
+.date{ text-align:center;color:#F4E3C8;font-weight:800;font-size:.85rem;letter-spacing:.16em;text-transform:uppercase;
+  text-shadow:0 1px 0 rgba(60,38,16,.4);margin-top:10px}
+.board{
+  background:var(--plateau);border-radius:24px;padding:22px 20px;margin-top:16px;text-align:center;
+  box-shadow:0 8px 0 #D9C5A0, 0 22px 38px rgba(60,38,16,.38), inset 0 2px 0 #FFFDF6;
+}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:.8rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--doux)}
+.kicker i{width:10px;height:14px;background:var(--feuille);border-radius:50% 50% 50% 0;display:inline-block}
+.num{font-family:'Fredoka',sans-serif;font-weight:700;font-size:4.4rem;line-height:1.05;color:var(--encre);margin-top:6px}
+.num small{font-size:1.1rem;color:var(--doux);font-weight:600}
+.mode{font-family:'Fredoka',sans-serif;font-weight:600;font-size:1.55rem;margin-top:4px}
+.theme{color:var(--doux);font-weight:700;font-size:.92rem}
+/* mini-grille de blocs façon Woodoku */
+.miniboard{display:grid;grid-template-columns:repeat(6,30px);gap:4px;justify-content:center;margin:16px auto 0}
+.cell{width:30px;height:30px;border-radius:6px;background:var(--case);box-shadow:inset 0 2px 3px rgba(124,86,51,.25)}
+.cell.b{background:linear-gradient(180deg,#D9A368,#C08A4E);box-shadow:0 3px 0 #93642F, inset 0 2px 0 #F0C896}
+.cell.g{background:linear-gradient(180deg,#9CC274,#7FA85C);box-shadow:0 3px 0 #54743A, inset 0 2px 0 #C4E0A4}
+.cta{
+  display:inline-block;margin-top:22px;padding:16px 42px;border:none;border-radius:18px;
+  font-family:'Fredoka',sans-serif;font-weight:700;font-size:1.25rem;color:#FFFDF4;letter-spacing:.03em;
+  background:linear-gradient(180deg,#94BA6C,var(--feuille-fonce));
+  box-shadow:0 6px 0 #46622E, 0 16px 26px rgba(60,38,16,.35), inset 0 2px 0 #C9E5A8;
+  text-shadow:0 1.5px 0 #46622E;
+}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:16px}
+.stat{background:var(--plateau);border-radius:18px;text-align:center;padding:13px 4px;
+  box-shadow:0 5px 0 #D9C5A0, 0 12px 20px rgba(60,38,16,.28)}
+.stat b{display:block;font-family:'Fredoka',sans-serif;font-weight:700;font-size:1.6rem;color:var(--braise)}
+.stat label{font-size:.68rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--doux)}
+.explore{display:flex;align-items:center;justify-content:space-between;background:var(--plateau);
+  border-radius:20px;box-shadow:0 5px 0 #D9C5A0, 0 12px 20px rgba(60,38,16,.28);padding:16px 20px;margin-top:14px}
+.explore .t{font-family:'Fredoka',sans-serif;font-weight:600;font-size:1.2rem}
+.explore .s{font-size:.84rem;font-weight:700;color:var(--doux)}
+.explore .a{width:42px;height:42px;border-radius:14px;background:linear-gradient(180deg,#D9A368,#C08A4E);
+  box-shadow:0 4px 0 #93642F;color:#FFF4DF;display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.tabbar{
+  position:fixed;bottom:16px;left:50%;transform:translateX(-50%);
+  width:min(380px,calc(100% - 44px));display:flex;padding:8px;border-radius:22px;
+  background:linear-gradient(180deg,var(--bois-clair),var(--bois));
+  box-shadow:0 6px 0 var(--bois-fonce), 0 18px 30px rgba(60,38,16,.45), inset 0 2px 0 rgba(255,240,210,.4);
+}
+.tab{flex:1;text-align:center;padding:9px 0;border-radius:15px;color:#F4E3C8;font-weight:800;font-size:.68rem;
+  letter-spacing:.06em;text-transform:uppercase;text-shadow:0 1px 0 rgba(60,38,16,.4)}
+.tab span{display:block;font-size:1.1rem}
+.tab.on{background:var(--plateau);color:var(--encre);text-shadow:none;box-shadow:inset 0 2px 4px rgba(124,86,51,.3)}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="titleplank"><h1>Orderix</h1></div>
+  <p class="date">Vendredi 12 juin</p>
+
+  <div class="board">
+    <span class="kicker"><i></i> Puzzle du jour <i style="transform:rotate(90deg)"></i></span>
+    <div class="num">163<small> / 365</small></div>
+    <p class="mode">Monde Miroir</p>
+    <p class="theme">Thème : WiFi</p>
+    <div class="miniboard">
+      <div class="cell b"></div><div class="cell"></div><div class="cell g"></div><div class="cell g"></div><div class="cell"></div><div class="cell b"></div>
+      <div class="cell b"></div><div class="cell"></div><div class="cell g"></div><div class="cell"></div><div class="cell"></div><div class="cell b"></div>
+      <div class="cell"></div><div class="cell b"></div><div class="cell"></div><div class="cell"></div><div class="cell b"></div><div class="cell"></div>
+    </div>
+    <button class="cta">Jouer</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><b>4 🍂</b><label>en série</label></div>
+    <div class="stat"><b>27</b><label>réussis</label></div>
+    <div class="stat"><b>1,8s</b><label>record</label></div>
+  </div>
+
+  <div class="explore">
+    <div><div class="t">Explorer l'année</div><div class="s">365 puzzles, un par jour</div></div>
+    <div class="a">→</div>
+  </div>
+
+  <nav class="tabbar">
+    <div class="tab on"><span>🌿</span>Jour</div>
+    <div class="tab"><span>🗓</span>Année</div>
+    <div class="tab"><span>🐿</span>Profil</div>
+  </nav>
+</div>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orderix — Heure bleue</title>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Mulish:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --nuit:#10172B; --nuit2:#1B2642; --carte:rgba(255,255,255,.055);
+  --or:#D8B569; --or-clair:#EFD9A7; --ivoire:#F2EDE2; --brume:#9AA5C2;
+  --bord:rgba(216,181,105,.28);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Mulish',sans-serif;color:var(--ivoire);
+  background:linear-gradient(175deg,var(--nuit) 0%,var(--nuit2) 55%,#22304F 100%);
+  min-height:100vh;
+}
+.phone{max-width:520px;margin:0 auto;padding:30px 22px 120px;position:relative;overflow:hidden}
+/* ciel étoilé */
+.stars{position:absolute;inset:0;pointer-events:none}
+.stars i{position:absolute;width:3px;height:3px;border-radius:50%;background:var(--or-clair)}
+.lune{position:absolute;top:26px;right:24px;width:44px;height:44px;border-radius:50%;
+  background:transparent;box-shadow:-10px 6px 0 0 var(--or);opacity:.9;transform:rotate(-12deg)}
+.date{font-size:.76rem;font-weight:800;letter-spacing:.3em;text-transform:uppercase;color:var(--or);text-align:center}
+h1{font-family:'Marcellus',serif;font-weight:400;font-size:3.2rem;text-align:center;letter-spacing:.04em;margin-top:4px}
+h1 em{font-style:normal;color:var(--or)}
+.tagline{text-align:center;color:var(--brume);font-size:.98rem;font-weight:600}
+.filet{display:flex;align-items:center;gap:12px;justify-content:center;margin:16px 0 6px;color:var(--or)}
+.filet::before,.filet::after{content:'';width:54px;height:1px;background:linear-gradient(to right,transparent,var(--or))}
+.filet::after{transform:scaleX(-1)}
+.filet b{font-size:.8rem}
+.card{
+  background:var(--carte);border:1px solid var(--bord);border-radius:24px;
+  backdrop-filter:blur(8px);
+  box-shadow:0 24px 60px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.08);
+  padding:30px 24px;margin-top:18px;text-align:center;position:relative;overflow:hidden;
+}
+.card::before{content:'';position:absolute;top:-90px;left:50%;transform:translateX(-50%);
+  width:260px;height:200px;background:radial-gradient(closest-side,rgba(216,181,105,.22),transparent);}
+.kicker{font-size:.72rem;font-weight:800;letter-spacing:.32em;text-transform:uppercase;color:var(--brume)}
+.num{font-family:'Marcellus',serif;font-size:5rem;color:var(--or-clair);line-height:1;margin:12px 0 0;text-shadow:0 0 26px rgba(216,181,105,.35)}
+.num small{font-size:1.1rem;color:var(--brume)}
+.mode{font-family:'Marcellus',serif;font-size:1.65rem;letter-spacing:.03em;margin-top:12px}
+.theme{color:var(--brume);font-size:.95rem;margin-top:2px}
+.cta{
+  display:inline-block;margin-top:24px;padding:16px 38px;border-radius:999px;border:none;
+  font-family:'Mulish',sans-serif;font-weight:800;font-size:1.02rem;letter-spacing:.04em;color:#241A05;
+  background:linear-gradient(160deg,var(--or-clair),var(--or));
+  box-shadow:0 10px 30px rgba(216,181,105,.45), inset 0 1px 0 rgba(255,255,255,.5);
+}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:16px}
+.stat{background:var(--carte);border:1px solid rgba(255,255,255,.10);border-radius:16px;text-align:center;padding:15px 4px}
+.stat b{display:block;font-family:'Marcellus',serif;font-size:1.8rem;color:var(--or-clair)}
+.stat label{font-size:.66rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--brume)}
+.explore{display:flex;align-items:center;justify-content:space-between;background:var(--carte);border:1px solid rgba(255,255,255,.10);border-radius:20px;padding:18px 22px;margin-top:14px}
+.explore .t{font-family:'Marcellus',serif;font-size:1.2rem}
+.explore .s{font-size:.84rem;color:var(--brume)}
+.explore .a{width:40px;height:40px;border-radius:50%;border:1px solid var(--bord);color:var(--or);display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+.tabbar{
+  position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
+  width:min(370px,calc(100% - 48px));display:flex;padding:8px;
+  background:rgba(16,23,43,.85);backdrop-filter:blur(14px);
+  border:1px solid var(--bord);border-radius:999px;box-shadow:0 18px 44px rgba(0,0,0,.5);
+}
+.tab{flex:1;text-align:center;padding:10px 0;border-radius:999px;font-size:.66rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--brume)}
+.tab.on{background:linear-gradient(160deg,var(--or-clair),var(--or));color:#241A05}
+.tab span{display:block;font-size:1.02rem;margin-bottom:1px}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="stars">
+    <i style="top:8%;left:12%"></i><i style="top:5%;left:55%;width:2px;height:2px"></i>
+    <i style="top:14%;left:80%;width:2px;height:2px"></i><i style="top:20%;left:30%;width:2px;height:2px"></i>
+    <i style="top:31%;left:90%"></i><i style="top:43%;left:6%;width:2px;height:2px"></i>
+    <i style="top:58%;left:88%;width:2px;height:2px"></i><i style="top:66%;left:14%"></i>
+    <i style="top:77%;left:70%;width:2px;height:2px"></i><i style="top:84%;left:38%"></i>
+  </div>
+  <div class="lune"></div>
+  <p class="date">Vendredi 12 juin</p>
+  <h1>Order<em>ix</em></h1>
+  <p class="tagline">Votre pause d'esprit du soir</p>
+  <div class="filet"><b>✦</b></div>
+
+  <div class="card">
+    <p class="kicker">Puzzle du jour</p>
+    <div class="num">163<small> / 365</small></div>
+    <p class="mode">Monde Miroir</p>
+    <p class="theme">Thème : WiFi</p>
+    <button class="cta">Jouer le puzzle du jour</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><b>4</b><label>en série</label></div>
+    <div class="stat"><b>27</b><label>réussis</label></div>
+    <div class="stat"><b>1,8s</b><label>record</label></div>
+  </div>
+
+  <div class="explore">
+    <div><div class="t">Explorer l'année</div><div class="s">365 puzzles, un par jour</div></div>
+    <div class="a">→</div>
+  </div>
+
+  <nav class="tabbar">
+    <div class="tab on"><span>✦</span>Jour</div>
+    <div class="tab"><span>☾</span>Année</div>
+    <div class="tab"><span>✧</span>Profil</div>
+  </nav>
+</div>
+</body>
+</html>

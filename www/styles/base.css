@@ -1,0 +1,138 @@
+/* ═══════════════════════════════════════════════════════════════
+   ORDERIX — Design system « Easybrain × SNG »
+   Blanc clinique · bleu signature · or · flat & social
+   ═══════════════════════════════════════════════════════════════ */
+
+@font-face {
+    font-family: 'Roboto';
+    src: url('../assets/fonts/roboto-400-normal.woff2') format('woff2');
+    font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+    font-family: 'Roboto';
+    src: url('../assets/fonts/roboto-500-normal.woff2') format('woff2');
+    font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+    font-family: 'Roboto';
+    src: url('../assets/fonts/roboto-700-normal.woff2') format('woff2');
+    font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+    font-family: 'Roboto';
+    src: url('../assets/fonts/roboto-900-normal.woff2') format('woff2');
+    font-weight: 900; font-style: normal; font-display: swap;
+}
+
+:root {
+    /* Palette Easybrain */
+    --bleu: #4A6CFA;
+    --bleu-fonce: #3553D1;
+    --bleu-pale: #EEF2FF;
+    --bleu-bord: #D6DEFC;
+    --encre: #23262F;
+    --gris: #8B90A0;
+    --gris-clair: #B9BDC9;
+    --fond: #F4F6FA;
+    --carte: #FFFFFF;
+    --ligne: #E8EAF1;
+    --or: #F5B227;
+    --or-pale: #FFF6E3;
+    --or-bord: #F7E3B2;
+    --vert: #34B871;
+    --vert-pale: #E3F7ED;
+    --rouge: #E0533D;
+    --rouge-pale: #FCE9E5;
+
+    --sans: 'Roboto', 'Segoe UI', system-ui, sans-serif;
+
+    --radius: 20px;
+    --radius-sm: 12px;
+    --shadow-card: 0 1px 3px rgba(35, 38, 47, .07), 0 8px 24px rgba(35, 38, 47, .06);
+    --shadow-tiny: 0 1px 3px rgba(35, 38, 47, .07);
+    --shadow-cta: 0 4px 12px rgba(74, 108, 250, .35);
+
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+html, body { height: 100%; }
+
+body {
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--encre);
+    background-color: var(--fond);
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior-y: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+h1, h2, h3 { font-weight: 900; letter-spacing: -0.01em; }
+
+button {
+    font-family: inherit;
+    border: none;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+input { font-family: inherit; font-size: 1rem; }
+
+.hidden { display: none !important; }
+
+/* Boutons standard */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 15px 32px;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 1.05rem;
+    transition: transform .12s ease, box-shadow .2s ease, background .2s ease;
+}
+.btn:active { transform: scale(.97); }
+
+.btn-primary {
+    background: var(--bleu);
+    color: #fff;
+    box-shadow: var(--shadow-cta);
+}
+.btn-primary:active { background: var(--bleu-fonce); }
+
+.btn-quiet {
+    background: var(--bleu-pale);
+    color: var(--bleu-fonce);
+}
+
+.btn-ghost {
+    background: var(--carte);
+    color: var(--gris);
+    border: 1.5px solid var(--ligne);
+}
+
+.btn-plum {
+    background: var(--bleu);
+    color: #fff;
+    box-shadow: var(--shadow-cta);
+}
+
+/* Carte générique */
+.card {
+    background: var(--carte);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+}
+
+::-webkit-scrollbar { width: 0; height: 0; }

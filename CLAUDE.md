@@ -4,40 +4,80 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Orderix is a French-language, browser-based daily puzzle game with 365 unique daily levels. Players complete ordering, sorting, and identification challenges with time-based scoring. Built entirely with vanilla JavaScript (no frameworks, no npm, no build step).
+Orderix is a French-language daily brain-puzzle game with 365 unique daily levels, packaged as a
+**native Android app via Capacitor** (the web app in `www/` is the entire game; the `android/`
+folder is the generated native shell). Target audience: women ~40 who enjoy brain games — the UI
+is an "Easybrain × SNG" design: flat utilitarian white/light-gray (Easybrain) with a social home
+layout (SNG): player HUD (avatar/level/stars), "Puzzle du jour" banner card, daily leaderboard on
+home, 4 tabs (Jour/Année/Classement/Profil). Signature blue #4A6CFA, gold #F5B227, green #34B871,
+red #E0533D; Roboto bundled offline in `www/assets/fonts/`.
+
+Vanilla JavaScript, no framework, no bundler: global script loading, load order in
+`www/index.html` matters.
 
 ## Development
 
-**Run locally:** Open `index.html` directly in a browser. No build or install step required.
+- **Web preview:** open `www/index.html` in a browser (everything works except native packaging).
+- **Sync web → Android:** `npx cap sync android`
+- **Build APK:** `cd android && .\gradlew assembleDebug` → `android/app/build/outputs/apk/debug/app-debug.apk`
+  (requires Android SDK; `ANDROID_HOME` or `android/local.properties` must point to it).
+- **Regenerate icons/splash:** sources in `assets/icon.svg` / `assets/splash.svg`, then
+  `npx capacitor-assets generate --android` (PNGs are rendered from the SVGs with sharp).
+- No automated tests or linting. `node --check` each JS file for syntax.
 
-**No automated tests or linting** are configured.
+## Architecture (www/)
 
-## Architecture
+Script load order (index.html): `data.js` → `utils.js` → `generators.js` → `styles.js` →
+`modes/*.js` → `core/state.js` → `api/database.js` → `ui/board.js` → `ui/screens.js` →
+`core/logic.js` → `core/gameLoop.js` → `main.js`. All state is global; name collisions across
+files will cause bugs.
 
-The app uses global script loading (no modules/bundler). Script load order in `index.html` matters — dependencies must be loaded before dependents.
+- **`scripts/data.js`** — `GAME_MODES` (~47 modes, each with a `desc` instruction string;
+  `forceType` pins math modes to readable numeric types; `typeAgnostic` hides the theme),
+  `BASE_TYPES` (50 visual types), `TEXT_TYPES` whitelist, `buildDayTitle()`.
+- **`scripts/core/state.js`** — globals, the 365-day `DAYS` table (procedural mode×type cross),
+  DOM cache, storage helpers, **local progress** (`orderix_local_results`, playable without a
+  nickname), day-of-year ↔ date mapping, stats/streak computation.
+- **`scripts/ui/screens.js`** — screen navigation (home / calendar / profile / game), daily-puzzle
+  card, month-grouped 365-day calendar, `selectDay()` (intro panel with per-mode instructions and
+  visual example).
+- **`scripts/core/gameLoop.js`** — `startGame()`, **`resetBoard()`** (clears all inline styles
+  modes leave on `#game-board` — always call it between games), timer, `endGame()` (result panel,
+  feedback-first flow, petals + haptics), `abandonGame()`, `goHome()`.
+- **`scripts/core/logic.js`** — `handleLogic()` dispatcher + `verifyOrder()` (sort correction view).
+- **`scripts/api/database.js`** — Google Apps Script backend (`GAS_URL` in state.js). Score
+  submission is skipped when no nickname is set (local-only play). Config is cached in storage
+  for offline startup (4s timeout).
+- **`scripts/modes/*.js`** — one file per interactive mode. Typing & speedLetters use an
+  **on-screen AZERTY keypad** (`buildKeypad` in typing.js) — never use physical `<input>` for
+  letters (broken with Android virtual keyboard).
 
-### Load order and data flow
+### Mobile constraints (learned from the 2026 audit — see AUDIT.md)
 
-1. **Data layer** (`scripts/data.js`) — Defines ~50 `BASE_TYPES` (visual/data categories like lightness, emojis, numbers) and ~40 `GAME_MODES`. `DAYS` array maps each of 365 days to a mode+type combination.
-2. **Utilities** (`scripts/utils.js`, `scripts/generators.js`, `scripts/styles.js`) — Helper functions, value generation per type, and visual styling logic.
-3. **Game modes** (`scripts/modes/*.js`) — Each file implements `startGame*()` and `showExample*()` for one mode (reflex, typing, connectDots, mathQuiz, dragDrop, conveyor, speedQuiz, guessNumber, dobble, speedLetters).
-4. **State** (`scripts/core/state.js`) — Global variables, DOM element cache, LocalStorage/cookie helpers, and the Google Apps Script API URL.
-5. **API** (`scripts/api/database.js`) — Score submission, leaderboard fetch, and name validation via Google Apps Script backend (Google Sheets as database).
-6. **UI** (`scripts/ui/board.js`, `scripts/ui/sidebar.js`) — Game board rendering and day-selection sidebar.
-7. **Game logic** (`scripts/core/logic.js`) — `handleLogic()` dispatcher that routes to mode-specific win/loss evaluation.
-8. **Game loop** (`scripts/core/gameLoop.js`) — Initializes a day's game, delegates to the appropriate `startGame*()`, manages timer.
-9. **Entry point** (`scripts/main.js`) — Event listeners and app initialization.
+- Never rely on `:hover`, `mousemove`, or `:active`-reveal mechanics — removed modes hideHover,
+  chaseMin, blurMax for this reason.
+- Modes that render a computed target visually (sum/diff) must use `forceType: 'numbers'`.
+- speedQuiz "starts with / ends with" rules only apply to `TEXT_TYPES`.
+- Every mode sets inline styles on `#game-board`; `resetBoard()` is the only cleanup point.
 
-### Key patterns
+### Adding a new game mode
 
-- **Adding a new game mode:** Create a file in `scripts/modes/`, implement `startGame*()` and `showExample*()`, add the mode to `GAME_MODES` in `data.js`, wire it into `handleLogic()` in `logic.js` and `gameLoop.js`, and add the `<script>` tag in `index.html` in the correct load-order position.
-- **Adding a new base type:** Add to `BASE_TYPES` in `data.js`, add generation logic in `generators.js`, and add styling in `styles.js`.
-- All state is global (no module scope). Variable/function name collisions across files will cause bugs.
-
-### Backend
-
-Google Apps Script at a hardcoded URL in `scripts/core/state.js` (`GAS_URL`). Handles leaderboards, score submission, name checks, and feedback. The actual GAS code is not in this repo.
+Create `www/scripts/modes/<mode>.js` with `startGame*()` and `showExample*(day, row, vals)`
+(renders a static preview into `row`), add the mode (with `desc`) to `GAME_MODES`, wire it in
+`gameLoop.js` (`startGame`) and `ui/board.js` (`showExample`), add the `<script>` tag in
+`www/index.html` before `core/state.js`.
 
 ### Styling
 
-Six CSS files in `styles/`: `layout.css`, `sidebar.css`, `board.css`, `components.css`, `animations.css`, `responsive.css`. The app is mobile-responsive with a collapsible sidebar.
+`www/styles/`: `base.css` (design tokens — always use the CSS variables, e.g. `--bleu`, `--vert`,
+`--or`, `--rouge`, `--fond`, `--carte`, `--ligne`), `app.css` (screens/shell, HUD, lead lists,
+tabbar), `game.css` (board, items, keypad, result panel). Item visuals in `scripts/styles.js` use
+hardcoded palette hexes (blue #4A6CFA/#3553D1, green #34B871, gold #F5B227, red #E0533D,
+ink #23262F, gray #8B90A0). Mockup explorations live in `mockups/` (self-contained HTML +
+`shoot.js` to screenshot them).
+
+### Backend
+
+Google Apps Script (Google Sheets as DB) at `GAS_URL` — leaderboards, score submission, name
+checks, feedback, per-day config overrides. The GAS code is not in this repo. Scores are fully
+client-trusted (known limitation).

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orderix — Sorbet pop</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fond:#F0E9FF; --carte:#FFFFFF; --encre:#4A3B66; --doux:#9285AE;
+  --rose:#FF5E96; --rose2:#FF8DB4; --peche:#FFA15E; --menthe:#4ECDB4;
+  --citron:#FFD166; --lilas:#A78BFA;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Quicksand',sans-serif;color:var(--encre);background:var(--fond);
+  background-image:
+    radial-gradient(45% 30% at 0% 0%, rgba(167,139,250,.25), transparent 70%),
+    radial-gradient(45% 30% at 100% 8%, rgba(255,141,180,.30), transparent 70%),
+    radial-gradient(50% 30% at 50% 104%, rgba(78,205,180,.22), transparent 70%);
+  min-height:100vh;
+}
+.phone{max-width:520px;margin:0 auto;padding:28px 22px 122px;position:relative;overflow:hidden}
+/* confettis */
+.conf{position:absolute;border-radius:50%;pointer-events:none;opacity:.85}
+.date{font-size:.8rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--lilas);text-align:center}
+h1{font-family:'Baloo 2',cursive;font-weight:800;font-size:3.3rem;text-align:center;line-height:1.05;
+  background:linear-gradient(95deg,var(--rose) 10%,var(--lilas) 55%,var(--menthe) 95%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;}
+.tagline{text-align:center;font-weight:700;color:var(--doux);font-size:1rem}
+.card{
+  background:var(--carte);border-radius:32px;padding:30px 24px 28px;margin-top:20px;text-align:center;
+  box-shadow:0 10px 0 #E4D7F8, 0 26px 50px rgba(74,59,102,.16);
+  position:relative;overflow:hidden;
+}
+.badge{position:absolute;top:18px;right:-34px;transform:rotate(38deg);background:var(--citron);color:#7A5C00;
+  font-family:'Baloo 2',cursive;font-weight:800;font-size:.72rem;letter-spacing:.08em;padding:6px 44px}
+.kicker{display:inline-block;background:#F4EDFF;color:var(--lilas);font-weight:800;font-size:.74rem;
+  letter-spacing:.16em;text-transform:uppercase;padding:7px 16px;border-radius:999px}
+.num{font-family:'Baloo 2',cursive;font-weight:800;font-size:4.9rem;line-height:1;color:var(--rose);margin-top:12px;
+  text-shadow:0 5px 0 #FFD9E6;}
+.num small{font-size:1.15rem;color:var(--doux);text-shadow:none}
+.mode{font-family:'Baloo 2',cursive;font-weight:700;font-size:1.7rem;margin-top:8px}
+.theme{color:var(--doux);font-weight:700;font-size:.95rem}
+.cta{
+  display:inline-block;margin-top:22px;padding:17px 38px;border-radius:999px;border:none;
+  font-family:'Baloo 2',cursive;font-weight:800;font-size:1.15rem;color:#fff;letter-spacing:.02em;
+  background:linear-gradient(170deg,var(--rose2),var(--rose));
+  box-shadow:0 7px 0 #D63E78, 0 18px 30px rgba(255,94,150,.4);
+}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:18px}
+.stat{border-radius:22px;text-align:center;padding:14px 4px;background:var(--carte);box-shadow:0 6px 0 #E4D7F8}
+.stat b{display:block;font-family:'Baloo 2',cursive;font-weight:800;font-size:1.7rem}
+.stat:nth-child(1) b{color:var(--peche)} .stat:nth-child(2) b{color:var(--menthe)} .stat:nth-child(3) b{color:var(--lilas)}
+.stat label{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--doux)}
+.explore{display:flex;align-items:center;justify-content:space-between;background:var(--carte);border-radius:26px;
+  box-shadow:0 6px 0 #E4D7F8;padding:18px 22px;margin-top:14px}
+.explore .t{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.2rem}
+.explore .s{font-size:.85rem;font-weight:700;color:var(--doux)}
+.explore .a{width:42px;height:42px;border-radius:50%;background:var(--menthe);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.25rem;box-shadow:0 4px 0 #36A892}
+.tabbar{
+  position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
+  width:min(370px,calc(100% - 48px));display:flex;padding:8px;background:#fff;
+  border-radius:999px;box-shadow:0 8px 0 #E4D7F8, 0 24px 40px rgba(74,59,102,.22);
+}
+.tab{flex:1;text-align:center;padding:10px 0;border-radius:999px;font-family:'Baloo 2',cursive;font-size:.72rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--doux)}
+.tab.on{background:linear-gradient(170deg,var(--rose2),var(--rose));color:#fff;box-shadow:0 4px 0 #D63E78}
+.tab span{display:block;font-size:1.05rem}
+</style>
+</head>
+<body>
+<div class="phone">
+  <i class="conf" style="top:6%;left:8%;width:10px;height:10px;background:var(--citron)"></i>
+  <i class="conf" style="top:11%;left:88%;width:8px;height:8px;background:var(--menthe)"></i>
+  <i class="conf" style="top:24%;left:4%;width:7px;height:7px;background:var(--rose2)"></i>
+  <i class="conf" style="top:36%;left:93%;width:9px;height:9px;background:var(--lilas)"></i>
+  <i class="conf" style="top:64%;left:7%;width:8px;height:8px;background:var(--peche)"></i>
+  <i class="conf" style="top:72%;left:90%;width:10px;height:10px;background:var(--citron)"></i>
+
+  <p class="date">Vendredi 12 juin</p>
+  <h1>Orderix</h1>
+  <p class="tagline">5 minutes de pep's pour vos neurones !</p>
+
+  <div class="card">
+    <div class="badge">Jour 163</div>
+    <span class="kicker">★ Puzzle du jour ★</span>
+    <div class="num">163<small> / 365</small></div>
+    <p class="mode">Monde Miroir</p>
+    <p class="theme">Thème : WiFi</p>
+    <button class="cta">C'est parti !</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><b>4 🔥</b><label>en série</label></div>
+    <div class="stat"><b>27</b><label>réussis</label></div>
+    <div class="stat"><b>1,8s</b><label>record</label></div>
+  </div>
+
+  <div class="explore">
+    <div><div class="t">Explorer l'année</div><div class="s">365 puzzles, un par jour</div></div>
+    <div class="a">→</div>
+  </div>
+
+  <nav class="tabbar">
+    <div class="tab on"><span>🏠</span>Jour</div>
+    <div class="tab"><span>🗓️</span>Année</div>
+    <div class="tab"><span>👑</span>Profil</div>
+  </nav>
+</div>
+</body>
+</html>

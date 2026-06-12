@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orderix — style Easybrain, mise en page SNG</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* ── Style graphique : Easybrain (blanc clinique, bleu signature,
+   flat, gris fonctionnels, trophée doré) — Mise en page : copie
+   EXACTE du mockup SNG (HUD social, table encadrée, bandeau, tuiles,
+   classement des amies, 4 onglets). ── */
+:root{
+  --bleu:#4A6CFA; --bleu-fonce:#3553D1; --bleu-pale:#EEF2FF;
+  --encre:#23262F; --gris:#8B90A0; --fond:#F4F6FA; --carte:#FFFFFF;
+  --ligne:#E8EAF1; --or:#F5B227; --vert:#34B871; --rouge:#E0533D;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Roboto',sans-serif;color:var(--encre);background:var(--fond);min-height:100vh}
+.phone{max-width:520px;margin:0 auto;padding:16px 16px 116px}
+/* barre de statut joueuse (layout SNG, flat Easybrain) */
+.hud{display:flex;align-items:center;gap:8px}
+.avatar{width:46px;height:46px;border-radius:50%;border:2.5px solid var(--bleu);
+  background:var(--bleu-pale);display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+.hud .lvl{font-size:.72rem;font-weight:700;color:var(--bleu)}
+.hud .nom{font-weight:900;font-size:.95rem}
+.pill{margin-left:auto;display:flex;align-items:center;gap:6px;background:var(--carte);
+  border:1px solid var(--ligne);border-radius:999px;padding:6px 14px 6px 8px;font-weight:900;font-size:.9rem;
+  box-shadow:0 1px 3px rgba(35,38,47,.07)}
+.coin{width:22px;height:22px;border-radius:50%;background:var(--or);
+  display:flex;align-items:center;justify-content:center;font-size:.75rem}
+.plus{width:20px;height:20px;border-radius:50%;background:var(--bleu);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.85rem}
+h1{font-weight:900;text-align:center;font-size:2.7rem;letter-spacing:-.02em;margin-top:14px}
+h1 b{color:var(--bleu)}
+.date{text-align:center;font-weight:500;font-size:.8rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gris)}
+/* table encadrée (layout SNG) → carte blanche Easybrain */
+.table{margin-top:14px;border-radius:20px;padding:0;background:var(--carte);
+  box-shadow:0 1px 3px rgba(35,38,47,.07), 0 8px 24px rgba(35,38,47,.06)}
+.table-in{border-radius:20px;padding:22px 18px;text-align:center}
+.banner{
+  margin:-36px auto 8px;width:fit-content;padding:9px 28px;border-radius:999px;position:relative;
+  background:var(--bleu);color:#fff;
+  box-shadow:0 4px 12px rgba(74,108,250,.35);
+  font-weight:700;font-size:.9rem;letter-spacing:.12em;text-transform:uppercase;
+}
+.num{font-weight:900;font-size:4.2rem;line-height:1;letter-spacing:-.02em}
+.num small{font-size:1.1rem;color:var(--gris);font-weight:500}
+.mode{font-weight:900;font-size:1.5rem;color:var(--bleu);margin-top:6px}
+.theme{font-weight:500;font-size:.9rem;color:var(--gris)}
+.theme b{color:var(--or)}
+/* tuiles (layout SNG) → tuiles flat Easybrain */
+.tiles{display:flex;gap:6px;justify-content:center;margin-top:14px}
+.tile{width:38px;height:52px;border-radius:8px;background:var(--bleu-pale);border:1.5px solid #D6DEFC;
+  color:var(--bleu);font-weight:900;font-size:1.3rem;display:flex;align-items:center;justify-content:center}
+.tile.t{background:#FFF6E3;border-color:#F7E3B2;color:var(--or)}
+.cta{
+  display:inline-block;margin-top:20px;padding:15px 64px;border:none;border-radius:12px;
+  font-family:'Roboto',sans-serif;font-weight:700;font-size:1.15rem;color:#fff;
+  background:var(--bleu);box-shadow:0 4px 12px rgba(74,108,250,.35);
+}
+/* classement social (layout SNG) → liste flat Easybrain */
+.lead{margin-top:14px;border-radius:16px;background:var(--carte);padding:14px 16px;
+  box-shadow:0 1px 3px rgba(35,38,47,.07)}
+.lead .lt{font-weight:700;font-size:.85rem;letter-spacing:.1em;color:var(--gris);
+  text-transform:uppercase;margin-bottom:8px;text-align:center}
+.lrow{display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid var(--ligne);font-weight:500;font-size:.95rem}
+.lrow:last-child{border-bottom:none}
+.lrow .rk{font-weight:900;width:22px;color:var(--gris)}
+.lrow:nth-child(2) .rk{color:var(--or)}
+.lrow .av{width:32px;height:32px;border-radius:50%;border:2px solid var(--ligne);background:var(--bleu-pale);
+  display:flex;align-items:center;justify-content:center;font-size:.95rem}
+.lrow .sc{margin-left:auto;font-weight:900;color:var(--vert)}
+.lrow.me{background:var(--bleu-pale);border-radius:10px;font-weight:700}
+.lrow.me .rk{color:var(--bleu)}
+/* barre d'onglets 4 entrées (layout SNG, flat Easybrain) */
+.tabbar{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:min(520px,100%);display:flex;background:var(--carte);
+  border-top:1px solid var(--ligne);padding:6px 0 10px;
+}
+.tab{flex:1;text-align:center;color:var(--gris);font-size:.68rem;font-weight:500}
+.tab span{display:block;font-size:1.3rem;margin-bottom:1px}
+.tab.on{color:var(--bleu);font-weight:700}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="hud">
+    <div class="avatar">👩</div>
+    <div><div class="nom">Nadia</div><div class="lvl">NIVEAU 12</div></div>
+    <div class="pill"><div class="coin">★</div>12 450 <div class="plus">+</div></div>
+  </div>
+
+  <h1>Order<b>ix</b></h1>
+  <p class="date">Vendredi 12 juin</p>
+
+  <div class="table">
+    <div class="table-in">
+      <div class="banner">Puzzle du jour</div>
+      <div class="num">163<small> / 365</small></div>
+      <p class="mode">Monde Miroir</p>
+      <p class="theme">Thème : WiFi · <b>×2 étoiles aujourd'hui !</b></p>
+      <div class="tiles">
+        <div class="tile">1</div><div class="tile t">6</div><div class="tile">3</div><div class="tile t">9</div>
+      </div>
+      <button class="cta">Jouer</button>
+    </div>
+  </div>
+
+  <div class="lead">
+    <div class="lt">— Classement des amies —</div>
+    <div class="lrow"><span class="rk">1</span><span class="av">👩‍🦰</span> Sophie <span class="sc">1,42 s</span></div>
+    <div class="lrow me"><span class="rk">2</span><span class="av">👩</span> Nadia (vous) <span class="sc">1,80 s</span></div>
+    <div class="lrow"><span class="rk">3</span><span class="av">👱‍♀️</span> Mireille <span class="sc">2,07 s</span></div>
+  </div>
+
+  <nav class="tabbar">
+    <div class="tab on"><span>▦</span>Jour</div>
+    <div class="tab"><span>🗓</span>Année</div>
+    <div class="tab"><span>🏆</span>Ligue</div>
+    <div class="tab"><span>👥</span>Amies</div>
+  </nav>
+</div>
+</body>
+</html>

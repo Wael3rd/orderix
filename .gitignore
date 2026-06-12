@@ -1,0 +1,9 @@
+node_modules/
+shots/
+android/local.properties
+android/.gradle/
+android/app/build/
+android/build/
+*.keystore
+Orderix-debug.apk
+.claude/settings.local.json

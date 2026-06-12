@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orderix — style Easybrain</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* ── Pastiche Easybrain (Sudoku.com / Blockudoku / Number Match) ──
+   Blanc clinique, un seul bleu signature, gris fonctionnels,
+   trophée doré du Daily Challenge, zéro fantaisie. ── */
+:root{
+  --bleu:#4A6CFA; --bleu-fonce:#3553D1; --encre:#23262F; --gris:#8B90A0;
+  --fond:#F4F6FA; --carte:#FFFFFF; --ligne:#E8EAF1; --or:#F5B227; --vert:#34B871;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Roboto',sans-serif;background:var(--fond);color:var(--encre);min-height:100vh}
+.phone{max-width:520px;margin:0 auto;padding:18px 16px 110px}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:4px 4px 14px}
+.topbar .logo{font-weight:900;font-size:1.35rem;letter-spacing:-.02em}
+.topbar .logo b{color:var(--bleu)}
+.topbar .ico{width:38px;height:38px;border-radius:50%;background:var(--carte);border:1px solid var(--ligne);
+  display:flex;align-items:center;justify-content:center;color:var(--gris);font-size:1.1rem}
+.card{background:var(--carte);border-radius:16px;box-shadow:0 1px 3px rgba(35,38,47,.07);padding:20px;margin-bottom:12px}
+.dc-head{display:flex;align-items:center;gap:14px}
+.trophy{width:64px;height:64px;border-radius:14px;background:linear-gradient(160deg,#FFE9B8,#FFD774);
+  display:flex;align-items:center;justify-content:center;font-size:2rem}
+.dc-head .t{font-weight:900;font-size:1.25rem}
+.dc-head .s{color:var(--gris);font-size:.88rem;margin-top:2px}
+.dc-meta{display:flex;gap:8px;margin-top:16px}
+.chip{flex:1;background:var(--fond);border-radius:10px;text-align:center;padding:10px 4px}
+.chip b{display:block;font-size:1.15rem;font-weight:900}
+.chip span{font-size:.7rem;color:var(--gris);text-transform:uppercase;letter-spacing:.06em;font-weight:500}
+.chip b.blue{color:var(--bleu)} .chip b.gold{color:var(--or)} .chip b.green{color:var(--vert)}
+.cta{display:block;width:100%;margin-top:16px;padding:16px;border:none;border-radius:12px;
+  background:var(--bleu);color:#fff;font-family:'Roboto',sans-serif;font-weight:700;font-size:1.05rem;
+  box-shadow:0 4px 12px rgba(74,108,250,.35)}
+.section-t{font-weight:700;font-size:.95rem;margin:18px 6px 10px;color:var(--encre);display:flex;justify-content:space-between}
+.section-t a{color:var(--bleu);font-size:.85rem;font-weight:500;text-decoration:none}
+.cal{display:flex;gap:8px}
+.day{flex:1;background:var(--carte);border:1px solid var(--ligne);border-radius:12px;text-align:center;padding:10px 0}
+.day .dow{font-size:.66rem;color:var(--gris);text-transform:uppercase;font-weight:500}
+.day .n{font-weight:900;font-size:1.05rem;margin-top:3px}
+.day .st{font-size:.85rem;margin-top:2px;height:1.1em}
+.day.done .st{color:var(--vert)} .day.fail .st{color:#E0533D}
+.day.today{border:2px solid var(--bleu);background:#EEF2FF}
+.day.today .n{color:var(--bleu)}
+.mode-row{display:flex;align-items:center;gap:14px;padding:14px 16px}
+.mode-ico{width:46px;height:46px;border-radius:10px;background:#EEF2FF;color:var(--bleu);
+  display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900}
+.mode-row .t{font-weight:700;font-size:1rem}
+.mode-row .s{color:var(--gris);font-size:.82rem}
+.mode-row .go{margin-left:auto;color:var(--bleu);font-weight:700;font-size:.9rem}
+.tabbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(520px,100%);
+  display:flex;background:var(--carte);border-top:1px solid var(--ligne);padding:6px 0 10px}
+.tab{flex:1;text-align:center;color:var(--gris);font-size:.68rem;font-weight:500}
+.tab span{display:block;font-size:1.35rem;margin-bottom:1px}
+.tab.on{color:var(--bleu);font-weight:700}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="topbar">
+    <div class="logo">Order<b>ix</b></div>
+    <div class="ico">⚙</div>
+  </div>
+
+  <div class="card">
+    <div class="dc-head">
+      <div class="trophy">🏆</div>
+      <div>
+        <div class="t">Défi du jour</div>
+        <div class="s">12 juin · Monde Miroir — WiFi</div>
+      </div>
+    </div>
+    <div class="dc-meta">
+      <div class="chip"><b class="blue">163/365</b><span>jour</span></div>
+      <div class="chip"><b class="gold">4</b><span>série</span></div>
+      <div class="chip"><b class="green">27</b><span>réussis</span></div>
+    </div>
+    <button class="cta">Jouer</button>
+  </div>
+
+  <div class="section-t">Cette semaine <a>Calendrier ›</a></div>
+  <div class="cal">
+    <div class="day done"><div class="dow">Lun</div><div class="n">8</div><div class="st">✓</div></div>
+    <div class="day done"><div class="dow">Mar</div><div class="n">9</div><div class="st">✓</div></div>
+    <div class="day fail"><div class="dow">Mer</div><div class="n">10</div><div class="st">✕</div></div>
+    <div class="day done"><div class="dow">Jeu</div><div class="n">11</div><div class="st">✓</div></div>
+    <div class="day today"><div class="dow">Ven</div><div class="n">12</div><div class="st"></div></div>
+    <div class="day"><div class="dow">Sam</div><div class="n">13</div><div class="st"></div></div>
+    <div class="day"><div class="dow">Dim</div><div class="n">14</div><div class="st"></div></div>
+  </div>
+
+  <div class="section-t">Entraînement libre</div>
+  <div class="card mode-row"><div class="mode-ico">⇅</div><div><div class="t">Tris &amp; classements</div><div class="s">21 variantes</div></div><div class="go">JOUER</div></div>
+  <div class="card mode-row"><div class="mode-ico">∑</div><div><div class="t">Calcul mental</div><div class="s">6 variantes</div></div><div class="go">JOUER</div></div>
+  <div class="card mode-row"><div class="mode-ico">◉</div><div><div class="t">Observation</div><div class="s">12 variantes</div></div><div class="go">JOUER</div></div>
+
+  <nav class="tabbar">
+    <div class="tab on"><span>▦</span>Accueil</div>
+    <div class="tab"><span>🏆</span>Défis</div>
+    <div class="tab"><span>📊</span>Stats</div>
+    <div class="tab"><span>👤</span>Profil</div>
+  </nav>
+</div>
+</body>
+</html>

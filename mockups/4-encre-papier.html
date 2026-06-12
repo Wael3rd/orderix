@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orderix — Encre & papier</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,500;0,8..60,700;1,8..60,500&family=Public+Sans:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --papier:#FBFBF8; --encre:#16151A; --gris:#71706B; --trait:#16151A;
+  --vermillon:#E04E2C; --trame:#ECEBE4;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Public Sans',sans-serif;color:var(--encre);background:var(--papier);min-height:100vh}
+.phone{max-width:520px;margin:0 auto;padding:26px 22px 118px}
+.masthead{border-bottom:3px solid var(--trait);padding-bottom:14px;text-align:center}
+.date{font-size:.72rem;font-weight:800;letter-spacing:.3em;text-transform:uppercase;color:var(--gris)}
+h1{font-family:'Source Serif 4',serif;font-weight:700;font-size:3rem;letter-spacing:-.02em;line-height:1.05;margin-top:2px}
+h1 i{color:var(--vermillon);font-style:italic;font-weight:500}
+.tagline{font-family:'Source Serif 4',serif;font-style:italic;color:var(--gris);font-size:1rem;margin-top:2px}
+.rule-thin{height:1px;background:var(--trait);margin-top:3px}
+.card{border:1.5px solid var(--trait);margin-top:22px;text-align:center;position:relative;background:#fff}
+.corner{position:absolute;width:14px;height:14px;border:1.5px solid var(--trait)}
+.corner.tl{top:-7px;left:-7px;border-right:none;border-bottom:none;background:var(--papier)}
+.corner.br{bottom:-7px;right:-7px;border-left:none;border-top:none;background:var(--papier)}
+.card-head{display:flex;justify-content:space-between;border-bottom:1px solid var(--trait);
+  font-size:.68rem;font-weight:800;letter-spacing:.22em;text-transform:uppercase;padding:10px 14px;color:var(--gris)}
+.card-head b{color:var(--vermillon)}
+.card-body{padding:26px 24px 30px}
+.num{font-family:'Source Serif 4',serif;font-weight:700;font-size:5.2rem;line-height:1;letter-spacing:-.03em}
+.num small{font-size:1.1rem;color:var(--gris);font-weight:500;letter-spacing:0}
+.mode{font-family:'Source Serif 4',serif;font-style:italic;font-weight:500;font-size:1.6rem;margin-top:12px}
+.theme{font-size:.86rem;color:var(--gris);margin-top:2px;letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+.cta{
+  display:inline-block;margin-top:24px;padding:15px 36px;border:none;
+  font-family:'Public Sans',sans-serif;font-weight:800;font-size:.95rem;letter-spacing:.14em;text-transform:uppercase;
+  background:var(--encre);color:var(--papier);box-shadow:5px 5px 0 var(--vermillon);
+}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;margin-top:18px;border:1.5px solid var(--trait);background:#fff}
+.stat{text-align:center;padding:16px 4px;border-right:1px solid var(--trait)}
+.stat:last-child{border-right:none}
+.stat b{display:block;font-family:'Source Serif 4',serif;font-weight:700;font-size:1.9rem}
+.stat:nth-child(1) b{color:var(--vermillon)}
+.stat label{font-size:.64rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--gris)}
+.explore{display:flex;align-items:center;justify-content:space-between;border:1.5px solid var(--trait);background:#fff;
+  padding:16px 20px;margin-top:14px}
+.explore .t{font-family:'Source Serif 4',serif;font-weight:700;font-size:1.2rem}
+.explore .s{font-size:.8rem;color:var(--gris)}
+.explore .a{font-size:1.4rem;color:var(--vermillon)}
+.minigrid{display:flex;gap:5px;justify-content:center;margin-top:22px}
+.minigrid i{width:13px;height:13px;border:1.5px solid var(--trait);display:inline-block}
+.minigrid i.f{background:var(--encre)} .minigrid i.v{background:var(--vermillon);border-color:var(--vermillon)}
+.tabbar{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:min(520px,100%);display:flex;background:var(--papier);
+  border-top:2px solid var(--trait);
+}
+.tab{flex:1;text-align:center;padding:14px 0 16px;font-size:.66rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--gris);border-right:1px solid var(--trame)}
+.tab:last-child{border-right:none}
+.tab.on{color:var(--encre);box-shadow:inset 0 4px 0 var(--vermillon)}
+.tab span{display:block;font-family:'Source Serif 4',serif;font-size:1.05rem;font-weight:700;margin-bottom:2px}
+</style>
+</head>
+<body>
+<div class="phone">
+  <header class="masthead">
+    <p class="date">Vendredi 12 juin · N° 163</p>
+    <h1>Order<i>ix</i></h1>
+    <p class="tagline">Le quotidien de votre esprit</p>
+  </header>
+  <div class="rule-thin"></div>
+
+  <div class="card">
+    <span class="corner tl"></span><span class="corner br"></span>
+    <div class="card-head"><span>Puzzle du jour</span><b>Inédit</b></div>
+    <div class="card-body">
+      <div class="num">163<small> / 365</small></div>
+      <p class="mode">Monde Miroir</p>
+      <p class="theme">Thème · WiFi</p>
+      <button class="cta">Jouer</button>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><b>4</b><label>en série</label></div>
+    <div class="stat"><b>27</b><label>réussis</label></div>
+    <div class="stat"><b>1,8s</b><label>record</label></div>
+  </div>
+
+  <div class="explore">
+    <div><div class="t">Explorer l'année</div><div class="s">365 puzzles, un par jour</div></div>
+    <div class="a">→</div>
+  </div>
+
+  <div class="minigrid">
+    <i class="f"></i><i class="f"></i><i class="v"></i><i></i><i class="f"></i><i></i><i class="f"></i><i></i><i></i><i class="f"></i>
+  </div>
+
+  <nav class="tabbar">
+    <div class="tab on"><span>I</span>Jour</div>
+    <div class="tab"><span>II</span>Année</div>
+    <div class="tab"><span>III</span>Profil</div>
+  </nav>
+</div>
+</body>
+</html>
