@@ -18,9 +18,14 @@ Vanilla JavaScript, no framework, no bundler: global script loading, load order 
 ## Development
 
 - **Web preview:** open `www/index.html` in a browser (everything works except native packaging).
-- **Sync web → Android:** `npx cap sync android`
-- **Build APK:** `cd android && .\gradlew assembleDebug` → `android/app/build/outputs/apk/debug/app-debug.apk`
-  (requires Android SDK; `ANDROID_HOME` or `android/local.properties` must point to it).
+- **Environments:** `config/orderix.{staging,prod}.json` → `node set-env.js <env>` generates
+  `www/scripts/env.js` (NEVER edit env.js by hand; it exposes `ORDERIX_ENV` consumed by state.js).
+  Android has matching product flavors `dev` (appId `.dev`, name "Orderix Dev") and `prod`.
+- **Build APK:** `npm run android:dev` (staging) / `npm run android:prod` →
+  `android/app/build/outputs/apk/<flavor>/debug/` (requires Android SDK;
+  `ANDROID_HOME` or `android/local.properties` must point to it).
+- **Backend migration in progress:** GAS is the active backend; Supabase (EU) schema lives in
+  `supabase/migrations/` — see `docs/architecture.md` for the 4-phase plan and what's done.
 - **Regenerate icons/splash:** sources in `assets/icon.svg` / `assets/splash.svg`, then
   `npx capacitor-assets generate --android` (PNGs are rendered from the SVGs with sharp).
 - No automated tests or linting. `node --check` each JS file for syntax.

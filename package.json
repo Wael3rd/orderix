@@ -4,9 +4,13 @@
   "description": "Orderix — 365 jours d'agilité mentale. Jeu de puzzles quotidiens.",
   "private": true,
   "scripts": {
-    "android:sync": "npx cap sync android",
-    "android:open": "npx cap open android",
-    "android:apk": "npx cap sync android && cd android && gradlew assembleDebug"
+    "test": "node smoke-test.js",
+    "env:staging": "node set-env.js staging && npx cap sync android",
+    "env:prod": "node set-env.js prod && npx cap sync android",
+    "android:dev": "npm run env:staging && cd android && gradlew assembleDevDebug",
+    "android:prod": "npm run env:prod && cd android && gradlew assembleProdDebug",
+    "android:release": "npm run env:prod && cd android && gradlew bundleProdRelease",
+    "android:open": "npx cap open android"
   },
   "dependencies": {
     "@capacitor/android": "^6.1.2",

@@ -1,7 +1,11 @@
 // ─── État global, stockage, calendrier ───────────────────────────
 
-// Backend Google Apps Script (classements, scores, avis)
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwdBn3nmfJzB-uNlGGQ2_u5-6hqRy4urDKOWRTQWmclVwnmjE5NCE8TYPu6Saelwu_y6g/exec";
+// Backend — URLs injectées par environnement (set-env.js → env.js).
+// GAS reste le backend actif tant que Supabase n'est pas branché (phase 2).
+const GAS_URL = (typeof ORDERIX_ENV !== 'undefined' && ORDERIX_ENV.gasUrl) || '';
+const SUPABASE_URL = (typeof ORDERIX_ENV !== 'undefined' && ORDERIX_ENV.supabaseUrl) || '';
+const SUPABASE_ANON_KEY = (typeof ORDERIX_ENV !== 'undefined' && ORDERIX_ENV.supabaseAnonKey) || '';
+const ENV_NAME = (typeof ORDERIX_ENV !== 'undefined' && ORDERIX_ENV.envName) || 'staging';
 
 // Variables d'état de partie
 let timerInterval, lastTime, gameTimeout, envInterval;
