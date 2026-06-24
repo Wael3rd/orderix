@@ -5,5 +5,8 @@ android/.gradle/
 android/app/build/
 android/build/
 *.keystore
+tests/screenshots/
+tests/report.json
+tests/report.md
 Orderix-debug.apk
 .claude/settings.local.json

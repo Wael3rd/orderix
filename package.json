@@ -10,11 +10,14 @@
     "android:dev": "npm run env:staging && cd android && gradlew assembleDevDebug",
     "android:prod": "npm run env:prod && cd android && gradlew assembleProdDebug",
     "android:release": "npm run env:prod && cd android && gradlew bundleProdRelease",
-    "android:open": "npx cap open android"
+    "android:open": "npx cap open android",
+    "qa": "node tests/qa-runner.js",
+    "qa:baselines": "node tests/qa-runner.js --update-baselines"
   },
   "dependencies": {
     "@capacitor/android": "^6.1.2",
-    "@capacitor/core": "^6.1.2"
+    "@capacitor/core": "^6.1.2",
+    "ws": "^8.21.0"
   },
   "devDependencies": {
     "@capacitor/assets": "^3.0.5",
