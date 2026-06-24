@@ -26,7 +26,6 @@ function startGame() {
     hasSharedThisGame = false;
     clearInterval(window.speedTimer);
 
-    introPanel.classList.add('hidden');
     resultPanel.classList.add('hidden');
     resultDisplay.textContent = '';
     leaderboardSection.classList.add('hidden');
@@ -40,8 +39,23 @@ function startGame() {
     }
 
     timerDisplay.classList.remove('late');
-    board.classList.remove('hidden');
     resetBoard();
+    board.style.opacity = '';
+    board.style.transform = '';
+    board.style.transition = '';
+    board.classList.remove('hidden');
+    board.style.animation = 'screenIn .3s cubic-bezier(.22,.8,.3,1) both';
+    board.addEventListener('animationend', function h() { board.removeEventListener('animationend', h); board.style.animation = ''; }, { once: true });
+
+    // Animer la sortie de l'intro (si elle est visible)
+    if (!introPanel.classList.contains('hidden')) {
+        introPanel.style.animation = 'screenOut .22s ease-in forwards';
+        introPanel.addEventListener('animationend', function h() {
+            introPanel.removeEventListener('animationend', h);
+            introPanel.classList.add('hidden');
+            introPanel.style.animation = '';
+        }, { once: true });
+    }
 
     if (mode.isReflex) {
         startGameReflex();
@@ -160,6 +174,7 @@ function startGame() {
         let tMin = Math.min(...values);
         let targetVal = mode.findTarget === 'max' ? tMax : (mode.findTarget === 'min' ? tMin : (mode.findTarget === 'median' ? [...values].sort((a, b) => a - b)[Math.floor(values.length / 2)] : null));
 
+        const itemFrag = document.createDocumentFragment();
         shuf.forEach(val => {
             const item = document.createElement('div');
             item.className = `item type-${currentDayConfig.type}`;
@@ -181,19 +196,20 @@ function startGame() {
                         lastTap = now;
                         return;
                     }
-                    if (mode.requireLong) return; // géré par pointerdown
+                    if (mode.requireLong) return;
                     handleLogic(item, val, targetVal, mode, values);
                 });
 
                 if (mode.requireLong) {
-                    item.addEventListener('pointerdown', () => { pressTimer = setTimeout(() => handleLogic(item, val, targetVal, mode, values), 800); });
+                    item.addEventListener('pointerdown', () => { pressTimer = setTimeout(() => handleLogic(item, val, targetVal, mode, values), 600); });
                     item.addEventListener('pointerup', () => clearTimeout(pressTimer));
                     item.addEventListener('pointerleave', () => clearTimeout(pressTimer));
                     item.addEventListener('pointercancel', () => clearTimeout(pressTimer));
                 }
             }
-            board.appendChild(item);
+            itemFrag.appendChild(item);
         });
+        board.appendChild(itemFrag);
 
         if (mode.flashHide) setTimeout(() => document.querySelectorAll('#game-board .item').forEach(el => el.classList.add('peek-hidden')), 2000);
         if (mode.shuffleTick) envInterval = setInterval(() => { if (!isPaused) document.querySelectorAll('#game-board .item').forEach(el => el.style.order = Math.floor(Math.random() * 100)); }, mode.shuffleTick);
@@ -267,6 +283,11 @@ function endGame(message, isWin, isAbandon = false) {
     clearInterval(window.speedTimer);
     board.classList.remove('blackout-mode');
 
+    // Tamisage du plateau pendant que le panneau de résultat monte
+    board.style.transition = 'opacity .3s ease, transform .3s ease';
+    board.style.opacity = '0.3';
+    board.style.transform = 'scale(.97)';
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     isPaused = true;
@@ -329,6 +350,9 @@ function leaveGame(target) {
     timeElapsed = 0;
     pendingTimeVal = 0;
     resetBoard();
+    board.style.opacity = '';
+    board.style.transform = '';
+    board.style.transition = '';
     board.classList.add('hidden');
     timerDisplay.textContent = '0.000';
     resultDisplay.textContent = '';

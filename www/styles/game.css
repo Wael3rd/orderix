@@ -23,7 +23,11 @@
     color: var(--bleu-fonce);
     font-size: 1.15rem;
     display: flex; align-items: center; justify-content: center;
+    transition: transform .1s;
 }
+#back-btn:active { transform: scale(.88); background: var(--fond); }
+.btn-quiet:active { background: var(--bleu-bord) !important; }
+.btn-ghost:active { background: var(--fond) !important; }
 
 .game-titles { flex: 1; min-width: 0; }
 #game-day-label {

@@ -14,8 +14,10 @@
         if (cached) applyDayConfig(JSON.parse(cached));
     } catch (e) { }
 
+    const bootStart = Date.now();
     showScreen('home');
-    document.getElementById('boot-loader').classList.add('fade');
+    const remaining = Math.max(0, 1200 - (Date.now() - bootStart));
+    setTimeout(() => document.getElementById('boot-loader').classList.add('fade'), remaining);
 
     const ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
     if (ctrl) setTimeout(() => ctrl.abort(), 4000);

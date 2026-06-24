@@ -20,6 +20,10 @@
     from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: none; }
 }
+@keyframes screenOut {
+    from { opacity: 1; transform: none; }
+    to { opacity: 0; transform: translateY(-8px); }
+}
 
 /* ── HUD joueuse (accueil) ────────────────────────────────── */
 
@@ -72,6 +76,7 @@
     font-weight: 900;
     font-size: .9rem;
 }
+.hud .plus:active { transform: scale(.82); opacity: .7; }
 
 @keyframes riseIn {
     from { opacity: 0; transform: translateY(10px); }
@@ -215,6 +220,18 @@
 .lrow.me .rk { color: var(--bleu); }
 .lead .empty { text-align: center; color: var(--gris); font-size: .9rem; padding: 12px 0; }
 
+.skel-block {
+    display: inline-block;
+    background: linear-gradient(90deg, var(--ligne) 25%, var(--fond) 50%, var(--ligne) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 6px;
+}
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
 /* ── Écrans secondaires : titres ──────────────────────────── */
 
 .screen-title {
@@ -324,7 +341,7 @@
     color: var(--encre);
     outline: none;
 }
-.name-row input:focus { border-color: var(--bleu); }
+.name-row input:focus { border-color: var(--bleu); background: var(--bleu-pale); box-shadow: 0 0 0 4px rgba(74, 108, 250, .12); }
 .name-row .btn { padding: 13px 20px; font-size: .95rem; }
 
 #name-status { font-size: .85rem; font-weight: 700; margin-top: 8px; min-height: 1.2em; }
@@ -382,6 +399,7 @@
     font-weight: 500;
 }
 .tab svg { width: 22px; height: 22px; }
+.tab:active { opacity: .55; }
 .tab.active { color: var(--bleu); font-weight: 700; }
 
 /* Loader plein écran initial */

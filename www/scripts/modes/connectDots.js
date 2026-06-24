@@ -42,6 +42,7 @@ function startGameConnectDots() {
     let currentDot = 1;
     let isDrawing = false;
     let points = [];
+    let boardRect = null;
 
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:visible;';
@@ -79,13 +80,14 @@ function startGameConnectDots() {
         const target = document.elementFromPoint(e.clientX, e.clientY);
         if (target && target.dataset.num == currentDot) {
             isDrawing = true;
+            boardRect = board.getBoundingClientRect();
             target.style.backgroundColor = '#34B871';
             svg.appendChild(tempLine);
             updateTempLine(e);
         }
     });
 
-    board.addEventListener('pointermove', (e) => {
+    board.addEventListener('pointermove', (e) => {  // passive not set: uses elementFromPoint
         if (!isDrawing || isPaused) return;
         updateTempLine(e);
 
@@ -114,7 +116,7 @@ function startGameConnectDots() {
     });
 
     function updateTempLine(e) {
-        const rect = board.getBoundingClientRect();
+        const rect = boardRect;
         const prevPt = points[currentDot - 1];
         tempLine.setAttribute('x1', prevPt.x);
         tempLine.setAttribute('y1', prevPt.y);
@@ -139,7 +141,7 @@ function startGameConnectDots() {
         points.forEach(p => p.el.style.backgroundColor = '#4A6CFA');
     };
 
-    board.addEventListener('pointerup', stopDrawing);
-    board.addEventListener('pointercancel', stopDrawing);
-    board.addEventListener('pointerleave', stopDrawing);
+    board.addEventListener('pointerup', stopDrawing, { passive: true });
+    board.addEventListener('pointercancel', stopDrawing, { passive: true });
+    board.addEventListener('pointerleave', stopDrawing, { passive: true });
 }

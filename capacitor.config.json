@@ -2,7 +2,7 @@
   "appId": "com.orderix.app",
   "appName": "Orderix",
   "webDir": "www",
-  "backgroundColor": "#F8F3EB",
+  "backgroundColor": "#F4F6FA",
   "android": {
     "allowMixedContent": false
   },

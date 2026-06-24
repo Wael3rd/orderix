@@ -122,10 +122,25 @@ function submitScore(timeVal, feedback, isUpdate = false) {
         });
 }
 
+function _skeletonRows(n) {
+    const f = document.createDocumentFragment();
+    for (let i = 0; i < n; i++) {
+        const li = document.createElement('li');
+        li.className = 'lrow';
+        li.innerHTML = '<span class="rk skel-block" style="width:20px;height:14px"></span>' +
+            '<span class="av skel-block" style="width:32px;height:32px;border-radius:50%"></span>' +
+            '<span class="nm skel-block" style="width:80px;height:14px"></span>' +
+            '<span class="sc skel-block" style="width:50px;height:14px;margin-left:auto"></span>';
+        f.appendChild(li);
+    }
+    return f;
+}
+
 // Classement d'un jour rendu en lignes sociales (.lrow) — accueil et écran Classement
 function fetchBoardInto(dayId, listEl, topN) {
     if (!listEl) return;
-    listEl.innerHTML = '<li class="empty">Chargement…</li>';
+    listEl.innerHTML = '';
+    listEl.appendChild(_skeletonRows(topN));
 
     const cfg = dayConfig[dayId];
     const count = (cfg && cfg.count) ? cfg.count : 10;
@@ -171,7 +186,8 @@ function fetchBoardInto(dayId, listEl, topN) {
 }
 
 function fetchLeaderboard() {
-    leaderboardList.innerHTML = '<li style="justify-content:center;color:var(--ink-3)">Chargement…</li>';
+    leaderboardList.innerHTML = '';
+    leaderboardList.appendChild(_skeletonRows(5));
 
     const targetUrl = `${GAS_URL}?day=${currentDayConfig.id}&itemCount=${activeItemCount}&nocache=${Date.now()}`;
 

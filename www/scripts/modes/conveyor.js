@@ -74,13 +74,28 @@ function startGameConveyor() {
     const centerMark = document.createElement('div');
     centerMark.style.cssText = 'position:absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width:64px; height:64px; border:4px solid #F5B227; border-radius:12px; z-index:5; pointer-events:none; box-shadow: 0 0 10px rgba(53,42,51,0.25);';
 
-    vals.forEach((val) => {
-        const item = document.createElement('div');
-        item.className = `item type-${tType}`;
-        item.style.transition = 'opacity 0.2s, transform 0.2s';
-        applyStyle(item, tType, val);
-        beltContainer.appendChild(_conveyorCell(item));
-    });
+    // Scrolling virtuel : seules VISIBLE_COUNT cellules vivent dans le DOM,
+    // recyclées à chaque avance (au lieu de 50-100+ éléments).
+    const VISIBLE_COUNT = 7;
+    let cIdx = 0;
+
+    function renderVisibleCells() {
+        beltContainer.innerHTML = '';
+        const frag = document.createDocumentFragment();
+        const start = Math.max(0, cIdx - 3);
+        const end = Math.min(vals.length, start + VISIBLE_COUNT);
+        for (let i = start; i < end; i++) {
+            const item = document.createElement('div');
+            item.className = `item type-${tType}`;
+            item.style.transition = 'opacity 0.2s, transform 0.2s';
+            applyStyle(item, tType, vals[i]);
+            if (i < cIdx) { item.style.opacity = '0'; item.style.transform = 'scale(0.5)'; }
+            frag.appendChild(_conveyorCell(item));
+        }
+        beltContainer.appendChild(frag);
+        beltContainer.style.transform = `translateX(-${(cIdx - start) * 80}px)`;
+    }
+    renderVisibleCells();
 
     beltWrapper.appendChild(beltContainer);
     beltWrapper.appendChild(centerMark);
@@ -88,8 +103,6 @@ function startGameConveyor() {
 
     const btnContainer = document.createElement('div');
     btnContainer.style.cssText = 'display:flex; gap:15px; flex-wrap:wrap; justify-content:center; padding: 10px; width: 100%; max-width: 500px;';
-
-    let cIdx = 0;
 
     uniqueChoices.forEach(uVal => {
         const btn = document.createElement('div');
@@ -100,9 +113,6 @@ function startGameConveyor() {
             e.preventDefault();
             if (isPaused) return;
             if (vals[cIdx] === uVal) {
-                const cell = beltContainer.children[cIdx];
-                cell.firstChild.style.opacity = '0';
-                cell.firstChild.style.transform = 'scale(0.5)';
                 cIdx++;
                 haptic(8);
 
@@ -111,7 +121,7 @@ function startGameConveyor() {
                     countSpan.textContent = cIdx + 1;
                 }
 
-                beltContainer.style.transform = `translateX(-${cIdx * 80}px)`;
+                renderVisibleCells();
                 if (cIdx >= vals.length) {
                     if (countSpan) countSpan.textContent = vals.length;
                     endGame('Tapis vidé !', true);

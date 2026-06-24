@@ -35,8 +35,7 @@ function startGameReflex() {
             haptic(8);
             if (clicked >= activeItemCount) endGame('Toutes les cibles touchées !', true);
         };
-        item.addEventListener('touchstart', (e) => { e.preventDefault(); hit(); });
-        item.addEventListener('mousedown', hit);
+        item.addEventListener('pointerdown', (e) => { e.preventDefault(); hit(); });
 
         board.appendChild(item); spawned++;
         gameTimeout = setTimeout(spawn, 300 + Math.random() * 500);

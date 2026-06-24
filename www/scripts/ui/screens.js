@@ -10,18 +10,53 @@ const SCREENS = {
 };
 const tabbar = document.getElementById('tabbar');
 
+let _screenTransitioning = false;
+
 function showScreen(name) {
+    if (_screenTransitioning) return;
+    const prev = currentScreen;
     currentScreen = name;
-    Object.keys(SCREENS).forEach(k => SCREENS[k].classList.toggle('hidden', k !== name));
+
     tabbar.classList.toggle('away', name === 'game');
     document.querySelectorAll('#tabbar .tab').forEach(t =>
         t.classList.toggle('active', t.dataset.screen === name));
-    window.scrollTo(0, 0);
 
-    if (name === 'home') buildHome();
-    if (name === 'calendar') buildCalendar();
-    if (name === 'league') buildLeague();
-    if (name === 'profile') buildProfile();
+    const outgoing = SCREENS[prev];
+    const incoming = SCREENS[name];
+
+    function showIncoming() {
+        Object.keys(SCREENS).forEach(k => {
+            SCREENS[k].classList.toggle('hidden', k !== name);
+            SCREENS[k].style.animation = '';
+        });
+        incoming.style.animation = 'none';
+        void incoming.offsetWidth;
+        incoming.style.animation = '';
+        window.scrollTo(0, 0);
+        _screenTransitioning = false;
+
+        if (name === 'home') buildHome();
+        if (name === 'calendar') buildCalendar();
+        if (name === 'league') buildLeague();
+        if (name === 'profile') buildProfile();
+    }
+
+    if (outgoing && outgoing !== incoming && !outgoing.classList.contains('hidden')) {
+        // Animer la sortie si le navigateur supporte les animations CSS
+        // (jsdom / environnements de test ne les supportent pas → transition immédiate)
+        const supportsAnim = typeof outgoing.getAnimations === 'function';
+        if (supportsAnim) {
+            _screenTransitioning = true;
+            outgoing.style.animation = 'screenOut .2s ease-in forwards';
+            const done = () => { outgoing.style.animation = ''; showIncoming(); };
+            outgoing.addEventListener('animationend', done, { once: true });
+            setTimeout(() => { if (_screenTransitioning) done(); }, 250);
+        } else {
+            showIncoming();
+        }
+    } else {
+        showIncoming();
+    }
 }
 
 // ── ACCUEIL ──────────────────────────────────────────────────────
@@ -128,6 +163,7 @@ function buildCalendar() {
         enabledIds[day.id] = !(cfg && cfg.enabled === false);
     });
 
+    const calFrag = document.createDocumentFragment();
     let dayId = 1;
     for (let m = 0; m < 12 && dayId <= 365; m++) {
         const daysInMonth = new Date(year, m + 1, 0).getDate();
@@ -145,6 +181,7 @@ function buildCalendar() {
 
         const grid = document.createElement('div');
         grid.className = 'month-grid';
+        const gridFrag = document.createDocumentFragment();
 
         for (let d = 1; d <= daysInMonth && dayId <= 365; d++, dayId++) {
             const id = dayId;
@@ -153,7 +190,7 @@ function buildCalendar() {
             chip.className = 'day-chip';
             chip.textContent = d;
 
-            if (!enabledIds[id]) { chip.style.opacity = '.3'; chip.disabled = true; grid.appendChild(chip); continue; }
+            if (!enabledIds[id]) { chip.style.opacity = '.3'; chip.disabled = true; gridFrag.appendChild(chip); continue; }
 
             const info = getPlayedInfo(id);
             if (info && info.isWin) { chip.classList.add('win'); chip.textContent = '✓'; monthWon++; }
@@ -161,8 +198,9 @@ function buildCalendar() {
             if (id === tid) chip.classList.add('today');
 
             chip.addEventListener('click', () => selectDay(day));
-            grid.appendChild(chip);
+            gridFrag.appendChild(chip);
         }
+        grid.appendChild(gridFrag);
 
         const count = document.createElement('span');
         count.className = 'month-count';
@@ -171,8 +209,9 @@ function buildCalendar() {
 
         block.appendChild(name);
         block.appendChild(grid);
-        container.appendChild(block);
+        calFrag.appendChild(block);
     }
+    container.appendChild(calFrag);
 }
 
 // ── PROFIL ───────────────────────────────────────────────────────
