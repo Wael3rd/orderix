@@ -57,7 +57,19 @@ function startGame() {
         }, { once: true });
     }
 
-    if (mode.isReflex) {
+    // Modes à manches : 3 manches progressives + 1 joker (une erreur pardonnée)
+    baseItemCount = activeItemCount;
+    currentRound = 1;
+    totalRounds = mode.rounds || 1;
+    shieldAvailable = !!mode.rounds;
+
+    if (mode.isOrderChain) {
+        startGameOrderChain();
+    } else if (mode.isInsertion) {
+        startGameInsertion();
+    } else if (mode.isCascade) {
+        startGameCascade();
+    } else if (mode.isReflex) {
         startGameReflex();
     } else if (mode.isTyping) {
         startGameTyping();
@@ -81,6 +93,32 @@ function startGame() {
         board.style.flexDirection = 'row';
         board.style.alignItems = 'flex-start';
         board.style.display = 'flex';
+
+        // Le corps est relançable : pour les modes `rounds`, chaque manche
+        // régénère un plateau plus fourni que la précédente.
+        window.startGenericRound = function () {
+        board.innerHTML = '';
+        const oldTarget = document.getElementById('dynamic-target-ui');
+        if (oldTarget) oldTarget.remove();
+        clearInterval(envInterval);
+        selectionOrder = [];
+        flipped = [];
+        matched = 0;
+
+        if (mode.rounds) {
+            const ladder = [
+                Math.max(4, Math.round(baseItemCount * 0.6)),
+                baseItemCount,
+                Math.round(baseItemCount * 1.4)
+            ];
+            activeItemCount = ladder[Math.min(currentRound, ladder.length) - 1];
+
+            const hud = document.createElement('div');
+            hud.id = 'round-hud';
+            hud.style.cssText = 'width:100%;text-align:center;font-weight:bold;color:#8B90A0;font-size:.95rem;margin-bottom:6px;';
+            hud.innerHTML = `Manche ${currentRound}/${totalRounds} · Joker <span style="color:${shieldAvailable ? '#F5B227' : '#B9BDC9'};font-size:1.1em">${shieldAvailable ? '●' : '○'}</span>`;
+            board.appendChild(hud);
+        }
 
         let values = [];
         if (mode.specialGen === 'odd') {
@@ -244,6 +282,8 @@ function startGame() {
                 if (activeItem) handleLogic(activeItem, parseFloat(activeItem.dataset.value), targetVal, mode, values);
             };
         }
+        }; // fin de startGenericRound
+        window.startGenericRound();
     }
 
     clearInterval(timerInterval);
@@ -277,6 +317,9 @@ function gameTick() {
 }
 
 function endGame(message, isWin, isAbandon = false) {
+    // Les modes à manches font varier activeItemCount : le résultat est
+    // toujours enregistré sur le compte de base (classements cohérents)
+    if (baseItemCount) activeItemCount = baseItemCount;
     clearInterval(timerInterval);
     clearTimeout(gameTimeout);
     clearInterval(envInterval);
@@ -315,6 +358,7 @@ function endGame(message, isWin, isAbandon = false) {
     resultTime.innerHTML = isAbandon ? '<small>Partie abandonnée</small>'
         : `${(timeElapsed / 1000).toFixed(3)}<small> s</small>`;
     resultPhrase.textContent = isWin ? pickPhrase(WIN_PHRASES) : pickPhrase(FAIL_PHRASES);
+    resultDisplay.style.color = '';
     resultDisplay.textContent = message || '';
 
     // L'avis sur le puzzle d'abord, puis classement et partage

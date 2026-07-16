@@ -16,6 +16,8 @@ let currentDayConfig = null;
 let activeItemCount = 10;
 let exactTarget = 0, targetSum = 0, targetDiff = 0, flipped = [], matched = 0,
     targetSequence = [], currentSequenceIdx = 0, currentRound = 1, totalRounds = 3, currentMathTarget = 0;
+let shieldAvailable = false; // joker : une erreur pardonnée (modes à manches)
+let baseItemCount = 0;       // compte d'éléments de référence (les manches le font varier)
 let sessionReferredBy = '';
 try { sessionReferredBy = new URLSearchParams(window.location.search).get('ref') || ''; } catch (e) { }
 let hasSharedThisGame = false;
@@ -29,9 +31,12 @@ let returnScreen = 'home'; // écran d'origine avant d'entrer dans un jour (reto
 
 // ─── Compilation des 365 jours ───────────────────────────────────
 let ALL_DAYS = [];
-// Les 50 premiers jours : tri croissant sur chaque type de base
-BASE_TYPES.forEach(d => {
-    ALL_DAYS.push({ id: d.id, type: d.type, modeId: 'sortAsc' });
+// Les 50 premiers jours : rotation des modes phares sur chaque type de base
+// (la première semaine d'une joueuse doit montrer le meilleur du jeu)
+BASE_TYPES.forEach((d, i) => {
+    const mKey = STARTER_ROTATION[i % STARTER_ROTATION.length];
+    const mode = GAME_MODES[mKey];
+    ALL_DAYS.push({ id: d.id, type: mode.forceType || d.type, modeId: mKey });
 });
 // Remplissage jusqu'à 365 par croisement procédural mode × type
 const MKEYS = Object.keys(GAME_MODES);

@@ -68,6 +68,12 @@ function showExample(day, container) {
         res.style.boxShadow = '0 0 0 3px #FFFFFF, 0 0 0 6px #34B871';
 
         row.append(i1, op, i2, eq, res);
+    } else if (mode.isOrderChain) {
+        showExampleOrderChain(day, row, vals);
+    } else if (mode.isInsertion) {
+        showExampleInsertion(day, row, vals);
+    } else if (mode.isCascade) {
+        showExampleCascade(day, row, vals);
     } else if (mode.isReflex) {
         showExampleReflex(day, row, vals);
     } else if (mode.isTyping) {

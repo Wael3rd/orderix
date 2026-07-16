@@ -27,6 +27,29 @@ window.confirm = () => true;
 window.navigator.vibrate = () => true;
 if (!window.AbortController) window.AbortController = AbortController;
 
+// Horloge contrôlable : aucun timer réel ne tourne pendant les tests,
+// __clock.tick(ms) fait avancer le temps de façon déterministe.
+window.eval(`;(function(){
+    let now = 0, seq = 1;
+    const timers = new Map();
+    window.setTimeout = (fn, d) => { timers.set(seq, { fn, at: now + (d || 0), interval: null }); return seq++; };
+    window.setInterval = (fn, d) => { timers.set(seq, { fn, at: now + (d || 1), interval: d || 1 }); return seq++; };
+    window.clearTimeout = window.clearInterval = (id) => { timers.delete(id); };
+    window.__clock = { tick(ms) {
+        const end = now + ms;
+        let guard = 0;
+        while (guard++ < 10000) {
+            let next = null, nid = null;
+            for (const [id, t] of timers) if (t.at <= end && (next === null || t.at < next.at)) { next = t; nid = id; }
+            if (!next) break;
+            now = next.at;
+            if (next.interval) next.at = now + next.interval; else timers.delete(nid);
+            try { next.fn(); } catch (e) { }
+        }
+        now = end;
+    } };
+})();`);
+
 const scriptSrcs = [...html.matchAll(/<script src="([^"]+)"><\/script>/g)].map(m => m[1]);
 let bundle = '';
 for (const src of scriptSrcs) {
@@ -83,21 +106,42 @@ __check('partie complète (tri croissant, victoire)', () => {
     goHome();
 });
 
-__check('partie complète (chasse au max, défaite + correction)', () => {
+__check('chasse au max : joker sur la 1re erreur, défaite sur la 2e', () => {
     localResults = {}; serverPlayedDays = {};
     const day = DAYS.find(d => d.modeId === 'findMax');
     selectDay(day);
     startGame();
     const items = Array.from(board.querySelectorAll('.item'));
     items.sort((a, b) => parseFloat(a.dataset.value) - parseFloat(b.dataset.value));
-    items[0].click(); // le plus petit → erreur
+    items[0].click(); // 1re erreur → joker consommé, la partie continue
+    if (!resultPanel.classList.contains('hidden')) throw new Error('le joker n a pas pardonné la 1re erreur');
+    if (shieldAvailable) throw new Error('joker non consommé');
+    items[1].click(); // 2e erreur → défaite
     if (resultPanel.classList.contains('hidden')) throw new Error('panneau de résultat absent');
     if (!localResults[day.id] || localResults[day.id].isWin) throw new Error('défaite non enregistrée');
     goHome();
 });
 
+__check('chasse au max : victoire = 3 manches enchaînées', () => {
+    localResults = {}; serverPlayedDays = {};
+    const day = DAYS.find(d => d.modeId === 'findMax');
+    selectDay(day);
+    startGame();
+    for (let r = 0; r < 3; r++) {
+        const items = Array.from(board.querySelectorAll('.item:not(.matched)'))
+            .filter(i => i.dataset.value !== undefined);
+        if (items.length === 0) throw new Error('plateau vide à la manche ' + (r + 1));
+        items.sort((a, b) => parseFloat(a.dataset.value) - parseFloat(b.dataset.value));
+        items[items.length - 1].click(); // le max
+        __clock.tick(700); // laisse la manche suivante se lancer
+    }
+    if (resultPanel.classList.contains('hidden')) throw new Error('pas de victoire après 3 manches');
+    if (!localResults[day.id] || !localResults[day.id].isWin) throw new Error('victoire non enregistrée');
+    goHome();
+});
+
 __check('statistiques et série', () => {
-    localResults = {};
+    localResults = {}; serverPlayedDays = {};
     const tid = todayDayId();
     saveLocalResult(tid, 10, 5.2, true);
     saveLocalResult(tid - 1, 10, 6.1, true);

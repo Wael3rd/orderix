@@ -1,5 +1,50 @@
 // ─── Logique de jeu : clics sur items et vérification des tris ───
 
+// Consomme le joker s'il est disponible : l'erreur est pardonnée une fois.
+function consumeShield() {
+    if (!shieldAvailable) return false;
+    shieldAvailable = false;
+    haptic(50);
+    resultDisplay.textContent = 'Joker utilisé — plus le droit à l\'erreur !';
+    resultDisplay.style.color = '#F5B227';
+    const hud = document.getElementById('round-hud');
+    if (hud) hud.innerHTML = `Manche ${currentRound}/${totalRounds} · Joker <span style="color:#B9BDC9;font-size:1.1em">○</span>`;
+    setTimeout(() => {
+        if (!isPaused && resultDisplay.textContent.indexOf('Joker') === 0) resultDisplay.textContent = '';
+    }, 1600);
+    return true;
+}
+
+// Succès d'une manche (modes `rounds`) : manche suivante, ou victoire finale
+function genericRoundWin(winMessage) {
+    if (currentRound < totalRounds) {
+        currentRound++;
+        haptic(12);
+        resultDisplay.textContent = 'Bien vu — manche suivante !';
+        resultDisplay.style.color = '#34B871';
+        setTimeout(() => {
+            if (isPaused) return;
+            resultDisplay.textContent = '';
+            window.startGenericRound();
+        }, 550);
+    } else {
+        endGame(winMessage, true);
+    }
+}
+
+// Erreur sur un item : joker si disponible (l'item fautif est neutralisé),
+// sinon défaite avec mise en évidence de la solution.
+function genericRoundFail(item, correctVals, failMessage) {
+    if (GAME_MODES[currentDayConfig.modeId].rounds && consumeShield()) {
+        item.classList.add('error');
+        item.style.pointerEvents = 'none';
+        return;
+    }
+    item.classList.add('error');
+    showSolutionHighlight(correctVals);
+    endGame(failMessage, false);
+}
+
 function handleLogic(item, val, targetVal, mode, values) {
     if (item.classList.contains('matched')) return;
 
@@ -76,18 +121,21 @@ function handleLogic(item, val, targetVal, mode, values) {
     }
 
     if (mode.findTarget) {
-        if (Math.abs(val - targetVal) < 0.0001) endGame('Cible atteinte !', true);
-        else {
-            item.classList.add('error');
-            showSolutionHighlight([targetVal]);
-            endGame('Ce n\'était pas celui-là — la bonne réponse est entourée.', false);
+        if (Math.abs(val - targetVal) < 0.0001) {
+            item.classList.add('matched');
+            genericRoundWin('Toutes les cibles atteintes !');
+        } else {
+            genericRoundFail(item, [targetVal], 'Ce n\'était pas celui-là — la bonne réponse est entourée.');
         }
         return;
     }
 
     if (mode.winOnOdd || mode.winOnPairs) {
         let c = values.filter(v => Math.abs(v - val) < 0.0001).length;
-        if (mode.winOnOdd && c === 1) endGame('Intrus démasqué !', true);
+        if (mode.winOnOdd && c === 1) {
+            item.classList.add('matched');
+            genericRoundWin('Intrus démasqué !');
+        }
         else if (mode.winOnPairs && c === 2) {
             matched++;
             const badge = document.createElement('div');
@@ -95,15 +143,13 @@ function handleLogic(item, val, targetVal, mode, values) {
             item.appendChild(badge);
             item.classList.add('matched');
             haptic(12);
-            if (matched === 2) endGame('Jumeaux réunis !', true);
+            if (matched === 2) genericRoundWin('Jumeaux réunis !');
         }
         else {
-            item.classList.add('error');
             let correctVals = [];
             if (mode.winOnOdd) correctVals = [values.find(v => values.filter(x => Math.abs(x - v) < 0.0001).length === 1)];
             if (mode.winOnPairs) correctVals = [values.find(v => values.filter(x => Math.abs(x - v) < 0.0001).length === 2)];
-            showSolutionHighlight(correctVals);
-            endGame('Raté — la bonne réponse est entourée.', false);
+            genericRoundFail(item, correctVals, 'Raté — la bonne réponse est entourée.');
         }
         return;
     }
@@ -117,7 +163,17 @@ function handleLogic(item, val, targetVal, mode, values) {
             let v1 = parseFloat(selectionOrder[0].dataset.value);
             let v2 = parseFloat(selectionOrder[1].dataset.value);
             if ((mode.isSum && Math.abs((v1 + v2) - targetSum) < 0.001) || (mode.isDiff && Math.abs(Math.abs(v1 - v2) - targetDiff) < 0.001)) {
-                endGame('Calcul exact !', true);
+                genericRoundWin('Calcul exact !');
+            } else if (mode.rounds && consumeShield()) {
+                // Joker : la paire fautive clignote puis se désélectionne
+                const sel = selectionOrder.slice();
+                sel.forEach(i => i.classList.add('error'));
+                selectionOrder = [];
+                setTimeout(() => {
+                    if (isPaused) return;
+                    sel.forEach(i => { i.classList.remove('error'); i.classList.remove('selected'); });
+                    renderBadges();
+                }, 700);
             } else {
                 selectionOrder.forEach(i => i.classList.add('error'));
                 let correctVals = [];
@@ -149,11 +205,11 @@ function handleLogic(item, val, targetVal, mode, values) {
     }
 
     if (mode.isTargetMatch) {
-        if (Math.abs(val - exactTarget) < 0.0001) endGame('Correspondance parfaite !', true);
-        else {
-            item.classList.add('error');
-            showSolutionHighlight([exactTarget]);
-            endGame('Ce n\'était pas le bon — le modèle est entouré.', false);
+        if (Math.abs(val - exactTarget) < 0.0001) {
+            item.classList.add('matched');
+            genericRoundWin('Correspondance parfaite !');
+        } else {
+            genericRoundFail(item, [exactTarget], 'Ce n\'était pas le bon — le modèle est entouré.');
         }
         return;
     }

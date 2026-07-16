@@ -373,6 +373,63 @@
     transition: width .05s linear;
 }
 
+/* ── Nouveaux modes phares (audit gameplay v2.1) ──────────── */
+
+/* La Chaîne : maillon trouvé (reste visible, principe Schulte) */
+.item.chain-done {
+    opacity: .4;
+    pointer-events: none;
+    box-shadow: 0 0 0 2px var(--carte), 0 0 0 4px var(--vert);
+}
+
+/* L'Insertion : emplacements d'insertion */
+.slot-btn {
+    width: 26px; height: 44px;
+    border-radius: 9px;
+    border: 2px dashed var(--bleu-bord);
+    background: var(--bleu-pale);
+    color: var(--bleu);
+    font-weight: 900;
+    font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: transform .1s;
+}
+.slot-btn:active { transform: scale(.85); }
+.slot-btn.slot-error {
+    border-color: var(--rouge);
+    background: var(--rouge-pale);
+    color: var(--rouge);
+    animation: wobble .3s;
+}
+.slot-btn.slot-correct {
+    border-style: solid;
+    border-color: var(--vert);
+    background: var(--vert-pale);
+    color: var(--vert);
+    transform: scale(1.15);
+}
+.slot-hint { pointer-events: none; }
+
+/* Tri Cascade : zones de décision */
+.cascade-zone {
+    flex: 1;
+    padding: 20px 10px;
+    border-radius: 16px;
+    font-weight: 900;
+    font-size: .95rem;
+    letter-spacing: .06em;
+    text-align: center;
+    line-height: 1.5;
+    border: 2px solid transparent;
+    transition: transform .1s;
+}
+.cascade-zone:active { transform: scale(.95); }
+.cascade-zone.small-side { background: var(--bleu-pale); color: var(--bleu-fonce); border-color: var(--bleu-bord); }
+.cascade-zone.big-side { background: var(--or-pale); color: #A87A0E; border-color: var(--or-bord); }
+.cascade-zone.zone-ok { background: var(--vert-pale) !important; border-color: var(--vert) !important; color: var(--vert) !important; }
+.cascade-zone.zone-error { background: var(--rouge-pale) !important; border-color: var(--rouge) !important; color: var(--rouge) !important; animation: wobble .3s; }
+
 /* Confettis de victoire */
 #petals {
     position: fixed;

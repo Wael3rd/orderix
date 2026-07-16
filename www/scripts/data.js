@@ -1,45 +1,54 @@
 // ─── Catalogue des modes de jeu ──────────────────────────────────
-// Modes supprimés lors de l'audit mobile (juin 2026) :
-//   hideHover (dépendait de :hover), chaseMin (dépendait de mousemove),
-//   blurMax (le :active de révélation déclenchait le clic au tactile).
+// Audit gameplay (juin 2026, v2.1) — voir docs/gameplay-audit.md :
+//  · SUPPRIMÉS (reskins « par irritation » d'un même jeu, fausse variété) :
+//    spinSort, pulseSort, danceSort, colorSort, gravitySort (clones de sortAsc),
+//    wobbleMax, flickerMax, invertMin (clones de findMax).
+//  · `rounds: 3` : les modes « une seule touche » deviennent 3 manches
+//    progressives avec 1 joker (une erreur pardonnée) — fin du « perdu en 0,8 s ».
+//  · NOUVEAUX modes phares : orderChain (Schulte), insertion (Timeline),
+//    cascade (tri de flux façon Speed Match).
 // `desc` : consigne affichée sur l'écran d'introduction.
 // `typeAgnostic` : le mode n'utilise pas le type visuel du jour (titre simplifié).
 
 const GAME_MODES = {
+    // ── Modes phares « l'art d'ordonner » ──
+    orderChain: { name: "La Chaîne", isOrderChain: true, desc: "Touchez les éléments du plus petit au plus grand, sans casser la chaîne. 3 manches, 3 vies." },
+    insertion: { name: "L'Insertion", isInsertion: true, desc: "Un élément arrive : touchez l'emplacement exact où il s'insère dans la rangée ordonnée. 2 vies." },
+    cascade: { name: "Tri Cascade", isCascade: true, desc: "Plus petit ou plus grand que la référence ? Triez le flux avant la fin du temps — ça accélère ! 3 vies." },
+
+    // ── Tris (validation par bouton) ──
     sortAsc: { name: "Tri Croissant", isSort: true, order: 1, desc: "Touchez les éléments du plus petit au plus grand, puis validez." },
     sortDesc: { name: "Tri Décroissant", isSort: true, order: -1, desc: "Touchez les éléments du plus grand au plus petit, puis validez." },
-    findMax: { name: "Chasse au Max", findTarget: 'max', desc: "Touchez l'élément le plus grand. Un seul essai !" },
-    findMin: { name: "Chasse au Min", findTarget: 'min', desc: "Touchez l'élément le plus petit. Un seul essai !" },
-    findOdd: { name: "L'Intrus", specialGen: 'odd', winOnOdd: true, desc: "Un seul élément n'a aucun jumeau : démasquez-le." },
-    findPair: { name: "Les Jumeaux", specialGen: 'pair', winOnPairs: true, desc: "Deux éléments sont identiques : touchez-les tous les deux." },
-    pairs: { name: "Paires", specialGen: 'pairs', isPairsMatch: true, desc: "Associez tous les éléments deux par deux." },
-    reflex: { name: "Cibles Mobiles", isReflex: true, typeAgnostic: false, desc: "Touchez chaque cible dès qu'elle apparaît." },
-    flashMax: { name: "Mémoire Flash", findTarget: 'max', flashHide: true, desc: "Mémorisez vite : tout se cache après 2 secondes. Touchez le plus grand." },
-    flashSort: { name: "Tri Flash", isSort: true, order: 1, flashHide: true, desc: "Observez bien : tout se cache après 2 secondes. Triez de mémoire, du plus petit au plus grand." },
-    spinSort: { name: "Tourbillon", isSort: true, order: 1, cssClass: 'spin-anim', desc: "Triez du plus petit au plus grand… pendant que tout tournoie." },
-    invertMin: { name: "Inversion", findTarget: 'min', cssClass: 'invert-color', desc: "Les couleurs sont inversées. Touchez le plus petit." },
-    sumTarget: { name: "Addition Cible", isSum: true, forceType: 'numbers', desc: "Touchez les 2 nombres dont la somme égale la cible." },
     evensAsc: { name: "Pairs Uniquement", isSort: true, order: 1, filter: 'even', desc: "Triez ces valeurs paires du plus petit au plus grand." },
     oddsDesc: { name: "Impairs Uniquement", isSort: true, order: -1, filter: 'odd', desc: "Triez ces valeurs impaires du plus grand au plus petit." },
-    median: { name: "La Médiane", findTarget: 'median', desc: "Touchez la valeur du milieu : ni la plus petite, ni la plus grande." },
+    flashSort: { name: "Tri Flash", isSort: true, order: 1, flashHide: true, desc: "Observez bien : tout se cache après 2 secondes. Triez de mémoire, du plus petit au plus grand." },
+    blindSort: { name: "Tri à l'Aveugle", isSort: true, order: 1, peekHide: true, desc: "Touchez une carte pour la révéler 1 seconde. Triez de mémoire." },
+    mirrorSort: { name: "Monde Miroir", isSort: true, order: 1, cssClass: 'mirror-view', desc: "Tout est inversé en miroir. Triez du plus petit au plus grand." },
     shuffleSort: { name: "Tremblement", isSort: true, order: 1, shuffleTick: 2500, desc: "Triez du plus petit au plus grand… mais tout se mélange régulièrement !" },
     blackout: { name: "Coupure de Courant", isSort: true, order: 1, blackout: true, desc: "Triez du plus petit au plus grand malgré les coupures de lumière." },
     shrinkSort: { name: "Rétrécissement", isSort: true, order: 1, cssClass: 'shrink-anim', desc: "Triez vite : tout rétrécit et finira par disparaître !" },
-    flickerMax: { name: "Stroboscope", findTarget: 'max', cssClass: 'flicker-anim', desc: "Touchez le plus grand malgré le clignotement." },
-    mirrorSort: { name: "Monde Miroir", isSort: true, order: 1, cssClass: 'mirror-view', desc: "Tout est inversé en miroir. Triez du plus petit au plus grand." },
-    doubleTapMax: { name: "Double Frappe", findTarget: 'max', requireDbTap: true, desc: "Touchez DEUX FOIS rapidement l'élément le plus grand." },
-    longPressMin: { name: "Pression Longue", findTarget: 'min', requireLong: true, desc: "Maintenez le doigt appuyé sur l'élément le plus petit." },
-    blindSort: { name: "Tri à l'Aveugle", isSort: true, order: 1, peekHide: true, desc: "Touchez une carte pour la révéler 1 seconde. Triez de mémoire." },
-    mathDiff: { name: "Soustraction Cible", isDiff: true, forceType: 'numbers', desc: "Touchez les 2 nombres dont la différence égale la cible." },
-    avoidMin: { name: "Survie", avoidTarget: 'min', desc: "Touchez tous les éléments SAUF le plus petit. Ne le touchez jamais !" },
-    pulseSort: { name: "Pulsation", isSort: true, order: 1, cssClass: 'pulse-anim', desc: "Triez du plus petit au plus grand pendant que tout palpite." },
-    wobbleMax: { name: "Instabilité", findTarget: 'max', cssClass: 'wobble-anim', desc: "Touchez le plus grand malgré les secousses." },
-    findTargetUI: { name: "Recherche Exacte", isTargetMatch: true, desc: "Retrouvez l'élément identique au modèle affiché." },
-    gravitySort: { name: "Gravité", isSort: true, order: 1, cssClass: 'gravity-anim', desc: "Triez du plus petit au plus grand." },
-    colorSort: { name: "Technicolor", isSort: true, order: 1, cssClass: 'hue-shift', desc: "Triez du plus petit au plus grand… les couleurs, elles, n'arrêtent pas de changer." },
-    danceSort: { name: "La Danse", isSort: true, order: 1, cssClass: 'dance-anim', desc: "Triez du plus petit au plus grand pendant que tout danse." },
+
+    // ── Chasses (3 manches · 1 joker) ──
+    findMax: { name: "Chasse au Max", findTarget: 'max', rounds: 3, desc: "Touchez l'élément le plus grand. 3 manches de plus en plus fournies, 1 joker." },
+    findMin: { name: "Chasse au Min", findTarget: 'min', rounds: 3, desc: "Touchez l'élément le plus petit. 3 manches de plus en plus fournies, 1 joker." },
+    median: { name: "La Médiane", findTarget: 'median', rounds: 3, desc: "Touchez la valeur du milieu : ni la plus petite, ni la plus grande. 3 manches, 1 joker." },
+    flashMax: { name: "Mémoire Flash", findTarget: 'max', flashHide: true, rounds: 3, desc: "Mémorisez vite : tout se cache après 2 secondes. Touchez le plus grand. 3 manches, 1 joker." },
+    doubleTapMax: { name: "Double Frappe", findTarget: 'max', requireDbTap: true, rounds: 3, desc: "Touchez DEUX FOIS rapidement l'élément le plus grand. 3 manches, 1 joker." },
+    longPressMin: { name: "Pression Longue", findTarget: 'min', requireLong: true, rounds: 3, desc: "Maintenez le doigt appuyé sur l'élément le plus petit. 3 manches, 1 joker." },
+    findOdd: { name: "L'Intrus", specialGen: 'odd', winOnOdd: true, rounds: 3, desc: "Un seul élément n'a aucun jumeau : démasquez-le. 3 manches, 1 joker." },
+    findPair: { name: "Les Jumeaux", specialGen: 'pair', winOnPairs: true, rounds: 3, desc: "Deux éléments sont identiques : touchez-les tous les deux. 3 manches, 1 joker." },
+    findTargetUI: { name: "Recherche Exacte", isTargetMatch: true, rounds: 3, desc: "Retrouvez l'élément identique au modèle affiché. 3 manches, 1 joker." },
     cursorSort: { name: "Curseur Fou", isTargetMatch: true, useCursor: true, desc: "Le halo doré va et vient. Touchez l'écran quand il entoure le modèle." },
+    sumTarget: { name: "Addition Cible", isSum: true, forceType: 'numbers', rounds: 3, desc: "Touchez les 2 nombres dont la somme égale la cible. 3 manches, 1 joker." },
+    mathDiff: { name: "Soustraction Cible", isDiff: true, forceType: 'numbers', rounds: 3, desc: "Touchez les 2 nombres dont la différence égale la cible. 3 manches, 1 joker." },
+
+    // ── Parcours multi-étapes ──
+    pairs: { name: "Paires", specialGen: 'pairs', isPairsMatch: true, desc: "Associez tous les éléments deux par deux." },
+    avoidMin: { name: "Survie", avoidTarget: 'min', desc: "Touchez tous les éléments SAUF le plus petit. Ne le touchez jamais !" },
     sequenceHunt: { name: "Chasse en Série", isSequence: true, sequenceLength: 5, desc: "Retrouvez les éléments demandés, dans l'ordre, un par un." },
+    reflex: { name: "Cibles Mobiles", isReflex: true, desc: "Touchez chaque cible dès qu'elle apparaît." },
+
+    // ── Moteurs dédiés ──
     typingTest: { name: "Dactylographie", isTyping: true, typeAgnostic: true, desc: "Recopiez la suite de lettres avec le clavier à l'écran, le plus vite possible." },
     connectDots: { name: "Relier les Points", isConnectDots: true, typeAgnostic: true, desc: "Reliez les points dans l'ordre, sans lever le doigt." },
     mathQuizAdd: { name: "Calcul · Additions", isMathQuiz: true, mathOp: '+', typeAgnostic: true, desc: "3 calculs à résoudre : touchez la bonne réponse." },
@@ -53,6 +62,11 @@ const GAME_MODES = {
     guessNumber: { name: "Le Juste Prix", isGuessNumber: true, typeAgnostic: true, desc: "Devinez le nombre caché grâce aux indices « plus » et « moins »." },
     dobble: { name: "Symbole Commun", isDobble: true, desc: "Un seul élément figure dans les 4 colonnes : sélectionnez-le dans chacune." }
 };
+
+// Rotation des 50 premiers jours : la première semaine d'une joueuse doit
+// montrer le meilleur du jeu, pas 50 fois « Tri Croissant » (audit v2.1).
+const STARTER_ROTATION = ['orderChain', 'sortAsc', 'cascade', 'pairs', 'insertion',
+    'connectDots', 'findMax', 'guessNumber', 'flashSort', 'dobble'];
 
 // ─── 50 types visuels de base ────────────────────────────────────
 const BASE_TYPES = [
