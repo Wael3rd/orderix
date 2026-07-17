@@ -16,7 +16,8 @@ dom.window.eval(fs.readFileSync('www/scripts/data.js', 'utf8') + ';window.__M = 
 const MODES = dom.window.__M;
 
 const GROUPS = [
-    ['⭐ Modes phares — un jour sur trois', ['orderChain', 'insertion', 'cascade']],
+    ['⭐ Modes phares (janvier 1-3)', ['orderChain', 'cascade', 'insertion']],
+    ['🗓️ La vague de janvier (4-30)', ['fontaine', 'metronome', 'laSuite', 'patience', 'duel', 'rummy', 'dominoOrder', 'escalier', 'tubes', 'swapSort', 'boulons', 'fileBloquee', 'etageres', 'hanoi', 'rangement', 'futoshiki', 'balance', 'ordreCache', 'indices', 'chronologie', 'aiguillage', 'ascenseur', 'guichet', 'photoClasse', 'memoryChain', 'fusion']],
     ['Tris', ['sortAsc', 'sortDesc', 'evensAsc', 'oddsDesc', 'flashSort', 'blindSort', 'mirrorSort', 'shuffleSort', 'blackout', 'shrinkSort']],
     ['Chasses — 3 manches + 1 joker', ['findMax', 'findMin', 'median', 'flashMax', 'doubleTapMax', 'longPressMin', 'findOdd', 'findPair', 'findTargetUI', 'cursorSort', 'sumTarget', 'mathDiff']],
     ['Parcours multi-étapes', ['pairs', 'avoidMin', 'sequenceHunt', 'reflex']],
