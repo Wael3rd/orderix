@@ -37,9 +37,15 @@ Script load order (index.html): `data.js` → `utils.js` → `generators.js` →
 `core/logic.js` → `core/gameLoop.js` → `main.js`. All state is global; name collisions across
 files will cause bugs.
 
-- **`scripts/data.js`** — `GAME_MODES` (~47 modes, each with a `desc` instruction string;
-  `forceType` pins math modes to readable numeric types; `typeAgnostic` hides the theme),
-  `BASE_TYPES` (50 visual types), `TEXT_TYPES` whitelist, `buildDayTitle()`.
+- **`scripts/data.js`** — `GAME_MODES` (67 modes incl. the 26-mode "January wave" of ordering
+  gameplays, each with a `desc` instruction string; `forceType` pins math modes to readable
+  numeric types; `typeAgnostic` hides the theme), `BASE_TYPES` (50 visual types), `TEXT_TYPES`
+  whitelist, `buildDayTitle()`. Calendar: days 1-30 = `JANUARY_LINEUP` (one new gameplay per
+  day, testing phase — do not reorder without the owner's ask), day 31+ = legacy rotation.
+- **Feedback loop**: end-of-game comment box opens a prefilled GitHub issue (label `feedback`);
+  a cloud routine ("Orderix — correctifs depuis les feedbacks", every 2h) reads them, implements
+  fixes, runs `node smoke-test.js`, commits to main and answers/closes the issue. APK rebuilds
+  still happen locally (`npm run android:dev`).
 - **`scripts/core/state.js`** — globals, the 365-day `DAYS` table (procedural mode×type cross),
   DOM cache, storage helpers, **local progress** (`orderix_local_results`, playable without a
   nickname), day-of-year ↔ date mapping, stats/streak computation.
