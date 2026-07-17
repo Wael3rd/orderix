@@ -21,7 +21,8 @@ for (let id = 1; id <= 365; id++) {
     out.push({ id, title: buildDayTitle({ modeId: mKey, type: mode.forceType || base.type }) });
 }
 const start = new Date(Date.UTC(2026, 0, 1));
-console.log(out.slice(197, 206).map(d => {
+const from = ${process.argv[2] || 198}, to = ${process.argv[3] || 206};
+console.log(out.slice(from - 1, to).map(d => {
     const dt = new Date(start.getTime() + (d.id - 1) * 86400000);
     return 'Jour ' + d.id + ' (' + dt.getUTCDate() + '/' + (dt.getUTCMonth() + 1) + ') : ' + d.title;
 }).join('\\n'));

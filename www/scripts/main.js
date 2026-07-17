@@ -36,21 +36,12 @@
 })();
 
 function applyDayConfig(cfg) {
+    // La distribution mode×type des 365 jours est organisée dans le code
+    // (state.js) depuis l'audit v2.1 — les overrides modeId/type hérités du
+    // Google Sheet ne sont PLUS appliqués (ils écrasaient la nouvelle
+    // rotation des modes phares). Le serveur conserve deux leviers :
+    // `count` (nombre d'éléments) et `enabled` (désactivation d'urgence).
     dayConfig = cfg || {};
-    DAYS.forEach(day => {
-        const c = dayConfig[day.id];
-        if (c) {
-            if (c.modeId && GAME_MODES[c.modeId]) day.modeId = c.modeId;
-            if (c.type) {
-                const bType = BASE_TYPES.find(b => b.type === c.type);
-                if (bType) day.type = c.type;
-            }
-            // Les modes à type imposé (additions…) gardent leur type lisible
-            const mode = GAME_MODES[day.modeId];
-            if (mode.forceType) day.type = mode.forceType;
-            day.title = buildDayTitle(day);
-        }
-    });
 }
 
 function recoverPendingGame() {
