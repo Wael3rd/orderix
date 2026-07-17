@@ -30,25 +30,30 @@ let currentScreen = 'home';
 let returnScreen = 'home'; // écran d'origine avant d'entrer dans un jour (retour cohérent)
 
 // ─── Compilation des 365 jours ───────────────────────────────────
+// Distribution qualité sur TOUTE l'année (le puzzle du jour suit le jour
+// de l'année : une joueuse peut commencer en juillet comme en janvier) :
+//   · 1 jour sur 3 → mode PHARE (La Chaîne / L'Insertion / Tri Cascade)
+//   · 1 jour sur 3 → mode de tier A (les valeurs sûres)
+//   · 1 jour sur 3 → longue traîne (variété)
+const FLAGSHIP_MODES = ['orderChain', 'insertion', 'cascade'];
+const QUALITY_MODES = ['sortAsc', 'pairs', 'connectDots', 'guessNumber', 'flashSort',
+    'dobble', 'speedQuiz', 'conveyorBelt', 'blindSort', 'speedLetters', 'sortDesc',
+    'findMax', 'findMin'];
+const REST_MODES = Object.keys(GAME_MODES)
+    .filter(k => !FLAGSHIP_MODES.includes(k) && !QUALITY_MODES.includes(k));
+
 let ALL_DAYS = [];
-// Les 50 premiers jours : rotation des modes phares sur chaque type de base
-// (la première semaine d'une joueuse doit montrer le meilleur du jeu)
-BASE_TYPES.forEach((d, i) => {
-    const mKey = STARTER_ROTATION[i % STARTER_ROTATION.length];
-    const mode = GAME_MODES[mKey];
-    ALL_DAYS.push({ id: d.id, type: mode.forceType || d.type, modeId: mKey });
-});
-// Remplissage jusqu'à 365 par croisement procédural mode × type
-const MKEYS = Object.keys(GAME_MODES);
-let cId = ALL_DAYS.length + 1, mIdx = 0;
-while (ALL_DAYS.length < 365) {
-    const mKey = MKEYS[mIdx % MKEYS.length];
+let qIdx = 0, rIdx = 0;
+for (let id = 1; id <= 365; id++) {
+    let mKey;
+    if (id % 3 === 1) mKey = FLAGSHIP_MODES[Math.floor(id / 3) % FLAGSHIP_MODES.length];
+    else if (id % 3 === 2) mKey = QUALITY_MODES[qIdx++ % QUALITY_MODES.length];
+    else mKey = REST_MODES[rIdx++ % REST_MODES.length];
+
     const mode = GAME_MODES[mKey];
     // Certains modes exigent un type précis (ex. additions → nombres lisibles)
-    let base = BASE_TYPES[(cId * 13) % BASE_TYPES.length];
-    let type = mode.forceType || base.type;
-    ALL_DAYS.push({ id: cId, type: type, modeId: mKey });
-    cId++; mIdx++;
+    const base = BASE_TYPES[(id * 13) % BASE_TYPES.length];
+    ALL_DAYS.push({ id: id, type: mode.forceType || base.type, modeId: mKey });
 }
 ALL_DAYS.forEach(d => { d.title = buildDayTitle(d); });
 const DAYS = ALL_DAYS;

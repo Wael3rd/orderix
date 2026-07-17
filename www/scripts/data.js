@@ -63,11 +63,6 @@ const GAME_MODES = {
     dobble: { name: "Symbole Commun", isDobble: true, desc: "Un seul élément figure dans les 4 colonnes : sélectionnez-le dans chacune." }
 };
 
-// Rotation des 50 premiers jours : la première semaine d'une joueuse doit
-// montrer le meilleur du jeu, pas 50 fois « Tri Croissant » (audit v2.1).
-const STARTER_ROTATION = ['orderChain', 'sortAsc', 'cascade', 'pairs', 'insertion',
-    'connectDots', 'findMax', 'guessNumber', 'flashSort', 'dobble'];
-
 // ─── 50 types visuels de base ────────────────────────────────────
 const BASE_TYPES = [
     { id: 1, title: "Luminosité", type: "lightness" },
