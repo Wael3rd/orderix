@@ -250,7 +250,36 @@ function startGame() {
         board.appendChild(itemFrag);
 
         if (mode.flashHide) setTimeout(() => document.querySelectorAll('#game-board .item').forEach(el => el.classList.add('peek-hidden')), 2000);
-        if (mode.shuffleTick) envInterval = setInterval(() => { if (!isPaused) document.querySelectorAll('#game-board .item').forEach(el => el.style.order = Math.floor(Math.random() * 100)); }, mode.shuffleTick);
+        if (mode.shuffleTick) {
+            // Jauge de tension : temps restant avant le prochain mélange
+            const shuffleHud = document.createElement('div');
+            shuffleHud.style.cssText = 'width:100%;display:flex;flex-direction:column;align-items:center;gap:3px;margin-bottom:8px;order:-1;';
+            const shuffleLbl = document.createElement('div');
+            shuffleLbl.style.cssText = 'font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#8B90A0;';
+            shuffleLbl.textContent = 'Prochain mélange';
+            const shuffleBarWrap = document.createElement('div');
+            shuffleBarWrap.className = 'timebar-wrap';
+            shuffleBarWrap.style.margin = '0';
+            const shuffleBar = document.createElement('div');
+            shuffleBar.className = 'timebar';
+            shuffleBarWrap.appendChild(shuffleBar);
+            shuffleHud.append(shuffleLbl, shuffleBarWrap);
+            board.insertBefore(shuffleHud, board.firstChild);
+
+            let shuffleElapsed = 0;
+            const shuffleStep = 50;
+            envInterval = setInterval(() => {
+                if (isPaused) return;
+                shuffleElapsed += shuffleStep;
+                shuffleBar.style.width = (Math.max(0, mode.shuffleTick - shuffleElapsed) / mode.shuffleTick * 100) + '%';
+                if (shuffleElapsed >= mode.shuffleTick) {
+                    shuffleElapsed = 0;
+                    haptic(15);
+                    // style.order laisse la jauge en tête (order:-1), les items se mélangent
+                    document.querySelectorAll('#game-board .item').forEach(el => el.style.order = Math.floor(Math.random() * 100));
+                }
+            }, shuffleStep);
+        }
         if (mode.blackout) envInterval = setInterval(() => { if (!isPaused) board.classList.toggle('blackout-mode'); }, 1500);
 
         // Curseur ping-pong : on touche l'écran quand le halo entoure le modèle

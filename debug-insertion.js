@@ -1,3 +1,4 @@
+// Capture rapide du mode Tremblement (jauge de mélange), jour 12.
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -25,22 +26,14 @@ const server = http.createServer((req, res) => {
     page.on('request', r => r.url().includes('script.google.com') ? r.abort() : r.continue());
     await page.goto('http://localhost:8765/', { waitUntil: 'networkidle0', timeout: 20000 });
     await new Promise(r => setTimeout(r, 900));
-
-    const out = await page.evaluate(`
-        (function() {
-            try {
-                const day = DAYS.find(d => d.modeId === 'insertion');
-                if (!day) return 'PAS DE JOUR insertion. Jours 1-12: ' + DAYS.slice(0,12).map(d => d.id + ':' + d.modeId).join(', ');
-                selectDay(day);
-                const introVisible = !introPanel.classList.contains('hidden');
-                startGame();
-                return JSON.stringify({ dayId: day.id, type: day.type, screen: currentScreen, introVisible, boardChildren: board.children.length });
-            } catch (e) {
-                return 'EXCEPTION: ' + e.message + ' | ' + (e.stack || '').split('\\n')[1];
-            }
-        })()
+    await page.evaluate(`
+        localResults = {}; serverPlayedDays = {};
+        selectDay(DAYS.find(d => d.modeId === 'shuffleSort'));
+        startGame();
     `);
-    console.log(out);
+    await new Promise(r => setTimeout(r, 1400)); // jauge à ~55%
+    await page.screenshot({ path: 'shots/shuffle-gauge.png' });
+    console.log('ok jour ' + await page.evaluate(`currentDayConfig.id`));
     await browser.close();
     server.close();
 })();
