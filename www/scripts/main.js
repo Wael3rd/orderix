@@ -167,6 +167,20 @@ function handleFeedback(feedbackValue) {
     fetchLeaderboard();
 }
 
+// ─── Zone de test (staging uniquement) ───────────────────────────
+if (ENV_NAME === 'staging') {
+    document.getElementById('dev-zone').classList.remove('hidden');
+    document.getElementById('reset-progress-btn').addEventListener('click', () => {
+        if (!confirm('Effacer toute la progression locale ? Toutes les cases redeviendront jouables.')) return;
+        setStorage('orderix_local_results', '');
+        setStorage('orderix_pending_game', '');
+        localResults = {};
+        serverPlayedDays = {};
+        buildProfile();
+        alert('Progression effacée — le calendrier est vierge.');
+    });
+}
+
 // ─── Confort mobile ──────────────────────────────────────────────
 // Le mode « Pression Longue » déclencherait le menu contextuel Android
 document.addEventListener('contextmenu', (e) => {
