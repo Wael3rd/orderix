@@ -1,0 +1,257 @@
+// ─── Mode : Chronologie ──────────────────────────────────────────
+// Culture générale : toucher 5 cartes de la plus petite valeur à la
+// plus grande. Chaque bonne réponse fige la carte avec son rang et
+// révèle sa valeur réelle. 1 joker : la première erreur est
+// pardonnée (la carte secoue). Données factuelles embarquées.
+
+const DATASETS = [
+    {
+        question: 'Du plus ancien au plus récent', unite: 'année',
+        items: [
+            { label: 'Téléphone', valeur: 1876 },
+            { label: 'Avion', valeur: 1903 },
+            { label: 'Télévision', valeur: 1926 },
+            { label: 'Four à micro-ondes', valeur: 1945 },
+            { label: 'Smartphone tactile', valeur: 2007 }
+        ]
+    },
+    {
+        question: 'Du plus léger au plus lourd', unite: 'kg',
+        items: [
+            { label: 'Chat', valeur: 4 },
+            { label: 'Loup', valeur: 40 },
+            { label: 'Lion', valeur: 190 },
+            { label: 'Cheval', valeur: 500 },
+            { label: 'Éléphant d\'Afrique', valeur: 5000 }
+        ]
+    },
+    {
+        question: 'Du plus bas au plus haut', unite: 'm',
+        items: [
+            { label: 'Statue de la Liberté', valeur: 93 },
+            { label: 'Grande Pyramide', valeur: 139 },
+            { label: 'Tour Eiffel', valeur: 330 },
+            { label: 'Empire State Building', valeur: 443 },
+            { label: 'Burj Khalifa', valeur: 828 }
+        ]
+    },
+    {
+        question: 'Du moins élevé au plus élevé', unite: 'm',
+        items: [
+            { label: 'Mont Blanc', valeur: 4809 },
+            { label: 'Kilimandjaro', valeur: 5895 },
+            { label: 'Denali', valeur: 6190 },
+            { label: 'Aconcagua', valeur: 6961 },
+            { label: 'Everest', valeur: 8849 }
+        ]
+    },
+    {
+        question: 'Du plus court au plus long', unite: 'km',
+        items: [
+            { label: 'Seine', valeur: 777 },
+            { label: 'Loire', valeur: 1006 },
+            { label: 'Rhin', valeur: 1233 },
+            { label: 'Danube', valeur: 2850 },
+            { label: 'Nil', valeur: 6650 }
+        ]
+    },
+    {
+        question: 'De la plus petite à la plus grande', unite: 'km',
+        items: [
+            { label: 'Mercure', valeur: 4879 },
+            { label: 'Mars', valeur: 6779 },
+            { label: 'Vénus', valeur: 12104 },
+            { label: 'Terre', valeur: 12742 },
+            { label: 'Jupiter', valeur: 139820 }
+        ]
+    },
+    {
+        question: 'Du plus lent au plus rapide', unite: 'km/h',
+        items: [
+            { label: 'Poule', valeur: 14 },
+            { label: 'Chat', valeur: 48 },
+            { label: 'Lévrier', valeur: 72 },
+            { label: 'Antilope', valeur: 88 },
+            { label: 'Faucon pèlerin en piqué', valeur: 320 }
+        ]
+    },
+    {
+        question: 'De la vie la plus courte à la plus longue', unite: 'ans',
+        items: [
+            { label: 'Hamster', valeur: 3 },
+            { label: 'Lapin', valeur: 9 },
+            { label: 'Chien', valeur: 13 },
+            { label: 'Cheval', valeur: 28 },
+            { label: 'Tortue géante', valeur: 150 }
+        ]
+    },
+    {
+        question: 'Du moins peuplé au plus peuplé', unite: 'millions d\'habitants',
+        items: [
+            { label: 'Portugal', valeur: 10 },
+            { label: 'France', valeur: 68 },
+            { label: 'Japon', valeur: 124 },
+            { label: 'États-Unis', valeur: 335 },
+            { label: 'Inde', valeur: 1440 }
+        ]
+    },
+    {
+        question: 'Du plus ancien au plus récent', unite: 'année',
+        items: [
+            { label: 'Orgue', valeur: -250 },
+            { label: 'Violon', valeur: 1550 },
+            { label: 'Piano', valeur: 1700 },
+            { label: 'Saxophone', valeur: 1846 },
+            { label: 'Thérémine', valeur: 1920 }
+        ]
+    }
+];
+
+function _chronoFmt(valeur, unite) {
+    if (unite === 'année') {
+        return valeur < 0 ? `${-valeur} av. J.-C.` : String(valeur);
+    }
+    return `${valeur} ${unite}`;
+}
+
+function _chronoCard(label, small) {
+    const card = document.createElement('div');
+    card.style.cssText = 'position:relative;background:#FFFFFF;border:2px solid #EEF2FF;' +
+        `border-radius:12px;padding:${small ? '6px 10px' : '12px 14px'};` +
+        `min-width:${small ? '78px' : '132px'};text-align:center;flex-shrink:0;` +
+        'box-shadow:0 2px 6px rgba(35,38,47,.08);user-select:none;';
+    const lbl = document.createElement('div');
+    lbl.style.cssText = `font-weight:900;color:#23262F;font-size:${small ? '.72rem' : '.92rem'};line-height:1.3;`;
+    lbl.textContent = label;
+    card.appendChild(lbl);
+    const val = document.createElement('div');
+    val.style.cssText = `font-weight:bold;color:#8B90A0;font-size:${small ? '.62rem' : '.78rem'};min-height:1.2em;margin-top:2px;`;
+    card.appendChild(val);
+    card._lbl = lbl;
+    card._val = val;
+    return card;
+}
+
+function _chronoRankChip(card, rank) {
+    const chip = document.createElement('div');
+    chip.style.cssText = 'position:absolute;top:-9px;left:-9px;width:22px;height:22px;' +
+        'border-radius:50%;background:#34B871;color:#FFFFFF;font-weight:900;font-size:12px;' +
+        'display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(35,38,47,.25);';
+    chip.textContent = rank;
+    card.appendChild(chip);
+}
+
+function showExampleChronologie(day, row, vals) {
+    const ex = document.createElement('div');
+    ex.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:8px;margin:6px auto;';
+
+    const q = document.createElement('div');
+    q.style.cssText = 'font-size:.8rem;color:#8B90A0;font-weight:bold;';
+    q.textContent = 'Du plus ancien au plus récent (année)';
+
+    const cardsRow = document.createElement('div');
+    cardsRow.style.cssText = 'display:flex;gap:8px;justify-content:center;padding-top:9px;';
+    const c1 = _chronoCard('Téléphone', true);
+    c1.style.borderColor = '#34B871';
+    c1._val.textContent = '1876';
+    c1._val.style.color = '#34B871';
+    _chronoRankChip(c1, 1);
+    cardsRow.append(c1, _chronoCard('Avion', true), _chronoCard('Télévision', true));
+
+    const note = document.createElement('div');
+    note.style.cssText = 'font-size:.78rem;color:#8B90A0;font-weight:bold;';
+    note.textContent = 'Touchez les cartes dans l\'ordre — 1 joker';
+
+    ex.append(q, cardsRow, note);
+    row.style.flexDirection = 'column';
+    row.append(ex);
+}
+
+function startGameChronologie() {
+    board.style.display = 'flex';
+    board.style.flexDirection = 'column';
+    board.style.alignItems = 'center';
+
+    const set = DATASETS[Math.floor(Math.random() * DATASETS.length)];
+    const sorted = [...set.items].sort((a, b) => a.valeur - b.valeur);
+    const shuffled = [...set.items].sort(() => Math.random() - 0.5);
+    let next = 0;
+    let jokerUsed = false;
+    let finished = false;
+
+    const header = document.createElement('div');
+    header.style.cssText = 'text-align:center;margin-bottom:6px;';
+    header.innerHTML = `<div style="font-weight:900;color:#23262F;font-size:1.02rem;">${set.question}</div>` +
+        `<div style="font-weight:bold;color:#8B90A0;font-size:.8rem;">Unité : ${set.unite}</div>`;
+    board.appendChild(header);
+
+    const hud = document.createElement('div');
+    hud.style.cssText = 'display:flex;gap:18px;justify-content:center;font-weight:bold;color:#8B90A0;font-size:.9rem;margin-bottom:14px;';
+    board.appendChild(hud);
+    function renderHud() {
+        hud.innerHTML = `<span>Trouvées <b style="color:#4A6CFA">${next}/5</b></span>` +
+            (jokerUsed
+                ? '<span style="color:#8B90A0">Joker : utilisé</span>'
+                : '<span style="color:#F5B227">Joker : ● disponible</span>');
+    }
+    renderHud();
+
+    const zone = document.createElement('div');
+    zone.style.cssText = 'display:flex;flex-wrap:wrap;gap:12px;justify-content:center;max-width:420px;padding-top:9px;';
+    board.appendChild(zone);
+
+    const cards = [];
+    shuffled.forEach(item => {
+        const card = _chronoCard(item.label, false);
+        card.style.cursor = 'pointer';
+        card._item = item;
+        cards.push(card);
+
+        card.addEventListener('click', () => {
+            if (isPaused || finished || card._done) return;
+
+            if (item.valeur === sorted[next].valeur && item.label === sorted[next].label) {
+                card._done = true;
+                card.style.pointerEvents = 'none';
+                card.style.borderColor = '#34B871';
+                card._val.textContent = _chronoFmt(item.valeur, set.unite);
+                card._val.style.color = '#34B871';
+                _chronoRankChip(card, next + 1);
+                next++;
+                haptic(8);
+                renderHud();
+                if (next >= 5) {
+                    finished = true;
+                    endGame(jokerUsed
+                        ? 'Chronologie complète — le joker a bien servi !'
+                        : 'Chronologie parfaite, sans joker !', true);
+                }
+            } else if (!jokerUsed) {
+                // Première erreur pardonnée : la carte secoue
+                jokerUsed = true;
+                haptic(40);
+                card.classList.add('wobble-anim');
+                setTimeout(() => card.classList.remove('wobble-anim'), 600);
+                renderHud();
+                resultDisplay.textContent = 'Joker utilisé — première erreur pardonnée !';
+                resultDisplay.style.color = '#F5B227';
+                setTimeout(() => {
+                    if (!isPaused && !finished) resultDisplay.textContent = '';
+                }, 1600);
+            } else {
+                finished = true;
+                haptic(60);
+                card.style.borderColor = '#E0533D';
+                // Révèle toutes les valeurs pour apprendre quelque chose
+                cards.forEach(c => {
+                    if (!c._done) {
+                        c._val.textContent = _chronoFmt(c._item.valeur, set.unite);
+                        c._val.style.color = '#E0533D';
+                    }
+                });
+                endGame('Raté — toutes les valeurs sont révélées.', false);
+            }
+        });
+        zone.appendChild(card);
+    });
+}

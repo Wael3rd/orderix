@@ -30,25 +30,27 @@ let currentScreen = 'home';
 let returnScreen = 'home'; // écran d'origine avant d'entrer dans un jour (retour cohérent)
 
 // ─── Compilation des 365 jours ───────────────────────────────────
-// Distribution qualité sur TOUTE l'année (le puzzle du jour suit le jour
-// de l'année : une joueuse peut commencer en juillet comme en janvier) :
-//   · 1 jour sur 3 → mode PHARE (La Chaîne / L'Insertion / Tri Cascade)
-//   · 1 jour sur 3 → mode de tier A (les valeurs sûres)
-//   · 1 jour sur 3 → longue traîne (variété)
-const FLAGSHIP_MODES = ['orderChain', 'insertion', 'cascade'];
-const QUALITY_MODES = ['sortAsc', 'pairs', 'connectDots', 'guessNumber', 'flashSort',
-    'dobble', 'speedQuiz', 'conveyorBelt', 'blindSort', 'speedLetters', 'sortDesc',
-    'findMax', 'findMin'];
-const REST_MODES = Object.keys(GAME_MODES)
-    .filter(k => !FLAGSHIP_MODES.includes(k) && !QUALITY_MODES.includes(k));
+// JANVIER (jours 1-30) : la vitrine — les 30 gameplays d'ordonnancement,
+// un par jour, dans l'ordre de la liste validée (session de test).
+// Jour 31 + FÉVRIER→DÉCEMBRE : rotation de tous les anciens modes
+// (rien n'est supprimé du roster).
+const JANUARY_LINEUP = [
+    'orderChain', 'cascade', 'insertion', 'fontaine', 'metronome',
+    'laSuite', 'patience', 'duel', 'rummy', 'dominoOrder',
+    'escalier', 'tubes', 'swapSort', 'boulons', 'fileBloquee',
+    'etageres', 'hanoi', 'rangement', 'futoshiki', 'balance',
+    'ordreCache', 'indices', 'chronologie', 'conveyorBelt', 'aiguillage',
+    'ascenseur', 'guichet', 'photoClasse', 'memoryChain', 'fusion'
+];
+const LEGACY_MODES = Object.keys(GAME_MODES)
+    .filter(k => !JANUARY_LINEUP.includes(k) || ['orderChain', 'cascade', 'insertion', 'conveyorBelt'].includes(k));
 
 let ALL_DAYS = [];
-let qIdx = 0, rIdx = 0;
+let legacyIdx = 0;
 for (let id = 1; id <= 365; id++) {
     let mKey;
-    if (id % 3 === 1) mKey = FLAGSHIP_MODES[Math.floor(id / 3) % FLAGSHIP_MODES.length];
-    else if (id % 3 === 2) mKey = QUALITY_MODES[qIdx++ % QUALITY_MODES.length];
-    else mKey = REST_MODES[rIdx++ % REST_MODES.length];
+    if (id <= 30) mKey = JANUARY_LINEUP[id - 1];
+    else mKey = LEGACY_MODES[legacyIdx++ % LEGACY_MODES.length];
 
     const mode = GAME_MODES[mKey];
     // Certains modes exigent un type précis (ex. additions → nombres lisibles)

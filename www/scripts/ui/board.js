@@ -74,6 +74,58 @@ function showExample(day, container) {
         showExampleInsertion(day, row, vals);
     } else if (mode.isCascade) {
         showExampleCascade(day, row, vals);
+    } else if (mode.isFontaine) {
+        showExampleFontaine(day, row, vals);
+    } else if (mode.isMetronome) {
+        showExampleMetronome(day, row, vals);
+    } else if (mode.isLaSuite) {
+        showExampleLaSuite(day, row, vals);
+    } else if (mode.isPatience) {
+        showExamplePatience(day, row, vals);
+    } else if (mode.isDuel) {
+        showExampleDuel(day, row, vals);
+    } else if (mode.isRummy) {
+        showExampleRummy(day, row, vals);
+    } else if (mode.isDominoOrder) {
+        showExampleDominoOrder(day, row, vals);
+    } else if (mode.isEscalier) {
+        showExampleEscalier(day, row, vals);
+    } else if (mode.isTubes) {
+        showExampleTubes(day, row, vals);
+    } else if (mode.isSwapSort) {
+        showExampleSwapSort(day, row, vals);
+    } else if (mode.isBoulons) {
+        showExampleBoulons(day, row, vals);
+    } else if (mode.isHanoi) {
+        showExampleHanoi(day, row, vals);
+    } else if (mode.isFileBloquee) {
+        showExampleFileBloquee(day, row, vals);
+    } else if (mode.isEtageres) {
+        showExampleEtageres(day, row, vals);
+    } else if (mode.isRangement) {
+        showExampleRangement(day, row, vals);
+    } else if (mode.isFutoshiki) {
+        showExampleFutoshiki(day, row, vals);
+    } else if (mode.isBalance) {
+        showExampleBalance(day, row, vals);
+    } else if (mode.isOrdreCache) {
+        showExampleOrdreCache(day, row, vals);
+    } else if (mode.isIndices) {
+        showExampleIndices(day, row, vals);
+    } else if (mode.isChronologie) {
+        showExampleChronologie(day, row, vals);
+    } else if (mode.isAiguillage) {
+        showExampleAiguillage(day, row, vals);
+    } else if (mode.isAscenseur) {
+        showExampleAscenseur(day, row, vals);
+    } else if (mode.isGuichet) {
+        showExampleGuichet(day, row, vals);
+    } else if (mode.isPhotoClasse) {
+        showExamplePhotoClasse(day, row, vals);
+    } else if (mode.isMemoryChain) {
+        showExampleMemoryChain(day, row, vals);
+    } else if (mode.isFusion) {
+        showExampleFusion(day, row, vals);
     } else if (mode.isReflex) {
         showExampleReflex(day, row, vals);
     } else if (mode.isTyping) {

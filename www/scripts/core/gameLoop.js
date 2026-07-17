@@ -30,6 +30,7 @@ function startGame() {
     resultDisplay.textContent = '';
     leaderboardSection.classList.add('hidden');
     dbMessage.textContent = '';
+    document.getElementById('comment-zone').classList.add('hidden');
 
     if (mode.isSort) {
         checkBtn.textContent = 'Valider mon ordre';
@@ -69,6 +70,58 @@ function startGame() {
         startGameInsertion();
     } else if (mode.isCascade) {
         startGameCascade();
+    } else if (mode.isFontaine) {
+        startGameFontaine();
+    } else if (mode.isMetronome) {
+        startGameMetronome();
+    } else if (mode.isLaSuite) {
+        startGameLaSuite();
+    } else if (mode.isPatience) {
+        startGamePatience();
+    } else if (mode.isDuel) {
+        startGameDuel();
+    } else if (mode.isRummy) {
+        startGameRummy();
+    } else if (mode.isDominoOrder) {
+        startGameDominoOrder();
+    } else if (mode.isEscalier) {
+        startGameEscalier();
+    } else if (mode.isTubes) {
+        startGameTubes();
+    } else if (mode.isSwapSort) {
+        startGameSwapSort();
+    } else if (mode.isBoulons) {
+        startGameBoulons();
+    } else if (mode.isHanoi) {
+        startGameHanoi();
+    } else if (mode.isFileBloquee) {
+        startGameFileBloquee();
+    } else if (mode.isEtageres) {
+        startGameEtageres();
+    } else if (mode.isRangement) {
+        startGameRangement();
+    } else if (mode.isFutoshiki) {
+        startGameFutoshiki();
+    } else if (mode.isBalance) {
+        startGameBalance();
+    } else if (mode.isOrdreCache) {
+        startGameOrdreCache();
+    } else if (mode.isIndices) {
+        startGameIndices();
+    } else if (mode.isChronologie) {
+        startGameChronologie();
+    } else if (mode.isAiguillage) {
+        startGameAiguillage();
+    } else if (mode.isAscenseur) {
+        startGameAscenseur();
+    } else if (mode.isGuichet) {
+        startGameGuichet();
+    } else if (mode.isPhotoClasse) {
+        startGamePhotoClasse();
+    } else if (mode.isMemoryChain) {
+        startGameMemoryChain();
+    } else if (mode.isFusion) {
+        startGameFusion();
     } else if (mode.isReflex) {
         startGameReflex();
     } else if (mode.isTyping) {

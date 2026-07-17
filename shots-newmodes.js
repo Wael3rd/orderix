@@ -28,7 +28,8 @@ const server = http.createServer((req, res) => {
     const errors = [];
     page.on('pageerror', e => errors.push('PAGEERROR: ' + e.message));
 
-    for (const modeId of ['orderChain', 'insertion', 'cascade']) {
+    const list = process.argv.slice(2).length ? process.argv.slice(2) : ['orderChain', 'insertion', 'cascade'];
+    for (const modeId of list) {
         await page.goto('http://localhost:8765/', { waitUntil: 'networkidle0', timeout: 20000 });
         await new Promise(r => setTimeout(r, 900));
 

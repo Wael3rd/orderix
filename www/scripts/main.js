@@ -158,6 +158,7 @@ function handleFeedback(feedbackValue) {
     feedbackQ.classList.add('hidden');
     feedbackContainer.classList.add('hidden');
     resultActions.classList.remove('hidden');
+    document.getElementById('comment-zone').classList.remove('hidden');
     leaderboardSection.classList.remove('hidden');
     if (feedbackValue !== 'none' && getPlayerName()) {
         dbMessage.textContent = 'Envoi de votre avis…';
@@ -166,6 +167,39 @@ function handleFeedback(feedbackValue) {
     submitScore(pendingTimeVal, feedbackValue, true);
     fetchLeaderboard();
 }
+
+// ─── Commentaires de test → GitHub Issues ────────────────────────
+// Le commentaire ouvre une issue GitHub pré-remplie (label `feedback`) :
+// un agent planifié la lit et lance les correctifs sans passer par le chat.
+document.getElementById('comment-send').addEventListener('click', () => {
+    const box = document.getElementById('comment-box');
+    const status = document.getElementById('comment-status');
+    const txt = box.value.trim();
+    if (!txt) { status.textContent = 'Écrivez d\'abord un commentaire.'; return; }
+
+    const day = currentDayConfig;
+    const info = day ? getPlayedInfo(day.id) : null;
+    const result = info
+        ? (info.isWin ? `réussi en ${Math.abs(info.time).toFixed(3)} s` : (info.time === -999999 ? 'abandonné' : 'raté'))
+        : '—';
+    const title = `[feedback] Jour ${day ? day.id : '?'} — ${day ? GAME_MODES[day.modeId].name : 'général'}`;
+    const body = `**Mode** : ${day ? day.title : '—'} (\`${day ? day.modeId : ''}\` · type \`${day ? day.type : ''}\`)\n` +
+        `**Résultat** : ${result}\n**Env** : ${ENV_NAME}\n\n**Commentaire** :\n${txt}\n\n` +
+        `_Envoyé depuis l'app le ${new Date().toLocaleString('fr-FR')}_`;
+
+    // Sauvegarde locale de secours (consultable même sans réseau)
+    try {
+        const all = JSON.parse(getStorage('orderix_comments') || '[]') || [];
+        all.push({ date: new Date().toISOString(), day: day ? day.id : 0, modeId: day ? day.modeId : '', txt: txt, result: result });
+        setStorage('orderix_comments', JSON.stringify(all));
+    } catch (e) { }
+
+    const url = 'https://github.com/Wael3rd/orderix/issues/new?labels=feedback&title=' +
+        encodeURIComponent(title) + '&body=' + encodeURIComponent(body);
+    window.open(url, '_system');
+    status.textContent = 'GitHub s\'ouvre : appuyez sur « Submit new issue » et Claude prendra le relais.';
+    box.value = '';
+});
 
 // ─── Zone de test (staging uniquement) ───────────────────────────
 if (ENV_NAME === 'staging') {

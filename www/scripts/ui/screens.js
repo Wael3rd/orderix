@@ -248,6 +248,8 @@ function selectDay(day) {
     resultDisplay.textContent = '';
     dbMessage.textContent = '';
     leaderboardSection.classList.add('hidden');
+    document.getElementById('comment-zone').classList.add('hidden');
+    document.getElementById('comment-status').textContent = '';
 
     const mode = GAME_MODES[day.modeId];
     const base = BASE_TYPES.find(b => b.type === day.type);
@@ -275,6 +277,7 @@ function selectDay(day) {
         feedbackQ.classList.add('hidden');
         feedbackContainer.classList.add('hidden');
         resultActions.classList.remove('hidden');
+        document.getElementById('comment-zone').classList.remove('hidden');
         pendingTimeVal = 0;
 
         leaderboardTitle.textContent = `Classement — Jour ${day.id}`;
