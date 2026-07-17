@@ -67,6 +67,15 @@ function getPlayerName() {
 }
 
 function submitScore(timeVal, feedback, isUpdate = false) {
+    // Version de test : aucun envoi au serveur (le classement réel n'est
+    // pas pollué et « Rejouer (test) » reste sans trace).
+    if (ENV_NAME === 'staging') {
+        dbMessage.textContent = 'Mode test — rien n\'est envoyé au serveur.';
+        dbMessage.style.color = 'var(--gris-clair)';
+        if (!isUpdate) fetchLeaderboard();
+        return;
+    }
+
     const name = getPlayerName();
     if (!name) {
         // Sans pseudo, la partie reste locale : on n'envoie rien au serveur.

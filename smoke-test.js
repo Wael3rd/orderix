@@ -164,6 +164,26 @@ __check('retour : calendrier → jour → back ramène au calendrier', () => {
     if (currentScreen !== 'home') throw new Error('retour vers ' + currentScreen + ' au lieu de home');
 });
 
+__check('staging : rejouer efface le résultat et rouvre l intro', () => {
+    localResults = {}; serverPlayedDays = {};
+    const day = DAYS.find(d => d.modeId === 'sortAsc');
+    selectDay(day);
+    startGame();
+    const items = Array.from(board.querySelectorAll('.item'));
+    items.sort((a, b) => parseFloat(a.dataset.value) - parseFloat(b.dataset.value));
+    items.forEach(it => it.click());
+    verifyOrder();
+    if (!localResults[day.id]) throw new Error('résultat non enregistré avant rejeu');
+    const replayBtn = document.getElementById('replay-btn');
+    if (replayBtn.classList.contains('hidden')) throw new Error('bouton rejouer invisible en staging');
+    replayBtn.click();
+    __clock.tick(500);
+    if (localResults[day.id]) throw new Error('résultat non effacé par le rejeu');
+    if (introPanel.classList.contains('hidden')) throw new Error('intro non rouverte après rejeu');
+    if (currentScreen !== 'game') throw new Error('pas sur l écran de jeu');
+    goHome();
+});
+
 __check('jour déjà joué → pas de seconde tentative', () => {
     localResults = {};
     const day = DAYS[10];

@@ -55,7 +55,8 @@ function recoverPendingGame() {
         // Marque le jour comme abandonné en local
         saveLocalResult(data.dayId, data.itemCount || 10, -999999, false);
 
-        // Et au serveur si un pseudo existe
+        // Et au serveur si un pseudo existe (jamais en version de test)
+        if (ENV_NAME === 'staging') return;
         const name = getStorage('orderix_player_name') || '';
         if (!name) return;
         fetch(GAS_URL, {
@@ -204,6 +205,19 @@ document.getElementById('comment-send').addEventListener('click', () => {
 // ─── Zone de test (staging uniquement) ───────────────────────────
 if (ENV_NAME === 'staging') {
     document.getElementById('dev-zone').classList.remove('hidden');
+
+    // Rejouer le jour courant : efface son résultat (local + cache serveur)
+    // et rouvre l'écran d'introduction — rien n'est envoyé au serveur en staging.
+    document.getElementById('replay-btn').classList.remove('hidden');
+    document.getElementById('replay-btn').addEventListener('click', () => {
+        if (!currentDayConfig) return;
+        const day = currentDayConfig;
+        delete localResults[day.id];
+        setStorage('orderix_local_results', JSON.stringify(localResults));
+        delete serverPlayedDays[day.id];
+        pendingTimeVal = 0;
+        selectDay(day);
+    });
     document.getElementById('reset-progress-btn').addEventListener('click', () => {
         if (!confirm('Effacer toute la progression locale ? Toutes les cases redeviendront jouables.')) return;
         setStorage('orderix_local_results', '');
