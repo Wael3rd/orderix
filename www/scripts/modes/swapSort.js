@@ -70,6 +70,11 @@ function startGameSwapSort() {
     rangee.style.cssText = 'display:flex;gap:8px;justify-content:center;flex-wrap:nowrap;';
     board.appendChild(rangee);
 
+    const aide = document.createElement('div');
+    aide.style.cssText = 'font-size:.85rem;color:#8B90A0;font-weight:bold;margin-top:10px;text-align:center;';
+    aide.textContent = 'On n\'échange que deux tuiles VOISINES';
+    board.appendChild(aide);
+
     const astuce = document.createElement('div');
     astuce.style.cssText = 'font-size:.85rem;color:#8B90A0;font-style:italic;margin-top:12px;text-align:center;';
     astuce.textContent = '« Chaque échange compte — réfléchissez avant de toucher. »';
@@ -91,9 +96,18 @@ function startGameSwapSort() {
             const t = document.createElement('div');
             t.style.cssText = 'width:46px;height:46px;border-radius:10px;background:#4A6CFA;color:#FFFFFF;font-weight:900;font-size:1.1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;touch-action:manipulation;user-select:none;transition:transform .12s;';
             t.textContent = v;
-            if (sel === i) {
-                t.style.transform = 'translateY(-5px)';
-                t.style.boxShadow = '0 0 0 3px #FFFFFF, 0 0 0 6px #F5B227';
+            if (sel !== null) {
+                if (sel === i) {
+                    t.style.transform = 'translateY(-5px)';
+                    t.style.boxShadow = '0 0 0 3px #FFFFFF, 0 0 0 6px #F5B227';
+                } else if (Math.abs(sel - i) === 1) {
+                    // Voisine échangeable : anneau vert pulsant
+                    t.style.boxShadow = '0 0 0 3px #FFFFFF, 0 0 0 6px #34B871';
+                    t.style.animation = 'pulse 1s infinite';
+                } else {
+                    // Tuile hors de portée : estompée
+                    t.style.opacity = '0.45';
+                }
             }
             if (pulses && pulses.indexOf(i) !== -1) t.style.animation = 'pulse .3s';
             t.addEventListener('pointerdown', e => { e.preventDefault(); tap(i); });

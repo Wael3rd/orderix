@@ -1,8 +1,8 @@
 // ─── Mode : Le Métronome ─────────────────────────────────────────
 // La Chaîne sous tempo : 12 nombres à taper dans l'ordre croissant,
 // mais chaque tap doit arriver avant la fin de la barre de temps.
-// Le tempo démarre à 3,0 s et se resserre de 150 ms par bonne réponse
-// (plancher 1,1 s). Temps écoulé ou tap faux : -1 vie. 2 vies.
+// Le tempo démarre à 4,5 s et se resserre de 100 ms par bonne réponse
+// (plancher 2,0 s). Temps écoulé ou tap faux : -1 vie. 2 vies.
 
 function _metronomeUniques(count, max) {
     const set = new Set();
@@ -58,7 +58,7 @@ function startGameMetronome() {
 
     const COUNT = 12;
     let lives = 2;
-    let tempo = 3000;
+    let tempo = 4500;
     let nextIdx = 0;
     let over = false;
 
@@ -82,7 +82,7 @@ function startGameMetronome() {
     board.appendChild(grid);
 
     function renderHud() {
-        hud.innerHTML = `<span>Chaîne <b style="color:#4A6CFA">${nextIdx}/${COUNT}</b> · tempo <b style="color:#23262F">${(tempo / 1000).toFixed(1)} s</b></span>` +
+        hud.innerHTML = `<span>Chaîne <b style="color:#4A6CFA">${nextIdx}/${COUNT}</b> · Temps par coup : <b style="color:#23262F">${(tempo / 1000).toFixed(1).replace('.', ',')} s</b></span>` +
             `<span style="color:#E0533D;letter-spacing:2px">${'♥'.repeat(lives)}${'♡'.repeat(2 - lives)}</span>`;
     }
 
@@ -140,7 +140,7 @@ function startGameMetronome() {
                 badge.textContent = nextIdx + 1;
                 item.appendChild(badge);
                 nextIdx++;
-                tempo = Math.max(1100, tempo - 150);
+                tempo = Math.max(2000, tempo - 100);
                 haptic(8);
                 renderHud();
                 if (nextIdx >= COUNT) {

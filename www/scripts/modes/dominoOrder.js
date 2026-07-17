@@ -3,7 +3,9 @@
 // premier est posé au centre, les 7 autres mélangés dans la main.
 // Taper un domino de la main : s'il se connecte à une extrémité de la
 // chaîne (retourné si besoin, droite prioritaire), il s'attache.
-// Sinon : secousse et −1 vie (3 vies). Victoire : main vide.
+// Sinon : secousse + rappel des extrémités attendues (aucune vie
+// perdue). Seule défaite : blocage réel (aucun domino de la main ne
+// se connecte). Victoire : main vide.
 
 function _dominoEl(a, b, small) {
     const d = document.createElement('div');
@@ -46,7 +48,6 @@ function startGameDominoOrder() {
     board.style.flexDirection = 'column';
     board.style.alignItems = 'center';
 
-    let lives = 3;
     // Chaîne connectée : 9 valeurs 1..6 → 8 dominos [v(i)|v(i+1)]
     const seq = Array.from({ length: 9 }, () => 1 + Math.floor(Math.random() * 6));
     const dominoes = [];
@@ -79,8 +80,7 @@ function startGameDominoOrder() {
 
     function renderHud() {
         hud.innerHTML = `<span>Restants <b style="color:#4A6CFA">${hand.length}</b></span>` +
-            `<span>Extrémités <b style="color:#23262F">${leftEnd()} — ${rightEnd()}</b></span>` +
-            `<span style="color:#E0533D;letter-spacing:2px">${'♥'.repeat(lives)}${'♡'.repeat(3 - lives)}</span>`;
+            `<span style="font-size:1.3rem;color:#23262F">Extrémités : ◀ <b style="color:#4A6CFA">${leftEnd()}</b> … <b style="color:#4A6CFA">${rightEnd()}</b> ▶</span>`;
     }
 
     function renderChain() {
@@ -119,24 +119,20 @@ function startGameDominoOrder() {
                         return;
                     }
                     if (!hand.some(canConnect)) {
-                        endGame(`Blocage — plus aucun domino ne se connecte. Il en restait ${hand.length}.`, false);
+                        endGame('Blocage : aucune extrémité ne correspond. L’ordre de pose compte !', false);
                     }
                 } else {
-                    lives--;
+                    // Aucune vie perdue : secousse + message précis sur ce qu'il faut
                     haptic(50);
                     el.style.animation = 'wobble .3s';
                     el.style.boxShadow = '0 0 0 3px #FFFFFF, 0 0 0 6px #E0533D';
                     setTimeout(() => { el.style.animation = ''; el.style.boxShadow = ''; }, 320);
-                    renderHud();
-                    if (lives <= 0) {
-                        // Entoure en vert un domino jouable avant de conclure
-                        const hintIdx = hand.findIndex(canConnect);
-                        if (hintIdx >= 0) {
-                            const hintEl = handZone.children[hintIdx];
-                            if (hintEl) hintEl.style.boxShadow = '0 0 0 3px #FFFFFF, 0 0 0 6px #34B871';
-                        }
-                        endGame('Plus de vies — un domino jouable est entouré en vert.', false);
-                    }
+                    const msg = L === R
+                        ? `Il faut un ${L} pour se connecter`
+                        : `Il faut un ${L} ou un ${R} pour se connecter`;
+                    resultDisplay.textContent = msg;
+                    resultDisplay.style.color = '#E0533D';
+                    setTimeout(() => { if (!isPaused && resultDisplay.textContent === msg) resultDisplay.textContent = ''; }, 1500);
                 }
             });
             handZone.appendChild(el);

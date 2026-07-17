@@ -44,6 +44,14 @@ function startGamePatience() {
     board.style.flexDirection = 'column';
     board.style.alignItems = 'center';
 
+    // Style injecté une seule fois : pulsation verte des colonnes légales
+    if (!document.getElementById('patience-pulse-style')) {
+        const st = document.createElement('style');
+        st.id = 'patience-pulse-style';
+        st.textContent = '@keyframes patiencePulse{0%,100%{box-shadow:0 0 0 2px rgba(52,184,113,.30)}50%{box-shadow:0 0 0 7px rgba(52,184,113,.55)}}';
+        document.head.appendChild(st);
+    }
+
     // Flux : 18 valeurs uniques de 2..99, mélangées
     const all = [];
     for (let i = 2; i <= 99; i++) all.push(i);
@@ -64,6 +72,11 @@ function startGamePatience() {
     const colZone = document.createElement('div');
     colZone.style.cssText = 'display:flex;gap:8px;justify-content:center;align-items:flex-start;margin-bottom:14px;';
     board.appendChild(colZone);
+
+    const stuckMsg = document.createElement('div');
+    stuckMsg.style.cssText = 'display:none;font-size:.85rem;font-weight:bold;color:#E0533D;text-align:center;margin-bottom:8px;';
+    stuckMsg.textContent = 'Aucune colonne possible — défaussez';
+    board.appendChild(stuckMsg);
 
     const discardBtn = document.createElement('button');
     discardBtn.style.cssText = 'display:none;padding:11px 24px;border-radius:999px;background:#E0533D;color:#FFFFFF;font-weight:900;font-size:.95rem;border:none;touch-action:manipulation;';
@@ -87,6 +100,16 @@ function startGamePatience() {
             el.style.cssText = 'display:flex;flex-direction:column;gap:3px;padding:6px;min-width:56px;min-height:120px;' +
                 'background:#EEF2FF;border:2px dashed #4A6CFA;border-radius:12px;align-items:center;' +
                 'touch-action:manipulation;transition:box-shadow .12s;';
+            // Coups légaux évidents : colonne verte pulsante si la carte peut s'y poser,
+            // colonne estompée sinon
+            if (idx < 18) {
+                if (colLegal(ci)) {
+                    el.style.border = '2px solid #34B871';
+                    el.style.animation = 'patiencePulse 1.1s ease-in-out infinite';
+                } else {
+                    el.style.opacity = '.5';
+                }
+            }
             col.forEach((v, vi) => {
                 const card = _patienceCardEl(v, true);
                 if (vi === col.length - 1) card.style.boxShadow = '0 0 0 2px #FFFFFF, 0 0 0 4px #3553D1';
@@ -118,7 +141,10 @@ function startGamePatience() {
         lbl.textContent = 'Carte à placer :';
         const card = _patienceCardEl(stream[idx], false);
         card.style.boxShadow = '0 0 0 3px #FFFFFF, 0 0 0 6px #F5B227';
-        curZone.append(lbl, card);
+        const help = document.createElement('div');
+        help.style.cssText = 'font-size:.78rem;font-weight:bold;color:#8B90A0;text-align:center;max-width:300px;margin-top:2px;';
+        help.textContent = 'Posez-la sur une colonne verte (sa dernière carte est plus petite)';
+        curZone.append(lbl, card, help);
     }
 
     function nextCard() {
@@ -131,6 +157,7 @@ function startGamePatience() {
         renderCols();
         const stuck = ![0, 1, 2, 3].some(colLegal);
         discardBtn.style.display = stuck ? 'block' : 'none';
+        stuckMsg.style.display = stuck ? 'block' : 'none';
         if (stuck && tokens <= 0) {
             // 4e défausse forcée : défaite
             endGame(`Aucune colonne possible et plus de jetons — il restait ${18 - idx} cartes.`, false);

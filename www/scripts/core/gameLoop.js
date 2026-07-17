@@ -98,6 +98,8 @@ function startGame() {
         startGameFileBloquee();
     } else if (mode.isEtageres) {
         startGameEtageres();
+    } else if (mode.isGrille) {
+        startGameGrille();
     } else if (mode.isRangement) {
         startGameRangement();
     } else if (mode.isFutoshiki) {

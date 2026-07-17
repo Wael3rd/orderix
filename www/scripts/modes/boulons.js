@@ -4,6 +4,7 @@
 // sur un écrou STRICTEMENT plus large. Objectif : 3 vis portant
 // chacune une pyramide parfaite grand-moyen-petit. La génération
 // est vérifiée solvable en ≤ 30 coups par un BFS borné.
+// Bouton Annuler à historique illimité : jamais bloqué.
 
 function showExampleBoulons(day, row, vals) {
     const ex = document.createElement('div');
@@ -120,9 +121,18 @@ function startGameBoulons() {
     let sel = null;
     let coups = 0;
     let fini = false;
+    const historique = [];   // coups joués [source, destination], illimité
 
     const hud = document.createElement('div');
-    hud.style.cssText = 'font-weight:bold;color:#8B90A0;font-size:.95rem;margin-bottom:4px;';
+    hud.style.cssText = 'display:flex;align-items:center;gap:14px;margin-bottom:4px;';
+    const compteur = document.createElement('div');
+    compteur.style.cssText = 'font-weight:bold;color:#8B90A0;font-size:.95rem;';
+    const btnAnnuler = document.createElement('button');
+    btnAnnuler.className = 'btn btn-ghost';
+    btnAnnuler.style.cssText = 'padding:8px 14px;font-size:.85rem;';
+    btnAnnuler.textContent = '↩ Annuler';
+    btnAnnuler.addEventListener('pointerdown', e => { e.preventDefault(); annuler(); });
+    hud.append(compteur, btnAnnuler);
     board.appendChild(hud);
 
     const zone = document.createElement('div');
@@ -132,7 +142,9 @@ function startGameBoulons() {
     const HEX = 'polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%)';
 
     function render() {
-        hud.innerHTML = 'Coups : <b style="color:#4A6CFA">' + coups + '</b>';
+        compteur.innerHTML = 'Coups : <b style="color:#4A6CFA">' + coups + '</b>';
+        btnAnnuler.disabled = !historique.length;
+        btnAnnuler.style.opacity = historique.length ? '1' : '.4';
         zone.innerHTML = '';
         vis.forEach((pile, i) => {
             const col = document.createElement('div');
@@ -186,6 +198,7 @@ function startGameBoulons() {
         }
 
         dst.push(src.pop());
+        historique.push([sel, i]);
         coups++;
         sel = null;
         haptic(10);
@@ -195,6 +208,19 @@ function startGameBoulons() {
             fini = true;
             endGame('Trois pyramides parfaites — bien vissé !', true);
         }
+    }
+
+    // Annulation : repose l'écrou sur sa vis d'origine SANS vérifier
+    // la légalité (on restaure simplement l'état précédent). Historique
+    // illimité : impossible de rester bloqué.
+    function annuler() {
+        if (isPaused || fini || !historique.length) return;
+        const c = historique.pop();
+        vis[c[0]].push(vis[c[1]].pop());
+        coups--;
+        sel = null;
+        haptic(8);
+        render();
     }
 
     render();

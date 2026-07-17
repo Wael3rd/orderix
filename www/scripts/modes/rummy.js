@@ -1,14 +1,14 @@
 // ─── Mode : Suites ───────────────────────────────────────────────
-// Inspiré de Rummikub : 9 tuiles = 3 suites de 3 valeurs consécutives,
+// Inspiré de Rummikub : 15 tuiles = 5 suites de 3 valeurs consécutives,
 // mélangées. Taper 3 tuiles ; si elles forment une suite (ordre de
 // tap indifférent), elles se verrouillent en vert et s'alignent
-// triées. Sinon : secousse rouge et −1 vie (2 vies). Les suites sont
-// générées avec un écart d'au moins 2 pour éviter toute suite
-// « à cheval » ambiguë.
+// triées. Sinon : secousse rouge et −1 vie (2 vies). Les plages
+// peuvent se toucher : n'importe quel triplet consécutif est accepté,
+// l'ambiguïté fait partie du défi. Victoire : 5 suites verrouillées.
 
 function _rummyTileEl(val, small) {
     const t = document.createElement('div');
-    const s = small ? 40 : 54;
+    const s = small ? 40 : 52;
     t.style.cssText = `width:${s}px;height:${s}px;border-radius:10px;background:#4A6CFA;color:#FFFFFF;` +
         `font-weight:900;font-size:${small ? '1rem' : '1.2rem'};display:flex;align-items:center;` +
         `justify-content:center;flex-shrink:0;user-select:none;touch-action:manipulation;` +
@@ -44,11 +44,15 @@ function startGameRummy() {
     board.style.alignItems = 'center';
 
     let lives = 2;
-    // 3 suites disjointes, écart >= 2 entre elles (pas de suite à cheval possible)
-    const s0 = 1 + Math.floor(Math.random() * 4);
-    const s1 = s0 + 5 + Math.floor(Math.random() * 4);
-    const s2 = s1 + 5 + Math.floor(Math.random() * 4);
-    const runs = [s0, s1, s2].map(s => [s, s + 1, s + 2]);
+    // 5 suites de 3 consécutifs ; les plages voisines peuvent se toucher
+    // (écart 0..2 entre la fin d'une suite et le début de la suivante)
+    const starts = [];
+    let start = 1 + Math.floor(Math.random() * 4);
+    for (let k = 0; k < 5; k++) {
+        starts.push(start);
+        start += 3 + Math.floor(Math.random() * 3);
+    }
+    const runs = starts.map(s => [s, s + 1, s + 2]);
     const tiles = runs.flat().map(v => ({ val: v, locked: false }));
     tiles.sort(() => Math.random() - 0.5);
 
@@ -64,11 +68,11 @@ function startGameRummy() {
     board.appendChild(lockedZone);
 
     const grid = document.createElement('div');
-    grid.style.cssText = 'display:flex;flex-wrap:wrap;gap:12px;justify-content:center;max-width:340px;';
+    grid.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:320px;';
     board.appendChild(grid);
 
     function renderHud() {
-        hud.innerHTML = `<span>Suites <b style="color:#4A6CFA">${lockedRuns.length}/3</b></span>` +
+        hud.innerHTML = `<span>Suites <b style="color:#4A6CFA">${lockedRuns.length}/5</b></span>` +
             `<span style="color:#E0533D;letter-spacing:2px">${'♥'.repeat(lives)}${'♡'.repeat(2 - lives)}</span>`;
     }
 
@@ -130,8 +134,15 @@ function startGameRummy() {
                     renderHud();
                     renderLocked();
                     renderGrid();
-                    if (lockedRuns.length >= 3) {
-                        endGame('Les trois suites sont reconstituées !', true);
+                    if (lockedRuns.length >= 5) {
+                        endGame('Les cinq suites sont reconstituées !', true);
+                    } else {
+                        // Garde-fou : avec des plages qui se touchent, un triplet
+                        // « à cheval » peut rendre le reste impossible
+                        const remaining = tiles.filter(t2 => !t2.locked).map(t2 => t2.val);
+                        if (!findValidRun(remaining)) {
+                            endGame('Plus aucune suite possible avec les tuiles restantes.', false);
+                        }
                     }
                 } else {
                     lives--;

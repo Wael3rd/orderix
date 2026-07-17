@@ -102,6 +102,8 @@ function showExample(day, container) {
         showExampleFileBloquee(day, row, vals);
     } else if (mode.isEtageres) {
         showExampleEtageres(day, row, vals);
+    } else if (mode.isGrille) {
+        showExampleGrille(day, row, vals);
     } else if (mode.isRangement) {
         showExampleRangement(day, row, vals);
     } else if (mode.isFutoshiki) {

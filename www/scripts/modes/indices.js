@@ -1,10 +1,12 @@
 // ─── Mode : Les Indices ──────────────────────────────────────────
 // 5 personnages de couleurs à remettre dans le bon ordre gauche→
-// droite grâce à 4-5 indices textuels (avant / juste après /
-// position exacte / ni premier ni dernier). Réarrangement par
-// échanges (taper 2 personnages) puis « Valider ». 2 essais ; après
-// un échec, les positions correctes sont cochées ✓.
-// Unicité de la solution vérifiée par force brute (120 permutations).
+// droite grâce à 4-5 indices textuels RELATIONNELS (avant / juste
+// après / ni premier ni dernier / quelque part entre / pas côte à
+// côte). Au plus UN indice « position exacte », en dernier recours.
+// Réarrangement par échanges (taper 2 personnages) puis « Valider ».
+// 2 essais ; après un échec, les positions correctes sont cochées ✓.
+// Force brute (120 permutations) : solution UNIQUE et jeu d'indices
+// MINIMAL (aucun indice retirable sans perdre l'unicité).
 
 const _IND_PERSOS = [
     { name: 'Bleu',   c: '#4A6CFA', l: 'B'  },
@@ -54,7 +56,7 @@ function _indBuildPool(solution) {
     const posOf = [];
     solution.forEach((ch, pos) => { posOf[ch] = pos; });
     const N = i => _IND_PERSOS[i].name;
-    const avant = [], apres = [], milieu = [], exact = [];
+    const avant = [], apres = [], milieu = [], entre = [], ecart = [], exact = [];
 
     for (let x = 0; x < 5; x++) {
         for (let y = 0; y < 5; y++) {
@@ -71,6 +73,13 @@ function _indBuildPool(solution) {
                     test: p => p.indexOf(y) === p.indexOf(x) + 1
                 });
             }
+            // « A et B ne sont pas côte à côte » (une fois par paire)
+            if (x < y && Math.abs(posOf[x] - posOf[y]) > 1) {
+                ecart.push({
+                    text: `${N(x)} et ${N(y)} ne sont pas côte à côte`,
+                    test: p => Math.abs(p.indexOf(x) - p.indexOf(y)) !== 1
+                });
+            }
         }
         if (posOf[x] >= 1 && posOf[x] <= 3) {
             milieu.push({
@@ -83,40 +92,92 @@ function _indBuildPool(solution) {
             test: (px => p => p.indexOf(x) === px)(posOf[x])
         });
     }
-    return { avant, apres, milieu, exact };
+    // « A est quelque part entre B et C » (ordre B..A..C ou C..A..B)
+    for (let a = 0; a < 5; a++) {
+        for (let b = 0; b < 5; b++) {
+            for (let c = b + 1; c < 5; c++) {
+                if (a === b || a === c) continue;
+                const lo = Math.min(posOf[b], posOf[c]);
+                const hi = Math.max(posOf[b], posOf[c]);
+                if (posOf[a] > lo && posOf[a] < hi) {
+                    entre.push({
+                        text: `${N(a)} est quelque part entre ${N(b)} et ${N(c)}`,
+                        test: p => {
+                            const pa = p.indexOf(a), pb = p.indexOf(b), pc = p.indexOf(c);
+                            return (pb < pa && pa < pc) || (pc < pa && pa < pb);
+                        }
+                    });
+                }
+            }
+        }
+    }
+    return { avant, apres, milieu, entre, ecart, exact };
+}
+
+// Retire un à un les indices redondants : à la fin, aucun indice ne
+// peut être enlevé sans perdre l'unicité. Les tests étant monotones
+// (ajouter un indice ne peut que réduire les solutions), une seule
+// passe suffit et garantit qu'aucun sous-ensemble strict ne suffit.
+function _indMinimize(clues, perms) {
+    const kept = [...clues];
+    for (let i = kept.length - 1; i >= 0; i--) {
+        const without = kept.slice(0, i).concat(kept.slice(i + 1));
+        if (_indCountMatch(without, perms) === 1) {
+            kept.splice(i, 1);
+        }
+    }
+    return kept;
 }
 
 function _indGenerate() {
     const perms = _indAllPerms();
 
-    for (let attempt = 0; attempt < 200; attempt++) {
+    for (let attempt = 0; attempt < 300; attempt++) {
         const sol = _indShuffle([0, 1, 2, 3, 4]);
         const groups = _indBuildPool(sol);
-        // Variété : un indice de chaque gabarit d'abord, puis le reste mélangé
-        const head = [];
-        [groups.exact, groups.avant, groups.apres, groups.milieu].forEach(g => {
+        // Vivier 100 % relationnel. Variété : un indice de chaque
+        // gabarit d'abord (mélangés entre eux), puis le reste mélangé.
+        const head = [], rest = [];
+        [groups.entre, groups.ecart, groups.avant, groups.apres, groups.milieu].forEach(g => {
             const s = _indShuffle(g);
             if (s.length) head.push(s.shift());
-            s.forEach(cl => head.push(cl));
+            s.forEach(cl => rest.push(cl));
         });
-        const pool = _indShuffle(head.slice(0, 4)).concat(_indShuffle(head.slice(4)));
+        const pool = _indShuffle(head).concat(_indShuffle(rest));
 
+        // Ajoute des indices relationnels jusqu'à unicité
         const clues = [];
         let unique = false;
-        let k = 0;
-        while (k < pool.length && clues.length < 5) {
-            clues.push(pool[k++]);
+        for (const cl of pool) {
+            clues.push(cl);
             if (_indCountMatch(clues, perms) === 1) { unique = true; break; }
         }
+        // Dernier recours seulement : UN indice « position exacte »
+        if (!unique) {
+            for (const ex of _indShuffle(groups.exact)) {
+                if (_indCountMatch(clues.concat([ex]), perms) === 1) {
+                    clues.push(ex);
+                    unique = true;
+                    break;
+                }
+            }
+        }
         if (!unique) continue;
-        while (clues.length < 4 && k < pool.length) clues.push(pool[k++]); // complète à 4 mini
-        if (clues.length >= 4 && clues.length <= 5) return { sol, clues: _indShuffle(clues) };
+
+        // Minimalité : aucun sous-ensemble strict ne doit suffire
+        const minimal = _indMinimize(clues, perms);
+        const nExact = minimal.filter(cl => groups.exact.includes(cl)).length;
+        if (minimal.length >= 4 && minimal.length <= 5 && nExact <= 1) {
+            return { sol, clues: _indShuffle(minimal) };
+        }
     }
 
-    // Repli garanti : 4 positions exactes → solution forcément unique
+    // Repli garanti (jamais atteint en pratique) : tous les indices
+    // « avant » déterminent l'ordre à eux seuls, puis minimisation.
     const sol = _indShuffle([0, 1, 2, 3, 4]);
     const groups = _indBuildPool(sol);
-    return { sol, clues: _indShuffle(groups.exact.slice(0, 4)) };
+    const minimal = _indMinimize(_indShuffle(groups.avant), perms);
+    return { sol, clues: _indShuffle(minimal) };
 }
 
 function _indCircle(idx, size) {
@@ -136,7 +197,7 @@ function showExampleIndices(day, row, vals) {
     const clueCard = document.createElement('div');
     clueCard.style.cssText = 'background:#EEF2FF;border-radius:10px;padding:8px 14px;' +
         'font-size:.8rem;color:#23262F;font-weight:bold;text-align:left;';
-    clueCard.innerHTML = '• Bleu est quelque part avant Rouge<br>• Jaune est en position 2';
+    clueCard.innerHTML = '• Jaune est quelque part entre Bleu et Rouge<br>• Bleu et Rouge ne sont pas côte à côte';
 
     const rowEx = document.createElement('div');
     rowEx.style.cssText = 'display:flex;gap:10px;';

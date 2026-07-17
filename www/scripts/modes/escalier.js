@@ -1,8 +1,8 @@
 // ─── Mode : L'Escalier ───────────────────────────────────────────
-// Marché de 5 tuiles (valeurs 1..40 uniques, pioche totale de 18).
+// Marché de 4 tuiles (valeurs 1..40 uniques, pioche totale de 14).
 // Chaque tuile prise doit être STRICTEMENT supérieure à la dernière
 // marche ; l'escalier s'affiche en marches montantes. Bouton
-// « Défausser » (3 max) : Défausser PUIS une tuile du marché la jette
+// « Défausser » (2 max) : Défausser PUIS une tuile du marché la jette
 // et la remplace. Victoire : 8 marches. Défaite : plus aucun coup.
 
 function _escalierTileEl(val) {
@@ -51,15 +51,15 @@ function startGameEscalier() {
     board.style.flexDirection = 'column';
     board.style.alignItems = 'center';
 
-    // Pioche : 18 valeurs uniques de 1..40
+    // Pioche : 14 valeurs uniques de 1..40
     const all = [];
     for (let i = 1; i <= 40; i++) all.push(i);
     all.sort(() => Math.random() - 0.5);
-    const pool = all.slice(0, 18);
-    const market = pool.splice(0, 5);
-    const deck = pool; // 13 restantes
+    const pool = all.slice(0, 14);
+    const market = pool.splice(0, 4);
+    const deck = pool; // 10 restantes
     const stairs = [];
-    let discards = 3;
+    let discards = 2;
     let discardMode = false;
 
     const hud = document.createElement('div');
@@ -80,7 +80,7 @@ function startGameEscalier() {
     board.appendChild(marketZone);
 
     const discardBtn = document.createElement('button');
-    discardBtn.textContent = 'Défausser (3)';
+    discardBtn.textContent = 'Défausser (2)';
     discardBtn.style.cssText = 'padding:11px 24px;border-radius:999px;border:2px solid #E0533D;background:#FFFFFF;' +
         'color:#E0533D;font-weight:900;font-size:.95rem;touch-action:manipulation;transition:background .12s,color .12s;';
     board.appendChild(discardBtn);
@@ -89,7 +89,7 @@ function startGameEscalier() {
 
     function renderHud() {
         hud.innerHTML = `<span>Marches <b style="color:#4A6CFA">${stairs.length}/8</b></span>` +
-            `<span>Pioche : <b style="color:#4A6CFA">${deck.length}</b></span>`;
+            `<span>Pioche restante : <b style="color:#4A6CFA">${deck.length}</b></span>`;
     }
 
     function renderStairs() {

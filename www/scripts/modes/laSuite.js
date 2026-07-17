@@ -25,7 +25,7 @@ function _laSuitePileEl(dir) {
         `font-weight:900;color:#23262F;font-size:1.25rem;flex-shrink:0;touch-action:manipulation;` +
         `transition:transform .1s,box-shadow .12s;`;
     const arrow = document.createElement('span');
-    arrow.style.cssText = `font-size:.85rem;color:${col};line-height:1;pointer-events:none;`;
+    arrow.style.cssText = `font-size:1.35rem;font-weight:900;color:${col};line-height:1;pointer-events:none;`;
     arrow.textContent = dir === 1 ? '↑' : '↓';
     const num = document.createElement('span');
     num.style.pointerEvents = 'none';
@@ -153,12 +153,27 @@ function startGameLaSuite() {
                 _laSuiteShake(el);
             }
         });
-        pileZone.appendChild(el);
+        const wrap = document.createElement('div');
+        wrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:4px;width:74px;';
+        const caption = document.createElement('div');
+        caption.style.cssText = 'font-size:.78rem;color:#8B90A0;font-weight:bold;text-align:center;line-height:1.25;';
+        el._caption = caption;
+        wrap.append(el, caption);
+        pileZone.appendChild(wrap);
         return el;
     });
 
     function renderPiles() {
-        piles.forEach((p, i) => { pileEls[i]._num.textContent = p.val; });
+        piles.forEach((p, i) => {
+            pileEls[i]._num.textContent = p.val;
+            // Consigne concrète : quelle valeur est jouable sur cette pile
+            const main = p.dir === 1 ? `posez &gt; ${p.val}` : `posez &lt; ${p.val}`;
+            let magic = '';
+            if (p.dir === 1 && p.val - 10 >= 2) magic = `ou exactement ${p.val - 10}`;
+            if (p.dir === -1 && p.val + 10 <= 99) magic = `ou exactement ${p.val + 10}`;
+            pileEls[i]._caption.innerHTML = main +
+                (magic ? `<br><span style="color:#F5B227">${magic}</span>` : '');
+        });
     }
 
     function renderHand() {

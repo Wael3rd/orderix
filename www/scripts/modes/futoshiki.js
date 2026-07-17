@@ -5,6 +5,8 @@
 // valeur (vide→1→2→3→4→vide), puis « Vérifier ». 2 vies.
 // Génération : carré latin permuté + contraintes/pré-remplies,
 // unicité garantie par backtracking.
+// Aide progressive : toutes les 8 s (gelées en pause), un signe
+// supplémentaire VRAI est révélé (flash or), maximum 6 indices.
 
 function _futoShuffle(arr) {
     const a = [...arr];
@@ -98,7 +100,10 @@ function _futoGeneratePuzzle() {
         }
         addCon = !addCon;
     }
-    return { sol, cons, given };
+    // Réserve d'indices : les inégalités vraies restantes (paires
+    // adjacentes de la solution non encore affichées)
+    const reserve = pairOrder.slice(nCons).map(toCon);
+    return { sol, cons, given, reserve };
 }
 
 function _futoCellDiv(size, txt, fixed) {
@@ -194,7 +199,7 @@ function startGameFutoshiki() {
         }
     }
     // Signes d'inégalité dans les gouttières
-    puzzle.cons.forEach(con => {
+    function renderSign(con) {
         const s = document.createElement('div');
         s.style.cssText = 'font-weight:900;color:#23262F;font-size:1.05rem;user-select:none;';
         const { a, b, lo } = con;
@@ -210,7 +215,41 @@ function startGameFutoshiki() {
             s.textContent = (lo.r === r) ? '∧' : '∨';
         }
         grid.appendChild(s);
-    });
+        return s;
+    }
+    puzzle.cons.forEach(renderSign);
+
+    // ── Indices progressifs : un signe vrai révélé toutes les 8 s ──
+    const reserve = _futoShuffle(puzzle.reserve);
+    const MAX_HINTS = 6;
+    let hintsGiven = 0;
+    let hintTick = 0;
+    clearInterval(window.speedTimer);
+    window.speedTimer = setInterval(() => {
+        if (isPaused || finished) return;   // gelé pendant la pause
+        hintTick++;
+        if (hintTick < 8) return;
+        hintTick = 0;
+        const con = reserve.shift();
+        if (!con) { clearInterval(window.speedTimer); return; }
+        puzzle.cons.push(con);              // la vérification en tient compte
+        const s = renderSign(con);
+        s.style.transition = 'transform .3s ease, color .3s ease';
+        s.style.color = '#F5B227';
+        s.style.transform = 'scale(1.6)';
+        setTimeout(() => {
+            s.style.color = '#23262F';
+            s.style.transform = 'scale(1)';
+        }, 1200);
+        resultDisplay.textContent = 'Nouvel indice !';
+        resultDisplay.style.color = '#F5B227';
+        haptic(12);
+        setTimeout(() => {
+            if (resultDisplay.textContent === 'Nouvel indice !') resultDisplay.textContent = '';
+        }, 1200);
+        hintsGiven++;
+        if (hintsGiven >= MAX_HINTS || reserve.length === 0) clearInterval(window.speedTimer);
+    }, 1000);
 
     function flashCells(keys) {
         keys.forEach(k => {

@@ -9,7 +9,7 @@ const JANUARY_LINEUP = [
     'orderChain', 'cascade', 'insertion', 'fontaine', 'metronome',
     'laSuite', 'patience', 'duel', 'rummy', 'dominoOrder',
     'escalier', 'tubes', 'swapSort', 'boulons', 'fileBloquee',
-    'etageres', 'hanoi', 'rangement', 'futoshiki', 'balance',
+    'grille', 'hanoi', 'etageres', 'futoshiki', 'balance',
     'ordreCache', 'indices', 'chronologie', 'conveyorBelt', 'aiguillage',
     'ascenseur', 'guichet', 'photoClasse', 'memoryChain', 'fusion'
 ];
