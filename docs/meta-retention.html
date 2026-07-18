@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orderix — Méta Game Loop &amp; Rétention D365</title>
+<style>
+:root{
+  --bleu:#4A6CFA;--bleu2:#3553D1;--pale:#EEF2FF;--encre:#23262F;--gris:#8B90A0;
+  --fond:#F4F6FA;--carte:#fff;--ligne:#E8EAF1;--or:#F5B227;--vert:#34B871;--rouge:#E0533D;
+  --violet:#8B5CF6;--teal:#1E7A74;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI',Roboto,-apple-system,sans-serif;background:var(--fond);color:var(--encre);line-height:1.55}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px 80px}
+
+/* ── Hero ── */
+.hero{background:linear-gradient(135deg,#3553D1 0%,#4A6CFA 55%,#6B87FB 100%);color:#fff;
+  padding:52px 16px 64px;text-align:center;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;inset:auto -10% -60% -10%;height:120px;background:var(--fond);
+  border-radius:50% 50% 0 0}
+.hero .kicker{font-size:.72rem;font-weight:800;letter-spacing:.28em;text-transform:uppercase;opacity:.85}
+.hero h1{font-size:clamp(1.7rem,5vw,2.6rem);font-weight:900;margin:10px 0 6px}
+.hero h1 b{color:var(--or)}
+.hero p{max-width:560px;margin:0 auto;font-size:.98rem;opacity:.92}
+.hero .tags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:18px;position:relative;z-index:2}
+.hero .tag{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);padding:6px 14px;
+  border-radius:999px;font-size:.72rem;font-weight:800;letter-spacing:.04em}
+
+/* ── Sections ── */
+section{margin-top:52px}
+.sec-num{font-size:.7rem;font-weight:900;letter-spacing:.24em;color:var(--bleu);text-transform:uppercase}
+h2{font-size:1.5rem;font-weight:900;margin:4px 0 6px}
+.lead{color:var(--gris);font-size:.94rem;max-width:640px;margin-bottom:22px}
+.lead b{color:var(--encre)}
+
+.card{background:var(--carte);border-radius:18px;padding:22px;box-shadow:0 2px 10px rgba(35,38,47,.06);margin-bottom:14px}
+.card h3{font-size:1.05rem;font-weight:900;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.card p{font-size:.9rem;color:#4A4E5A}
+.card p+p{margin-top:8px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;
+  font-size:.68rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase}
+.p-bleu{background:var(--pale);color:var(--bleu2)} .p-vert{background:#E3F7ED;color:#1E7A4A}
+.p-or{background:#FFF6E3;color:#B07E0A} .p-rouge{background:#FCE9E5;color:#A93A29}
+.p-violet{background:#F2E7FB;color:#7A3AA9}
+
+/* ── North Star loop ── */
+.northstar{background:var(--carte);border-radius:22px;padding:30px 18px;box-shadow:0 2px 12px rgba(35,38,47,.07);text-align:center}
+.ns-flow{display:flex;align-items:stretch;justify-content:center;gap:0;flex-wrap:wrap;margin:8px 0 4px}
+.ns-step{flex:1;min-width:96px;max-width:150px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.ns-ico{width:58px;height:58px;border-radius:18px;display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;box-shadow:inset 0 -3px 0 rgba(0,0,0,.1)}
+.ns-step small{font-size:.68rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--gris)}
+.ns-step b{font-size:.82rem;line-height:1.25}
+.ns-arrow{display:flex;align-items:center;font-size:1.2rem;color:#C2C7D6;font-weight:900;padding:0 2px}
+.ns-guard{margin-top:16px;display:inline-block;background:#FFF6E3;color:#B07E0A;max-width:460px;
+  border:1.5px dashed var(--or);padding:10px 18px;border-radius:14px;font-size:.82rem;font-weight:800;line-height:1.5}
+
+/* ── Nested loops ── */
+.loops{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.loop{background:var(--carte);border-radius:18px;padding:18px;box-shadow:0 2px 10px rgba(35,38,47,.06);
+  border-top:5px solid var(--bleu);display:flex;flex-direction:column;gap:8px}
+.loop .cadence{font-size:.66rem;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--gris)}
+.loop h3{font-size:1rem;font-weight:900}
+.loop .why{font-size:.8rem;color:#4A4E5A;flex:1}
+.loop .mech{font-size:.78rem;background:var(--fond);border-radius:10px;padding:8px 10px}
+.loop .mech b{display:block;font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gris);margin-bottom:2px}
+.loop .kpi{font-size:.72rem;font-weight:800;color:var(--bleu2)}
+.l-jour{border-color:var(--bleu)} .l-sem{border-color:var(--vert)}
+.l-mois{border-color:var(--or)} .l-an{border-color:var(--violet)}
+
+/* ── Churn table ── */
+.churn{width:100%;border-collapse:separate;border-spacing:0;background:var(--carte);border-radius:16px;
+  overflow:hidden;box-shadow:0 2px 10px rgba(35,38,47,.06);font-size:.84rem}
+.churn th{background:var(--pale);color:var(--bleu2);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:12px 14px;text-align:left}
+.churn td{padding:12px 14px;border-top:1px solid var(--ligne);vertical-align:top}
+.churn td:first-child{font-weight:800;white-space:nowrap}
+.churn .fix{color:#1E7A4A;font-weight:700}
+
+/* ── Benchmarks ── */
+.bench{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.bench .card{margin-bottom:0}
+.bench .from{font-size:.66rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--gris)}
+
+/* ── KPI targets ── */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;text-align:center}
+.kpi-card{background:var(--carte);border-radius:16px;padding:18px 10px;box-shadow:0 2px 10px rgba(35,38,47,.06)}
+.kpi-card .v{font-size:1.6rem;font-weight:900;color:var(--bleu)}
+.kpi-card .l{font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--gris)}
+.kpi-card .b{font-size:.68rem;color:var(--gris);margin-top:4px}
+
+/* ── Roadmap ── */
+.road{position:relative;padding-left:26px}
+.road::before{content:'';position:absolute;left:8px;top:6px;bottom:6px;width:3px;background:var(--ligne);border-radius:2px}
+.step{position:relative;margin-bottom:16px}
+.step::before{content:'';position:absolute;left:-24px;top:6px;width:13px;height:13px;border-radius:50%;
+  background:var(--bleu);box-shadow:0 0 0 4px var(--pale)}
+.step.now::before{background:var(--vert)}
+.step .card{margin-bottom:0}
+.eff{font-size:.68rem;font-weight:900;color:var(--gris)}
+
+.foot{margin-top:60px;text-align:center;color:var(--gris);font-size:.72rem}
+@media(max-width:560px){
+  .ns-arrow{display:none} .ns-flow{gap:10px}
+  /* Le tableau anti-churn devient des cartes empilées */
+  .churn tr:first-child{display:none}
+  .churn, .churn tbody, .churn tr, .churn td{display:block;width:100%}
+  .churn tr{border-top:6px solid var(--fond)}
+  .churn td{border-top:none;padding:8px 16px}
+  .churn td:first-child{padding-top:14px;font-size:.92rem}
+  .churn td:last-child{padding-bottom:14px}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="kicker">Document de game design · confidentiel</div>
+  <h1>Order<b>ix</b> — Méta Game Loop &amp; Rétention D365</h1>
+  <p>Comment transformer un bon puzzle quotidien en habitude d'un an, pour une joueuse casual de 40 ans qui aime les jeux cérébraux.</p>
+  <div class="tags">
+    <span class="tag">🎯 Cible : femmes 35-50 · brain games</span>
+    <span class="tag">📱 Mobile · sessions de 3 min</span>
+    <span class="tag">🚫 Pas de faux multijoueur</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- ══ 1. THÈSE ══ -->
+<section>
+  <div class="sec-num">01 · La thèse</div>
+  <h2>La rétention D365 ne s'achète pas, elle se construit en poupées russes</h2>
+  <p class="lead">Un puzzle quotidien retient à J7 par sa <b>qualité</b>. Il retient à J365 par ses <b>structures de sens</b> :
+  chaque partie doit nourrir quelque chose de plus grand qu'elle. La règle d'or du genre (Wordle, Nonogram.com,
+  NYT Games) : <b>une seule vraie partie par jour</b> — c'est la rareté qui crée le rendez-vous — et des
+  boucles longues qui donnent une raison de ne jamais le manquer.</p>
+
+  <div class="northstar">
+    <div class="pill p-bleu" style="margin-bottom:14px">⭐ North-star loop</div>
+    <div class="ns-flow">
+      <div class="ns-step"><div class="ns-ico" style="background:#EEF2FF">🧩</div><small>Chaque jour</small><b>Je résous<br>le puzzle</b></div>
+      <div class="ns-arrow">→</div>
+      <div class="ns-step"><div class="ns-ico" style="background:#E3F7ED">✓</div><small>Immédiat</small><b>Ma case<br>se colorie</b></div>
+      <div class="ns-arrow">→</div>
+      <div class="ns-step"><div class="ns-ico" style="background:#FFF6E3">🏅</div><small>Chaque mois</small><b>Mon album<br>se complète</b></div>
+      <div class="ns-arrow">→</div>
+      <div class="ns-step"><div class="ns-ico" style="background:#F2E7FB">🏆</div><small>Sur l'année</small><b>Mon année<br>devient une œuvre</b></div>
+    </div>
+    <div class="ns-guard">🔥 Et ma <b>série</b> protège le tout — avec une assurance pour ne jamais tout perdre.</div>
+  </div>
+</section>
+
+<!-- ══ 2. LES 4 BOUCLES ══ -->
+<section>
+  <div class="sec-num">02 · Architecture</div>
+  <h2>Quatre boucles imbriquées, une par horizon de temps</h2>
+  <p class="lead">Chaque boucle répond à une question différente que se pose la joueuse. Si une boucle manque,
+  c'est à cet horizon-là que la rétention casse.</p>
+
+  <div class="loops">
+    <div class="loop l-jour">
+      <div class="cadence">⏱ 3 minutes · quotidien</div>
+      <h3>La boucle Rituel</h3>
+      <div class="why">« Qu'est-ce que je joue aujourd'hui ? » — Un puzzle unique, fini en 3-5 min, avec la
+      surprise du gameplay du jour (31 modes). Le café du cerveau.</div>
+      <div class="mech"><b>Mécaniques</b>Puzzle du jour · chrono personnel · étoile gagnée · variété des 31 modes</div>
+      <div class="kpi">KPI : DAU/MAU &gt; 40 % · durée session 3-6 min</div>
+    </div>
+    <div class="loop l-sem">
+      <div class="cadence">📅 Hebdomadaire</div>
+      <h3>La boucle Comparaison</h3>
+      <div class="why">« Suis-je régulière, suis-je bonne ? » — La ligue hebdo (20-30 joueuses, somme des temps)
+      et le bilan de semaine. Une compétition douce, sans confrontation directe.</div>
+      <div class="mech"><b>Mécaniques</b>Ligue hebdo montée/descente · récap du dimanche · bonus semaine parfaite</div>
+      <div class="kpi">KPI : jours joués / semaine ≥ 5 · D7 &gt; 35 %</div>
+    </div>
+    <div class="loop l-mois">
+      <div class="cadence">🗓 Mensuel</div>
+      <h3>La boucle Collection</h3>
+      <div class="why">« Qu'est-ce que je construis ? » — L'album du mois : 28-31 cases à colorier, une médaille
+      si le mois est complet. LA mécanique prouvée sur cette cible (Nonogram.com, MS Sudoku).</div>
+      <div class="mech"><b>Mécaniques</b>Album mensuel · médaille (or = complet, argent ≥ 20 j) · rattrapage des jours manqués</div>
+      <div class="kpi">KPI : D30 &gt; 15 % · taux de mois complétés</div>
+    </div>
+    <div class="loop l-an">
+      <div class="cadence">🎇 Annuel</div>
+      <h3>La boucle Héritage</h3>
+      <div class="why">« Tout ça mène où ? » — L'écran « Mon année » : 365 cases, 12 médailles à aligner,
+      le trophée Année Parfaite. On ne quitte pas un jeu où l'on a bâti quelque chose.</div>
+      <div class="mech"><b>Mécaniques</b>Fresque annuelle · trophées de paliers (100/200/365) · rétrospective de fin d'année</div>
+      <div class="kpi">KPI : D180 &gt; 6 % · D365 &gt; 3-4 %</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 3. ANTI-CHURN ══ -->
+<section>
+  <div class="sec-num">03 · Systèmes anti-churn</div>
+  <h2>On ne retient pas en ajoutant, on retient en dédramatisant l'absence</h2>
+  <p class="lead">À l'échelle d'un an, <b>tout le monde rate des jours</b>. La différence entre D30 et D365,
+  c'est ce qui se passe au retour : est-ce que revenir fait plaisir, ou est-ce que ça expose l'échec ?</p>
+
+  <table class="churn">
+    <tr><th>Moment de churn</th><th>Ce que ressent la joueuse</th><th>Contre-mesure</th></tr>
+    <tr>
+      <td>💔 Série brisée</td>
+      <td>« 43 jours perdus pour une soirée chargée… tant pis, j'arrête. » Le churn n°1 de tous les jeux à streak.</td>
+      <td class="fix">Gel de série : 1 offert/mois + 1 gagné par semaine parfaite (max 2 en stock). La série se répare, jamais gratuitement.</td>
+    </tr>
+    <tr>
+      <td>🕳 Album troué</td>
+      <td>« Mon mois ne sera jamais complet, à quoi bon continuer ? » Une semaine de vacances = album mort.</td>
+      <td class="fix">Rattrapage : les jours passés restent jouables (teinte distincte, sans compter dans la série). L'album est toujours sauvable — la médaille aussi.</td>
+    </tr>
+    <tr>
+      <td>😤 Puzzle trop dur</td>
+      <td>« Je bloque, je me sens bête. » Fatal sur une cible qui joue pour se sentir intelligente.</td>
+      <td class="fix">Jamais de défaite sèche sur les modes réflexion (annulation illimitée, solvabilité garantie par solveur) ; le chrono départage, pas l'échec.</td>
+    </tr>
+    <tr>
+      <td>🌫 Retour après absence</td>
+      <td>« Ça fait 3 semaines… je ne sais plus où j'en étais. »</td>
+      <td class="fix">Écran de bon retour : « Contente de vous revoir ! Voici votre puzzle du jour » + 1 gel offert. Zéro culpabilisation, jamais de pile de tâches en retard.</td>
+    </tr>
+    <tr>
+      <td>😴 Lassitude des modes</td>
+      <td>« C'est toujours pareil. »</td>
+      <td class="fix">Rotation des 31 gameplays validés + événements à thème qui recyclent l'existant (semaine déduction, week-end double étoiles). Zéro dev de neuf requis.</td>
+    </tr>
+  </table>
+</section>
+
+<!-- ══ 4. PSYCHOLOGIE CIBLE ══ -->
+<section>
+  <div class="sec-num">04 · La cible</div>
+  <h2>Ce qui fait rester une joueuse de 40 ans (et ce qui la fait fuir)</h2>
+  <div class="bench">
+    <div class="card">
+      <div class="from">Moteur n°1</div>
+      <h3>🧠 Se sentir intelligente</h3>
+      <p>Elle joue pour l'entretien du cerveau et la petite victoire quotidienne. Le jeu doit toujours renvoyer
+      « bien joué », jamais « raté ». La correction est pédagogique, la difficulté progressive et lisible.</p>
+    </div>
+    <div class="card">
+      <div class="from">Moteur n°2</div>
+      <h3>📖 Compléter, cocher, collectionner</h3>
+      <p>Grilles remplies, albums, séries : la complétion est plus motivante que la performance.
+      La fresque annuelle parle à cet instinct mieux qu'aucun classement.</p>
+    </div>
+    <div class="card">
+      <div class="from">Moteur n°3</div>
+      <h3>🛋 Un moment à soi, sans pression</h3>
+      <p>Session courte, rythme choisi, aucune punition sociale. La ligue est un tableau qu'on regarde,
+      pas un adversaire qui attaque. Pas de timer anxiogène sur les modes réflexion.</p>
+    </div>
+    <div class="card">
+      <div class="from">Répulsifs</div>
+      <h3>⛔ Ce qui la fait désinstaller</h3>
+      <p>Culpabilisation (« vous avez perdu votre série ! »), pubs agressives, faux joueurs, gameplay qui change
+      sans prévenir, murs de difficulté. Chaque système ci-dessus est conçu pour l'inverse.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 5. BENCHMARKS ══ -->
+<section>
+  <div class="sec-num">05 · Références</div>
+  <h2>On n'invente rien : on assemble le meilleur du marché</h2>
+  <div class="bench">
+    <div class="card"><div class="from">Wordle / NYT Games</div><h3>La rareté quotidienne</h3>
+      <p>Un puzzle par jour, pas plus. Le manque crée le rendez-vous du matin — et le rendez-vous crée l'habitude.</p></div>
+    <div class="card"><div class="from">Duolingo</div><h3>La série assurée</h3>
+      <p>Le streak + streak freeze est le système de rétention le plus documenté du mobile. La série motive,
+      l'assurance évite qu'elle devienne une raison de partir.</p></div>
+    <div class="card"><div class="from">Nonogram.com / MS Sudoku</div><h3>L'album mensuel à médailles</h3>
+      <p>Le calendrier-album avec médailles mensuelles et rattrapage est LE méta dominant du puzzle casual
+      sur notre cible exacte. Éprouvé depuis des années, top charts permanents.</p></div>
+    <div class="card"><div class="from">Royal Match / SNG</div><h3>La ligue douce &amp; les événements</h3>
+      <p>Ligues hebdomadaires asynchrones et événements calendaires courts : de la vie et une raison de revenir
+      « cette semaine », sans jamais affronter personne en direct.</p></div>
+  </div>
+</section>
+
+<!-- ══ 6. KPIS ══ -->
+<section>
+  <div class="sec-num">06 · Mesure</div>
+  <h2>Les chiffres qui disent si ça marche</h2>
+  <p class="lead">Benchmarks du puzzle casual de qualité. La D365 se lit dès la D30 : chaque boucle a son
+  indicateur avancé — inutile d'attendre un an pour savoir.</p>
+  <div class="kpis">
+    <div class="kpi-card"><div class="v">45 %</div><div class="l">D1</div><div class="b">le puzzle donne envie de revenir demain</div></div>
+    <div class="kpi-card"><div class="v">35 %</div><div class="l">D7</div><div class="b">le rituel + la ligue tiennent la semaine</div></div>
+    <div class="kpi-card"><div class="v">15 %</div><div class="l">D30</div><div class="b">l'album + la 1ʳᵉ médaille tiennent le mois</div></div>
+    <div class="kpi-card"><div class="v">6 %</div><div class="l">D180</div><div class="b">gels + rattrapage absorbent les absences</div></div>
+    <div class="kpi-card"><div class="v">3-4 %</div><div class="l">D365</div><div class="b">la fresque annuelle finit le travail</div></div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3>🔬 Indicateurs avancés à instrumenter dès maintenant</h3>
+    <p>Taux de complétion du puzzle du jour · jours joués par semaine par cohorte · taux d'usage du rattrapage ·
+    stock moyen de gels · % de mois terminés en médaille · taux de retour à J+1 d'une série brisée
+    (LE chiffre à surveiller : sans assurance il s'effondre sous 20 %, bien géré il dépasse 50 %).</p>
+  </div>
+</section>
+
+<!-- ══ 7. ROADMAP ══ -->
+<section>
+  <div class="sec-num">07 · Exécution</div>
+  <h2>Roadmap : trois vagues, du local vers le connecté</h2>
+  <div class="road">
+    <div class="step now"><div class="card">
+      <h3>Vague 1 — Le filet de sécurité <span class="pill p-vert">100 % local · dès maintenant</span></h3>
+      <p>① Rattrapage des jours manqués (teinte « en retard », hors série) · ② Gel de série (1/mois + semaine
+      parfaite, max 2) · ③ Médailles mensuelles (or/argent) + vitrine sur le profil.</p>
+      <p class="eff">Effort : quelques jours · Impact : D30→D90, le plus gros levier du document.</p>
+    </div></div>
+    <div class="step"><div class="card">
+      <h3>Vague 2 — Le sens du temps long <span class="pill p-bleu">local · ensuite</span></h3>
+      <p>④ Écran « Mon année » (fresque 365 + médailles + trophées de paliers) · ⑤ Cosmétiques par niveau
+      (thèmes de couleurs, avatars, styles de tuiles) · ⑥ Notifications douces liées à la série et à l'album.</p>
+      <p class="eff">Effort : ~1 semaine · Impact : D90→D365 + fondation de la monétisation cosmétique.</p>
+    </div></div>
+    <div class="step"><div class="card">
+      <h3>Vague 3 — La vie sociale douce <span class="pill p-violet">nécessite Supabase (phase 2)</span></h3>
+      <p>⑦ Ligue hebdomadaire (groupes de 20-30, somme des temps, promotion/relégation légère) · ⑧ Événements
+      calendaires à thème recyclant les 31 modes · ⑨ Récap hebdo partageable (« Ma semaine Orderix »).</p>
+      <p class="eff">Effort : dépend du backend · Impact : régularité intra-semaine + acquisition organique.</p>
+    </div></div>
+  </div>
+</section>
+
+<div class="foot">Orderix · document de game design — méta &amp; rétention · v1 · juillet 2026</div>
+</div>
+</body>
+</html>
