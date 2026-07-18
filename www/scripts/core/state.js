@@ -53,11 +53,19 @@ const JANUARY_LINEUP = [
 const LEGACY_MODES = Object.keys(GAME_MODES)
     .filter(k => !JANUARY_LINEUP.includes(k) || ['orderChain', 'cascade', 'insertion'].includes(k));
 
+// FÉVRIER (et début mars si besoin) : campagne de re-test des ANCIENS
+// gameplays — un par jour, SANS variation de thème (type neutre), pour
+// les revalider un à un. Ils reçoivent rev:1 → badge « ! » en staging.
+const LEGACY_RETEST = Object.keys(GAME_MODES).filter(k => !JANUARY_LINEUP.includes(k));
+LEGACY_RETEST.forEach(k => { if (!GAME_MODES[k].rev) GAME_MODES[k].rev = 1; });
+
 let ALL_DAYS = [];
 let legacyIdx = 0;
 for (let id = 1; id <= 365; id++) {
     let mKey;
+    let retest = false;
     if (id <= 31) mKey = JANUARY_LINEUP[id - 1];
+    else if (id - 32 < LEGACY_RETEST.length) { mKey = LEGACY_RETEST[id - 32]; retest = true; }
     else mKey = LEGACY_MODES[legacyIdx++ % LEGACY_MODES.length];
 
     const mode = GAME_MODES[mKey];
@@ -65,7 +73,7 @@ for (let id = 1; id <= 365; id++) {
     // ou refusent les types illisibles dans leur contexte (ex. tapis roulant
     // × ombre, issue #26) → repli sur des nombres.
     const base = BASE_TYPES[(id * 13) % BASE_TYPES.length];
-    let type = mode.forceType || base.type;
+    let type = retest ? (mode.forceType || 'numbers') : (mode.forceType || base.type);
     if (mode.avoidTypes && mode.avoidTypes.indexOf(type) !== -1) type = 'numbers';
     ALL_DAYS.push({ id: id, type: type, modeId: mKey });
 }

@@ -40,8 +40,10 @@ files will cause bugs.
 - **`scripts/data.js`** — `GAME_MODES` (67 modes incl. the 26-mode "January wave" of ordering
   gameplays, each with a `desc` instruction string; `forceType` pins math modes to readable
   numeric types; `typeAgnostic` hides the theme), `BASE_TYPES` (50 visual types), `TEXT_TYPES`
-  whitelist, `buildDayTitle()`. Calendar: days 1-30 = `JANUARY_LINEUP` (one new gameplay per
-  day, testing phase — do not reorder without the owner's ask), day 31+ = legacy rotation.
+  whitelist, `buildDayTitle()`. Calendar: days 1-31 = `JANUARY_LINEUP` (one new gameplay per
+  day, testing phase — do not reorder without the owner's ask), days 32-69 = `LEGACY_RETEST`
+  (each legacy mode once, neutral `numbers` type, auto `rev:1` for test badges), day 70+ =
+  legacy rotation (mode × type cross).
 - **Feedback loop**: end-of-game comment box opens a prefilled GitHub issue (label `feedback`);
   a cloud routine ("Orderix — correctifs depuis les feedbacks", every 2h) reads them, implements
   fixes, runs `node smoke-test.js`, commits to main and answers/closes the issue. APK rebuilds
