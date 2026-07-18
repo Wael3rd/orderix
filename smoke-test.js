@@ -74,10 +74,13 @@ __check('écran calendrier', () => showScreen('calendar'));
 __check('écran profil', () => showScreen('profile'));
 __check('écran accueil', () => showScreen('home'));
 __check('365 jours générés', () => { if (DAYS.length !== 365) throw new Error('DAYS=' + DAYS.length); });
+// Jour 32 retiré sans remplacement (retour #118) : jour vide intentionnel
+// au sein de la campagne de retest, seule exception admise avant jour 70.
+const KNOWN_EMPTY_RETEST_DAYS = [32];
 __check('modes et types valides (jours vides admis après la campagne)', () => {
     DAYS.forEach(d => {
         if (d.empty) {
-            if (d.id < 70) throw new Error('jour vide avant la fin de la campagne : ' + d.id);
+            if (d.id < 70 && KNOWN_EMPTY_RETEST_DAYS.indexOf(d.id) === -1) throw new Error('jour vide avant la fin de la campagne : ' + d.id);
             return;
         }
         if (d.id >= 70) throw new Error('jour non vide après la campagne : ' + d.id);
@@ -86,10 +89,16 @@ __check('modes et types valides (jours vides admis après la campagne)', () => {
     });
 });
 
+// rangement : retiré de la rotation du calendrier (retour #118) mais
+// conservé dans GAME_MODES — reste jouable via son propre écran de test.
+const MODES_WITHOUT_DAY = ['rangement'];
 Object.keys(GAME_MODES).forEach(modeId => {
     __check('mode ' + modeId + ' (intro + partie)', () => {
         const day = DAYS.find(d => d.modeId === modeId);
-        if (!day) throw new Error('aucun jour pour ce mode');
+        if (!day) {
+            if (MODES_WITHOUT_DAY.indexOf(modeId) !== -1) return;
+            throw new Error('aucun jour pour ce mode');
+        }
         localResults = {}; serverPlayedDays = {};
         selectDay(day);
         if (introPanel.classList.contains('hidden')) throw new Error('intro absente');

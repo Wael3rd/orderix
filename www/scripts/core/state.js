@@ -58,11 +58,17 @@ LEGACY_RETEST.forEach(k => { if (!GAME_MODES[k].rev) GAME_MODES[k].rev = 1; });
 
 // Après la campagne (11 mars et au-delà) : RIEN — le reste de l'année
 // est vide tant que le roster définitif n'est pas arrêté.
+// Retour #118 : jour 32 (Le Rangement) jugé redondant avec un autre jour
+// de la campagne déjà validé → journée retirée sans remplacement, sur
+// demande explicite ; le mode reste dans le roster (rien n'est supprimé),
+// simplement pas assigné ce jour-là.
+const RETEST_SKIP_DAYS = new Set([32]);
 let ALL_DAYS = [];
 for (let id = 1; id <= 365; id++) {
     let mKey;
     let retest = false;
     if (id <= 31) mKey = JANUARY_LINEUP[id - 1];
+    else if (RETEST_SKIP_DAYS.has(id)) { ALL_DAYS.push({ id: id, empty: true, modeId: null, type: 'numbers', title: '' }); continue; }
     else if (id - 32 < LEGACY_RETEST.length) { mKey = LEGACY_RETEST[id - 32]; retest = true; }
     else { ALL_DAYS.push({ id: id, empty: true, modeId: null, type: 'numbers', title: '' }); continue; }
 
