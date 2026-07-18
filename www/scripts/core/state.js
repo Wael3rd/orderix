@@ -122,9 +122,28 @@ function getStorage(key) {
 }
 
 // ─── Progression locale (jouable sans pseudo, hors-ligne) ────────
+// Le registre des revs testées (badges « ! ») est SÉPARÉ de la
+// progression : « reset progression » vide le calendrier sans faire
+// réapparaître les points d'exclamation des gameplays déjà testés.
+let testedRevs = {};
 function loadLocalResults() {
     try { localResults = JSON.parse(getStorage('orderix_local_results') || '{}') || {}; }
     catch (e) { localResults = {}; }
+    try { testedRevs = JSON.parse(getStorage('orderix_tested_revs') || '{}') || {}; }
+    catch (e) { testedRevs = {}; }
+    // Migration : récupère les revs déjà jouées avant ce registre
+    let migrated = false;
+    for (const dayId in localResults) {
+        const res = localResults[dayId];
+        if (!res || !res.rev) continue;
+        const day = DAYS.find(d => d.id === parseInt(dayId));
+        if (!day) continue;
+        if ((testedRevs[day.modeId] || 0) < res.rev) {
+            testedRevs[day.modeId] = res.rev;
+            migrated = true;
+        }
+    }
+    if (migrated) setStorage('orderix_tested_revs', JSON.stringify(testedRevs));
 }
 function saveLocalResult(dayId, count, time, isWin) {
     // `rev` mémorise la révision du gameplay jouée : si le mode est ensuite
@@ -133,19 +152,23 @@ function saveLocalResult(dayId, count, time, isWin) {
     const rev = day ? (GAME_MODES[day.modeId].rev || 0) : 0;
     localResults[dayId] = { count: count, time: time, isWin: isWin, rev: rev };
     setStorage('orderix_local_results', JSON.stringify(localResults));
+    if (day && rev > (testedRevs[day.modeId] || 0)) {
+        testedRevs[day.modeId] = rev;
+        setStorage('orderix_tested_revs', JSON.stringify(testedRevs));
+    }
 }
 // Résultat connu pour un jour : priorité au serveur, sinon local
 function getPlayedInfo(dayId) {
     return serverPlayedDays[dayId] || localResults[dayId] || null;
 }
 // Badge « ! » (version de test) : le gameplay de ce jour a changé depuis
-// la dernière partie locale — il attend un (re-)test.
+// le dernier test — registre `testedRevs`, indépendant de la progression
+// (survit au « reset progression »).
 function needsTest(day) {
     if (ENV_NAME !== 'staging') return false;
     const rev = GAME_MODES[day.modeId].rev || 0;
     if (rev === 0) return false;
-    const res = localResults[day.id];
-    return rev > ((res && res.rev) || 0);
+    return rev > (testedRevs[day.modeId] || 0);
 }
 
 // ─── Calendrier : jour 1..365 ↔ date de l'année courante ─────────
