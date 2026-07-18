@@ -1,14 +1,15 @@
 // ─── Mode : Le Nonogramme (jour 31) ──────────────────────────────
-// Picross 7×7 inspiré de Nonogram.com (Easybrain). Un motif secret
+// Picross 6×6 (retours #95 « 7×7 », #105 « moins dur », #110 « 6×6 »)
+// inspiré de Nonogram.com (Easybrain). Un motif secret
 // est généré ; seuls les indices classiques (longueurs des blocs
 // consécutifs remplis, par ligne et par colonne) sont affichés.
 // Deux outils : ■ Remplir et ✕ Marquer vide. Les indices passent au
-// vert quand leur ligne/colonne est satisfaite. Victoire dès que les
-// 7 lignes ET les 7 colonnes correspondent — toute solution valide
+// vert quand leur ligne/colonne est satisfaite. Victoire dès que
+// toutes les lignes ET colonnes correspondent — toute solution valide
 // compte, même différente du motif d'origine. Pas de défaite : le
 // chrono départage.
 
-const _NONO_N = 7;
+const _NONO_N = 6;
 
 // Longueurs des blocs consécutifs remplis d'une ligne/colonne ([0] si vide)
 function _nonoClues(cells) {
@@ -136,7 +137,7 @@ function startGameNonogramme() {
     board.appendChild(hud);
 
     // ── Table : coin vide + indices de colonnes + indices de lignes + cellules ─
-    const CELL = 38;
+    const CELL = 44;
     const table = document.createElement('div');
     table.style.cssText = `display:grid;grid-template-columns:auto repeat(${_NONO_N},${CELL}px);` +
         `grid-template-rows:auto repeat(${_NONO_N},${CELL}px);gap:3px;align-items:stretch;`;

@@ -1,60 +1,73 @@
 // ─── Mode : L'Embouteillage (jour 26) ────────────────────────────
-// Inspiré de Rush Hour / Unblock Me. v2 (retour #64) : la notion
-// d'ordre est au cœur du jeu — TROIS voitures numérotées doivent
-// sortir par la droite DANS L'ORDRE 1 → 2 → 3, chacune sur sa ligne.
-// Une voiture ne peut franchir la sortie que si c'est son tour.
-// Grilles plus denses, vérifiées résolubles à la main. Annulation
-// illimitée, compteur de manœuvres.
+// Inspiré de Rush Hour / Unblock Me. v3 (retour #113) : comme dans le
+// vrai Rush Hour, les sorties ne sont plus toutes du même côté —
+// chaque voiture numérotée a SA sortie fléchée (droite, gauche, haut
+// ou bas selon son orientation), à franchir DANS L'ORDRE 1 → 2 → 3.
+// Camions de 3 cases dans les bloqueurs. Grilles générées puis
+// vérifiées par solveur BFS (minimum prouvé 24 / 25 / 28 manœuvres).
+// Annulation illimitée, compteur de manœuvres.
 
 const _EMB_COLORS = ['#4A6CFA', '#34B871', '#8B5CF6', '#3553D1', '#1E7A74', '#E0533D'];
 
-// {r, c, len, dir 'h'|'v', num?} — les voitures numérotées sont
-// horizontales et sortent par la droite de leur ligne.
-// Retour #93 (« mille fois trop facile ») : niveaux générés puis
-// vérifiés par solveur BFS hors-ligne — minimum 22 / 28 / 30 pas.
+// {r, c, len, dir 'h'|'v', num?, exit? 'r'|'l'|'u'|'d'} — chaque
+// voiture numérotée a sa propre sortie, dans le sens de sa voie.
+// Retour #113 : niveaux générés puis vérifiés par solveur BFS —
+// minimum prouvé 24 / 25 / 28 manœuvres.
 const _EMB_LEVELS = [
     [
-        { r: 2, c: 2, len: 2, dir: 'h', num: 1 },
-        { r: 0, c: 1, len: 2, dir: 'h', num: 2 },
-        { r: 4, c: 0, len: 2, dir: 'h', num: 3 },
-        { r: 4, c: 4, len: 2, dir: 'v' },
-        { r: 0, c: 0, len: 2, dir: 'v' },
-        { r: 0, c: 5, len: 2, dir: 'v' },
-        { r: 3, c: 3, len: 2, dir: 'v' },
-        { r: 5, c: 0, len: 3, dir: 'h' },
-        { r: 3, c: 5, len: 2, dir: 'v' },
-        { r: 2, c: 0, len: 2, dir: 'h' },
-        { r: 0, c: 4, len: 2, dir: 'v' },
-        { r: 0, c: 3, len: 2, dir: 'v' }
+        { r: 5, c: 1, len: 2, dir: 'h', num: 1, exit: 'r' },
+        { r: 1, c: 2, len: 2, dir: 'v', num: 2, exit: 'd' },
+        { r: 0, c: 4, len: 2, dir: 'v', num: 3, exit: 'd' },
+        { r: 1, c: 3, len: 2, dir: 'v' },
+        { r: 4, c: 3, len: 2, dir: 'v' },
+        { r: 2, c: 1, len: 3, dir: 'v' },
+        { r: 3, c: 5, len: 3, dir: 'v' },
+        { r: 1, c: 0, len: 2, dir: 'v' },
+        { r: 3, c: 3, len: 2, dir: 'h' },
+        { r: 2, c: 4, len: 2, dir: 'h' },
+        { r: 0, c: 1, len: 2, dir: 'h' }
     ],
     [
-        { r: 1, c: 0, len: 2, dir: 'h', num: 1 },
-        { r: 2, c: 1, len: 2, dir: 'h', num: 2 },
-        { r: 5, c: 1, len: 2, dir: 'h', num: 3 },
-        { r: 0, c: 5, len: 2, dir: 'v' },
-        { r: 0, c: 1, len: 3, dir: 'h' },
-        { r: 4, c: 5, len: 2, dir: 'v' },
-        { r: 2, c: 4, len: 2, dir: 'v' },
-        { r: 3, c: 1, len: 2, dir: 'v' },
-        { r: 3, c: 0, len: 3, dir: 'v' },
-        { r: 4, c: 2, len: 2, dir: 'h' },
-        { r: 2, c: 3, len: 2, dir: 'v' },
-        { r: 0, c: 4, len: 2, dir: 'v' }
-    ],
-    [
-        { r: 2, c: 2, len: 2, dir: 'h', num: 1 },
-        { r: 3, c: 2, len: 2, dir: 'h', num: 2 },
-        { r: 0, c: 1, len: 2, dir: 'h', num: 3 },
-        { r: 2, c: 4, len: 2, dir: 'v' },
-        { r: 1, c: 4, len: 2, dir: 'h' },
-        { r: 0, c: 3, len: 2, dir: 'v' },
+        { r: 4, c: 1, len: 2, dir: 'v', num: 1, exit: 'u' },
+        { r: 3, c: 2, len: 2, dir: 'v', num: 2, exit: 'u' },
+        { r: 1, c: 1, len: 2, dir: 'h', num: 3, exit: 'r' },
+        { r: 1, c: 5, len: 2, dir: 'v' },
+        { r: 3, c: 4, len: 2, dir: 'v' },
+        { r: 0, c: 0, len: 2, dir: 'h' },
+        { r: 0, c: 4, len: 2, dir: 'h' },
         { r: 2, c: 0, len: 2, dir: 'v' },
+        { r: 5, c: 3, len: 3, dir: 'h' },
+        { r: 1, c: 4, len: 2, dir: 'v' },
+        { r: 0, c: 3, len: 3, dir: 'v' },
+        { r: 4, c: 0, len: 2, dir: 'v' },
+        { r: 3, c: 5, len: 2, dir: 'v' }
+    ],
+    [
+        { r: 3, c: 3, len: 2, dir: 'h', num: 1, exit: 'l' },
+        { r: 4, c: 0, len: 2, dir: 'h', num: 2, exit: 'r' },
+        { r: 1, c: 1, len: 2, dir: 'v', num: 3, exit: 'd' },
+        { r: 1, c: 0, len: 2, dir: 'v' },
+        { r: 5, c: 1, len: 2, dir: 'h' },
+        { r: 1, c: 4, len: 2, dir: 'v' },
+        { r: 2, c: 2, len: 2, dir: 'v' },
         { r: 4, c: 4, len: 2, dir: 'v' },
-        { r: 3, c: 5, len: 2, dir: 'v' },
-        { r: 5, c: 0, len: 2, dir: 'h' },
-        { r: 2, c: 1, len: 2, dir: 'v' }
+        { r: 0, c: 5, len: 3, dir: 'v' },
+        { r: 1, c: 3, len: 2, dir: 'v' },
+        { r: 0, c: 2, len: 2, dir: 'v' },
+        { r: 0, c: 3, len: 2, dir: 'h' }
     ]
 ];
+
+// La voiture peut-elle SORTIR en poussant dans `dir` ? (bord atteint
+// du côté de sa sortie)
+function _embIsExit(car, dir, S) {
+    if (!car.exit) return false;
+    if (car.dir === 'h' && car.exit === 'r') return dir > 0 && car.c + car.len >= S;
+    if (car.dir === 'h' && car.exit === 'l') return dir < 0 && car.c <= 0;
+    if (car.dir === 'v' && car.exit === 'd') return dir > 0 && car.r + car.len >= S;
+    if (car.dir === 'v' && car.exit === 'u') return dir < 0 && car.r <= 0;
+    return false;
+}
 
 function showExampleEmbouteillage(day, row, vals) {
     const ex = document.createElement('div');
@@ -70,12 +83,20 @@ function showExampleEmbouteillage(day, row, vals) {
         if (txt) v.textContent = txt;
         return v;
     };
-    mini.append(mk(0, 0, 2, 1, '#F5B227', '1'), mk(2, 1, 2, 1, '#F5B227', '2'), mk(1, 3, 1, 2, '#4A6CFA'));
+    mini.append(mk(0, 0, 2, 1, '#F5B227', '1'), mk(2, 1, 1, 2, '#F5B227', '2'), mk(1, 3, 1, 2, '#4A6CFA'));
+    // Deux flèches de sortie dans des sens différents
+    const fl1 = document.createElement('div');
+    fl1.style.cssText = 'position:absolute;right:-16px;top:6px;font-weight:900;color:#F5B227;font-size:.9rem;';
+    fl1.textContent = '⇒';
+    const fl2 = document.createElement('div');
+    fl2.style.cssText = 'position:absolute;left:41px;bottom:-18px;font-weight:900;color:#F5B227;font-size:.9rem;';
+    fl2.textContent = '⇓';
+    mini.append(fl1, fl2);
     ex.appendChild(mini);
 
     const note = document.createElement('div');
     note.style.cssText = 'font-weight:bold;color:#8B90A0;font-size:.8rem;text-align:center;max-width:270px;';
-    note.textContent = 'Dégagez la voie et sortez les voitures dorées DANS L\'ORDRE : la 1, puis la 2, puis la 3.';
+    note.textContent = 'Chaque voiture dorée sort par SA flèche — dans l\'ordre : la 1, puis la 2, puis la 3.';
 
     ex.append(note);
     row.style.flexDirection = 'column';
@@ -91,7 +112,6 @@ function startGameEmbouteillage() {
 
     // Retour #104 (10×10) exploré puis abandonné : les grilles Rush Hour
     // au-delà de 6×6 sont soit triviales soit invérifiables par solveur.
-    // On reste sur 6×6 dense, minimum prouvé 22/28/30 manœuvres.
     const S = 6, CELL = 52, GAP = 4;
     const level = _EMB_LEVELS[Math.floor(Math.random() * _EMB_LEVELS.length)];
     let colorIdx = 0;
@@ -116,14 +136,20 @@ function startGameEmbouteillage() {
     stage.style.cssText = `position:relative;width:${stageW}px;height:${stageW}px;background:#D8DCE8;border-radius:14px;`;
     board.appendChild(stage);
 
-    // Flèches de sortie sur la ligne de chaque voiture numérotée
+    // Flèche de sortie de chaque voiture numérotée, sur SON côté
     cars.filter(c => c.num).forEach(c => {
         const exit = document.createElement('div');
         exit.className = 'emb-exit';
         exit.dataset.num = c.num;
-        exit.style.cssText = `position:absolute;right:-20px;top:${GAP + c.r * (CELL + GAP) + CELL / 2 - 12}px;` +
+        let pos, txt;
+        const along = GAP + (c.dir === 'h' ? c.r : c.c) * (CELL + GAP) + CELL / 2;
+        if (c.exit === 'r') { pos = `right:-22px;top:${along - 12}px;`; txt = c.num + '⇒'; }
+        else if (c.exit === 'l') { pos = `left:-22px;top:${along - 12}px;`; txt = '⇐' + c.num; }
+        else if (c.exit === 'd') { pos = `bottom:-26px;left:${along - 10}px;`; txt = c.num + '⇓'; }
+        else { pos = `top:-26px;left:${along - 10}px;`; txt = c.num + '⇑'; }
+        exit.style.cssText = `position:absolute;${pos}` +
             'font-weight:900;font-size:1.15rem;transition:color .2s,opacity .2s;';
-        exit.textContent = c.num + '⇒';
+        exit.textContent = txt;
         stage.appendChild(exit);
     });
 
@@ -157,12 +183,11 @@ function startGameEmbouteillage() {
 
     function tryStep(vi, dir) {
         const car = cars[vi];
+        // Franchir SA sortie : réservé à la voiture dont c'est le tour
+        if (_embIsExit(car, dir, S)) {
+            return (car.num === nextOut) ? 'exit' : false;
+        }
         if (car.dir === 'h') {
-            if (dir > 0 && car.c + car.len >= S) {
-                // Franchir la sortie : réservé à la voiture dont c'est le tour
-                if (car.num && car.num === nextOut) return 'exit';
-                return false;
-            }
             const target = dir > 0 ? [car.r, car.c + car.len] : [car.r, car.c - 1];
             if (!cellFree(target[0], target[1], vi)) return false;
             car.c += dir;

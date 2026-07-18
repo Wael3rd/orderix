@@ -87,11 +87,11 @@ const DAYS = [
  {d:6, n:"Le Code", g:"Wordle des chiffres (déduction)", s:"valide", note:"#96 : « Passe-le en validé ! » ✓ (5 chiffres confirmés)."},
  {d:7, n:"Mémo Croissant", g:"jeu de mémoire (Concentration)", s:"valide", note:"#97 : « Passe-le en validé ! » ✓ (4×4 confirmé)."},
  {d:8, n:"Le Solitaire", g:"Klondike mini (MobilityWare : 100 M+ joueurs, 69 % de femmes)", s:"valide", note:"#83 : « C'est ok c'est validé » ✓"},
- {d:9, n:"Blocs", g:"Block Blast (n°1 mondial, 366 M dl)", s:"corrige", note:"#98 : le fantôme fait désormais foi (la pièce se pose EXACTEMENT là où on la voit, plus de décalage) + flash doré et gonflement des cases quand une ligne s'efface. À re-tester."},
+ {d:9, n:"Blocs", g:"Block Blast (n°1 mondial, 366 M dl)", s:"valide", note:"#107 : « C'est bon c'est validé ! » ✓ (pose exacte + flash doré)."},
  {d:10, n:"Les Dominos", g:"Dominosa (puzzle de déduction classique)", s:"valide", note:"#106 : « Il est GÉNIAL celui-là ! » ✓"},
  {d:11, n:"Paires Reliées", g:"Tile Connect / Onet (86 M+ dl)", s:"valide", note:"#86 : « C'est bon c'est validé » ✓"},
  {d:12, n:"Les Tubes", g:"water-sort ordonné", s:"valide", note:"#99 : « Passe-le en validé ! » ✓ (fioles figées + fond 5→1 confirmés)."},
- {d:13, n:"Le Tri Minimal", g:"tri par insertions comptées (ex-Échange Minimal)", s:"corrige", note:"#100 « on ne peut pas se rater » : mécanique refaite — GLISSEZ une tuile n'importe où, budget = strict minimum (10 − plus longue sous-suite croissante). Le puzzle : trouver quelles tuiles ne pas bouger. À re-tester."},
+ {d:13, n:"Le Tri Minimal", g:"tri par insertions comptées (ex-Échange Minimal)", s:"valide", note:"#108 : ✅ Validé ✓ (mécanique glisser + budget minimum)."},
  {d:14, n:"Les Boulons", g:"screw-sort (Screwdom)", s:"valide", note:"#11 puis #25 « Ok comme gameplay là ! » — doublement confirmé."},
  {d:15, n:"La File", g:"file d'attente + sièges", s:"valide", note:"#12 réussi ; l'idée multi-guichets est notée au backlog (issue refermée)."},
  {d:16, n:"La Grille", g:"3×3 échanges adjacents+diagonales", s:"valide", note:"#74 : « Validé » ✓ (née de VOTRE idée #13)."},
@@ -101,18 +101,18 @@ const DAYS = [
  {d:20, n:"La Balance", g:"déduction par pesées", s:"valide", note:"#17 « suuuper bien »."},
  {d:21, n:"L'Ordre Caché", g:"mastermind d'ordre", s:"valide", note:"#18 « Très bon gameplay ! »"},
  {d:22, n:"Les Indices", g:"logique par indices", s:"valide", note:"#90 : « C'est validé ! » ✓ (concept #66 + contrôles drag & drop #67)."},
- {d:23, n:"Chronologie", g:"culture générale ordonnée", s:"corrige", note:"#102 « le drag se décale trop » : corrigé — la carte reste exactement sous le doigt (point de saisie mémorisé, taille identique). Le reste était « nickel ». À re-tester."},
- {d:24, n:"Les Suites", g:"Spider Solitaire mini (evergreen n°1 des cartes)", s:"nouveau", note:"Remplace Les Piles (#103 « incompréhensible, pas de lien avec le tri »). Ici le tri EST le jeu : empilez en ordre décroissant et complétez deux suites 10→1. Donnes vérifiées résolubles, annulation illimitée. À tester."},
+ {d:23, n:"Chronologie", g:"culture générale ordonnée", s:"valide", note:"#109 : ✅ Validé ✓ (drag corrigé, 8 cartes)."},
+ {d:24, n:"Les Suites", g:"Spider Solitaire mini (evergreen n°1 des cartes)", s:"valide", note:"#111 : ✅ Validé ✓ — réussi en 24 min 45, un vrai morceau ! Donnes toujours vérifiées résolubles."},
  {d:25, n:"2048", g:"LE classique merge", s:"valide", note:"#55 : « Très bien, c'est validé ! » ✓"},
- {d:26, n:"L'Embouteillage", g:"Rush Hour / Unblock Me", s:"corrige", note:"#104 (10×10) exploré puis abandonné d'un commun accord : au-delà de 6×6, les grilles Rush Hour sont soit triviales soit invérifiables (explosion du solveur). On reste sur les 3 grilles corsées du #93 (min 22/28/30 manœuvres) — verdict à donner sur celles-ci."},
+ {d:26, n:"L'Embouteillage", g:"Rush Hour / Unblock Me", s:"corrige", note:"#113 : config vrai Rush Hour — chaque voiture dorée sort par SA flèche (droite, gauche, haut ou bas), camions de 3, nouvelles grilles vérifiées par solveur (min 24/25/28 manœuvres). À re-tester."},
  {d:27, n:"Triple Suite", g:"tile-match (Vita Mahjong, Triple Tile)", s:"valide", note:"#36 : « Ça marche super super bien » ✓"},
  {d:28, n:"Photo de Classe", g:"mémoire spatiale", s:"valide", note:"#30 « très bien » — temps de mémorisation doublé comme demandé."},
- {d:29, n:"Le Taquin", g:"15-puzzle classique (indémodable du casual)", s:"nouveau", note:"Remplace Les Bulles (#94 « trop simple, aucun lien avec le tri »). Le puzzle glissant : remettez 1 à 8 DANS L'ORDRE en glissant les tuiles — 100 % tri, mélanges toujours solvables. À tester."},
+ {d:29, n:"Le Taquin", g:"15-puzzle classique (indémodable du casual)", s:"valide", note:"#112 : ✅ Validé ✓"},
  {d:30, n:"Fusion", g:"chaînes à fusionner", s:"valide", note:"#32 « vraiment très bien » — consigne réécrite comme demandé."},
- {d:31, n:"Le Nonogramme", g:"picross 7×7 (Nonogram.com, top charts mondial)", s:"corrige", note:"#105 « 7×7 bien mais trop dur » : difficulté adoucie — jamais plus de 2 blocs par ligne/colonne, grilles plus denses donc indices plus parlants. À re-tester."}
+ {d:31, n:"Le Nonogramme", g:"picross 6×6 (Nonogram.com, top charts mondial)", s:"corrige", note:"#110 : grille passée en 6×6 (max 2 blocs par ligne/colonne conservé). À re-tester."}
 ];
 
-const LAST_CURATED_ISSUE = 106; // dernier retour intégré à la base curée ci-dessus
+const LAST_CURATED_ISSUE = 113; // dernier retour intégré à la base curée ci-dessus
 const BADGES = {
   valide:    ['b-valide', '✅ Validé'],
   corrige:   ['b-corrige', '🔧 Corrigé — à re-tester'],
@@ -125,7 +125,7 @@ const BADGES = {
 };
 
 // Version de la base curée — sert à détecter une page en cache périmée
-const SUIVI_VERSION = '2026-07-18-5';
+const SUIVI_VERSION = '2026-07-18-6';
 
 let filter = 'tous';
 let issuesByDay = {};

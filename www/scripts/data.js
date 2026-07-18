@@ -39,13 +39,13 @@ const GAME_MODES = {
     indices: { rev: 1, name: "Les Indices", isIndices: true, typeAgnostic: true, desc: "Lisez les indices, GLISSEZ les personnages pour reconstituer l'ordre exact, puis validez. 2 essais." },
     chronologie: { rev: 4, name: "Chronologie", isChronologie: true, typeAgnostic: true, desc: "Glissez les 8 cartes pour composer votre ordre, puis validez : les bonnes positions se verrouillent en vert. Recommencez jusqu'au sans-faute !" },
     deux048: { name: "2048", isDeux048: true, typeAgnostic: true, desc: "Glissez la grille : deux tuiles égales fusionnent en une plus grande (2+2=4, 4+4=8…). Créez la tuile 128 !" },
-    embouteillage: { rev: 3, name: "L'Embouteillage", isEmbouteillage: true, typeAgnostic: true, desc: "Faites glisser les véhicules pour sortir les trois voitures dorées DANS L'ORDRE : la n°1, puis la 2, puis la 3. Grilles corsées, annulation illimitée." },
+    embouteillage: { rev: 4, name: "L'Embouteillage", isEmbouteillage: true, typeAgnostic: true, desc: "Comme au vrai Rush Hour : chaque voiture dorée sort par SA flèche (droite, gauche, haut ou bas), DANS L'ORDRE 1, 2 puis 3. Camions de 3 cases, annulation illimitée." },
     tripleOrdre: { name: "Triple Suite", isTripleOrdre: true, typeAgnostic: true, desc: "Prenez les tuiles libres pour réunir les trios de nombres qui se suivent (même couleur). Si la barre déborde à 7, c'est perdu !" },
     photoClasse: { name: "Photo de Classe", isPhotoClasse: true, typeAgnostic: true, desc: "Mémorisez qui est où, puis reformez le rang d'origine après le mélange. 2 vies." },
     taquin: { rev: 1, name: "Le Taquin", isTaquin: true, typeAgnostic: true, desc: "Le puzzle glissant classique : faites glisser les tuiles dans la case vide pour remettre les nombres de 1 à 8 DANS L'ORDRE." },
     suites: { rev: 1, name: "Les Suites", isSuites: true, typeAgnostic: true, desc: "Façon Spider Solitaire : empilez les cartes en ordre décroissant (un 7 se pose sur un 8) et complétez deux suites de 10 à 1 — elles s'envolent ! Annulation illimitée." },
     fusion: { name: "Fusion", isFusion: true, typeAgnostic: true, desc: "Glissez le doigt pour relier des nombres qui SE SUIVENT (1→2→3…) : la chaîne fusionne en une seule tuile plus grande. Fabriquez la tuile 8 !" },
-    nonogramme: { rev: 3, name: "Le Nonogramme", isNonogramme: true, typeAgnostic: true, desc: "Grille 7×7 : les chiffres indiquent les blocs de cases à remplir sur chaque ligne et colonne. Remplissez la grille — les indices passent au vert quand c'est juste." },
+    nonogramme: { rev: 4, name: "Le Nonogramme", isNonogramme: true, typeAgnostic: true, desc: "Grille 6×6 : les chiffres indiquent les blocs de cases à remplir sur chaque ligne et colonne. Remplissez la grille — les indices passent au vert quand c'est juste." },
 
     // ── Tris (validation par bouton) ──
     sortAsc: { name: "Tri Croissant", isSort: true, order: 1, desc: "Touchez les éléments du plus petit au plus grand, puis validez." },
