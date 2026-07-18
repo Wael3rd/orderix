@@ -170,6 +170,7 @@ function handleFeedback(feedbackValue) {
     resultActions.classList.remove('hidden');
     document.getElementById('comment-zone').classList.remove('hidden');
     renderCommentOutbox();
+    retryPendingComments();
     leaderboardSection.classList.remove('hidden');
     if (feedbackValue !== 'none' && getPlayerName()) {
         dbMessage.textContent = 'Envoi de votre avis…';
@@ -179,9 +180,51 @@ function handleFeedback(feedbackValue) {
     fetchLeaderboard();
 }
 
-// ─── Commentaires de test → GitHub Issues ────────────────────────
-// Le commentaire ouvre une issue GitHub pré-remplie (label `feedback`) :
-// un agent planifié la lit et lance les correctifs sans passer par le chat.
+// ─── Commentaires de test → Claude, sans formulaire GitHub ───────
+// L'issue est créée DIRECTEMENT via l'API GitHub (jeton « issues-only »
+// injecté au build via config/orderix.staging.local.json, jamais commité).
+// File d'attente locale : rien n'est jamais perdu, tout ce qui n'est pas
+// parti est renvoyable en un tap et retenté automatiquement.
+const GH_TOKEN = (typeof ORDERIX_ENV !== 'undefined' && ORDERIX_ENV.githubToken) || '';
+
+function _loadComments() {
+    try { return JSON.parse(getStorage('orderix_comments') || '[]') || []; } catch (e) { return []; }
+}
+function _saveComments(all) { setStorage('orderix_comments', JSON.stringify(all)); }
+
+function _commentIssueUrl(title, body) {
+    return 'https://github.com/Wael3rd/orderix/issues/new?labels=feedback&title=' +
+        encodeURIComponent(title) + '&body=' + encodeURIComponent(body);
+}
+
+// Création silencieuse de l'issue via l'API. Résout true si c'est parti.
+function sendCommentDirect(entry) {
+    if (!GH_TOKEN) return Promise.resolve(false);
+    return fetch('https://api.github.com/repos/Wael3rd/orderix/issues', {
+        method: 'POST',
+        headers: {
+            'Authorization': 'Bearer ' + GH_TOKEN,
+            'Accept': 'application/vnd.github+json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ title: entry.title, body: entry.body, labels: ['feedback'] })
+    }).then(r => r.ok).catch(() => false);
+}
+
+function _markSent(id) {
+    const all = _loadComments();
+    const e = all.find(x => x.id === id);
+    if (e) { e.sent = true; _saveComments(all); }
+}
+
+// Retente en arrière-plan tout ce qui n'est pas parti (réseau coupé, etc.)
+function retryPendingComments() {
+    if (!GH_TOKEN) return;
+    _loadComments().filter(e => !e.sent).forEach(e => {
+        sendCommentDirect(e).then(ok => { if (ok) { _markSent(e.id); renderCommentOutbox(); } });
+    });
+}
+
 document.getElementById('comment-send').addEventListener('click', () => {
     const box = document.getElementById('comment-box');
     const status = document.getElementById('comment-status');
@@ -198,34 +241,45 @@ document.getElementById('comment-send').addEventListener('click', () => {
         `**Résultat** : ${result}\n**Env** : ${ENV_NAME}\n\n**Commentaire** :\n${txt}\n\n` +
         `_Envoyé depuis l'app le ${new Date().toLocaleString('fr-FR')}_`;
 
-    // Sauvegarde locale de secours (consultable même sans réseau) —
-    // le titre et le corps sont conservés pour pouvoir RENVOYER tel quel :
-    // le formulaire GitHub restaure parfois son ancien brouillon et ignore
-    // le nouveau texte pré-rempli (retours perdus / doublons #19-#20).
-    try {
-        const all = JSON.parse(getStorage('orderix_comments') || '[]') || [];
-        all.push({ date: new Date().toISOString(), day: day ? day.id : 0, modeId: day ? day.modeId : '', txt: txt, result: result, title: title, body: body });
-        setStorage('orderix_comments', JSON.stringify(all));
-    } catch (e) { }
-
-    window.open(_commentIssueUrl(title, body), '_system');
-    status.innerHTML = '<b style="color:var(--rouge)">Vérifiez sur GitHub que c\'est bien CE texte</b> — ' +
-        'si un ancien commentaire s\'affiche, effacez-le d\'abord. Votre texte est gardé dans le filet de secours ci-dessous.';
+    const entry = {
+        id: Date.now(), date: new Date().toISOString(), day: day ? day.id : 0,
+        modeId: day ? day.modeId : '', txt: txt, result: result,
+        title: title, body: body, sent: false
+    };
+    const all = _loadComments();
+    all.push(entry);
+    _saveComments(all);
     box.value = '';
     renderCommentOutbox();
+
+    if (GH_TOKEN) {
+        status.textContent = 'Envoi à Claude…';
+        status.style.color = 'var(--gris)';
+        sendCommentDirect(entry).then(ok => {
+            if (ok) {
+                _markSent(entry.id);
+                status.textContent = '✓ Envoyé à Claude — merci !';
+                status.style.color = 'var(--vert)';
+                haptic([10, 30, 10]);
+            } else {
+                status.textContent = 'Réseau capricieux — gardé dans le filet de secours, renvoi automatique.';
+                status.style.color = 'var(--rouge)';
+            }
+            renderCommentOutbox();
+        });
+    } else {
+        // Repli sans jeton : formulaire GitHub pré-rempli (attention au brouillon)
+        window.open(_commentIssueUrl(title, body), '_system');
+        status.innerHTML = '<b style="color:var(--rouge)">Vérifiez sur GitHub que c\'est bien CE texte</b> — ' +
+            'si un ancien commentaire s\'affiche, effacez-le d\'abord. Copie gardée ci-dessous.';
+    }
 });
 
-function _commentIssueUrl(title, body) {
-    return 'https://github.com/Wael3rd/orderix/issues/new?labels=feedback&title=' +
-        encodeURIComponent(title) + '&body=' + encodeURIComponent(body);
-}
-
-// Filet de secours : les 5 derniers commentaires, chacun renvoyable en un tap
+// Filet de secours : les 5 derniers commentaires, état ✓/⏳, renvoi en un tap
 function renderCommentOutbox() {
     const zone = document.getElementById('comment-outbox');
     const list = document.getElementById('comment-outbox-list');
-    let all = [];
-    try { all = JSON.parse(getStorage('orderix_comments') || '[]') || []; } catch (e) { }
+    const all = _loadComments();
     if (!all.length) { zone.classList.add('hidden'); return; }
     zone.classList.remove('hidden');
     list.innerHTML = '';
@@ -233,19 +287,31 @@ function renderCommentOutbox() {
         const row = document.createElement('div');
         row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:7px 10px;margin-bottom:6px;' +
             'background:var(--fond);border-radius:10px;font-size:.8rem;';
+        const state = document.createElement('span');
+        state.style.cssText = 'flex-shrink:0;font-size:.9rem;';
+        state.textContent = entry.sent ? '✅' : '⏳';
         const label = document.createElement('div');
         label.style.cssText = 'flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--gris);';
         label.innerHTML = `<b style="color:var(--encre)">J${entry.day}</b> · ${entry.txt}`;
-        const resend = document.createElement('button');
-        resend.style.cssText = 'flex-shrink:0;padding:6px 12px;border-radius:999px;background:var(--pale);' +
-            'color:var(--bleu-fonce);font-weight:900;font-size:.75rem;';
-        resend.textContent = '↻ Renvoyer';
-        resend.addEventListener('click', () => {
-            const t = entry.title || `[feedback] Jour ${entry.day} — commentaire`;
-            const b = entry.body || `**Commentaire** :\n${entry.txt}\n\n_Renvoyé depuis le filet de secours_`;
-            window.open(_commentIssueUrl(t, b), '_system');
-        });
-        row.append(label, resend);
+        row.append(state, label);
+        if (!entry.sent) {
+            const resend = document.createElement('button');
+            resend.style.cssText = 'flex-shrink:0;padding:6px 12px;border-radius:999px;background:var(--pale);' +
+                'color:var(--bleu-fonce);font-weight:900;font-size:.75rem;';
+            resend.textContent = '↻ Renvoyer';
+            resend.addEventListener('click', () => {
+                const t = entry.title || `[feedback] Jour ${entry.day} — commentaire`;
+                const b = entry.body || `**Commentaire** :\n${entry.txt}\n\n_Renvoyé depuis le filet de secours_`;
+                if (GH_TOKEN) {
+                    sendCommentDirect({ title: t, body: b }).then(ok => {
+                        if (ok) { _markSent(entry.id); renderCommentOutbox(); haptic([10, 30, 10]); }
+                    });
+                } else {
+                    window.open(_commentIssueUrl(t, b), '_system');
+                }
+            });
+            row.appendChild(resend);
+        }
         list.appendChild(row);
     });
 }

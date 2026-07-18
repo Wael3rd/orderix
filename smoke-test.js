@@ -53,7 +53,14 @@ window.eval(`;(function(){
 const scriptSrcs = [...html.matchAll(/<script src="([^"]+)"><\/script>/g)].map(m => m[1]);
 let bundle = '';
 for (const src of scriptSrcs) {
-    bundle += `\n;/* ===== ${src} ===== */\n` + fs.readFileSync(path.join(__dirname, 'www', src), 'utf8');
+    const file = path.join(__dirname, 'www', src);
+    if (!fs.existsSync(file) && src.endsWith('env.js')) {
+        // env.js est généré par set-env.js et gitignoré (il peut contenir un
+        // jeton local) : stub minimal pour les environnements de CI/routine.
+        bundle += `\n;/* ===== ${src} (stub) ===== */\nconst ORDERIX_ENV = { envName: 'staging', gasUrl: '', supabaseUrl: '', supabaseAnonKey: '', githubToken: '' };\n`;
+        continue;
+    }
+    bundle += `\n;/* ===== ${src} ===== */\n` + fs.readFileSync(file, 'utf8');
 }
 
 const TEST_CODE = `

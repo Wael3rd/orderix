@@ -12,3 +12,5 @@ Orderix-debug.apk
 .claude/settings.local.json
 Orderix-dev.apk
 pages/
+config/*.local.json
+www/scripts/env.js
