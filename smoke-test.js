@@ -74,9 +74,14 @@ __check('écran calendrier', () => showScreen('calendar'));
 __check('écran profil', () => showScreen('profile'));
 __check('écran accueil', () => showScreen('home'));
 __check('365 jours générés', () => { if (DAYS.length !== 365) throw new Error('DAYS=' + DAYS.length); });
-__check('modes et types valides', () => {
-    DAYS.forEach(d => { if (!GAME_MODES[d.modeId]) throw new Error('mode inconnu: ' + d.modeId); });
+__check('modes et types valides (jours vides admis après la campagne)', () => {
     DAYS.forEach(d => {
+        if (d.empty) {
+            if (d.id < 70) throw new Error('jour vide avant la fin de la campagne : ' + d.id);
+            return;
+        }
+        if (d.id >= 70) throw new Error('jour non vide après la campagne : ' + d.id);
+        if (!GAME_MODES[d.modeId]) throw new Error('mode inconnu: ' + d.modeId);
         if (!BASE_TYPES.find(b => b.type === d.type)) throw new Error('type inconnu: ' + d.type);
     });
 });

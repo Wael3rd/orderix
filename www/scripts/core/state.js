@@ -50,23 +50,21 @@ const JANUARY_LINEUP = [
     'embouteillage', 'tripleOrdre', 'photoClasse', 'taquin', 'fusion',
     'nonogramme'
 ];
-const LEGACY_MODES = Object.keys(GAME_MODES)
-    .filter(k => !JANUARY_LINEUP.includes(k) || ['orderChain', 'cascade', 'insertion'].includes(k));
-
-// FÉVRIER (et début mars si besoin) : campagne de re-test des ANCIENS
-// gameplays — un par jour, SANS variation de thème (type neutre), pour
-// les revalider un à un. Ils reçoivent rev:1 → badge « ! » en staging.
+// FÉVRIER (et début mars) : campagne de re-test des ANCIENS gameplays
+// — un par jour, SANS variation de thème (type neutre), pour les
+// revalider un à un. Ils reçoivent rev:1 → badge « ! » en staging.
 const LEGACY_RETEST = Object.keys(GAME_MODES).filter(k => !JANUARY_LINEUP.includes(k));
 LEGACY_RETEST.forEach(k => { if (!GAME_MODES[k].rev) GAME_MODES[k].rev = 1; });
 
+// Après la campagne (11 mars et au-delà) : RIEN — le reste de l'année
+// est vide tant que le roster définitif n'est pas arrêté.
 let ALL_DAYS = [];
-let legacyIdx = 0;
 for (let id = 1; id <= 365; id++) {
     let mKey;
     let retest = false;
     if (id <= 31) mKey = JANUARY_LINEUP[id - 1];
     else if (id - 32 < LEGACY_RETEST.length) { mKey = LEGACY_RETEST[id - 32]; retest = true; }
-    else mKey = LEGACY_MODES[legacyIdx++ % LEGACY_MODES.length];
+    else { ALL_DAYS.push({ id: id, empty: true, modeId: null, type: 'numbers', title: '' }); continue; }
 
     const mode = GAME_MODES[mKey];
     // Certains modes exigent un type précis (ex. additions → nombres lisibles)
@@ -77,7 +75,7 @@ for (let id = 1; id <= 365; id++) {
     if (mode.avoidTypes && mode.avoidTypes.indexOf(type) !== -1) type = 'numbers';
     ALL_DAYS.push({ id: id, type: type, modeId: mKey });
 }
-ALL_DAYS.forEach(d => { d.title = buildDayTitle(d); });
+ALL_DAYS.forEach(d => { if (!d.empty) d.title = buildDayTitle(d); });
 const DAYS = ALL_DAYS;
 
 // ─── Cache DOM ───────────────────────────────────────────────────
@@ -157,10 +155,10 @@ function saveLocalResult(dayId, count, time, isWin) {
     // `rev` mémorise la révision du gameplay jouée : si le mode est ensuite
     // retouché (rev incrémentée dans GAME_MODES), le badge « ! » réapparaît.
     const day = DAYS.find(d => d.id === dayId);
-    const rev = day ? (GAME_MODES[day.modeId].rev || 0) : 0;
+    const rev = (day && !day.empty) ? (GAME_MODES[day.modeId].rev || 0) : 0;
     localResults[dayId] = { count: count, time: time, isWin: isWin, rev: rev };
     setStorage('orderix_local_results', JSON.stringify(localResults));
-    if (day && rev > (testedRevs[day.modeId] || 0)) {
+    if (day && !day.empty && rev > (testedRevs[day.modeId] || 0)) {
         testedRevs[day.modeId] = rev;
         setStorage('orderix_tested_revs', JSON.stringify(testedRevs));
     }
@@ -173,7 +171,7 @@ function getPlayedInfo(dayId) {
 // le dernier test — registre `testedRevs`, indépendant de la progression
 // (survit au « reset progression »).
 function needsTest(day) {
-    if (ENV_NAME !== 'staging') return false;
+    if (ENV_NAME !== 'staging' || day.empty) return false;
     const rev = GAME_MODES[day.modeId].rev || 0;
     if (rev === 0) return false;
     return rev > (testedRevs[day.modeId] || 0);

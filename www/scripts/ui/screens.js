@@ -75,6 +75,29 @@ function buildHome() {
 
     const tid = todayDayId();
     const day = DAYS.find(d => d.id === tid) || DAYS[0];
+
+    // Jour vide (après la campagne de test) : carte « pause », pas de bouton Jouer
+    if (day.empty) {
+        document.getElementById('daily-num').textContent = day.id;
+        document.getElementById('daily-mode').textContent = 'Pas de défi ce jour';
+        document.getElementById('daily-type').textContent = 'Le calendrier de test couvre janvier, février et début mars.';
+        const tiles = document.getElementById('daily-tiles');
+        tiles.innerHTML = '';
+        const z = document.createElement('div');
+        z.className = 'tile t';
+        z.textContent = '☾';
+        tiles.appendChild(z);
+        const act = document.getElementById('daily-action');
+        act.innerHTML = '';
+        const goCal = document.createElement('button');
+        goCal.className = 'btn btn-primary';
+        goCal.textContent = 'Ouvrir le calendrier';
+        goCal.addEventListener('click', () => showScreen('calendar'));
+        act.appendChild(goCal);
+        document.getElementById('home-lead-list').innerHTML = '';
+        return;
+    }
+
     const mode = GAME_MODES[day.modeId];
     const base = BASE_TYPES.find(b => b.type === day.type);
 
@@ -146,6 +169,12 @@ function buildHome() {
 function buildLeague() {
     const tid = todayDayId();
     const day = DAYS.find(d => d.id === tid) || DAYS[0];
+    if (day.empty) {
+        document.getElementById('league-sub').textContent = `Jour ${day.id} · pas de défi ce jour`;
+        document.getElementById('league-note').textContent = 'Le classement reprend avec le calendrier de test.';
+        document.getElementById('league-list').innerHTML = '';
+        return;
+    }
     const mode = GAME_MODES[day.modeId];
     document.getElementById('league-sub').textContent = `Jour ${day.id} · ${mode.name}`;
     document.getElementById('league-note').textContent = getPlayedInfo(day.id)
@@ -233,7 +262,7 @@ function buildDayChip(day, d, id, tid, enabled, info) {
     chip.className = 'day-chip';
     chip.textContent = d;
 
-    if (!enabled) { chip.style.opacity = '.3'; chip.disabled = true; return chip; }
+    if (day.empty || !enabled) { chip.style.opacity = '.3'; chip.disabled = true; return chip; }
 
     if (info && info.isWin) { chip.classList.add('win'); chip.textContent = '✓'; }
     else if (info) { chip.classList.add('fail'); }
@@ -264,10 +293,10 @@ function buildDayRow(day, d, id, tid, enabled, info) {
 
     const name = document.createElement('span');
     name.className = 'dr-name';
-    name.textContent = GAME_MODES[day.modeId].name;
+    name.textContent = day.empty ? '—' : GAME_MODES[day.modeId].name;
     row.appendChild(name);
 
-    if (!enabled) {
+    if (day.empty || !enabled) {
         row.classList.add('off');
         row.disabled = true;
         return row;
@@ -314,6 +343,7 @@ function buildProfile() {
 
 // ── OUVERTURE D'UN JOUR (écran de jeu, phase intro) ──────────────
 function selectDay(day) {
+    if (day.empty) return; // jour sans défi (après la campagne de test)
     currentDayConfig = day;
     // Mémorise l'écran d'origine : le bouton retour y ramènera
     if (currentScreen !== 'game') returnScreen = currentScreen;
