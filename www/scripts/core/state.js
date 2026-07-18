@@ -127,12 +127,25 @@ function loadLocalResults() {
     catch (e) { localResults = {}; }
 }
 function saveLocalResult(dayId, count, time, isWin) {
-    localResults[dayId] = { count: count, time: time, isWin: isWin };
+    // `rev` mémorise la révision du gameplay jouée : si le mode est ensuite
+    // retouché (rev incrémentée dans GAME_MODES), le badge « ! » réapparaît.
+    const day = DAYS.find(d => d.id === dayId);
+    const rev = day ? (GAME_MODES[day.modeId].rev || 0) : 0;
+    localResults[dayId] = { count: count, time: time, isWin: isWin, rev: rev };
     setStorage('orderix_local_results', JSON.stringify(localResults));
 }
 // Résultat connu pour un jour : priorité au serveur, sinon local
 function getPlayedInfo(dayId) {
     return serverPlayedDays[dayId] || localResults[dayId] || null;
+}
+// Badge « ! » (version de test) : le gameplay de ce jour a changé depuis
+// la dernière partie locale — il attend un (re-)test.
+function needsTest(day) {
+    if (ENV_NAME !== 'staging') return false;
+    const rev = GAME_MODES[day.modeId].rev || 0;
+    if (rev === 0) return false;
+    const res = localResults[day.id];
+    return rev > ((res && res.rev) || 0);
 }
 
 // ─── Calendrier : jour 1..365 ↔ date de l'année courante ─────────

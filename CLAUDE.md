@@ -46,6 +46,12 @@ files will cause bugs.
   a cloud routine ("Orderix — correctifs depuis les feedbacks", every 2h) reads them, implements
   fixes, runs `node smoke-test.js`, commits to main and answers/closes the issue. APK rebuilds
   still happen locally (`npm run android:dev`).
+- **Test badge (MANDATORY on every gameplay change)**: each mode in `GAME_MODES` may carry a
+  `rev: N` field. Whenever you create, replace, or materially change a gameplay, you MUST bump
+  its `rev` (add `rev: 1` if absent, else increment). The staging app shows a "!" badge on days
+  whose mode `rev` is newer than the locally played revision (`needsTest()` in state.js) — this
+  is how the owner knows which gameplays to (re-)test. Forgetting the bump silently hides the
+  change from the test workflow.
 - **`scripts/core/state.js`** — globals, the 365-day `DAYS` table (procedural mode×type cross),
   DOM cache, storage helpers, **local progress** (`orderix_local_results`, playable without a
   nickname), day-of-year ↔ date mapping, stats/streak computation.

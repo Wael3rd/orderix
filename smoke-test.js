@@ -191,6 +191,19 @@ __check('staging : rejouer efface le résultat et rouvre l intro', () => {
     goHome();
 });
 
+__check('badge « ! » : modes en rev > partie locale, disparaît après re-test', () => {
+    localResults = {}; serverPlayedDays = {};
+    buildCalendar();
+    const before = document.querySelectorAll('#calendar-months .totest').length;
+    if (before < 5) throw new Error('badges attendus sur les modes en rev, trouvés : ' + before);
+    // Jouer un jour flaggé enregistre la rev → le badge disparaît
+    const flagged = DAYS.find(d => needsTest(d));
+    saveLocalResult(flagged.id, 10, 5.0, true);
+    buildCalendar();
+    const after = document.querySelectorAll('#calendar-months .totest').length;
+    if (after !== before - 1) throw new Error('badges avant=' + before + ' après=' + after + ', attendu ' + (before - 1));
+});
+
 __check('jour déjà joué → pas de seconde tentative', () => {
     localResults = {};
     const day = DAYS[10];

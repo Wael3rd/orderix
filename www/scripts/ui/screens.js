@@ -79,7 +79,15 @@ function buildHome() {
     const base = BASE_TYPES.find(b => b.type === day.type);
 
     document.getElementById('daily-num').textContent = day.id;
-    document.getElementById('daily-mode').textContent = mode.name;
+    const dailyModeEl = document.getElementById('daily-mode');
+    dailyModeEl.textContent = mode.name;
+    if (needsTest(day)) {
+        const t = document.createElement('span');
+        t.className = 'totest';
+        t.style.cssText = 'position:static;display:inline-flex;margin-left:8px;vertical-align:middle;';
+        t.textContent = '!';
+        dailyModeEl.appendChild(t);
+    }
     const themeEl = document.getElementById('daily-type');
     themeEl.innerHTML = '';
     if (!mode.typeAgnostic && base) themeEl.appendChild(document.createTextNode('Thème : ' + base.title));
@@ -196,6 +204,15 @@ function buildCalendar() {
             if (info && info.isWin) { chip.classList.add('win'); chip.textContent = '✓'; monthWon++; }
             else if (info) { chip.classList.add('fail'); }
             if (id === tid) chip.classList.add('today');
+
+            // Version de test : « ! » sur les gameplays modifiés depuis
+            // la dernière partie (nouveaux, corrigés ou remplacés)
+            if (needsTest(day)) {
+                const t = document.createElement('span');
+                t.className = 'totest';
+                t.textContent = '!';
+                chip.appendChild(t);
+            }
 
             chip.addEventListener('click', () => selectDay(day));
             gridFrag.appendChild(chip);

@@ -297,6 +297,27 @@
     background: var(--bleu-pale);
 }
 
+/* Version de test : badge « ! » = gameplay modifié, à (re-)tester */
+.day-chip { position: relative; }
+.totest {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--or);
+    color: #fff;
+    font-weight: 900;
+    font-size: .72rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 3px rgba(35, 38, 47, .25);
+    pointer-events: none;
+    z-index: 5;
+}
+
 /* ── PROFIL ───────────────────────────────────────────────── */
 
 .profile-card { padding: 20px; margin-bottom: 12px; border-radius: var(--radius-sm); }
