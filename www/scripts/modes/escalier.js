@@ -4,6 +4,9 @@
 // marche ; l'escalier s'affiche en marches montantes. Bouton
 // « Défausser » (2 max) : Défausser PUIS une tuile du marché la jette
 // et la remplace. Victoire : 8 marches. Défaite : plus aucun coup.
+// Génération vérifiée solvable (recherche mémoïsée bornée sur le
+// marché + pioche + 2 défausses) : un tirage 100% aléatoire pouvait
+// être injouable par pure malchance, sans faute de la joueuse.
 
 function _escalierTileEl(val) {
     const t = document.createElement('div');
@@ -46,16 +49,56 @@ function showExampleEscalier(day, row, vals) {
     row.append(ex);
 }
 
+// Recherche mémoïsée : le marché est-il gagnable (8 marches, ≤ 2
+// défausses) en jouant du mieux possible ? État = marché courant +
+// index dans la pioche + défausses restantes + dernière marche.
+function _escalierSolvable(pool) {
+    const deck = pool.slice(4);
+    const memo = new Map();
+    let appels = 0;
+    function rec(marche, idxPioche, defausses, derniere, marches) {
+        if (marches >= 8) return true;
+        const cle = marche.slice().sort((a, b) => a - b).join(',') + '|' + idxPioche + '|' + defausses + '|' + derniere;
+        if (memo.has(cle)) return memo.get(cle);
+        if (++appels > 120000) return false;
+        let ok = false;
+        for (let i = 0; i < marche.length && !ok; i++) {
+            const val = marche[i];
+            const reste = marche.slice(0, i).concat(marche.slice(i + 1));
+            const pioche = idxPioche < deck.length ? deck[idxPioche] : null;
+            const nextMarche = pioche !== null ? reste.concat([pioche]) : reste;
+            const nextIdx = pioche !== null ? idxPioche + 1 : idxPioche;
+            if (val > derniere && rec(nextMarche, nextIdx, defausses, val, marches + 1)) ok = true;
+            else if (defausses > 0 && rec(nextMarche, nextIdx, defausses - 1, derniere, marches)) ok = true;
+        }
+        memo.set(cle, ok);
+        return ok;
+    }
+    return rec(pool.slice(0, 4), 0, 2, 0, 0);
+}
+
+function _escalierGenerer() {
+    for (let essai = 0; essai < 50; essai++) {
+        const all = [];
+        for (let i = 1; i <= 40; i++) all.push(i);
+        all.sort(() => Math.random() - 0.5);
+        const pool = all.slice(0, 14);
+        if (_escalierSolvable(pool)) return pool;
+    }
+    // Secours (théorique) : ordre croissant, toujours jouable sans défausse
+    const all = [];
+    for (let i = 1; i <= 40; i++) all.push(i);
+    all.sort(() => Math.random() - 0.5);
+    return all.slice(0, 14).sort((a, b) => a - b);
+}
+
 function startGameEscalier() {
     board.style.display = 'flex';
     board.style.flexDirection = 'column';
     board.style.alignItems = 'center';
 
-    // Pioche : 14 valeurs uniques de 1..40
-    const all = [];
-    for (let i = 1; i <= 40; i++) all.push(i);
-    all.sort(() => Math.random() - 0.5);
-    const pool = all.slice(0, 14);
+    // Pioche : 14 valeurs uniques de 1..40, vérifiées solvables
+    const pool = _escalierGenerer();
     const market = pool.splice(0, 4);
     const deck = pool; // 10 restantes
     const stairs = [];
