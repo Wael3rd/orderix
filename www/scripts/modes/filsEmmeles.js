@@ -3,7 +3,8 @@
 // vos pastilles (à gauche, mélangées) aux prises 1..8 (à droite, dans
 // l'ordre). Échangez deux pastilles pour dénouer tous les fils :
 // zéro croisement = ordre parfait. Budget d'échanges limité mais
-// toujours suffisant (minimum théorique + 3).
+// toujours suffisant (minimum théorique + 1 — retour de test, issue
+// #38 : +3 était trop permissif, pas assez challenging).
 
 function _filPastille(num, size, selected) {
     const el = document.createElement('div');
@@ -81,7 +82,7 @@ function startGameFilsEmmeles() {
         }
         return N - cycles;
     }
-    let budget = minSwaps(perm) + 3;
+    let budget = minSwaps(perm) + 1;
     let selected = -1;
     let over = false;
 

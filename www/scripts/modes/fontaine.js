@@ -53,6 +53,7 @@ function startGameFontaine() {
     const BALL = 56;                       // diamètre en px
     const H = 420;
     const W = Math.max(board.clientWidth, BALL + 20);
+    const MIN_Y = 38;                      // sous le bandeau HUD (retour de test, issue #39)
     const TOTAL_ROUNDS = 2;
 
     let lives = 3;
@@ -96,7 +97,7 @@ function startGameFontaine() {
             // Rebond élastique sur les 4 parois
             if (b.x <= 0) { b.x = 0; b.vx = Math.abs(b.vx); }
             else if (b.x >= W - BALL) { b.x = W - BALL; b.vx = -Math.abs(b.vx); }
-            if (b.y <= 0) { b.y = 0; b.vy = Math.abs(b.vy); }
+            if (b.y <= MIN_Y) { b.y = MIN_Y; b.vy = Math.abs(b.vy); }
             else if (b.y >= H - BALL) { b.y = H - BALL; b.vy = -Math.abs(b.vy); }
             b.el.style.left = b.x + 'px';
             b.el.style.top = b.y + 'px';
@@ -167,13 +168,12 @@ function startGameFontaine() {
     // Positions initiales sans chevauchement (rejet, distance min entre coins)
     function placePositions(count) {
         const pts = [];
-        const minY = 38;                    // sous le bandeau HUD
         const maxX = W - BALL, maxY = H - BALL - 4;
         for (let i = 0; i < count; i++) {
-            let x = 0, y = minY;
+            let x = 0, y = MIN_Y;
             for (let a = 0; a < 300; a++) {
                 x = Math.random() * maxX;
-                y = minY + Math.random() * (maxY - minY);
+                y = MIN_Y + Math.random() * (maxY - MIN_Y);
                 if (pts.every(p => Math.hypot(p.x - x, p.y - y) >= BALL + 4)) break;
             }
             pts.push({ x: x, y: y });

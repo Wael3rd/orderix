@@ -3,9 +3,11 @@
 // premier est posé au centre, les 7 autres mélangés dans la main.
 // Taper un domino de la main : s'il se connecte à une extrémité de la
 // chaîne (retourné si besoin, droite prioritaire), il s'attache.
-// Sinon : secousse + rappel des extrémités attendues (aucune vie
-// perdue). Seule défaite : blocage réel (aucun domino de la main ne
-// se connecte). Victoire : main vide.
+// Sinon : secousse + rappel des extrémités attendues + une vie perdue
+// (retour de test, issue #44 : sans coût, on gagne en tapant au hasard
+// sans réfléchir). 3 vies pour toute la partie. Défaite si blocage réel
+// (aucun domino de la main ne se connecte) ou vies épuisées. Victoire :
+// main vide.
 
 // Dominos affichés à la verticale (retour de test, issue #22) :
 // la chaîne se lit de haut en bas, comme une colonne.
@@ -59,6 +61,7 @@ function startGameDominoOrder() {
     for (let i = 0; i < 8; i++) dominoes.push([seq[i], seq[i + 1]]);
     const chain = [dominoes[0]];
     const hand = dominoes.slice(1).sort(() => Math.random() - 0.5);
+    let lives = 3;
 
     const hud = document.createElement('div');
     hud.style.cssText = 'display:flex;gap:18px;align-items:center;justify-content:center;font-weight:bold;color:#8B90A0;font-size:.95rem;margin-bottom:12px;';
@@ -95,7 +98,8 @@ function startGameDominoOrder() {
 
     function renderHud() {
         hud.innerHTML = `<span>Restants <b style="color:#4A6CFA">${hand.length}</b></span>` +
-            `<span style="font-size:1.15rem;color:#23262F">Extrémités : ▲ <b style="color:#4A6CFA">${leftEnd()}</b> … <b style="color:#4A6CFA">${rightEnd()}</b> ▼</span>`;
+            `<span style="font-size:1.15rem;color:#23262F">Extrémités : ▲ <b style="color:#4A6CFA">${leftEnd()}</b> … <b style="color:#4A6CFA">${rightEnd()}</b> ▼</span>` +
+            `<span style="color:#E0533D;letter-spacing:2px">${'♥'.repeat(lives)}${'♡'.repeat(3 - lives)}</span>`;
     }
 
     function renderChain() {
@@ -137,7 +141,9 @@ function startGameDominoOrder() {
                         endGame('Blocage : aucune extrémité ne correspond. L’ordre de pose compte !', false);
                     }
                 } else {
-                    // Aucune vie perdue : secousse + message précis sur ce qu'il faut
+                    // Secousse + message précis sur ce qu'il faut + une vie perdue
+                    // (retour de test : taper au hasard sans coût gagnait la partie)
+                    lives--;
                     haptic(50);
                     el.style.animation = 'wobble .3s';
                     el.style.boxShadow = '0 0 0 3px #FFFFFF, 0 0 0 6px #E0533D';
@@ -148,6 +154,11 @@ function startGameDominoOrder() {
                     resultDisplay.textContent = msg;
                     resultDisplay.style.color = '#E0533D';
                     setTimeout(() => { if (!isPaused && resultDisplay.textContent === msg) resultDisplay.textContent = ''; }, 1500);
+                    renderHud();
+                    if (lives <= 0) {
+                        endGame('Plus de vies — observez les extrémités avant de jouer.', false);
+                        return;
+                    }
                 }
             });
             handZone.appendChild(el);
