@@ -58,6 +58,13 @@ letter-spacing:.05em;white-space:nowrap}
 <div class="wrap">
 <h1>Order<b>ix</b> — Suivi des gameplays de janvier</h1>
 <p class="sub">Commentaires lus en direct depuis les issues GitHub · <b id="last-sync">chargement…</b></p>
+<p style="text-align:center;margin:10px 0 4px;">
+  <a href="https://github.com/Wael3rd/orderix/releases/download/staging-latest/Orderix-dev.apk"
+     style="display:inline-block;background:var(--bleu,#4A6CFA);color:#fff;font-weight:900;
+            padding:12px 22px;border-radius:999px;text-decoration:none;box-shadow:0 3px 10px rgba(74,108,250,.35);">
+    ⬇ Télécharger l'APK de test (staging)</a><br>
+  <span style="font-size:.72rem;color:#8B90A0;font-weight:bold;">Toujours la dernière build — le lien ne change jamais.</span>
+</p>
 
 <div id="chips"></div>
 <div id="bar">
@@ -77,35 +84,35 @@ const DAYS = [
  {d:3, n:"L'Insertion", g:"timeline", s:"valide", note:"#80 : « Validé » ✓ (après la barre de temps du #69)."},
  {d:4, n:"La Fontaine", g:"balles rebondissantes à éclater dans l'ordre", s:"valide", note:"#49 : « Jeu validé » ✓"},
  {d:5, n:"Le Métronome", g:"rythme", s:"valide", note:"#50 : « Jeu validé » ✓"},
- {d:6, n:"Le Code", g:"Wordle des chiffres (déduction)", s:"valide", note:"#81 : « Passe-le à 5 chiffres et ok ! » ✓ — passage à 5 chiffres fait."},
- {d:7, n:"Mémo Croissant", g:"jeu de mémoire (Concentration)", s:"valide", note:"#82 : « 4×4 au lieu de 3×4 et ok » ✓ — grille 4×4 (8 paires) faite."},
+ {d:6, n:"Le Code", g:"Wordle des chiffres (déduction)", s:"valide", note:"#96 : « Passe-le en validé ! » ✓ (5 chiffres confirmés)."},
+ {d:7, n:"Mémo Croissant", g:"jeu de mémoire (Concentration)", s:"valide", note:"#97 : « Passe-le en validé ! » ✓ (4×4 confirmé)."},
  {d:8, n:"Le Solitaire", g:"Klondike mini (MobilityWare : 100 M+ joueurs, 69 % de femmes)", s:"valide", note:"#83 : « C'est ok c'est validé » ✓"},
- {d:9, n:"Blocs", g:"Block Blast (n°1 mondial, 366 M dl)", s:"valide", note:"#84 : « C'est ok » ✓ — la prévisualisation demandée (fantôme de la pièce entière pendant le glissé) est faite."},
- {d:10, n:"Les Dominos", g:"Dominosa (puzzle de déduction classique)", s:"nouveau", note:"Remplace la chaîne de dominos (#85 « ultra nul »). Le vrai domino pour un joueur : reliez les cases voisines deux par deux pour reconstituer les 10 dominos — chaque paire n'existe qu'une fois. À tester."},
+ {d:9, n:"Blocs", g:"Block Blast (n°1 mondial, 366 M dl)", s:"corrige", note:"#98 : le fantôme fait désormais foi (la pièce se pose EXACTEMENT là où on la voit, plus de décalage) + flash doré et gonflement des cases quand une ligne s'efface. À re-tester."},
+ {d:10, n:"Les Dominos", g:"Dominosa (puzzle de déduction classique)", s:"valide", note:"#106 : « Il est GÉNIAL celui-là ! » ✓"},
  {d:11, n:"Paires Reliées", g:"Tile Connect / Onet (86 M+ dl)", s:"valide", note:"#86 : « C'est bon c'est validé » ✓"},
- {d:12, n:"Les Tubes", g:"water-sort ordonné", s:"corrige", note:"#87 : fait par la routine — fiole complète figée + chiffre attendu (5→1) affiché en fond des emplacements vides. À confirmer."},
- {d:13, n:"Échange Minimal", g:"tri par échanges voisins", s:"valide", note:"#88 : « Ça me va. C'est validé. Passe-le à 10 valeurs » ✓ — passage à 10 valeurs fait par la routine."},
+ {d:12, n:"Les Tubes", g:"water-sort ordonné", s:"valide", note:"#99 : « Passe-le en validé ! » ✓ (fioles figées + fond 5→1 confirmés)."},
+ {d:13, n:"Le Tri Minimal", g:"tri par insertions comptées (ex-Échange Minimal)", s:"corrige", note:"#100 « on ne peut pas se rater » : mécanique refaite — GLISSEZ une tuile n'importe où, budget = strict minimum (10 − plus longue sous-suite croissante). Le puzzle : trouver quelles tuiles ne pas bouger. À re-tester."},
  {d:14, n:"Les Boulons", g:"screw-sort (Screwdom)", s:"valide", note:"#11 puis #25 « Ok comme gameplay là ! » — doublement confirmé."},
  {d:15, n:"La File", g:"file d'attente + sièges", s:"valide", note:"#12 réussi ; l'idée multi-guichets est notée au backlog (issue refermée)."},
  {d:16, n:"La Grille", g:"3×3 échanges adjacents+diagonales", s:"valide", note:"#74 : « Validé » ✓ (née de VOTRE idée #13)."},
  {d:17, n:"La Tour", g:"Hanoï", s:"valide", note:"#14 « C'EST GÉNIAL ! »"},
- {d:18, n:"Le Mahjong", g:"mahjong solitaire à étages (Vita Mahjong)", s:"corrige", note:"#89 « c'est bien mais il en faut 2× plus » : fait par la routine (48 tuiles, deux pyramides). À confirmer."},
+ {d:18, n:"Le Mahjong", g:"mahjong solitaire à étages (Vita Mahjong)", s:"valide", note:"#101 : « Passe-le en validé ! » ✓ (48 tuiles confirmées)."},
  {d:19, n:"Plus Petit, Plus Grand", g:"futoshiki", s:"valide", note:"#75 : « Validé » ✓"},
  {d:20, n:"La Balance", g:"déduction par pesées", s:"valide", note:"#17 « suuuper bien »."},
  {d:21, n:"L'Ordre Caché", g:"mastermind d'ordre", s:"valide", note:"#18 « Très bon gameplay ! »"},
  {d:22, n:"Les Indices", g:"logique par indices", s:"valide", note:"#90 : « C'est validé ! » ✓ (concept #66 + contrôles drag & drop #67)."},
- {d:23, n:"Chronologie", g:"culture générale ordonnée", s:"corrige", note:"#91 : GLISSER-DÉPOSER (la carte suit le doigt, emplacement en pointillés) et 8 cartes à trier au lieu de 5. Les mauvaises restent en place après validation. À re-tester."},
- {d:24, n:"Les Piles", g:"Hexa Sort (top mobile 2024-25)", s:"corrige", note:"#92 « rien compris comment on vide » : compteur doré « 4/7 » au-dessus des piles (série en cours), ligne d'aide sous le plateau, bordure rouge à l'approche du débordement. À re-tester."},
+ {d:23, n:"Chronologie", g:"culture générale ordonnée", s:"corrige", note:"#102 « le drag se décale trop » : corrigé — la carte reste exactement sous le doigt (point de saisie mémorisé, taille identique). Le reste était « nickel ». À re-tester."},
+ {d:24, n:"Les Suites", g:"Spider Solitaire mini (evergreen n°1 des cartes)", s:"nouveau", note:"Remplace Les Piles (#103 « incompréhensible, pas de lien avec le tri »). Ici le tri EST le jeu : empilez en ordre décroissant et complétez deux suites 10→1. Donnes vérifiées résolubles, annulation illimitée. À tester."},
  {d:25, n:"2048", g:"LE classique merge", s:"valide", note:"#55 : « Très bien, c'est validé ! » ✓"},
- {d:26, n:"L'Embouteillage", g:"Rush Hour / Unblock Me", s:"corrige", note:"#93 « mille fois trop facile » : 3 nouvelles grilles à 11-12 véhicules, vérifiées par solveur — minimum 22, 28 et 30 manœuvres. À re-tester."},
+ {d:26, n:"L'Embouteillage", g:"Rush Hour / Unblock Me", s:"corrige", note:"#104 (10×10) exploré puis abandonné d'un commun accord : au-delà de 6×6, les grilles Rush Hour sont soit triviales soit invérifiables (explosion du solveur). On reste sur les 3 grilles corsées du #93 (min 22/28/30 manœuvres) — verdict à donner sur celles-ci."},
  {d:27, n:"Triple Suite", g:"tile-match (Vita Mahjong, Triple Tile)", s:"valide", note:"#36 : « Ça marche super super bien » ✓"},
  {d:28, n:"Photo de Classe", g:"mémoire spatiale", s:"valide", note:"#30 « très bien » — temps de mémorisation doublé comme demandé."},
  {d:29, n:"Le Taquin", g:"15-puzzle classique (indémodable du casual)", s:"nouveau", note:"Remplace Les Bulles (#94 « trop simple, aucun lien avec le tri »). Le puzzle glissant : remettez 1 à 8 DANS L'ORDRE en glissant les tuiles — 100 % tri, mélanges toujours solvables. À tester."},
  {d:30, n:"Fusion", g:"chaînes à fusionner", s:"valide", note:"#32 « vraiment très bien » — consigne réécrite comme demandé."},
- {d:31, n:"Le Nonogramme", g:"picross 7×7 (Nonogram.com, top charts mondial)", s:"corrige", note:"#95 « Ok mais en 7×7 » : grille passée en 7×7. À confirmer."}
+ {d:31, n:"Le Nonogramme", g:"picross 7×7 (Nonogram.com, top charts mondial)", s:"corrige", note:"#105 « 7×7 bien mais trop dur » : difficulté adoucie — jamais plus de 2 blocs par ligne/colonne, grilles plus denses donc indices plus parlants. À re-tester."}
 ];
 
-const LAST_CURATED_ISSUE = 95; // dernier retour intégré à la base curée ci-dessus
+const LAST_CURATED_ISSUE = 106; // dernier retour intégré à la base curée ci-dessus
 const BADGES = {
   valide:    ['b-valide', '✅ Validé'],
   corrige:   ['b-corrige', '🔧 Corrigé — à re-tester'],
@@ -118,7 +125,7 @@ const BADGES = {
 };
 
 // Version de la base curée — sert à détecter une page en cache périmée
-const SUIVI_VERSION = '2026-07-18-4';
+const SUIVI_VERSION = '2026-07-18-5';
 
 let filter = 'tous';
 let issuesByDay = {};

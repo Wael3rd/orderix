@@ -73,6 +73,7 @@ function startGameBlocs() {
     let lines = 0;
     let selected = -1;
     let over = false;
+    let busy = false; // vrai pendant l'animation d'effacement
     let tray = [];
 
     function newTray() {
@@ -126,15 +127,15 @@ function startGameBlocs() {
     function render() {
         hud.innerHTML = `<span>Lignes effacées : <b style="color:#34B871">${lines}</b> / <b style="color:#F5B227">${GOAL}</b></span>`;
 
-        // Retour #84 : pendant le glissé, un fantôme de la pièce ENTIÈRE
-        // (pas juste une case) prévisualise où elle va se poser.
+        // Retours #84 puis #98 : le fantôme flottant est l'AUTORITÉ — la
+        // prévisualisation en grille et la pose utilisent le même ancrage
+        // (coin haut-gauche du fantôme), plus aucun décalage possible.
         const dragging = !!(pieceDrag && pieceDrag.moved);
         let ghostCells = null, ghostColor = null;
-        if (dragging && pieceDrag.target) {
+        if (dragging && pieceDrag.anchor) {
             const p = tray[pieceDrag.i];
-            const anchor = placementCovering(p.shape, pieceDrag.target.r, pieceDrag.target.c);
-            if (anchor) {
-                const [r0, c0] = anchor;
+            const { r0, c0 } = pieceDrag.anchor;
+            if (canPlace(p.shape, r0, c0)) {
                 ghostCells = new Set(p.shape.map(([r, c]) => (r0 + r) + ',' + (c0 + c)));
                 ghostColor = p.color;
             }
@@ -148,11 +149,12 @@ function startGameBlocs() {
             const valid = !dragging && selected !== -1 && !tray[selected].used && !grid[r][c] &&
                 placementCovering(tray[selected].shape, r, c) !== null;
             cell.style.cssText = `width:${CELL}px;height:${CELL}px;border-radius:6px;touch-action:manipulation;` +
+                'transition:background .15s,transform .15s;' +
                 `background:${grid[r][c] ? grid[r][c] : (isGhost ? ghostColor : (valid ? '#C9E7D4' : '#F4F6FA'))};` +
                 (grid[r][c] ? 'box-shadow:inset 0 -2px 0 rgba(0,0,0,.18);' : (isGhost ? 'opacity:.5;' : ''));
             cell.addEventListener('pointerdown', (e) => {
                 e.preventDefault();
-                if (isPaused || over || selected === -1) return;
+                if (isPaused || over || busy || selected === -1) return;
                 place(rr, cc);
             });
             gridEl.appendChild(cell);
@@ -180,9 +182,10 @@ function startGameBlocs() {
     // ─── Drag & drop natif (retour #70) : on GLISSE la pièce du bac
     // vers la grille, fantôme au-dessus du doigt, cases vertes en
     // direct. Un simple tap conserve l'ancien mode sélection + tap.
-    let pieceDrag = null; // { i, sx, sy, moved, ghost, target }
+    let pieceDrag = null; // { i, sx, sy, moved, ghost, anchor }
     function startPieceDrag(i, e) {
-        pieceDrag = { i: i, sx: e.clientX, sy: e.clientY, moved: false, ghost: null, target: null };
+        if (busy) return;
+        pieceDrag = { i: i, sx: e.clientX, sy: e.clientY, moved: false, ghost: null, anchor: null };
         document.addEventListener('pointermove', onPieceDragMove);
         document.addEventListener('pointerup', onPieceDragEnd);
         document.addEventListener('pointercancel', onPieceDragEnd);
@@ -202,16 +205,20 @@ function startGameBlocs() {
         }
         const maxC = Math.max(...p.shape.map(s => s[1])) + 1;
         const maxR = Math.max(...p.shape.map(s => s[0])) + 1;
+        const pitch = CELL + 3;
         const aimX = e.clientX, aimY = e.clientY - 70; // la pièce « flotte » au-dessus du doigt
-        pieceDrag.ghost.style.left = (aimX - (maxC * (CELL + 3)) / 2) + 'px';
-        pieceDrag.ghost.style.top = (aimY - (maxR * (CELL + 3)) / 2) + 'px';
-        // Case visée sous le fantôme
+        const gLeft = aimX - (maxC * pitch) / 2;
+        const gTop = aimY - (maxR * pitch) / 2;
+        pieceDrag.ghost.style.left = gLeft + 'px';
+        pieceDrag.ghost.style.top = gTop + 'px';
+        // Ancrage = coin haut-gauche du fantôme, arrondi à la case la
+        // plus proche : la pièce se pose EXACTEMENT là où on la voit.
         const rect = gridEl.getBoundingClientRect();
-        const gx = Math.floor((aimX - rect.left - 6) / (CELL + 3));
-        const gy = Math.floor((aimY - rect.top - 6) / (CELL + 3));
-        const target = (gx >= 0 && gx < S && gy >= 0 && gy < S) ? { r: gy, c: gx } : null;
-        const changed = JSON.stringify(target) !== JSON.stringify(pieceDrag.target);
-        pieceDrag.target = target;
+        const c0 = Math.round((gLeft - rect.left - 6) / pitch);
+        const r0 = Math.round((gTop - rect.top - 6) / pitch);
+        const anchor = (r0 > -maxR && r0 < S && c0 > -maxC && c0 < S) ? { r0: r0, c0: c0 } : null;
+        const changed = JSON.stringify(anchor) !== JSON.stringify(pieceDrag.anchor);
+        pieceDrag.anchor = anchor;
         if (changed) render();
     }
     function onPieceDragEnd() {
@@ -229,14 +236,21 @@ function startGameBlocs() {
             render();
             return;
         }
-        if (d.target) {
-            place(d.target.r, d.target.c);
-        } else {
-            selected = -1;
-            render();
+        if (d.anchor) {
+            const p = tray[d.i];
+            if (canPlace(p.shape, d.anchor.r0, d.anchor.c0)) {
+                placeAt(d.anchor.r0, d.anchor.c0);
+                return;
+            }
+            haptic(30);
+            gridEl.style.animation = 'wobble .25s';
+            setTimeout(() => { gridEl.style.animation = ''; }, 300);
         }
+        selected = -1;
+        render();
     }
 
+    // Mode tap-tap : la pièce se pose en COUVRANT la case touchée
     function place(rt, ct) {
         const p = tray[selected];
         const anchor = placementCovering(p.shape, rt, ct);
@@ -246,30 +260,60 @@ function startGameBlocs() {
             setTimeout(() => { gridEl.style.animation = ''; }, 300);
             return;
         }
-        const [r0, c0] = anchor;
+        placeAt(anchor[0], anchor[1]);
+    }
+
+    // Pose effective à l'ancrage donné (drag = ancrage du fantôme)
+    function placeAt(r0, c0) {
+        const p = tray[selected];
         p.shape.forEach(([r, c]) => { grid[r0 + r][c0 + c] = p.color; });
         p.used = true;
         selected = -1;
         haptic(10);
 
-        // Efface lignes et colonnes complètes
         const fullRows = [], fullCols = [];
         for (let r = 0; r < S; r++) if (grid[r].every(x => x)) fullRows.push(r);
         for (let c = 0; c < S; c++) if (grid.every(row => row[c])) fullCols.push(c);
-        fullRows.forEach(r => { for (let c = 0; c < S; c++) grid[r][c] = null; });
-        fullCols.forEach(c => { for (let r = 0; r < S; r++) grid[r][c] = null; });
         const cleared = fullRows.length + fullCols.length;
-        if (cleared) {
+
+        if (!cleared) {
+            if (tray.every(x => x.used)) newTray();
+            render();
+            checkEnd();
+            return;
+        }
+
+        // Retour #98 : du « juice » à l'effacement — les cases complètes
+        // flashent en doré et gonflent avant de disparaître.
+        render();
+        busy = true;
+        const cellsIdx = new Set();
+        fullRows.forEach(r => { for (let c = 0; c < S; c++) cellsIdx.add(r * S + c); });
+        fullCols.forEach(c => { for (let r = 0; r < S; r++) cellsIdx.add(r * S + c); });
+        cellsIdx.forEach(idx => {
+            const el = gridEl.children[idx];
+            if (!el) return;
+            el.style.background = '#F5B227';
+            el.style.transform = 'scale(1.18)';
+            el.style.zIndex = '5';
+        });
+        haptic([12, 40, 14]);
+
+        setTimeout(() => {
+            fullRows.forEach(r => { for (let c = 0; c < S; c++) grid[r][c] = null; });
+            fullCols.forEach(c => { for (let r = 0; r < S; r++) grid[r][c] = null; });
             lines += cleared;
-            haptic([12, 40, 14]);
+            busy = false;
             resultDisplay.textContent = cleared > 1 ? `${cleared} lignes d'un coup, superbe !` : 'Ligne effacée !';
             resultDisplay.style.color = '#34B871';
             setTimeout(() => { if (!isPaused) resultDisplay.textContent = ''; }, 1000);
-        }
+            if (tray.every(x => x.used)) newTray();
+            render();
+            checkEnd();
+        }, 260);
+    }
 
-        if (tray.every(x => x.used)) newTray();
-        render();
-
+    function checkEnd() {
         if (lines >= GOAL) {
             over = true;
             endGame(`${lines} lignes effacées — objectif atteint !`, true);

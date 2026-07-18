@@ -239,7 +239,9 @@ function startGameChronologie() {
 
     // ── Glisser-déposer (écouteurs sur document : la ligne d'origine
     //    est détruite par les re-rendus pendant le drag) ─────────────
-    const drag = { item: null, insertIdx: -1, clone: null };
+    // dx/dy = point de saisie DANS la carte : le clone reste exactement
+    // sous le doigt, sans décalage (retour #102)
+    const drag = { item: null, insertIdx: -1, clone: null, dx: 0, dy: 0 };
 
     function unlockedPositions() {
         const p = [];
@@ -262,8 +264,8 @@ function startGameChronologie() {
 
     function onDragMove(e) {
         if (!drag.item) return;
-        drag.clone.style.left = (e.clientX - 130) + 'px';
-        drag.clone.style.top = (e.clientY - 58) + 'px';
+        drag.clone.style.left = (e.clientX - drag.dx) + 'px';
+        drag.clone.style.top = (e.clientY - drag.dy) + 'px';
         const idx = insertIdxFromY(e.clientY);
         if (idx !== drag.insertIdx) {
             drag.insertIdx = idx;
@@ -293,19 +295,26 @@ function startGameChronologie() {
         render();
     }
 
-    function startDrag(item, e) {
+    function startDrag(item, e, sourceCard) {
         if (isPaused || finished || drag.item) return;
         drag.item = item;
         drag.insertIdx = insertIdxFromY(e.clientY);
-        const clone = _chronoCard(item.label, false);
+        // Le clone reprend la taille et la position EXACTES de la carte
+        // saisie, et suit le doigt depuis le point de saisie.
+        const rect = sourceCard.getBoundingClientRect();
+        drag.dx = e.clientX - rect.left;
+        drag.dy = e.clientY - rect.top;
+        const clone = _chronoCard(item.label, true);
         clone.style.position = 'fixed';
         clone.style.zIndex = '60';
-        clone.style.width = '250px';
-        clone.style.left = (e.clientX - 130) + 'px';
-        clone.style.top = (e.clientY - 58) + 'px';
-        clone.style.transform = 'scale(1.06)';
+        clone.style.boxSizing = 'border-box';
+        clone.style.width = rect.width + 'px';
+        clone.style.padding = '7px 12px';
+        clone.style.left = rect.left + 'px';
+        clone.style.top = rect.top + 'px';
         clone.style.pointerEvents = 'none';
         clone.style.borderColor = '#4A6CFA';
+        clone.style.boxShadow = '0 8px 22px rgba(35,38,47,.25)';
         document.body.appendChild(clone);
         drag.clone = clone;
         haptic(8);
@@ -360,7 +369,7 @@ function startGameChronologie() {
                     const it = item;
                     card.addEventListener('pointerdown', (e) => {
                         e.preventDefault();
-                        startDrag(it, e);
+                        startDrag(it, e, card);
                     });
                 }
                 line.appendChild(card);

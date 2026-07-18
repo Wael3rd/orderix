@@ -138,8 +138,8 @@ function startGame() {
         startGameSpeedLetters();
     } else if (mode.isDragDrop) {
         startGameDragDrop();
-    } else if (mode.isPiles) {
-        startGamePiles();
+    } else if (mode.isSuites) {
+        startGameSuites();
     } else if (mode.isSpeedQuiz) {
         startGameSpeedQuiz();
     } else if (mode.isGuessNumber) {

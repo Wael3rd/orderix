@@ -142,8 +142,8 @@ function showExample(day, container) {
         showExampleSpeedLetters(day, row, vals);
     } else if (mode.isDragDrop) {
         showExampleDragDrop(day, row, vals);
-    } else if (mode.isPiles) {
-        showExamplePiles(day, row, vals);
+    } else if (mode.isSuites) {
+        showExampleSuites(day, row, vals);
     } else if (mode.isSpeedQuiz) {
         showExampleSpeedQuiz(day, row, vals);
     } else if (mode.isGuessNumber) {

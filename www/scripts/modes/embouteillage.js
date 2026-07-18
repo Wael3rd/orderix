@@ -89,6 +89,9 @@ function startGameEmbouteillage() {
     board.style.gap = '12px';
     board.style.touchAction = 'none';
 
+    // Retour #104 (10×10) exploré puis abandonné : les grilles Rush Hour
+    // au-delà de 6×6 sont soit triviales soit invérifiables par solveur.
+    // On reste sur 6×6 dense, minimum prouvé 22/28/30 manœuvres.
     const S = 6, CELL = 52, GAP = 4;
     const level = _EMB_LEVELS[Math.floor(Math.random() * _EMB_LEVELS.length)];
     let colorIdx = 0;

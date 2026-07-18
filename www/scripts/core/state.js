@@ -46,7 +46,7 @@ const JANUARY_LINEUP = [
     'code', 'memoCroissant', 'solitaire', 'blocs', 'dominosa',
     'paires', 'tubes', 'swapSort', 'boulons', 'fileBloquee',
     'grille', 'hanoi', 'mahjong', 'futoshiki', 'balance',
-    'ordreCache', 'indices', 'chronologie', 'piles', 'deux048',
+    'ordreCache', 'indices', 'chronologie', 'suites', 'deux048',
     'embouteillage', 'tripleOrdre', 'photoClasse', 'taquin', 'fusion',
     'nonogramme'
 ];

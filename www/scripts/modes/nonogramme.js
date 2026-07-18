@@ -28,18 +28,25 @@ function _nonoSameClues(a, b) {
     return true;
 }
 
-// Motif secret : ~55% de cases remplies, aucune ligne/colonne entièrement vide
+// Motif secret : ~62% de cases remplies, aucune ligne/colonne vide et
+// JAMAIS plus de 2 blocs par ligne/colonne (retour #105 : le 7×7 était
+// trop dur — moins de blocs = indices plus longs, déduction plus douce)
+function _nonoBlocsOk(cells) {
+    return _nonoClues(cells).length <= 2;
+}
+
 function _nonoSecret() {
-    for (let attempt = 0; attempt < 200; attempt++) {
+    for (let attempt = 0; attempt < 2000; attempt++) {
         const g = [];
         for (let r = 0; r < _NONO_N; r++) {
             g.push([]);
-            for (let c = 0; c < _NONO_N; c++) g[r].push(Math.random() < 0.55 ? 1 : 0);
+            for (let c = 0; c < _NONO_N; c++) g[r].push(Math.random() < 0.62 ? 1 : 0);
         }
         let ok = true;
         for (let i = 0; i < _NONO_N; i++) {
-            if (!g[i].some(v => v)) ok = false;
-            if (!g.some(row => row[i])) ok = false;
+            const col = g.map(row => row[i]);
+            if (!g[i].some(v => v) || !col.some(v => v)) { ok = false; break; }
+            if (!_nonoBlocsOk(g[i]) || !_nonoBlocsOk(col)) { ok = false; break; }
         }
         if (ok) return g;
     }
