@@ -82,8 +82,8 @@ function showExample(day, container) {
         showExampleTripeaks(day, row, vals);
     } else if (mode.isDegrade) {
         showExampleDegrade(day, row, vals);
-    } else if (mode.isDuel) {
-        showExampleDuel(day, row, vals);
+    } else if (mode.isSolitaire) {
+        showExampleSolitaire(day, row, vals);
     } else if (mode.isBlocs) {
         showExampleBlocs(day, row, vals);
     } else if (mode.isDominoOrder) {

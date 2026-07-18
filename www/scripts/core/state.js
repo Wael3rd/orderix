@@ -41,7 +41,7 @@ let returnScreen = 'home'; // écran d'origine avant d'entrer dans un jour (reto
 // rummy→blocs (Block Blast), escalier→paires (Tile Connect).
 const JANUARY_LINEUP = [
     'orderChain', 'cascade', 'insertion', 'fontaine', 'metronome',
-    'tripeaks', 'degrade', 'duel', 'blocs', 'dominoOrder',
+    'tripeaks', 'degrade', 'solitaire', 'blocs', 'dominoOrder',
     'paires', 'tubes', 'swapSort', 'boulons', 'fileBloquee',
     'grille', 'hanoi', 'etageres', 'futoshiki', 'balance',
     'ordreCache', 'indices', 'chronologie', 'conveyorBelt', 'deux048',

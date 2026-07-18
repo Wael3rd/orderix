@@ -78,8 +78,8 @@ function startGame() {
         startGameTripeaks();
     } else if (mode.isDegrade) {
         startGameDegrade();
-    } else if (mode.isDuel) {
-        startGameDuel();
+    } else if (mode.isSolitaire) {
+        startGameSolitaire();
     } else if (mode.isBlocs) {
         startGameBlocs();
     } else if (mode.isDominoOrder) {
