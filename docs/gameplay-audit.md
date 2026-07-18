@@ -97,6 +97,12 @@ joueuse = 7× le même jeu !). Maintenant : rotation des 10 meilleurs modes
 - **Combo chronométré global** : multiplicateur de score sur les enchaînements
   rapides (nécessite un modèle de score au-delà du temps brut).
 - **Mode zen quotidien** : une variante sans chrono pour le soir (l'heure bleue…).
+- **La File** — plusieurs guichets au lieu d'une seule file (issue #12, à creuser).
+- **Dominos** — disposition verticale de la chaîne au lieu d'horizontale, à tester
+  (issue #22 ; retour incertain de la joueuse elle-même, pas encore tranché).
+- **La Suite** — jugé peu engageant par la testeuse même avec les explications
+  (issue #21) ; revoir l'intérêt du mode dans une passe globale sur la vague de
+  janvier plutôt qu'un correctif isolé.
 
 Sources benchmark : [AdLock — sorting games](https://adlock.com/blog/sorting-games-without-adds/),
 [Capermint — water sort mechanics](https://www.capermint.com/blog/water-sort-puzzle-bottle-game/),
