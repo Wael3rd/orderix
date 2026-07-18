@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orderix — Suivi des 31 gameplays de janvier</title>
+<style>
+:root{--bleu:#4A6CFA;--bleu2:#3553D1;--pale:#EEF2FF;--encre:#23262F;--gris:#8B90A0;
+--fond:#F4F6FA;--carte:#fff;--ligne:#E8EAF1;--or:#F5B227;--vert:#34B871;--rouge:#E0533D;--violet:#8B5CF6}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Roboto,sans-serif;background:var(--fond);color:var(--encre);padding:18px 12px 60px}
+.wrap{max-width:1100px;margin:0 auto}
+h1{font-size:1.5rem;font-weight:900;text-align:center}
+h1 b{color:var(--bleu)}
+.sub{text-align:center;color:var(--gris);font-size:.85rem;margin:4px 0 14px}
+.sub b{color:var(--vert)}
+/* filtres + compteurs */
+#chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
+.chip{padding:8px 16px;border-radius:999px;background:var(--carte);border:1.5px solid var(--ligne);
+font-weight:700;font-size:.8rem;color:var(--gris);cursor:pointer;user-select:none}
+.chip.on{background:var(--bleu);border-color:var(--bleu);color:#fff}
+.chip .n{opacity:.75;font-weight:900}
+/* barre outils */
+#bar{display:flex;gap:10px;justify-content:center;align-items:center;margin-bottom:16px;font-size:.78rem;color:var(--gris)}
+#refresh{padding:8px 18px;border-radius:999px;border:none;background:var(--pale);color:var(--bleu2);
+font-weight:900;font-size:.8rem;cursor:pointer}
+/* cartes jour */
+.day{background:var(--carte);border-radius:14px;box-shadow:0 1px 3px rgba(35,38,47,.07);
+padding:14px 16px;margin-bottom:10px;display:grid;grid-template-columns:52px 1fr auto;gap:4px 14px;align-items:start}
+.num{grid-row:span 3;width:52px;height:52px;border-radius:12px;background:var(--pale);color:var(--bleu2);
+display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:900}
+.num small{font-size:.55rem;letter-spacing:.08em;color:var(--gris);font-weight:700}
+.num span{font-size:1.15rem}
+.t{font-weight:900;font-size:1.02rem}
+.t .genre{font-weight:500;color:var(--gris);font-size:.78rem}
+.badge{justify-self:end;padding:5px 12px;border-radius:999px;font-weight:900;font-size:.7rem;
+letter-spacing:.05em;white-space:nowrap}
+.b-valide{background:#E3F7ED;color:#1E7A4A}
+.b-corrige{background:#FFF6E3;color:#B07E0A}
+.b-nouveau{background:#EEF2FF;color:var(--bleu2)}
+.b-aucun{background:#E8EAF1;color:var(--gris)}
+.b-ouvert{background:#FCE9E5;color:#A93A29}
+.b-recent{background:#F2E7FB;color:#7A3AA9}
+.note{grid-column:2/4;font-size:.8rem;color:var(--gris);line-height:1.4}
+.fb{grid-column:2/4;background:var(--fond);border-radius:10px;padding:9px 12px;font-size:.85rem;line-height:1.45}
+.fb .meta{font-size:.7rem;font-weight:700;color:var(--gris);margin-bottom:3px}
+.fb .meta a{color:var(--bleu2);text-decoration:none}
+.fb .meta .ok{color:var(--vert)} .fb .meta .ko{color:var(--rouge)}
+.fb.empty{color:#B9BDC9;font-style:italic}
+#status{text-align:center;color:var(--gris);font-size:.8rem;padding:20px}
+@media(max-width:560px){.day{grid-template-columns:44px 1fr}.badge{grid-column:2;justify-self:start;margin-top:2px}
+.note,.fb{grid-column:1/3}.num{grid-row:span 1;width:44px;height:44px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Order<b>ix</b> — Suivi des gameplays de janvier</h1>
+<p class="sub">Commentaires lus en direct depuis les issues GitHub · <b id="last-sync">chargement…</b></p>
+
+<div id="chips"></div>
+<div id="bar">
+  <button id="refresh">↻ Actualiser</button>
+  <span>auto-actualisation toutes les 5 min</span>
+</div>
+
+<div id="list"><div id="status">Chargement des retours depuis GitHub…</div></div>
+</div>
+
+<script>
+// ─── Base curée (état au 18/07/2026 après la vague de correctifs) ───
+// baseStatus : valide | corrige | nouveau | aucun
+const DAYS = [
+ {d:1, n:"La Chaîne", g:"Schulte / enchaînement", s:"aucun", note:"Mode phare v2.1 — aucun retour dans cette campagne."},
+ {d:2, n:"Tri Cascade", g:"tri de flux façon Speed Match", s:"aucun", note:"Mode phare v2.1 — aucun retour dans cette campagne."},
+ {d:3, n:"L'Insertion", g:"timeline", s:"aucun", note:"Mode phare v2.1 — aucun retour dans cette campagne."},
+ {d:4, n:"La Fontaine", g:"balles rebondissantes à éclater dans l'ordre", s:"corrige", note:"Refaite selon VOTRE idée du retour #1 (balles rebondissantes). À re-tester."},
+ {d:5, n:"Le Métronome", g:"rythme", s:"corrige", note:"#2 : temps allongé, consigne simplifiée. À re-tester."},
+ {d:6, n:"Le Sommet", g:"TriPeaks (Solitaire Grand Harvest)", s:"nouveau", note:"Remplace La Suite (#3, #21). Donne vérifiée gagnable par solveur."},
+ {d:7, n:"Patience", g:"colonnes croissantes", s:"corrige", note:"#4 « rien compris » : règle réécrite (colonnes vertes = jouables). À re-tester."},
+ {d:8, n:"Duel", g:"speed-solitaire contre la montre", s:"corrige", note:"#5 : réécrit à 80 %, plus de faux multi, cartes jouables illuminées. À re-tester."},
+ {d:9, n:"Suites", g:"rummy runs", s:"corrige", note:"#6 « trop facile » : passé à 15 tuiles / 5 suites. À re-tester."},
+ {d:10, n:"Dominos", g:"chaîne de dominos", s:"corrige", note:"#7 corrigé + #22 : affichage VERTICAL fait. À re-tester."},
+ {d:11, n:"L'Escalier", g:"draft de tuiles croissantes", s:"corrige", note:"#23 demandait un remplacement ; la routine a corrigé le vrai bug (tirage toujours gagnable). Si le re-test ne convainc pas → remplacement."},
+ {d:12, n:"Les Tubes", g:"water-sort ordonné", s:"corrige", note:"#9 « vraiment super » ; #24 (encore + de fioles) analysé sans agrandissement. À trancher au re-test."},
+ {d:13, n:"Échange Minimal", g:"tri par échanges voisins", s:"corrige", note:"#10 : seuls les échanges possibles s'illuminent. À re-tester."},
+ {d:14, n:"Les Boulons", g:"screw-sort (Screwdom)", s:"valide", note:"#11 puis #25 « Ok comme gameplay là ! » — doublement confirmé."},
+ {d:15, n:"La File", g:"file d'attente + sièges", s:"valide", note:"#12 réussi ; idée multi-guichets au backlog (issue ouverte volontairement)."},
+ {d:16, n:"La Grille", g:"3×3 échanges adjacents+diagonales", s:"corrige", note:"Née de VOTRE idée (#13). Jamais testée en tant que telle."},
+ {d:17, n:"La Tour", g:"Hanoï", s:"valide", note:"#14 « C'EST GÉNIAL ! »"},
+ {d:18, n:"Les Étagères", g:"goods-sort", s:"corrige", note:"#13 : retouchées (14 échanges max), déplacées du jour 16 au 18. À re-tester."},
+ {d:19, n:"Plus Petit, Plus Grand", g:"futoshiki", s:"corrige", note:"#16 « trop compliqué » : un indice se révèle toutes les 8 s. À re-tester."},
+ {d:20, n:"La Balance", g:"déduction par pesées", s:"valide", note:"#17 « suuuper bien »."},
+ {d:21, n:"L'Ordre Caché", g:"mastermind d'ordre", s:"valide", note:"#18 « Très bon gameplay ! »"},
+ {d:22, n:"Les Indices", g:"logique par indices", s:"corrige", note:"#19 « mille fois trop simples » : générateur durci. À re-tester."},
+ {d:23, n:"Chronologie", g:"culture générale ordonnée", s:"aucun", note:"Jamais testé (grisé par le bug du Sheet jusqu'au 18/07)."},
+ {d:24, n:"Tapis Roulant", g:"réactivité", s:"corrige", note:"#26 : types illisibles bannis (repli nombres). À re-tester."},
+ {d:25, n:"2048", g:"LE classique merge", s:"nouveau", note:"Remplace L'Aiguillage (#27, générateur non gagnable). Objectif : tuile 128."},
+ {d:26, n:"À Bord !", g:"Bus Jam", s:"nouveau", note:"Remplace L'Ascenseur (#28). Donne vérifiée gagnable par solveur."},
+ {d:27, n:"Triple Suite", g:"tile-match (Vita Mahjong, Triple Tile)", s:"nouveau", note:"Remplace Le Guichet (#29). Trios consécutifs, barre de 7."},
+ {d:28, n:"Photo de Classe", g:"mémoire spatiale", s:"valide", note:"#30 « très bien » — temps de mémorisation doublé comme demandé."},
+ {d:29, n:"Les Fils", g:"démêlage (Twisted Tangle)", s:"nouveau", note:"Remplace Tri de Mémoire (#31, doublon du 28)."},
+ {d:30, n:"Fusion", g:"chaînes à fusionner", s:"valide", note:"#32 « vraiment très bien » — consigne réécrite comme demandé."},
+ {d:31, n:"Le Chemin", g:"Hidato / Flow Free", s:"nouveau", note:"Inédit (#33) — janvier compte désormais 31 originaux."}
+];
+
+const LAST_CURATED_ISSUE = 33; // dernier retour intégré à la base curée ci-dessus
+const BADGES = {
+  valide:  ['b-valide', '✅ Validé'],
+  corrige: ['b-corrige', '🔧 Corrigé — à re-tester'],
+  nouveau: ['b-nouveau', '🆕 Nouveau — à tester'],
+  aucun:   ['b-aucun', '❓ Sans retour'],
+  ouvert:  ['b-ouvert', '🗣 Retour ouvert'],
+  recent:  ['b-recent', '💬 Retour récent traité']
+};
+
+let filter = 'tous';
+let issuesByDay = {};
+
+async function fetchIssues() {
+  document.getElementById('status') && (document.getElementById('status').textContent = 'Chargement…');
+  const out = {};
+  try {
+    for (let page = 1; page <= 3; page++) {
+      const r = await fetch(`https://api.github.com/repos/Wael3rd/orderix/issues?state=all&per_page=100&page=${page}`);
+      if (!r.ok) throw new Error('API ' + r.status);
+      const list = await r.json();
+      list.forEach(i => {
+        if (i.pull_request) return;
+        const m = (i.title || '').match(/Jour\s+(\d+)/i);
+        if (!m) return;
+        const d = parseInt(m[1]);
+        if (!out[d] || i.number > out[d].number) {
+          const body = i.body || '';
+          const cm = body.match(/\*\*Commentaire\*\*\s*:\s*([\s\S]+?)\s*_Envoy/);
+          const rm = body.match(/\*\*R[ée]sultat\*\*\s*:\s*(.+?)\s*\*\*/);
+          out[d] = {
+            number: i.number, state: i.state, url: i.html_url,
+            comment: cm ? cm[1].trim().replace(/\s+/g, ' ') : '(commentaire non lisible)',
+            result: rm ? rm[1].trim() : '?',
+            date: (i.created_at || '').slice(0, 10)
+          };
+        }
+      });
+      if (list.length < 100) break;
+    }
+    issuesByDay = out;
+    document.getElementById('last-sync').textContent = 'à jour · ' + new Date().toLocaleTimeString('fr-FR');
+  } catch (e) {
+    document.getElementById('last-sync').textContent = 'GitHub injoignable (' + e.message + ') — données locales';
+  }
+  render();
+}
+
+function statusOf(day) {
+  const iss = issuesByDay[day.d];
+  if (iss && iss.state === 'open') return 'ouvert';
+  if (iss && iss.number > LAST_CURATED_ISSUE) return 'recent';
+  return day.s;
+}
+
+function render() {
+  const counts = { tous: DAYS.length };
+  DAYS.forEach(x => { const s = statusOf(x); counts[s] = (counts[s] || 0) + 1; });
+
+  const chips = [['tous', 'Tous'], ['valide', '✅ Validés'], ['corrige', '🔧 À re-tester'],
+    ['nouveau', '🆕 Nouveaux'], ['aucun', '❓ Sans retour'], ['ouvert', '🗣 Ouverts'], ['recent', '💬 Récents']];
+  document.getElementById('chips').innerHTML = chips
+    .filter(([k]) => k === 'tous' || counts[k])
+    .map(([k, lbl]) => `<span class="chip ${filter === k ? 'on' : ''}" onclick="filter='${k}';render()">${lbl} <span class="n">${counts[k] || 0}</span></span>`)
+    .join('');
+
+  const list = document.getElementById('list');
+  list.innerHTML = '';
+  DAYS.forEach(day => {
+    const s = statusOf(day);
+    if (filter !== 'tous' && s !== filter) return;
+    const iss = issuesByDay[day.d];
+    const [cls, lbl] = BADGES[s];
+
+    const el = document.createElement('div');
+    el.className = 'day';
+    const fb = iss
+      ? `<div class="fb"><div class="meta"><a href="${iss.url}" target="_blank">#${iss.number}</a> · ${iss.date} ·
+           <span class="${/réussi/i.test(iss.result) ? 'ok' : 'ko'}">${iss.result}</span> ·
+           ${iss.state === 'open' ? '🟠 ouverte' : '⚪ fermée'}</div>
+           « ${iss.comment} »</div>`
+      : `<div class="fb empty">Aucun commentaire reçu pour ce jour.</div>`;
+    el.innerHTML = `
+      <div class="num"><small>JOUR</small><span>${day.d}</span></div>
+      <div class="t">${day.n} <span class="genre">· ${day.g}</span></div>
+      <span class="badge ${cls}">${lbl}</span>
+      <div class="note">${day.note}</div>
+      ${fb}`;
+    list.appendChild(el);
+  });
+  if (!list.children.length) list.innerHTML = '<div id="status">Rien dans ce filtre.</div>';
+}
+
+document.getElementById('refresh').addEventListener('click', fetchIssues);
+setInterval(fetchIssues, 5 * 60 * 1000);
+render();
+fetchIssues();
+</script>
+</body>
+</html>
