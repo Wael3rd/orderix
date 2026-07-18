@@ -48,7 +48,8 @@ function startGameMemoCroissant() {
     board.style.alignItems = 'center';
     board.style.gap = '12px';
 
-    const PAIRS = 6, COLS = 4;
+    // Retour #82 : grille 4×4 (8 paires) au lieu de 3×4 (6 paires)
+    const PAIRS = 8, COLS = 4;
     const pool = [];
     for (let v = 1; v <= PAIRS; v++) pool.push(v, v);
     const cells = pool.sort(() => Math.random() - 0.5);

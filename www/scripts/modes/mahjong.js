@@ -1,7 +1,8 @@
 // ─── Mode : Le Mahjong (jour 18) ─────────────────────────────────
 // Inspiré de Vita Mahjong / Tile Club (vague tile-match n°7 mondiale).
-// 24 tuiles = 12 paires de symboles réparties sur 3 couches qui se
-// chevauchent. Tapez DEUX tuiles LIBRES identiques pour les faire
+// 48 tuiles = 24 paires de symboles (retour #89 : deux fois plus de
+// tuiles), réparties sur deux pyramides de 3 couches empilées
+// verticalement. Tapez DEUX tuiles LIBRES identiques pour les faire
 // disparaître. Une tuile est libre si aucune tuile d'une couche
 // supérieure ne la recouvre à plus de 30 %. Pas de défaite : le chrono
 // départage, et un bouton « Mélanger » débloque les impasses.
@@ -25,16 +26,25 @@ function _mjTile(sym, opts) {
     return el;
 }
 
-// Positions fixes en pixels (aucune mesure DOM) : 12 + 8 + 4 = 24 tuiles
-function _mjPositions() {
+// Une pyramide de 12 + 8 + 4 = 24 tuiles, décalée verticalement de yOff
+function _mjPyramide(yOff) {
     const pos = [];
     for (let r = 0; r < 3; r++) for (let c = 0; c < 4; c++)
-        pos.push({ x: c * 54, y: r * 62, layer: 0 });
+        pos.push({ x: c * 54, y: yOff + r * 62, layer: 0 });
     for (let r = 0; r < 2; r++) for (let c = 0; c < 4; c++)
-        pos.push({ x: c * 54 + 27, y: r * 62 + 8, layer: 1 });
+        pos.push({ x: c * 54 + 27, y: yOff + r * 62 + 8, layer: 1 });
     for (let r = 0; r < 2; r++) for (let c = 0; c < 2; c++)
-        pos.push({ x: c * 54 + 54, y: r * 62 + 16, layer: 2 });
+        pos.push({ x: c * 54 + 54, y: yOff + r * 62 + 16, layer: 2 });
     return pos;
+}
+
+// Retour #89 : deux fois plus de tuiles — on empile deux pyramides
+// (verticalement, jamais horizontalement : pas de défilement latéral)
+// pour doubler le plateau à 48 tuiles sans toucher à la géométrie
+// de libération déjà éprouvée de chaque pyramide.
+function _mjPositions() {
+    const hauteurPyramide = 2 * 62 + 54 + 24; // hauteur d'une pyramide + respiration
+    return [..._mjPyramide(0), ..._mjPyramide(hauteurPyramide)];
 }
 
 // Fraction de la surface de b recouverte par a (tuiles de même taille)
@@ -107,7 +117,7 @@ function startGameMahjong() {
     // Distribution vérifiée résoluble (jusqu'à 100 tentatives)
     function deal() {
         const syms = [];
-        _MJ_SYMBOLS.forEach(s => { syms.push(s, s); });
+        _MJ_SYMBOLS.forEach(s => { syms.push(s, s, s, s); });
         let tiles = null;
         for (let attempt = 0; attempt < 100; attempt++) {
             syms.sort(() => Math.random() - 0.5);

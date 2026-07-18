@@ -1,8 +1,8 @@
 // ─── Mode : Échange Minimal ──────────────────────────────────────
-// Une rangée de 7 tuiles-nombres à trier avec un budget d'échanges
-// ADJACENTS égal au strict minimum (= nombre d'inversions de la
-// permutation). Chaque échange compte, même s'il aggrave la
-// situation : réfléchir avant de toucher.
+// Une rangée de 10 tuiles-nombres (retour #88 : 7 → 10) à trier avec
+// un budget d'échanges ADJACENTS égal au strict minimum (= nombre
+// d'inversions de la permutation). Chaque échange compte, même s'il
+// aggrave la situation : réfléchir avant de toucher.
 
 function showExampleSwapSort(day, row, vals) {
     const ex = document.createElement('div');
@@ -49,14 +49,14 @@ function startGameSwapSort() {
         return n;
     }
 
-    // 7 valeurs uniques 1..99, mélangées avec au moins 6 inversions
+    // 10 valeurs uniques 1..99, mélangées avec au moins 12 inversions
     let valeurs, inversions;
     do {
         const pool = new Set();
-        while (pool.size < 7) pool.add(1 + Math.floor(Math.random() * 99));
+        while (pool.size < 10) pool.add(1 + Math.floor(Math.random() * 99));
         valeurs = [...pool].sort(() => Math.random() - 0.5);
         inversions = compterInversions(valeurs);
-    } while (inversions < 6);
+    } while (inversions < 12);
 
     // Budget = minimum exact d'échanges adjacents (nombre d'inversions)
     let budget = inversions;

@@ -126,15 +126,30 @@ function startGameBlocs() {
     function render() {
         hud.innerHTML = `<span>Lignes effacées : <b style="color:#34B871">${lines}</b> / <b style="color:#F5B227">${GOAL}</b></span>`;
 
+        // Retour #84 : pendant le glissé, un fantôme de la pièce ENTIÈRE
+        // (pas juste une case) prévisualise où elle va se poser.
+        const dragging = !!(pieceDrag && pieceDrag.moved);
+        let ghostCells = null, ghostColor = null;
+        if (dragging && pieceDrag.target) {
+            const p = tray[pieceDrag.i];
+            const anchor = placementCovering(p.shape, pieceDrag.target.r, pieceDrag.target.c);
+            if (anchor) {
+                const [r0, c0] = anchor;
+                ghostCells = new Set(p.shape.map(([r, c]) => (r0 + r) + ',' + (c0 + c)));
+                ghostColor = p.color;
+            }
+        }
+
         gridEl.innerHTML = '';
         for (let r = 0; r < S; r++) for (let c = 0; c < S; c++) {
             const rr = r, cc = c;
             const cell = document.createElement('div');
-            const valid = selected !== -1 && !tray[selected].used && !grid[r][c] &&
+            const isGhost = ghostCells && ghostCells.has(r + ',' + c);
+            const valid = !dragging && selected !== -1 && !tray[selected].used && !grid[r][c] &&
                 placementCovering(tray[selected].shape, r, c) !== null;
             cell.style.cssText = `width:${CELL}px;height:${CELL}px;border-radius:6px;touch-action:manipulation;` +
-                `background:${grid[r][c] ? grid[r][c] : (valid ? '#C9E7D4' : '#F4F6FA')};` +
-                (grid[r][c] ? 'box-shadow:inset 0 -2px 0 rgba(0,0,0,.18);' : '');
+                `background:${grid[r][c] ? grid[r][c] : (isGhost ? ghostColor : (valid ? '#C9E7D4' : '#F4F6FA'))};` +
+                (grid[r][c] ? 'box-shadow:inset 0 -2px 0 rgba(0,0,0,.18);' : (isGhost ? 'opacity:.5;' : ''));
             cell.addEventListener('pointerdown', (e) => {
                 e.preventDefault();
                 if (isPaused || over || selected === -1) return;

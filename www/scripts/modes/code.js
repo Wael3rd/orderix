@@ -6,7 +6,7 @@
 // Après validation : VERT = bien placé, OR = présent mais mal placé,
 // GRIS = absent. Le pavé de touches mémorise ce qu'on sait déjà.
 
-const _CODE_LEN = 4;      // longueur du code
+const _CODE_LEN = 5;      // longueur du code (retour #81 : 4 → 5 chiffres)
 const _CODE_MAX = 8;      // chiffres de 1 à 8
 const _CODE_TRIES = 6;    // nombre d'essais
 
@@ -103,7 +103,7 @@ function startGameCode() {
         const line = document.createElement('div');
         line.style.cssText = 'display:flex;gap:8px;';
         grid.appendChild(line);
-        rows.push({ el: line, cells: [null, null, null, null], states: [null, null, null, null] });
+        rows.push({ el: line, cells: new Array(_CODE_LEN).fill(null), states: new Array(_CODE_LEN).fill(null) });
     }
 
     function renderRow(r) {

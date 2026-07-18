@@ -50,17 +50,20 @@ function startGameTubes() {
     const F = 8, V = 5, T = F + 2;
     const COUL = ['#4A6CFA', '#34B871', '#F5B227', '#E0533D', '#8B5CF6', '#1E7A74', '#E8752A', '#D9469A'];
 
+    // Une fiole est complète si elle contient exactement V jetons de la
+    // même famille, rangés du V (fond) au 1 (sommet).
+    function tubeComplet(tube) {
+        if (tube.length !== V) return false;
+        const f = tube[0].f;
+        for (let i = 0; i < V; i++) {
+            if (tube[i].f !== f || tube[i].v !== V - i) return false;
+        }
+        return true;
+    }
+
     function estResolu(tubes) {
         let complets = 0;
-        for (const tube of tubes) {
-            if (tube.length !== V) continue;
-            const f = tube[0].f;
-            let ok = true;
-            for (let i = 0; i < V; i++) {
-                if (tube[i].f !== f || tube[i].v !== V - i) { ok = false; break; }
-            }
-            if (ok) complets++;
-        }
+        for (const tube of tubes) if (tubeComplet(tube)) complets++;
         return complets === F;
     }
 
@@ -135,19 +138,32 @@ function startGameTubes() {
         btnAnnuler.style.opacity = historique.length ? '1' : '.4';
         zone.innerHTML = '';
         tubes.forEach((tube, i) => {
+            const locked = tubeComplet(tube);
             const tb = document.createElement('div');
             // 5 tubes par rangée : 5×62px + gaps ≈ 350px, sur 2 rangées
-            tb.style.cssText = 'width:62px;height:222px;background:#EEF2FF;border:2px solid #C7D2F5;border-radius:12px 12px 24px 24px;display:flex;flex-direction:column-reverse;align-items:center;padding:5px 0;gap:4px;box-sizing:border-box;touch-action:manipulation;transition:transform .12s;';
-            tube.forEach((jeton, j) => {
+            tb.style.cssText = 'width:62px;height:222px;border-radius:12px 12px 24px 24px;display:flex;flex-direction:column-reverse;align-items:center;padding:5px 0;gap:4px;box-sizing:border-box;touch-action:manipulation;transition:transform .12s;' +
+                (locked
+                    ? 'background:#E3F7ED;border:2px solid #34B871;box-shadow:0 0 0 2px #FFFFFF, 0 0 0 4px #34B871;'
+                    : 'background:#EEF2FF;border:2px solid #C7D2F5;');
+            // Retour #87 : les cases pas encore remplies affichent en fond
+            // le chiffre attendu à cette position (V au fond, 1 au sommet),
+            // pour ne pas avoir à deviner qu'il faut ranger le 1 en dernier.
+            for (let posIdx = 0; posIdx < V; posIdx++) {
+                const jeton = tube[posIdx];
                 const el = document.createElement('div');
-                el.style.cssText = 'width:36px;height:36px;border-radius:50%;background:' + COUL[jeton.f] + ';color:#FFFFFF;font-weight:900;font-size:.95rem;display:flex;align-items:center;justify-content:center;pointer-events:none;transition:transform .12s;flex-shrink:0;';
-                el.textContent = jeton.v;
-                if (sel === i && j === tube.length - 1) {
-                    el.style.transform = 'translateY(-10px)';
-                    el.style.boxShadow = '0 0 0 3px #FFFFFF, 0 0 0 5px #F5B227';
+                if (jeton) {
+                    el.style.cssText = 'width:36px;height:36px;border-radius:50%;background:' + COUL[jeton.f] + ';color:#FFFFFF;font-weight:900;font-size:.95rem;display:flex;align-items:center;justify-content:center;pointer-events:none;transition:transform .12s;flex-shrink:0;';
+                    el.textContent = jeton.v;
+                    if (sel === i && posIdx === tube.length - 1) {
+                        el.style.transform = 'translateY(-10px)';
+                        el.style.boxShadow = '0 0 0 3px #FFFFFF, 0 0 0 5px #F5B227';
+                    }
+                } else {
+                    el.style.cssText = 'width:36px;height:36px;border-radius:50%;border:2px dashed #C7D2F5;color:#C7D2F5;font-weight:900;font-size:.85rem;display:flex;align-items:center;justify-content:center;pointer-events:none;flex-shrink:0;box-sizing:border-box;';
+                    el.textContent = V - posIdx;
                 }
                 tb.appendChild(el);
-            });
+            }
             tb.addEventListener('pointerdown', e => { e.preventDefault(); tap(i, tb); });
             zone.appendChild(tb);
         });
@@ -156,7 +172,8 @@ function startGameTubes() {
     function tap(i, el) {
         if (isPaused || fini) return;
         if (sel === null) {
-            if (!tubes[i].length) return;
+            // Une fiole figée (complète) ne se touche plus.
+            if (!tubes[i].length || tubeComplet(tubes[i])) return;
             sel = i;
             haptic(6);
             render();
