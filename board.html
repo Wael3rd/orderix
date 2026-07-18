@@ -84,7 +84,7 @@ const EPICS = [
     {s:'fait', t:"Gel de série", n:"stock max 2 · 1 offert/mois · 1 gagné par semaine parfaite · consommation auto sur jour manqué · couvert par smoke test"},
     {s:'fait', t:"Rattrapage des jours manqués", n:"jours passés jouables, marqués « en retard » (vert contour), hors série — l'album reste sauvable"},
     {s:'fait', t:"Médailles mensuelles", n:"or = mois complet, argent = 20 jours+ (ou ⅔) · vitrine 12 mois sur le profil"},
-    {s:'afaire', t:"Écran « Mon année »", n:"fresque 365 cases + 12 médailles + trophées de paliers (100/200/365)"},
+    {s:'fait', t:"Écran « Mon année »", n:"fresque 365 cases sur le profil (vert = réussi, vert clair = rattrapage, rouge = raté, contour bleu = aujourd'hui) + trophées 50/100/200/365"},
     {s:'afaire', t:"Cosmétiques par niveau", n:"thèmes de couleurs, avatars, styles de tuiles — parure, jamais de puissance"},
     {s:'afaire', t:"Notifications locales douces", n:"rappel de série + fin de mois d'album (plugin Capacitor, opt-in)"}
   ]
@@ -114,7 +114,7 @@ const EPICS = [
   id:'viral', title:'E4 · Viralité & Partage', status:'afaire',
   goal:"Chaque victoire est une publicité. Le modèle Wordle : partage sans spoiler.",
   tasks:[
-    {s:'afaire', t:"Partage de résultat façon Wordle", n:"carte emoji (jour, mode, temps, série) sans révéler la solution — 1 tap vers WhatsApp"},
+    {s:'fait', t:"Partage de résultat façon Wordle", n:"carte emoji : jour, mode, temps, série 🔥, barre d'année 🟩 + lien défi « Tu fais mieux ? » — via le partage natif Android"},
     {s:'afaire', t:"Lien d'invitation avec parrainage", n:"le paramètre ?ref= est déjà capté dans state.js — récompense cosmétique au parrain et à la filleule"},
     {s:'afaire', t:"Défi direct « bats mon temps »", n:"deep link vers le jour joué avec le temps à battre affiché"},
     {s:'afaire', t:"Page résultat publique (Open Graph)", n:"le lien partagé montre une jolie carte dans WhatsApp/iMessage"}
@@ -142,7 +142,7 @@ const EPICS = [
   id:'release', title:'E7 · Release & Qualité', status:'afaire',
   goal:"Du dépôt GitHub au Play Store, proprement.",
   tasks:[
-    {s:'afaire', t:"CI GitHub Actions : APK à chaque push", n:"remplace les builds locaux — faisable dès maintenant"},
+    {s:'encours', t:"CI GitHub Actions : APK à chaque push", n:"smoke test bloquant → build → publication auto sur staging-latest · jeton feedback via secret ORDERIX_FEEDBACK_TOKEN"},
     {s:'afaire', t:"Signing release + AAB + versioning auto", n:"keystore sécurisé, versionCode incrémental"},
     {s:'bloque', t:"Compte Google Play Developer", n:"ACTION PROPRIÉTAIRE : créer le compte (25 $ une fois)"},
     {s:'afaire', t:"Fiche Play Store", n:"captures, description, icône, privacy policy (obligatoire)"},
