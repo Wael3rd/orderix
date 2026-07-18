@@ -78,15 +78,15 @@ font-size:.7rem;font-weight:900;margin-top:1px}
 // statuts : fait | encours | afaire | bloque
 const EPICS = [
 {
-  id:'meta', title:'E1 · Méta & Rétention (100 % local)', status:'encours',
+  id:'meta', title:'E1 · Méta & Rétention (100 % local)', status:'fait',
   goal:"La boucle jour→album→année qui fait la D365. Aucune dépendance serveur.",
   tasks:[
     {s:'fait', t:"Gel de série", n:"stock max 2 · 1 offert/mois · 1 gagné par semaine parfaite · consommation auto sur jour manqué · couvert par smoke test"},
     {s:'fait', t:"Rattrapage des jours manqués", n:"jours passés jouables, marqués « en retard » (vert contour), hors série — l'album reste sauvable"},
     {s:'fait', t:"Médailles mensuelles", n:"or = mois complet, argent = 20 jours+ (ou ⅔) · vitrine 12 mois sur le profil"},
     {s:'fait', t:"Écran « Mon année »", n:"fresque 365 cases sur le profil (vert = réussi, vert clair = rattrapage, rouge = raté, contour bleu = aujourd'hui) + trophées 50/100/200/365"},
-    {s:'afaire', t:"Cosmétiques par niveau", n:"thèmes de couleurs, avatars, styles de tuiles — parure, jamais de puissance"},
-    {s:'afaire', t:"Notifications locales douces", n:"rappel de série + fin de mois d'album (plugin Capacitor, opt-in)"}
+    {s:'fait', t:"Cosmétiques par niveau", n:"6 thèmes de couleurs (Océan, Émeraude, Corail, Améthyste, Rose Poudré, Minuit) + 12 avatars, débloqués par niveau, appliqués à toute l'app"},
+    {s:'fait', t:"Notifications locales douces", n:"rappel opt-in à 19 h (plugin Capacitor LocalNotifications), activable depuis le profil, jamais plus d'une par jour"}
   ]
 },
 {
@@ -151,10 +151,10 @@ const EPICS = [
   ]
 },
 {
-  id:'analytics', title:'E8 · Analytics & Mesure', status:'afaire',
+  id:'analytics', title:'E8 · Analytics & Mesure', status:'encours',
   goal:"Savoir si les boucles marchent — les KPIs du doc méta (D1/D7/D30, retour après série brisée).",
   tasks:[
-    {s:'afaire', t:"Événements locaux d'abord", n:"sessions, complétion du jour, rattrapages, gels consommés — stockés localement, synchronisés plus tard"},
+    {s:'fait', t:"Événements locaux d'abord", n:"journal local (600 derniers) : session_start, game_result (jour/mode/win/late/temps), partage, gels, notifications — prêt à synchroniser vers Supabase"},
     {s:'afaire', t:"Cohortes & funnels (via Supabase)", n:"D1/D7/D30 par cohorte hebdo"},
     {s:'afaire', t:"Tableau de bord rétention", n:"page web comme le suivi des gameplays"}
   ]
