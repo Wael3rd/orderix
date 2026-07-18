@@ -72,7 +72,7 @@ letter-spacing:.05em;white-space:nowrap}
 // ─── Base curée (état au 18/07/2026 après la vague de correctifs) ───
 // baseStatus : valide | corrige | nouveau | aucun
 const DAYS = [
- {d:1, n:"La Chaîne", g:"Schulte / enchaînement", s:"aucun", note:"Mode phare v2.1 — aucun retour dans cette campagne."},
+ {d:1, n:"La Chaîne", g:"Schulte / enchaînement", s:"valide", note:"#59 : « Validé » ✓"},
  {d:2, n:"Tri Cascade", g:"tri de flux façon Speed Match", s:"aucun", note:"Mode phare v2.1 — aucun retour dans cette campagne."},
  {d:3, n:"L'Insertion", g:"timeline", s:"aucun", note:"Mode phare v2.1 — aucun retour dans cette campagne."},
  {d:4, n:"La Fontaine", g:"balles rebondissantes à éclater dans l'ordre", s:"valide", note:"#49 : « Jeu validé » ✓"},
@@ -105,7 +105,7 @@ const DAYS = [
  {d:31, n:"Le Chemin", g:"Hidato / Flow Free", s:"corrige", note:"#57 « grille vide » : vrai bug de génération corrigé (le jeu ne s'était jamais affiché !). Départ bleu + jalons dorés visibles — re-testez avant verdict, sinon je remplace."}
 ];
 
-const LAST_CURATED_ISSUE = 57; // dernier retour intégré à la base curée ci-dessus
+const LAST_CURATED_ISSUE = 60; // dernier retour intégré à la base curée ci-dessus
 const BADGES = {
   valide:    ['b-valide', '✅ Validé'],
   corrige:   ['b-corrige', '🔧 Corrigé — à re-tester'],
