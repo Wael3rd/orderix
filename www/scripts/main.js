@@ -375,6 +375,10 @@ if (ENV_NAME === 'staging') {
         setStorage('orderix_pending_game', '');
         localResults = {};
         serverPlayedDays = {};
+        // La série et les médailles font partie de la progression ; les
+        // badges « ! » de test, eux, survivent (registre séparé).
+        streakData = { count: 0, lastDay: 0, freezes: 1, grantMonth: new Date().getFullYear() + '-' + new Date().getMonth(), frozenUsed: 0 };
+        saveStreakData();
         buildProfile();
         alert('Progression effacée — le calendrier est vierge.');
     });

@@ -128,6 +128,19 @@ function buildHome() {
         b.textContent = `Série : ${stats.streak} 🔥`;
         themeEl.appendChild(b);
     }
+    if (stats.freezes > 0) {
+        if (themeEl.textContent) themeEl.appendChild(document.createTextNode(' · '));
+        const g = document.createElement('span');
+        g.title = 'Gels de série : un jour manqué est pardonné par gel';
+        g.textContent = `🧊 ${stats.freezes}`;
+        themeEl.appendChild(g);
+    }
+    if (streakData.frozenUsed > 0) {
+        const info = document.createElement('div');
+        info.style.cssText = 'font-size:.78rem;font-weight:800;color:#4A6CFA;margin-top:4px;';
+        info.textContent = `🧊 ${streakData.frozenUsed > 1 ? streakData.frozenUsed + ' gels ont' : 'Un gel a'} protégé votre série !`;
+        themeEl.appendChild(info);
+    }
 
     // Tuiles décoratives : les chiffres du jour + une étoile
     const tilesEl = document.getElementById('daily-tiles');
@@ -272,7 +285,11 @@ function buildDayChip(day, d, id, tid, enabled, info) {
 
     if (day.empty || !enabled) { chip.style.opacity = '.3'; chip.disabled = true; return chip; }
 
-    if (info && info.isWin) { chip.classList.add('win'); chip.textContent = '✓'; }
+    if (info && info.isWin) {
+        chip.classList.add('win');
+        if (info.late) chip.classList.add('late'); // rattrapage : teinte distincte
+        chip.textContent = '✓';
+    }
     else if (info) { chip.classList.add('fail'); }
     if (id === tid) chip.classList.add('today');
 
@@ -319,7 +336,11 @@ function buildDayRow(day, d, id, tid, enabled, info) {
 
     const state = document.createElement('span');
     state.className = 'dr-state';
-    if (info && info.isWin) { state.textContent = '✓'; row.classList.add('win'); }
+    if (info && info.isWin) {
+        state.textContent = '✓';
+        row.classList.add('win');
+        if (info.late) row.classList.add('late');
+    }
     else if (info) { state.textContent = '✗'; row.classList.add('fail'); }
     else { state.textContent = '›'; }
     row.appendChild(state);
@@ -338,6 +359,8 @@ if (calendarView === 'list') {
 }
 
 // ── PROFIL ───────────────────────────────────────────────────────
+const MONTH_SHORT = ['Janv', 'Févr', 'Mars', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'];
+
 function buildProfile() {
     const stats = computeStats();
     document.getElementById('pstat-played').textContent = stats.played;
@@ -347,6 +370,42 @@ function buildProfile() {
     document.getElementById('pstat-streak').textContent = stats.streak;
     document.getElementById('pstat-best').textContent = stats.best !== null ? stats.best.toFixed(2) + 's' : '—';
     document.getElementById('pstat-level').textContent = 1 + Math.floor(stats.won / 10);
+    document.getElementById('pstat-freezes').textContent = stats.freezes > 0
+        ? `🧊 ${stats.freezes} gel${stats.freezes > 1 ? 's' : ''} de série en réserve (1 offert chaque mois, 1 par semaine parfaite)`
+        : '🧊 Plus de gel en réserve — le prochain arrive au début du mois.';
+
+    // Vitrine des médailles mensuelles
+    const row = document.getElementById('medals-row');
+    row.innerHTML = '';
+    monthMedals().forEach(m => {
+        const cell = document.createElement('div');
+        cell.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px;' +
+            'border-radius:12px;background:var(--fond);';
+        const ico = document.createElement('div');
+        ico.style.cssText = 'font-size:1.3rem;line-height:1;';
+        const lbl = document.createElement('div');
+        lbl.style.cssText = 'font-size:.62rem;font-weight:800;color:var(--gris);';
+        lbl.textContent = MONTH_SHORT[m.month];
+        if (m.active === 0) {
+            ico.textContent = '—';
+            ico.style.opacity = '.3';
+            cell.style.opacity = '.5';
+        } else if (m.medal === 'or') {
+            ico.textContent = '🥇';
+            cell.style.background = '#FFF6E3';
+        } else if (m.medal === 'argent') {
+            ico.textContent = '🥈';
+            cell.style.background = '#EEF2FF';
+        } else {
+            ico.textContent = '🏅';
+            ico.style.cssText += 'filter:grayscale(1);opacity:.35;';
+        }
+        const prog = document.createElement('div');
+        prog.style.cssText = 'font-size:.6rem;font-weight:700;color:var(--gris);';
+        prog.textContent = m.active > 0 ? `${m.won}/${m.active}` : '';
+        cell.append(ico, lbl, prog);
+        row.appendChild(cell);
+    });
 }
 
 // ── OUVERTURE D'UN JOUR (écran de jeu, phase intro) ──────────────

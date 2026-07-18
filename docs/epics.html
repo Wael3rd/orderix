@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orderix — Production Board</title>
+<style>
+:root{--bleu:#4A6CFA;--bleu2:#3553D1;--pale:#EEF2FF;--encre:#23262F;--gris:#8B90A0;
+--fond:#F4F6FA;--carte:#fff;--ligne:#E8EAF1;--or:#F5B227;--vert:#34B871;--rouge:#E0533D;--violet:#8B5CF6}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Roboto,sans-serif;background:var(--fond);color:var(--encre);padding:18px 12px 80px;line-height:1.5}
+.wrap{max-width:900px;margin:0 auto}
+h1{font-size:1.5rem;font-weight:900;text-align:center}
+h1 b{color:var(--bleu)}
+.sub{text-align:center;color:var(--gris);font-size:.85rem;margin:4px 0 6px}
+.global{max-width:420px;margin:14px auto 22px;background:var(--carte);border-radius:16px;padding:14px 18px;
+box-shadow:0 2px 8px rgba(35,38,47,.07);text-align:center}
+.global .nums{font-weight:900;font-size:.85rem;margin-bottom:8px}
+.bar{height:10px;border-radius:999px;background:var(--ligne);overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--vert),#6BD49A);border-radius:999px}
+#chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:18px}
+.chip{padding:7px 14px;border-radius:999px;background:var(--carte);border:1.5px solid var(--ligne);
+font-weight:700;font-size:.76rem;color:var(--gris);cursor:pointer;user-select:none}
+.chip.on{background:var(--bleu);border-color:var(--bleu);color:#fff}
+.epic{background:var(--carte);border-radius:18px;box-shadow:0 2px 10px rgba(35,38,47,.06);
+padding:18px;margin-bottom:14px;border-left:6px solid var(--bleu)}
+.epic.done{border-color:var(--vert)}
+.epic.blocked{border-color:var(--rouge)}
+.epic.wip{border-color:var(--or)}
+.ehead{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.ehead h2{font-size:1.05rem;font-weight:900;flex:1;min-width:200px}
+.ehead .goal{width:100%;font-size:.8rem;color:var(--gris);margin-top:2px}
+.badge{padding:4px 12px;border-radius:999px;font-weight:900;font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.b-fait{background:#E3F7ED;color:#1E7A4A}
+.b-encours{background:#FFF6E3;color:#B07E0A}
+.b-afaire{background:var(--pale);color:var(--bleu2)}
+.b-bloque{background:#FCE9E5;color:#A93A29}
+.ebar{margin:10px 0 12px}
+.ebar .txt{font-size:.68rem;font-weight:800;color:var(--gris);margin-bottom:4px}
+.tasks{display:flex;flex-direction:column;gap:6px}
+.task{display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-radius:10px;background:var(--fond);font-size:.85rem}
+.task .st{flex-shrink:0;width:22px;height:22px;border-radius:7px;display:flex;align-items:center;justify-content:center;
+font-size:.7rem;font-weight:900;margin-top:1px}
+.st-fait{background:var(--vert);color:#fff}
+.st-encours{background:var(--or);color:#fff}
+.st-afaire{background:#D8DCE8;color:#fff}
+.st-bloque{background:var(--rouge);color:#fff}
+.task.fait{opacity:.72}
+.task.fait .lbl{text-decoration:line-through;text-decoration-color:rgba(35,38,47,.35)}
+.task .lbl b{font-weight:800}
+.task .note{display:block;font-size:.72rem;color:var(--gris)}
+.legend{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:6px 0 20px;font-size:.72rem;color:var(--gris);font-weight:700}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:14px;height:14px;border-radius:5px;display:inline-block}
+.foot{margin-top:40px;text-align:center;color:var(--gris);font-size:.72rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Order<b>ix</b> — Production Board</h1>
+<p class="sub">Tout ce qu'il faut pour un jeu mobile casual pro · mis à jour par Claude à chaque avancée</p>
+<div class="global">
+  <div class="nums" id="global-nums">—</div>
+  <div class="bar"><i id="global-bar" style="width:0%"></i></div>
+</div>
+<div class="legend">
+  <span><i style="background:var(--vert)"></i> Fait</span>
+  <span><i style="background:var(--or)"></i> En cours</span>
+  <span><i style="background:#D8DCE8"></i> À faire</span>
+  <span><i style="background:var(--rouge)"></i> Bloqué (action propriétaire)</span>
+</div>
+<div id="chips"></div>
+<div id="board"></div>
+<div class="foot">Orderix · board de production v1 · les statuts sont mis à jour au fil des livraisons</div>
+</div>
+
+<script>
+// statuts : fait | encours | afaire | bloque
+const EPICS = [
+{
+  id:'meta', title:'E1 · Méta & Rétention (100 % local)', status:'encours',
+  goal:"La boucle jour→album→année qui fait la D365. Aucune dépendance serveur.",
+  tasks:[
+    {s:'fait', t:"Gel de série", n:"stock max 2 · 1 offert/mois · 1 gagné par semaine parfaite · consommation auto sur jour manqué · couvert par smoke test"},
+    {s:'fait', t:"Rattrapage des jours manqués", n:"jours passés jouables, marqués « en retard » (vert contour), hors série — l'album reste sauvable"},
+    {s:'fait', t:"Médailles mensuelles", n:"or = mois complet, argent = 20 jours+ (ou ⅔) · vitrine 12 mois sur le profil"},
+    {s:'afaire', t:"Écran « Mon année »", n:"fresque 365 cases + 12 médailles + trophées de paliers (100/200/365)"},
+    {s:'afaire', t:"Cosmétiques par niveau", n:"thèmes de couleurs, avatars, styles de tuiles — parure, jamais de puissance"},
+    {s:'afaire', t:"Notifications locales douces", n:"rappel de série + fin de mois d'album (plugin Capacitor, opt-in)"}
+  ]
+},
+{
+  id:'backend', title:'E2 · Comptes & Backend (Supabase, RGPD)', status:'bloque',
+  goal:"La fondation connectée : identité, scores fiables, conformité UE.",
+  tasks:[
+    {s:'bloque', t:"Créer les projets Supabase staging + prod (région EU)", n:"ACTION PROPRIÉTAIRE : créer les 2 projets et fournir les clés anon — le schéma SQL est déjà prêt dans supabase/migrations/"},
+    {s:'afaire', t:"Auth anonyme + réservation de pseudo", n:"device-first, aucun mot de passe requis pour jouer"},
+    {s:'afaire', t:"Migration des scores et classements GAS → Supabase", n:"avec période de double-écriture"},
+    {s:'afaire', t:"RGPD : consentement, export des données, suppression de compte", n:"obligatoire avant tout lancement public UE"},
+    {s:'afaire', t:"Config à distance des jours (remplace le Sheet)", n:"activer/désactiver un jour, messages du jour"},
+    {s:'afaire', t:"Scores côté serveur avec garde-fous anti-triche", n:"bornes de temps par mode, détection d'aberrations"}
+  ]
+},
+{
+  id:'social', title:'E3 · Ligue & Social doux', status:'afaire',
+  goal:"Une raison de revenir chaque jour de la semaine — sans jamais affronter personne. Dépend d'E2.",
+  tasks:[
+    {s:'afaire', t:"Ligue hebdomadaire", n:"groupes de 20-30 joueuses, somme des temps, montée/descente légère"},
+    {s:'afaire', t:"Récap du dimanche", n:"bilan de semaine : jours joués, position de ligue, meilleure perf"},
+    {s:'afaire', t:"Classement entre amies", n:"code à partager pour rejoindre le groupe de sa sœur/collègue"}
+  ]
+},
+{
+  id:'viral', title:'E4 · Viralité & Partage', status:'afaire',
+  goal:"Chaque victoire est une publicité. Le modèle Wordle : partage sans spoiler.",
+  tasks:[
+    {s:'afaire', t:"Partage de résultat façon Wordle", n:"carte emoji (jour, mode, temps, série) sans révéler la solution — 1 tap vers WhatsApp"},
+    {s:'afaire', t:"Lien d'invitation avec parrainage", n:"le paramètre ?ref= est déjà capté dans state.js — récompense cosmétique au parrain et à la filleule"},
+    {s:'afaire', t:"Défi direct « bats mon temps »", n:"deep link vers le jour joué avec le temps à battre affiché"},
+    {s:'afaire', t:"Page résultat publique (Open Graph)", n:"le lien partagé montre une jolie carte dans WhatsApp/iMessage"}
+  ]
+},
+{
+  id:'liveops', title:'E5 · Live-ops & Événements', status:'afaire',
+  goal:"De la vie sans dev : recycler les 31 modes validés en rendez-vous.",
+  tasks:[
+    {s:'afaire', t:"Événements calendaires à thème", n:"semaine déduction, week-end double étoiles, défi du 1er du mois"},
+    {s:'afaire', t:"Pilotage à distance des événements", n:"via la config serveur (E2) — zéro release pour lancer un événement"},
+    {s:'afaire', t:"Notifications push d'événement", n:"après E2, opt-in, max 2/semaine"}
+  ]
+},
+{
+  id:'money', title:'E6 · Monétisation douce', status:'afaire',
+  goal:"Payer pour se faire plaisir, jamais pour gagner. Décision produit à valider ensemble.",
+  tasks:[
+    {s:'afaire', t:"Choix du modèle", n:"reco : cosmétiques premium + pub récompensée facultative (gel supplémentaire) — zéro pub interstitielle"},
+    {s:'afaire', t:"Boutique de thèmes", n:"palettes saisonnières, styles de tuiles, avatars"},
+    {s:'afaire', t:"Intégration facturation Play", n:"IAP simples, restauration d'achats"}
+  ]
+},
+{
+  id:'release', title:'E7 · Release & Qualité', status:'afaire',
+  goal:"Du dépôt GitHub au Play Store, proprement.",
+  tasks:[
+    {s:'afaire', t:"CI GitHub Actions : APK à chaque push", n:"remplace les builds locaux — faisable dès maintenant"},
+    {s:'afaire', t:"Signing release + AAB + versioning auto", n:"keystore sécurisé, versionCode incrémental"},
+    {s:'bloque', t:"Compte Google Play Developer", n:"ACTION PROPRIÉTAIRE : créer le compte (25 $ une fois)"},
+    {s:'afaire', t:"Fiche Play Store", n:"captures, description, icône, privacy policy (obligatoire)"},
+    {s:'afaire', t:"Crash reporting léger", n:"remontée des erreurs JS + crashes natifs"},
+    {s:'afaire', t:"Matrice d'appareils", n:"petits écrans (360 px), Android 8+, mode économie d'énergie"}
+  ]
+},
+{
+  id:'analytics', title:'E8 · Analytics & Mesure', status:'afaire',
+  goal:"Savoir si les boucles marchent — les KPIs du doc méta (D1/D7/D30, retour après série brisée).",
+  tasks:[
+    {s:'afaire', t:"Événements locaux d'abord", n:"sessions, complétion du jour, rattrapages, gels consommés — stockés localement, synchronisés plus tard"},
+    {s:'afaire', t:"Cohortes & funnels (via Supabase)", n:"D1/D7/D30 par cohorte hebdo"},
+    {s:'afaire', t:"Tableau de bord rétention", n:"page web comme le suivi des gameplays"}
+  ]
+},
+{
+  id:'ftue', title:'E9 · Onboarding & FTUE', status:'afaire',
+  goal:"Les 90 premières secondes décident du D1.",
+  tasks:[
+    {s:'afaire', t:"Tutoriel premier lancement", n:"3 écrans max : le rendez-vous quotidien, l'album, la série"},
+    {s:'afaire', t:"Premier puzzle en douceur", n:"garanti gagnable + grosse célébration + première étoile"},
+    {s:'afaire', t:"Opt-in notifications au bon moment", n:"demandé APRÈS la première victoire, jamais au premier écran"}
+  ]
+}
+];
+
+const ST_LBL = { fait:'Fait', encours:'En cours', afaire:'À faire', bloque:'Bloqué' };
+const ST_CLS = { fait:'st-fait', encours:'st-encours', afaire:'st-afaire', bloque:'st-bloque' };
+const ST_ICO = { fait:'✓', encours:'…', afaire:'', bloque:'✋' };
+const EP_CLS = { fait:'done', encours:'wip', afaire:'', bloque:'blocked' };
+const EP_BADGE = { fait:'b-fait', encours:'b-encours', afaire:'b-afaire', bloque:'b-bloque' };
+
+let filter = 'tous';
+function render(){
+  let total=0, done=0;
+  EPICS.forEach(e => e.tasks.forEach(t => { total++; if (t.s==='fait') done++; }));
+  document.getElementById('global-nums').textContent =
+    done + ' / ' + total + ' sous-tâches livrées · ' + EPICS.length + ' epics';
+  document.getElementById('global-bar').style.width = (total ? Math.round(100*done/total) : 0) + '%';
+
+  const counts = { tous:EPICS.length, fait:0, encours:0, afaire:0, bloque:0 };
+  EPICS.forEach(e => counts[e.status]++);
+  document.getElementById('chips').innerHTML =
+    [['tous','Tous'],['encours','🔨 En cours'],['afaire','📋 À faire'],['bloque','✋ Bloqués'],['fait','✅ Faits']]
+    .filter(([k]) => k==='tous' || counts[k])
+    .map(([k,l]) => `<span class="chip ${filter===k?'on':''}" onclick="filter='${k}';render()">${l} <b>${counts[k]||0}</b></span>`)
+    .join('');
+
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+  EPICS.forEach(e => {
+    if (filter!=='tous' && e.status!==filter) return;
+    const d = e.tasks.filter(t=>t.s==='fait').length;
+    const el = document.createElement('div');
+    el.className = 'epic ' + (EP_CLS[e.status]||'');
+    el.innerHTML = `
+      <div class="ehead">
+        <h2>${e.title}</h2>
+        <span class="badge ${EP_BADGE[e.status]}">${ST_LBL[e.status]}</span>
+        <div class="goal">${e.goal}</div>
+      </div>
+      <div class="ebar">
+        <div class="txt">${d}/${e.tasks.length} sous-tâches</div>
+        <div class="bar"><i style="width:${Math.round(100*d/e.tasks.length)}%"></i></div>
+      </div>
+      <div class="tasks">${e.tasks.map(t => `
+        <div class="task ${t.s}">
+          <span class="st ${ST_CLS[t.s]}">${ST_ICO[t.s]}</span>
+          <span class="lbl"><b>${t.t}</b>${t.n ? `<span class="note">${t.n}</span>` : ''}</span>
+        </div>`).join('')}
+      </div>`;
+    board.appendChild(el);
+  });
+}
+render();
+</script>
+</body>
+</html>

@@ -290,6 +290,8 @@
 }
 .day-chip:active { transform: scale(.9); }
 .day-chip.win { background: var(--vert); border-color: var(--vert); color: #fff; }
+/* Rattrapage : réussi mais après sa date — vert contour, fond clair */
+.day-chip.win.late { background: #E3F7ED; color: var(--vert); border: 2px solid var(--vert); }
 .day-chip.fail { background: var(--rouge-pale); border-color: var(--rouge-pale); color: var(--rouge); }
 .day-chip.today {
     border: 2px solid var(--bleu);
@@ -409,6 +411,8 @@
 .day-row.win { border-color: var(--vert); }
 .day-row.win .dr-num { background: var(--vert); color: #fff; }
 .day-row.win .dr-state { color: var(--vert); }
+/* Rattrapage : réussi après sa date */
+.day-row.win.late .dr-num { background: #E3F7ED; color: var(--vert); border: 1.5px solid var(--vert); }
 .day-row.fail { border-color: var(--rouge-pale); }
 .day-row.fail .dr-num { background: var(--rouge-pale); color: var(--rouge); }
 .day-row.fail .dr-state { color: var(--rouge); }

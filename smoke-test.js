@@ -164,8 +164,11 @@ __check('chasse au max : victoire = 3 manches enchaînées', () => {
 __check('statistiques et série', () => {
     localResults = {}; serverPlayedDays = {};
     const tid = todayDayId();
+    // Hier gagné À L'HEURE (simulé via le registre), aujourd'hui gagné → série 2.
+    // Un rattrapage (jour passé) compte dans les stats mais PAS dans la série.
+    streakData = { count: 1, lastDay: tid - 1, freezes: 0, grantMonth: 'x', frozenUsed: 0 };
     saveLocalResult(tid, 10, 5.2, true);
-    saveLocalResult(tid - 1, 10, 6.1, true);
+    saveLocalResult(tid - 1, 10, 6.1, true); // rattrapage
     const s = computeStats();
     if (s.won !== 2) throw new Error('won=' + s.won);
     if (s.streak !== 2) throw new Error('streak=' + s.streak);
@@ -225,6 +228,51 @@ __check('badge « ! » : registre par mode, survit au reset progression', () => 
     const apresReset = document.querySelectorAll('#calendar-months .totest').length;
     if (apresReset !== after) throw new Error('le reset a fait réapparaître des badges : ' + after + ' → ' + apresReset);
     if (needsTest(flagged)) throw new Error('badge revenu après reset sur un mode déjà testé');
+});
+
+__check('série : gel consommé sur un jour manqué, cassée sans gel', () => {
+    localResults = {}; serverPlayedDays = {};
+    const today = todayDayId();
+    // Victoire hier + aujourd'hui = série de 2
+    streakData = { count: 0, lastDay: 0, freezes: 0, grantMonth: 'x', frozenUsed: 0 };
+    streakData.lastDay = today - 1; streakData.count = 5;
+    updateStreakOnWin();
+    if (streakData.count !== 6) throw new Error('série attendue 6, obtenue ' + streakData.count);
+    // Un jour manqué AVEC gel : la série continue et consomme le gel
+    streakData = { count: 10, lastDay: today - 2, freezes: 1, grantMonth: 'x', frozenUsed: 0 };
+    updateStreakOnWin();
+    if (streakData.count !== 11) throw new Error('gel non appliqué : ' + streakData.count);
+    if (streakData.freezes !== 0) throw new Error('gel non consommé');
+    if (streakData.frozenUsed !== 1) throw new Error('frozenUsed attendu');
+    // Un jour manqué SANS gel : la série repart à 1
+    streakData = { count: 10, lastDay: today - 2, freezes: 0, grantMonth: 'x', frozenUsed: 0 };
+    updateStreakOnWin();
+    if (streakData.count !== 1) throw new Error('série non cassée : ' + streakData.count);
+    // Semaine parfaite : passage à 7 → +1 gel
+    streakData = { count: 6, lastDay: today - 1, freezes: 0, grantMonth: 'x', frozenUsed: 0 };
+    updateStreakOnWin();
+    if (streakData.count !== 7 || streakData.freezes !== 1) throw new Error('bonus semaine parfaite manquant');
+});
+
+__check('rattrapage : jour passé marqué late, hors série ; médailles comptées', () => {
+    localResults = {}; serverPlayedDays = {};
+    streakData = { count: 3, lastDay: 0, freezes: 0, grantMonth: 'x', frozenUsed: 0 };
+    const today = todayDayId();
+    const pastDay = DAYS.find(d => !d.empty && d.id !== today);
+    saveLocalResult(pastDay.id, 10, 8.0, true);
+    if (!localResults[pastDay.id].late) throw new Error('rattrapage non marqué late');
+    if (streakData.count !== 3) throw new Error('le rattrapage a touché la série');
+    const medals = monthMedals();
+    if (medals.length !== 12) throw new Error('12 mois attendus');
+    const m0 = medals[0];
+    if (m0.active < 28 || m0.won !== (pastDay.id <= 31 ? 1 : 0)) throw new Error('comptage janvier incohérent : ' + m0.active + '/' + m0.won);
+    // Mois complet simulé → médaille d'or
+    localResults = {};
+    for (let id = 1; id <= 31; id++) {
+        const day = DAYS.find(x => x.id === id);
+        if (day && !day.empty) localResults[id] = { isWin: true, time: 5, rev: 0 };
+    }
+    if (monthMedals()[0].medal !== 'or') throw new Error('médaille d or attendue sur janvier complet');
 });
 
 __check('jour déjà joué → pas de seconde tentative', () => {

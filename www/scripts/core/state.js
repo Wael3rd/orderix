@@ -160,14 +160,19 @@ function loadLocalResults() {
 function saveLocalResult(dayId, count, time, isWin) {
     // `rev` mémorise la révision du gameplay jouée : si le mode est ensuite
     // retouché (rev incrémentée dans GAME_MODES), le badge « ! » réapparaît.
+    // `late` marque un RATTRAPAGE : jour joué après sa date — il complète
+    // l'album (médailles) mais ne nourrit pas la série.
     const day = DAYS.find(d => d.id === dayId);
     const rev = (day && !day.empty) ? (GAME_MODES[day.modeId].rev || 0) : 0;
-    localResults[dayId] = { count: count, time: time, isWin: isWin, rev: rev };
+    const late = dayId !== todayDayId();
+    localResults[dayId] = { count: count, time: time, isWin: isWin, rev: rev, late: late };
     setStorage('orderix_local_results', JSON.stringify(localResults));
     if (day && !day.empty && rev > (testedRevs[day.modeId] || 0)) {
         testedRevs[day.modeId] = rev;
         setStorage('orderix_tested_revs', JSON.stringify(testedRevs));
     }
+    // La série ne bouge que sur la victoire DU JOUR, jouée le jour même
+    if (isWin && !late) updateStreakOnWin();
 }
 // Résultat connu pour un jour : priorité au serveur, sinon local
 function getPlayedInfo(dayId) {
@@ -194,6 +199,94 @@ function dateOfDayId(id) {
     return new Date(new Date().getFullYear(), 0, id);
 }
 
+// ─── Série & gels (Epic méta : rétention) ────────────────────────
+// Modèle Duolingo : la série compte les victoires « du jour, le jour
+// même ». Les jours manqués sont absorbés par les GELS (stock max 2) :
+// 1 offert chaque mois + 1 gagné par semaine parfaite (7 victoires
+// d'affilée). Sans gel suffisant, la série repart à 1.
+const GELS_MAX = 2;
+let streakData = { count: 0, lastDay: 0, freezes: 0, grantMonth: '', frozenUsed: 0 };
+
+function loadStreakData() {
+    try {
+        const raw = JSON.parse(getStorage('orderix_streak') || 'null');
+        if (raw && typeof raw.count === 'number') streakData = raw;
+    } catch (e) { }
+    // Octroi mensuel : 1 gel offert au premier lancement du mois
+    const mois = new Date().getFullYear() + '-' + new Date().getMonth();
+    if (streakData.grantMonth !== mois) {
+        streakData.grantMonth = mois;
+        streakData.freezes = Math.min(GELS_MAX, (streakData.freezes || 0) + 1);
+        saveStreakData();
+    }
+}
+function saveStreakData() { setStorage('orderix_streak', JSON.stringify(streakData)); }
+
+function updateStreakOnWin() {
+    const today = todayDayId();
+    if (streakData.lastDay === today) return; // déjà comptée aujourd'hui
+    const gap = streakData.lastDay > 0 ? today - streakData.lastDay : 0;
+    streakData.frozenUsed = 0;
+    if (streakData.lastDay === 0 || gap > 1) {
+        // Jours manqués : les gels les absorbent (1 gel = 1 jour manqué)
+        const manques = streakData.lastDay === 0 ? 0 : gap - 1;
+        if (manques > 0 && streakData.freezes >= manques) {
+            streakData.freezes -= manques;
+            streakData.frozenUsed = manques;
+            streakData.count++;
+        } else if (manques > 0) {
+            streakData.count = 1; // série repartie
+        } else {
+            streakData.count = 1; // toute première victoire
+        }
+    } else {
+        streakData.count++;
+    }
+    // Semaine parfaite : tous les 7 jours de série, +1 gel (plafonné)
+    if (streakData.count > 0 && streakData.count % 7 === 0) {
+        streakData.freezes = Math.min(GELS_MAX, streakData.freezes + 1);
+    }
+    streakData.lastDay = today;
+    saveStreakData();
+}
+
+// Série affichée : celle du registre, éteinte si trop de jours ont
+// passé sans victoire et sans gels pour les couvrir
+function currentStreak() {
+    if (!streakData.lastDay) return 0;
+    const gap = todayDayId() - streakData.lastDay;
+    if (gap <= 1) return streakData.count;
+    return (gap - 1 <= streakData.freezes) ? streakData.count : 0;
+}
+
+// ─── Médailles mensuelles (album) ────────────────────────────────
+// Or = tous les jours actifs du mois réussis · Argent = 20 réussis
+// (ou 2/3 des jours actifs si le mois en compte moins de 30).
+function monthMedals() {
+    const year = new Date().getFullYear();
+    const medals = [];
+    let dayId = 1;
+    for (let m = 0; m < 12; m++) {
+        const daysInMonth = new Date(year, m + 1, 0).getDate();
+        let active = 0, won = 0;
+        for (let d = 1; d <= daysInMonth && dayId <= 365; d++, dayId++) {
+            const day = DAYS.find(x => x.id === dayId);
+            if (!day || day.empty) continue;
+            const cfg = dayConfig[dayId];
+            if (cfg && cfg.enabled === false) continue;
+            active++;
+            const info = getPlayedInfo(dayId);
+            if (info && info.isWin) won++;
+        }
+        const seuilArgent = Math.min(20, Math.ceil(active * 2 / 3));
+        let medal = null;
+        if (active > 0 && won >= active) medal = 'or';
+        else if (active > 0 && won >= seuilArgent) medal = 'argent';
+        medals.push({ month: m, active: active, won: won, medal: medal });
+    }
+    return medals;
+}
+
 function computeStats() {
     let played = 0, won = 0, best = null;
     DAYS.forEach(d => {
@@ -206,20 +299,10 @@ function computeStats() {
             if (best === null || t < best) best = t;
         }
     });
-    // Série : jours calendaires consécutifs réussis, en remontant depuis
-    // aujourd'hui (ou hier si le puzzle du jour n'est pas encore joué)
-    let streak = 0;
-    let d = todayDayId();
-    const todayInfo = getPlayedInfo(d);
-    if (!todayInfo || !todayInfo.isWin) d--;
-    while (d >= 1) {
-        const info = getPlayedInfo(d);
-        if (info && info.isWin) { streak++; d--; }
-        else break;
-    }
-    return { played: played, won: won, best: best, streak: streak };
+    return { played: played, won: won, best: best, streak: currentStreak(), freezes: streakData.freezes };
 }
 
 // Nom sauvegardé
 const savedName = getStorage('orderix_player_name');
 loadLocalResults();
+loadStreakData();
