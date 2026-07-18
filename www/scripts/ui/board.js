@@ -78,8 +78,8 @@ function showExample(day, container) {
         showExampleFontaine(day, row, vals);
     } else if (mode.isMetronome) {
         showExampleMetronome(day, row, vals);
-    } else if (mode.isCadenas) {
-        showExampleCadenas(day, row, vals);
+    } else if (mode.isCode) {
+        showExampleCode(day, row, vals);
     } else if (mode.isMemoCroissant) {
         showExampleMemoCroissant(day, row, vals);
     } else if (mode.isSolitaire) {
@@ -100,8 +100,8 @@ function showExample(day, container) {
         showExampleHanoi(day, row, vals);
     } else if (mode.isFileBloquee) {
         showExampleFileBloquee(day, row, vals);
-    } else if (mode.isEtageres) {
-        showExampleEtageres(day, row, vals);
+    } else if (mode.isMahjong) {
+        showExampleMahjong(day, row, vals);
     } else if (mode.isGrille) {
         showExampleGrille(day, row, vals);
     } else if (mode.isRangement) {
@@ -124,10 +124,10 @@ function showExample(day, container) {
         showExampleTripleOrdre(day, row, vals);
     } else if (mode.isPhotoClasse) {
         showExamplePhotoClasse(day, row, vals);
-    } else if (mode.isFilsEmmeles) {
-        showExampleFilsEmmeles(day, row, vals);
-    } else if (mode.isChemin) {
-        showExampleChemin(day, row, vals);
+    } else if (mode.isBulles) {
+        showExampleBulles(day, row, vals);
+    } else if (mode.isNonogramme) {
+        showExampleNonogramme(day, row, vals);
     } else if (mode.isFusion) {
         showExampleFusion(day, row, vals);
     } else if (mode.isReflex) {
@@ -142,8 +142,8 @@ function showExample(day, container) {
         showExampleSpeedLetters(day, row, vals);
     } else if (mode.isDragDrop) {
         showExampleDragDrop(day, row, vals);
-    } else if (mode.isConveyor) {
-        showExampleConveyor(day, row, vals);
+    } else if (mode.isPiles) {
+        showExamplePiles(day, row, vals);
     } else if (mode.isSpeedQuiz) {
         showExampleSpeedQuiz(day, row, vals);
     } else if (mode.isGuessNumber) {

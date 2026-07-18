@@ -205,7 +205,7 @@ function showExampleIndices(day, row, vals) {
 
     const note = document.createElement('div');
     note.style.cssText = 'font-size:.78rem;color:#8B90A0;font-weight:bold;text-align:center;';
-    note.textContent = 'Touchez 2 personnages pour les échanger';
+    note.textContent = 'Glissez les personnages pour les réordonner';
 
     ex.append(clueCard, rowEx, note);
     row.style.flexDirection = 'column';
@@ -219,8 +219,9 @@ function startGameIndices() {
 
     let essais = 2;
     let finished = false;
-    let selected = null;
     let marks = null; // positions correctes cochées après un échec
+    // Drag & drop natif (retour #67) : état du glissement en cours
+    let drag = null;  // { ch, insertIdx, clone }
 
     const { sol, clues } = _indGenerate();
     let current = _indShuffle([0, 1, 2, 3, 4]);
@@ -255,29 +256,31 @@ function startGameIndices() {
     validBtn.style.minWidth = '200px';
     board.appendChild(validBtn);
 
+    // Rendu de la rangée. Pendant un glissement, `current` ne contient
+    // plus le personnage saisi : un emplacement en pointillés marque le
+    // point d'insertion (drag.insertIdx).
     function renderRow() {
         rowZone.innerHTML = '';
-        current.forEach((chIdx, pos) => {
+        const display = drag
+            ? current.slice(0, drag.insertIdx).concat([null]).concat(current.slice(drag.insertIdx))
+            : current;
+        display.forEach((chIdx, pos) => {
             const col = document.createElement('div');
             col.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:4px;';
-            const circle = _indCircle(chIdx, 56);
-            circle.style.cursor = 'pointer';
-            if (selected === pos) circle.style.boxShadow = '0 0 0 3px #FFFFFF, 0 0 0 6px #3553D1';
-            circle.addEventListener('click', () => {
-                if (isPaused || finished) return;
-                if (selected === null) {
-                    selected = pos;
-                    haptic(6);
-                } else if (selected === pos) {
-                    selected = null;
-                } else {
-                    [current[selected], current[pos]] = [current[pos], current[selected]];
-                    selected = null;
-                    haptic(10);
-                }
-                renderRow();
-            });
-            col.appendChild(circle);
+            if (chIdx === null) {
+                const ph = document.createElement('div');
+                ph.style.cssText = 'width:56px;height:56px;border-radius:50%;border:3px dashed #C9D4FB;background:#EEF2FF;flex-shrink:0;';
+                col.appendChild(ph);
+            } else {
+                const circle = _indCircle(chIdx, 56);
+                circle.style.cssText += 'cursor:grab;touch-action:none;';
+                circle.addEventListener('pointerdown', (e) => {
+                    e.preventDefault();
+                    if (isPaused || finished || drag) return;
+                    startDrag(chIdx, e, circle);
+                });
+                col.appendChild(circle);
+            }
             const mark = document.createElement('div');
             mark.style.cssText = 'font-weight:900;font-size:1.05rem;min-height:1.2em;color:#34B871;';
             mark.textContent = (marks && marks[pos]) ? '✓' : '';
@@ -286,6 +289,62 @@ function startGameIndices() {
         });
     }
     renderRow();
+
+    // ─── Drag & drop natif (Pointer Events, retour #67) ──────────────
+    function insertIdxFromX(clientX) {
+        // Point d'insertion = nombre de cercles dont le centre est à
+        // gauche du doigt (positions mesurées en direct)
+        const circles = [...rowZone.querySelectorAll('div')]
+            .filter(el => el.style.borderRadius === '50%' && el.style.borderStyle !== 'dashed');
+        let idx = 0;
+        for (const c of circles) {
+            const r = c.getBoundingClientRect();
+            if (clientX > r.left + r.width / 2) idx++;
+        }
+        return Math.min(idx, current.length);
+    }
+
+    function startDrag(ch, e, circleEl) {
+        const pos = current.indexOf(ch);
+        current.splice(pos, 1);
+        const clone = circleEl.cloneNode(true);
+        clone.style.cssText += 'position:fixed;z-index:300;pointer-events:none;transform:scale(1.15);' +
+            'box-shadow:0 8px 22px rgba(35,38,47,.35);margin:0;';
+        clone.style.left = (e.clientX - 28) + 'px';
+        clone.style.top = (e.clientY - 40) + 'px';
+        document.body.appendChild(clone);
+        drag = { ch: ch, insertIdx: pos, clone: clone };
+        haptic(8);
+        // Écouteurs sur document : renderRow() reconstruit la rangée en
+        // cours de glissement, l'élément d'origine ne survit pas.
+        document.addEventListener('pointermove', onDragMove);
+        document.addEventListener('pointerup', onDragEnd);
+        document.addEventListener('pointercancel', onDragEnd);
+        renderRow();
+    }
+
+    function onDragMove(e) {
+        if (!drag) return;
+        drag.clone.style.left = (e.clientX - 28) + 'px';
+        drag.clone.style.top = (e.clientY - 40) + 'px';
+        const idx = insertIdxFromX(e.clientX);
+        if (idx !== drag.insertIdx) {
+            drag.insertIdx = idx;
+            renderRow();
+        }
+    }
+
+    function onDragEnd() {
+        if (!drag) return;
+        document.removeEventListener('pointermove', onDragMove);
+        document.removeEventListener('pointerup', onDragEnd);
+        document.removeEventListener('pointercancel', onDragEnd);
+        current.splice(drag.insertIdx, 0, drag.ch);
+        drag.clone.remove();
+        drag = null;
+        haptic(10);
+        renderRow();
+    }
 
     function revealSolution() {
         const line = document.createElement('div');
@@ -299,8 +358,7 @@ function startGameIndices() {
     }
 
     validBtn.addEventListener('click', () => {
-        if (isPaused || finished) return;
-        selected = null;
+        if (isPaused || finished || drag) return;
 
         if (current.every((v, i) => v === sol[i])) {
             finished = true;

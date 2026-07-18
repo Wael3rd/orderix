@@ -151,16 +151,75 @@ function startGameBlocs() {
                 (selected === i ? '#F5B227' : 'var(--ligne,#E8EAF1)') + ';touch-action:manipulation;' +
                 (p.used ? 'opacity:.15;pointer-events:none;' : (placeable ? '' : 'opacity:.35;')) +
                 (selected === i ? 'box-shadow:0 0 0 3px #FFF6E3;' : '');
+            slot.style.touchAction = 'none';
             slot.appendChild(_blocsMini(p.shape, 14, p.color));
             slot.addEventListener('pointerdown', (e) => {
                 e.preventDefault();
                 if (isPaused || over || p.used) return;
-                selected = selected === i ? -1 : i;
-                haptic(8);
-                render();
+                startPieceDrag(i, e);
             });
             trayEl.appendChild(slot);
         });
+    }
+
+    // ─── Drag & drop natif (retour #70) : on GLISSE la pièce du bac
+    // vers la grille, fantôme au-dessus du doigt, cases vertes en
+    // direct. Un simple tap conserve l'ancien mode sélection + tap.
+    let pieceDrag = null; // { i, sx, sy, moved, ghost, target }
+    function startPieceDrag(i, e) {
+        pieceDrag = { i: i, sx: e.clientX, sy: e.clientY, moved: false, ghost: null, target: null };
+        document.addEventListener('pointermove', onPieceDragMove);
+        document.addEventListener('pointerup', onPieceDragEnd);
+        document.addEventListener('pointercancel', onPieceDragEnd);
+    }
+    function onPieceDragMove(e) {
+        if (!pieceDrag) return;
+        const p = tray[pieceDrag.i];
+        if (!pieceDrag.moved) {
+            if (Math.abs(e.clientX - pieceDrag.sx) + Math.abs(e.clientY - pieceDrag.sy) < 8) return;
+            pieceDrag.moved = true;
+            selected = pieceDrag.i;
+            // Fantôme à l'échelle de la grille, décalé au-dessus du doigt
+            pieceDrag.ghost = _blocsMini(p.shape, CELL + 3, p.color);
+            pieceDrag.ghost.style.cssText += 'position:fixed;z-index:300;pointer-events:none;opacity:.85;';
+            document.body.appendChild(pieceDrag.ghost);
+            render();
+        }
+        const maxC = Math.max(...p.shape.map(s => s[1])) + 1;
+        const maxR = Math.max(...p.shape.map(s => s[0])) + 1;
+        const aimX = e.clientX, aimY = e.clientY - 70; // la pièce « flotte » au-dessus du doigt
+        pieceDrag.ghost.style.left = (aimX - (maxC * (CELL + 3)) / 2) + 'px';
+        pieceDrag.ghost.style.top = (aimY - (maxR * (CELL + 3)) / 2) + 'px';
+        // Case visée sous le fantôme
+        const rect = gridEl.getBoundingClientRect();
+        const gx = Math.floor((aimX - rect.left - 6) / (CELL + 3));
+        const gy = Math.floor((aimY - rect.top - 6) / (CELL + 3));
+        const target = (gx >= 0 && gx < S && gy >= 0 && gy < S) ? { r: gy, c: gx } : null;
+        const changed = JSON.stringify(target) !== JSON.stringify(pieceDrag.target);
+        pieceDrag.target = target;
+        if (changed) render();
+    }
+    function onPieceDragEnd() {
+        if (!pieceDrag) return;
+        document.removeEventListener('pointermove', onPieceDragMove);
+        document.removeEventListener('pointerup', onPieceDragEnd);
+        document.removeEventListener('pointercancel', onPieceDragEnd);
+        const d = pieceDrag;
+        pieceDrag = null;
+        if (d.ghost) d.ghost.remove();
+        if (!d.moved) {
+            // Simple tap : bascule la sélection (ancien mode tap-tap)
+            selected = selected === d.i ? -1 : d.i;
+            haptic(8);
+            render();
+            return;
+        }
+        if (d.target) {
+            place(d.target.r, d.target.c);
+        } else {
+            selected = -1;
+            render();
+        }
     }
 
     function place(rt, ct) {

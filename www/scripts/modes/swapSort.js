@@ -8,8 +8,9 @@ function showExampleSwapSort(day, row, vals) {
     const ex = document.createElement('div');
     ex.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:8px;margin:6px auto;';
 
+    // Colonne verticale (retour #73 : l'horizontal faisait défiler l'écran)
     const ligne = document.createElement('div');
-    ligne.style.cssText = 'display:flex;align-items:center;gap:6px;justify-content:center;';
+    ligne.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:6px;justify-content:center;';
     [12, 45, 27, 63].forEach((v, i) => {
         const t = document.createElement('div');
         t.style.cssText = 'width:38px;height:38px;border-radius:9px;background:#4A6CFA;color:#FFFFFF;font-weight:900;font-size:.95rem;display:flex;align-items:center;justify-content:center;';
@@ -19,14 +20,14 @@ function showExampleSwapSort(day, row, vals) {
         if (i === 1) {
             const fl = document.createElement('div');
             fl.style.cssText = 'font-weight:900;color:#F5B227;font-size:1.1rem;';
-            fl.textContent = '⇄';
+            fl.textContent = '⇅';
             ligne.appendChild(fl);
         }
     });
 
     const note = document.createElement('div');
     note.style.cssText = 'font-size:.78rem;color:#8B90A0;font-weight:bold;';
-    note.textContent = 'Échangez deux voisines pour tout trier';
+    note.textContent = 'Échangez deux voisines pour trier de haut en bas';
 
     ex.append(ligne, note);
     row.style.flexDirection = 'column';
@@ -66,13 +67,15 @@ function startGameSwapSort() {
     hud.style.cssText = 'font-weight:900;color:#23262F;font-size:1.25rem;margin-bottom:10px;text-align:center;';
     board.appendChild(hud);
 
+    // Retour #73 : rangée VERTICALE — plus de défilement horizontal,
+    // le tri se lit de haut (petit) en bas (grand)
     const rangee = document.createElement('div');
-    rangee.style.cssText = 'display:flex;gap:8px;justify-content:center;flex-wrap:nowrap;';
+    rangee.style.cssText = 'display:flex;flex-direction:column;gap:8px;align-items:center;';
     board.appendChild(rangee);
 
     const aide = document.createElement('div');
     aide.style.cssText = 'font-size:.85rem;color:#8B90A0;font-weight:bold;margin-top:10px;text-align:center;';
-    aide.textContent = 'On n\'échange que deux tuiles VOISINES';
+    aide.textContent = 'On n\'échange que deux tuiles VOISINES · plus petit en haut';
     board.appendChild(aide);
 
     const astuce = document.createElement('div');
@@ -94,11 +97,11 @@ function startGameSwapSort() {
         rangee.innerHTML = '';
         valeurs.forEach((v, i) => {
             const t = document.createElement('div');
-            t.style.cssText = 'width:46px;height:46px;border-radius:10px;background:#4A6CFA;color:#FFFFFF;font-weight:900;font-size:1.1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;touch-action:manipulation;user-select:none;transition:transform .12s;';
+            t.style.cssText = 'width:110px;height:42px;border-radius:10px;background:#4A6CFA;color:#FFFFFF;font-weight:900;font-size:1.1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;touch-action:manipulation;user-select:none;transition:transform .12s;';
             t.textContent = v;
             if (sel !== null) {
                 if (sel === i) {
-                    t.style.transform = 'translateY(-5px)';
+                    t.style.transform = 'translateX(8px)';
                     t.style.boxShadow = '0 0 0 3px #FFFFFF, 0 0 0 6px #F5B227';
                 } else if (Math.abs(sel - i) === 1) {
                     // Voisine échangeable : anneau vert pulsant

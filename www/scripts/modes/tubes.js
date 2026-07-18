@@ -45,20 +45,23 @@ function startGameTubes() {
     board.style.flexDirection = 'column';
     board.style.alignItems = 'center';
 
-    const COUL = ['#4A6CFA', '#34B871', '#F5B227', '#E0533D'];
+    // Retour #72 : format agrandi — 8 familles × 5 jetons, 10 tubes
+    // (8 pleins + 2 vides), sur deux rangées.
+    const F = 8, V = 5, T = F + 2;
+    const COUL = ['#4A6CFA', '#34B871', '#F5B227', '#E0533D', '#8B5CF6', '#1E7A74', '#E8752A', '#D9469A'];
 
     function estResolu(tubes) {
         let complets = 0;
         for (const tube of tubes) {
-            if (tube.length !== 4) continue;
+            if (tube.length !== V) continue;
             const f = tube[0].f;
             let ok = true;
-            for (let i = 0; i < 4; i++) {
-                if (tube[i].f !== f || tube[i].v !== 4 - i) { ok = false; break; }
+            for (let i = 0; i < V; i++) {
+                if (tube[i].f !== f || tube[i].v !== V - i) { ok = false; break; }
             }
             if (ok) complets++;
         }
-        return complets === 4;
+        return complets === F;
     }
 
     // Génération solvable : 30-40 coups inverses depuis l'état résolu.
@@ -70,20 +73,21 @@ function startGameTubes() {
     function generer() {
         let secours = null;
         for (let essai = 0; essai < 120; essai++) {
-            const tubes = [0, 1, 2, 3].map(f => [4, 3, 2, 1].map(v => ({ f: f, v: v })));
-            tubes.push([]);
-            const objectif = 30 + Math.floor(Math.random() * 11); // 30 à 40
+            const tubes = Array.from({ length: F }, (_, f) =>
+                Array.from({ length: V }, (_, i) => ({ f: f, v: V - i })));
+            tubes.push([], []);
+            const objectif = 70 + Math.floor(Math.random() * 21); // 70 à 90
             let faits = 0;
             while (faits < objectif) {
                 const coups = [];
-                for (let a = 0; a < 5; a++) {
+                for (let a = 0; a < T; a++) {
                     const tA = tubes[a];
                     if (!tA.length) continue;
                     const jeton = tA[tA.length - 1];
                     const dessous = tA[tA.length - 2];
                     if (dessous && !(dessous.f === jeton.f && dessous.v === jeton.v + 1)) continue;
-                    for (let b = 0; b < 5; b++) {
-                        if (b !== a && tubes[b].length < 4) coups.push([a, b]);
+                    for (let b = 0; b < T; b++) {
+                        if (b !== a && tubes[b].length < V) coups.push([a, b]);
                     }
                 }
                 if (!coups.length) break;
@@ -92,13 +96,14 @@ function startGameTubes() {
                 faits++;
             }
             if (faits >= objectif && !estResolu(tubes)) return tubes;
-            if (faits >= 8 && !estResolu(tubes) && !secours) secours = tubes;
+            if (faits >= 20 && !estResolu(tubes) && !secours) secours = tubes;
         }
         if (secours) return secours;
         // Dernier recours (théorique) : un coup inverse depuis l'état résolu
-        const tubes = [0, 1, 2, 3].map(f => [4, 3, 2, 1].map(v => ({ f: f, v: v })));
-        tubes.push([]);
-        tubes[4].push(tubes[0].pop());
+        const tubes = Array.from({ length: F }, (_, f) =>
+            Array.from({ length: V }, (_, i) => ({ f: f, v: V - i })));
+        tubes.push([], []);
+        tubes[F].push(tubes[0].pop());
         return tubes;
     }
 
@@ -121,7 +126,7 @@ function startGameTubes() {
     board.appendChild(hud);
 
     const zone = document.createElement('div');
-    zone.style.cssText = 'display:flex;gap:10px;justify-content:center;align-items:flex-end;';
+    zone.style.cssText = 'display:flex;flex-wrap:wrap;gap:12px 8px;justify-content:center;align-items:flex-end;max-width:360px;';
     board.appendChild(zone);
 
     function render() {
@@ -131,14 +136,14 @@ function startGameTubes() {
         zone.innerHTML = '';
         tubes.forEach((tube, i) => {
             const tb = document.createElement('div');
-            // 5 tubes de 58px + 4 gaps de 10px = 330px : tient sur ~390px
-            tb.style.cssText = 'width:58px;height:214px;background:#EEF2FF;border:2px solid #C7D2F5;border-radius:14px 14px 26px 26px;display:flex;flex-direction:column-reverse;align-items:center;padding:6px 0;gap:6px;box-sizing:border-box;touch-action:manipulation;transition:transform .12s;';
+            // 5 tubes par rangée : 5×62px + gaps ≈ 350px, sur 2 rangées
+            tb.style.cssText = 'width:62px;height:222px;background:#EEF2FF;border:2px solid #C7D2F5;border-radius:12px 12px 24px 24px;display:flex;flex-direction:column-reverse;align-items:center;padding:5px 0;gap:4px;box-sizing:border-box;touch-action:manipulation;transition:transform .12s;';
             tube.forEach((jeton, j) => {
                 const el = document.createElement('div');
-                el.style.cssText = 'width:42px;height:42px;border-radius:50%;background:' + COUL[jeton.f] + ';color:#FFFFFF;font-weight:900;font-size:1.1rem;display:flex;align-items:center;justify-content:center;pointer-events:none;transition:transform .12s;flex-shrink:0;';
+                el.style.cssText = 'width:36px;height:36px;border-radius:50%;background:' + COUL[jeton.f] + ';color:#FFFFFF;font-weight:900;font-size:.95rem;display:flex;align-items:center;justify-content:center;pointer-events:none;transition:transform .12s;flex-shrink:0;';
                 el.textContent = jeton.v;
                 if (sel === i && j === tube.length - 1) {
-                    el.style.transform = 'translateY(-14px)';
+                    el.style.transform = 'translateY(-10px)';
                     el.style.boxShadow = '0 0 0 3px #FFFFFF, 0 0 0 5px #F5B227';
                 }
                 tb.appendChild(el);
@@ -162,7 +167,7 @@ function startGameTubes() {
         const src = tubes[sel], dst = tubes[i];
         const jeton = src[src.length - 1];
         const sommet = dst[dst.length - 1];
-        const legal = dst.length < 4 && (!sommet || (sommet.f === jeton.f && sommet.v === jeton.v + 1));
+        const legal = dst.length < V && (!sommet || (sommet.f === jeton.f && sommet.v === jeton.v + 1));
 
         if (!legal) {
             // Coup illégal : secousse, pas de pénalité, la sélection reste
@@ -181,7 +186,7 @@ function startGameTubes() {
 
         if (estResolu(tubes)) {
             fini = true;
-            endGame('Quatre tubes parfaitement rangés !', true);
+            endGame('Huit tubes parfaitement rangés — impressionnant !', true);
         }
     }
 

@@ -105,26 +105,37 @@ function startGamePaires() {
         return null;
     }
 
-    // Génération vérifiée : l'effacement 1→10 doit être possible à chaque étape
-    let cells; // cells[idx] = numéro de paire (1..10)
+    // Retour #71 : la contrainte d'ordre croissant est SUPPRIMÉE — on
+    // relie les paires dans l'ordre qu'on veut (Onet classique).
+    // Génération vérifiée : une partie gloutonne doit pouvoir tout vider.
+    let cells; // cells[idx] = numéro de paire (1..PAIRS)
     let ok = false;
     for (let attempt = 0; attempt < 300 && !ok; attempt++) {
         const vals = [];
         for (let v = 1; v <= PAIRS; v++) { vals.push(v, v); }
         vals.sort(() => Math.random() - 0.5);
         cells = vals.slice();
-        // Simulation de la partie parfaite
+        // Simulation gloutonne : tant qu'il reste des tuiles, relier
+        // n'importe quelle paire connectable
         const g = cells.map(() => true);
-        ok = true;
-        for (let v = 1; v <= PAIRS; v++) {
-            const [i, j] = cells.map((x, k) => x === v ? k : -1).filter(k => k !== -1);
-            if (!pathBetween(g, i, j)) { ok = false; break; }
-            g[i] = false; g[j] = false;
+        let remaining = PAIRS;
+        let progress = true;
+        while (remaining > 0 && progress) {
+            progress = false;
+            for (let v = 1; v <= PAIRS && !progress; v++) {
+                const idxs = cells.map((x, k) => (x === v && g[k]) ? k : -1).filter(k => k !== -1);
+                if (idxs.length === 2 && pathBetween(g, idxs[0], idxs[1])) {
+                    g[idxs[0]] = false; g[idxs[1]] = false;
+                    remaining--;
+                    progress = true;
+                }
+            }
         }
+        ok = remaining === 0;
     }
 
     const done = cells.map(() => false);
-    let next = 1;
+    let cleared = 0;
     let selected = -1;
 
     const hud = document.createElement('div');
@@ -144,8 +155,8 @@ function startGamePaires() {
     board.appendChild(wrap);
 
     function render() {
-        hud.innerHTML = `<span>Cherchez les <b style="color:#4A6CFA">${next}</b></span>` +
-            `<span>Paires : <b style="color:#34B871">${next - 1}/${PAIRS}</b></span>`;
+        hud.innerHTML = `<span>Reliez les paires identiques</span>` +
+            `<span>Paires : <b style="color:#34B871">${cleared}/${PAIRS}</b></span>`;
         grid.innerHTML = '';
         cells.forEach((v, idx) => {
             const i = idx;
@@ -183,16 +194,16 @@ function startGamePaires() {
     }
 
     function tap(idx) {
-        const v = cells[idx];
-        if (v !== next) {
-            // Mauvais numéro : simple secousse, on cherche le `next`
-            haptic(30);
-            const el = grid.children[idx];
-            if (el) { el.style.animation = 'wobble .25s'; setTimeout(() => { el.style.animation = ''; }, 300); }
-            return;
-        }
         if (selected === -1) { selected = idx; haptic(8); render(); return; }
         if (selected === idx) { selected = -1; render(); return; }
+
+        if (cells[selected] !== cells[idx]) {
+            // Pas la même valeur : la sélection bascule sur la nouvelle tuile
+            haptic(20);
+            selected = idx;
+            render();
+            return;
+        }
 
         const g = cells.map((x, k) => !done[k]);
         const trail = pathBetween(g, selected, idx);
@@ -200,15 +211,15 @@ function startGamePaires() {
             done[selected] = true; done[idx] = true;
             flashPath(trail);
             selected = -1;
-            next++;
+            cleared++;
             haptic([10, 30, 10]);
             render();
-            if (next > PAIRS) {
-                endGame('Toutes les paires reliées, dans l’ordre parfait !', true);
+            if (cleared >= PAIRS) {
+                endGame('Toutes les paires reliées — plateau limpide !', true);
             }
         } else {
             haptic(40);
-            resultDisplay.textContent = 'Pas de chemin en 2 virages trouvé — réessayez.';
+            resultDisplay.textContent = 'Pas de chemin en 2 virages — libérez le passage avec d’autres paires.';
             resultDisplay.style.color = '#E0533D';
             setTimeout(() => { if (!isPaused) resultDisplay.textContent = ''; }, 1500);
             selected = -1;

@@ -1,8 +1,8 @@
 // ─── Mode : Chronologie ──────────────────────────────────────────
-// Culture générale : toucher 5 cartes de la plus petite valeur à la
-// plus grande. Chaque bonne réponse fige la carte avec son rang et
-// révèle sa valeur réelle. 1 joker : la première erreur est
-// pardonnée (la carte secoue). Données factuelles embarquées.
+// Culture générale : composer son ordre sur 5 emplacements puis
+// valider. Les bonnes positions se verrouillent en vert (valeur
+// révélée), les autres reviennent dans la réserve. On recommence
+// jusqu'au sans-faute. Données factuelles embarquées.
 
 const DATASETS = [
     {
@@ -160,7 +160,7 @@ function showExampleChronologie(day, row, vals) {
 
     const note = document.createElement('div');
     note.style.cssText = 'font-size:.78rem;color:#8B90A0;font-weight:bold;';
-    note.textContent = 'Touchez les cartes dans l\'ordre — 1 joker';
+    note.textContent = 'Placez les cartes puis validez — les bonnes se verrouillent';
 
     ex.append(q, cardsRow, note);
     row.style.flexDirection = 'column';
@@ -168,90 +168,154 @@ function showExampleChronologie(day, row, vals) {
 }
 
 function startGameChronologie() {
+    // Retour #79 : on COMPOSE son ordre, on VALIDE, le jeu dit position
+    // par position ce qui est juste (verrouillé en vert) et on réessaie
+    // jusqu'à tout trouver. Pas de défaite : le chrono départage.
     board.style.display = 'flex';
     board.style.flexDirection = 'column';
     board.style.alignItems = 'center';
+    board.style.gap = '12px';
 
     const set = DATASETS[Math.floor(Math.random() * DATASETS.length)];
     const sorted = [...set.items].sort((a, b) => a.valeur - b.valeur);
-    const shuffled = [...set.items].sort(() => Math.random() - 0.5);
-    let next = 0;
-    let jokerUsed = false;
+    const items = [...set.items].sort(() => Math.random() - 0.5);
+
+    // slots[i] = item posé en position i (null si vide) ; locked[i] = validé
+    const slots = [null, null, null, null, null];
+    const locked = [false, false, false, false, false];
+    let essais = 0;
     let finished = false;
 
     const header = document.createElement('div');
-    header.style.cssText = 'text-align:center;margin-bottom:6px;';
+    header.style.cssText = 'text-align:center;';
     header.innerHTML = `<div style="font-weight:900;color:#23262F;font-size:1.02rem;">${set.question}</div>` +
         `<div style="font-weight:bold;color:#8B90A0;font-size:.8rem;">Unité : ${set.unite}</div>`;
     board.appendChild(header);
 
     const hud = document.createElement('div');
-    hud.style.cssText = 'display:flex;gap:18px;justify-content:center;font-weight:bold;color:#8B90A0;font-size:.9rem;margin-bottom:14px;';
+    hud.style.cssText = 'display:flex;gap:18px;justify-content:center;font-weight:bold;color:#8B90A0;font-size:.9rem;';
     board.appendChild(hud);
-    function renderHud() {
-        hud.innerHTML = `<span>Trouvées <b style="color:#4A6CFA">${next}/5</b></span>` +
-            (jokerUsed
-                ? '<span style="color:#8B90A0">Joker : utilisé</span>'
-                : '<span style="color:#F5B227">Joker : ● disponible</span>');
-    }
-    renderHud();
 
-    const zone = document.createElement('div');
-    zone.style.cssText = 'display:flex;flex-wrap:wrap;gap:12px;justify-content:center;max-width:420px;padding-top:9px;';
-    board.appendChild(zone);
+    const slotZone = document.createElement('div');
+    slotZone.style.cssText = 'display:flex;flex-direction:column;gap:8px;align-items:stretch;min-width:250px;';
+    board.appendChild(slotZone);
 
-    const cards = [];
-    shuffled.forEach(item => {
-        const card = _chronoCard(item.label, false);
-        card.style.cursor = 'pointer';
-        card._item = item;
-        cards.push(card);
+    const validateBtn = document.createElement('button');
+    validateBtn.className = 'btn btn-plum';
+    validateBtn.textContent = 'Valider mon ordre';
+    board.appendChild(validateBtn);
 
-        card.addEventListener('click', () => {
-            if (isPaused || finished || card._done) return;
+    const poolZone = document.createElement('div');
+    poolZone.style.cssText = 'display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:400px;';
+    board.appendChild(poolZone);
 
-            if (item.valeur === sorted[next].valeur && item.label === sorted[next].label) {
-                card._done = true;
-                card.style.pointerEvents = 'none';
-                card.style.borderColor = '#34B871';
-                card._val.textContent = _chronoFmt(item.valeur, set.unite);
-                card._val.style.color = '#34B871';
-                _chronoRankChip(card, next + 1);
-                next++;
-                haptic(8);
-                renderHud();
-                if (next >= 5) {
-                    finished = true;
-                    endGame(jokerUsed
-                        ? 'Chronologie complète — le joker a bien servi !'
-                        : 'Chronologie parfaite, sans joker !', true);
+    function inSlots(item) { return slots.indexOf(item) !== -1; }
+
+    function render() {
+        const lockedCount = locked.filter(Boolean).length;
+        hud.innerHTML = `<span>Bien placées : <b style="color:#34B871">${lockedCount}/5</b></span>` +
+            `<span>Essais : <b style="color:#4A6CFA">${essais}</b></span>`;
+
+        slotZone.innerHTML = '';
+        slots.forEach((item, i) => {
+            const line = document.createElement('div');
+            line.style.cssText = 'display:flex;align-items:center;gap:10px;';
+            const num = document.createElement('div');
+            num.style.cssText = 'width:26px;height:26px;border-radius:50%;background:#EEF2FF;color:#3553D1;' +
+                'font-weight:900;font-size:.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;';
+            num.textContent = i + 1;
+            line.appendChild(num);
+            if (item) {
+                const card = _chronoCard(item.label, false);
+                card.style.flex = '1';
+                if (locked[i]) {
+                    card.style.borderColor = '#34B871';
+                    card._val.textContent = _chronoFmt(item.valeur, set.unite);
+                    card._val.style.color = '#34B871';
+                } else {
+                    card.style.cursor = 'pointer';
+                    card.addEventListener('pointerdown', (e) => {
+                        e.preventDefault();
+                        if (isPaused || finished) return;
+                        slots[i] = null; // renvoyer au réservoir
+                        haptic(8);
+                        render();
+                    });
                 }
-            } else if (!jokerUsed) {
-                // Première erreur pardonnée : la carte secoue
-                jokerUsed = true;
-                haptic(40);
-                card.classList.add('wobble-anim');
-                setTimeout(() => card.classList.remove('wobble-anim'), 600);
-                renderHud();
-                resultDisplay.textContent = 'Joker utilisé — première erreur pardonnée !';
-                resultDisplay.style.color = '#F5B227';
-                setTimeout(() => {
-                    if (!isPaused && !finished) resultDisplay.textContent = '';
-                }, 1600);
+                line.appendChild(card);
             } else {
-                finished = true;
-                haptic(60);
-                card.style.borderColor = '#E0533D';
-                // Révèle toutes les valeurs pour apprendre quelque chose
-                cards.forEach(c => {
-                    if (!c._done) {
-                        c._val.textContent = _chronoFmt(c._item.valeur, set.unite);
-                        c._val.style.color = '#E0533D';
-                    }
-                });
-                endGame('Raté — toutes les valeurs sont révélées.', false);
+                const empty = document.createElement('div');
+                empty.style.cssText = 'flex:1;height:48px;border:2px dashed #C9D4FB;border-radius:12px;background:#F4F6FA;';
+                line.appendChild(empty);
+            }
+            slotZone.appendChild(line);
+        });
+
+        poolZone.innerHTML = '';
+        items.forEach(item => {
+            if (inSlots(item)) return;
+            const card = _chronoCard(item.label, true);
+            card.style.cursor = 'pointer';
+            card.addEventListener('pointerdown', (e) => {
+                e.preventDefault();
+                if (isPaused || finished) return;
+                const free = slots.findIndex((s, k) => s === null && !locked[k]);
+                if (free === -1) return;
+                slots[free] = item;
+                haptic(8);
+                render();
+            });
+            poolZone.appendChild(card);
+        });
+
+        const full = slots.every(s => s !== null);
+        validateBtn.style.opacity = full ? '1' : '.4';
+        validateBtn.disabled = !full;
+    }
+
+    validateBtn.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        if (isPaused || finished || slots.some(s => s === null)) return;
+        essais++;
+        let allGood = true;
+        const wrongIdx = [];
+        slots.forEach((item, i) => {
+            if (locked[i]) return;
+            if (item.valeur === sorted[i].valeur && item.label === sorted[i].label) {
+                locked[i] = true;
+                haptic(8);
+            } else {
+                allGood = false;
+                wrongIdx.push(i);
             }
         });
-        zone.appendChild(card);
+        if (allGood) {
+            finished = true;
+            render();
+            endGame(`Chronologie reconstituée en ${essais} essai${essais > 1 ? 's' : ''} !`, true);
+            return;
+        }
+        // Feedback : les mauvaises positions clignotent en rouge puis
+        // retournent au réservoir, les bonnes restent verrouillées en vert
+        haptic(40);
+        render();
+        const lines = slotZone.children;
+        wrongIdx.forEach(i => {
+            const card = lines[i] && lines[i].children[1];
+            if (card) {
+                card.style.borderColor = '#E0533D';
+                card.style.animation = 'wobble .3s';
+            }
+        });
+        resultDisplay.textContent = `${wrongIdx.length} carte${wrongIdx.length > 1 ? 's' : ''} mal placée${wrongIdx.length > 1 ? 's' : ''} — réessayez !`;
+        resultDisplay.style.color = '#E0533D';
+        setTimeout(() => {
+            if (isPaused || finished) return;
+            wrongIdx.forEach(i => { slots[i] = null; });
+            resultDisplay.textContent = '';
+            render();
+        }, 750);
     });
+
+    render();
 }

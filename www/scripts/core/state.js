@@ -43,15 +43,15 @@ let returnScreen = 'home'; // écran d'origine avant d'entrer dans un jour (reto
 // degrade→memoCroissant (mémoire), sur demande explicite du produit.
 const JANUARY_LINEUP = [
     'orderChain', 'cascade', 'insertion', 'fontaine', 'metronome',
-    'cadenas', 'memoCroissant', 'solitaire', 'blocs', 'dominoOrder',
+    'code', 'memoCroissant', 'solitaire', 'blocs', 'dominoOrder',
     'paires', 'tubes', 'swapSort', 'boulons', 'fileBloquee',
-    'grille', 'hanoi', 'etageres', 'futoshiki', 'balance',
-    'ordreCache', 'indices', 'chronologie', 'conveyorBelt', 'deux048',
-    'embouteillage', 'tripleOrdre', 'photoClasse', 'filsEmmeles', 'fusion',
-    'chemin'
+    'grille', 'hanoi', 'mahjong', 'futoshiki', 'balance',
+    'ordreCache', 'indices', 'chronologie', 'piles', 'deux048',
+    'embouteillage', 'tripleOrdre', 'photoClasse', 'bulles', 'fusion',
+    'nonogramme'
 ];
 const LEGACY_MODES = Object.keys(GAME_MODES)
-    .filter(k => !JANUARY_LINEUP.includes(k) || ['orderChain', 'cascade', 'insertion', 'conveyorBelt'].includes(k));
+    .filter(k => !JANUARY_LINEUP.includes(k) || ['orderChain', 'cascade', 'insertion'].includes(k));
 
 let ALL_DAYS = [];
 let legacyIdx = 0;

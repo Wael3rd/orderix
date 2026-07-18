@@ -74,8 +74,8 @@ function startGame() {
         startGameFontaine();
     } else if (mode.isMetronome) {
         startGameMetronome();
-    } else if (mode.isCadenas) {
-        startGameCadenas();
+    } else if (mode.isCode) {
+        startGameCode();
     } else if (mode.isMemoCroissant) {
         startGameMemoCroissant();
     } else if (mode.isSolitaire) {
@@ -96,8 +96,8 @@ function startGame() {
         startGameHanoi();
     } else if (mode.isFileBloquee) {
         startGameFileBloquee();
-    } else if (mode.isEtageres) {
-        startGameEtageres();
+    } else if (mode.isMahjong) {
+        startGameMahjong();
     } else if (mode.isGrille) {
         startGameGrille();
     } else if (mode.isRangement) {
@@ -120,10 +120,10 @@ function startGame() {
         startGameTripleOrdre();
     } else if (mode.isPhotoClasse) {
         startGamePhotoClasse();
-    } else if (mode.isFilsEmmeles) {
-        startGameFilsEmmeles();
-    } else if (mode.isChemin) {
-        startGameChemin();
+    } else if (mode.isBulles) {
+        startGameBulles();
+    } else if (mode.isNonogramme) {
+        startGameNonogramme();
     } else if (mode.isFusion) {
         startGameFusion();
     } else if (mode.isReflex) {
@@ -138,8 +138,8 @@ function startGame() {
         startGameSpeedLetters();
     } else if (mode.isDragDrop) {
         startGameDragDrop();
-    } else if (mode.isConveyor) {
-        startGameConveyor();
+    } else if (mode.isPiles) {
+        startGamePiles();
     } else if (mode.isSpeedQuiz) {
         startGameSpeedQuiz();
     } else if (mode.isGuessNumber) {

@@ -53,11 +53,12 @@ function startGameMemoCroissant() {
     for (let v = 1; v <= PAIRS; v++) pool.push(v, v);
     const cells = pool.sort(() => Math.random() - 0.5);
 
+    // Retour #62 : plus de vies — la mémoire se travaille sans punition,
+    // seul le chrono départage.
     const solved = cells.map(() => false);
     let up = []; // indices actuellement retournés (0, 1 ou 2 pendant la comparaison)
     let lock = false;
     let next = 1;
-    let vies = 3;
     let over = false;
 
     const hud = document.createElement('div');
@@ -70,7 +71,7 @@ function startGameMemoCroissant() {
 
     function render() {
         hud.innerHTML = `<span>Cherchez la paire : <b style="color:#4A6CFA">${next}</b></span>` +
-            `<span>Vies : <b style="color:${vies <= 1 ? '#E0533D' : '#34B871'}">${'●'.repeat(vies)}${'○'.repeat(3 - vies)}</b></span>`;
+            `<span>Trouvées : <b style="color:#34B871">${next - 1}/${PAIRS}</b></span>`;
         grid.innerHTML = '';
         cells.forEach((v, i) => {
             const el = _memoCarte(v, 56, { solved: solved[i], up: up.includes(i) });
@@ -106,13 +107,9 @@ function startGameMemoCroissant() {
                     up = []; lock = false; render();
                 }
             } else {
-                vies--;
+                // Paire manquée : on mémorise et on continue, sans pénalité
                 haptic(30);
                 up = []; lock = false; render();
-                if (vies <= 0) {
-                    over = true;
-                    endGame('Plus de vies — réessayez demain sur un autre jour !', false);
-                }
             }
         }, 700);
     }

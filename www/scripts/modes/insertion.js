@@ -72,16 +72,58 @@ function startGameInsertion() {
     const toPlace = candidates.length;
 
     const hud = document.createElement('div');
-    hud.style.cssText = 'display:flex;gap:18px;align-items:center;justify-content:center;font-weight:bold;color:#8B90A0;font-size:.95rem;margin-bottom:10px;';
+    hud.style.cssText = 'display:flex;gap:18px;align-items:center;justify-content:center;font-weight:bold;color:#8B90A0;font-size:.95rem;margin-bottom:8px;';
     board.appendChild(hud);
 
+    // Retour #69 : barre de temps par insertion — 8 s pour placer,
+    // sinon une vie saute et le chrono repart.
+    const TEMPS_MS = 8000;
+    const barWrap = document.createElement('div');
+    barWrap.className = 'timebar-wrap';
+    barWrap.style.marginBottom = '14px';
+    const bar = document.createElement('div');
+    bar.className = 'timebar';
+    barWrap.appendChild(bar);
+    board.appendChild(barWrap);
+
+    // Retour #69 (mise en page) : le candidat dans une carte propre,
+    // bien séparé de la rangée
     const candZone = document.createElement('div');
-    candZone.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:4px;margin-bottom:16px;';
+    candZone.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:18px;' +
+        'background:#fff;border-radius:16px;padding:14px 26px;box-shadow:0 1px 3px rgba(35,38,47,.08);';
     board.appendChild(candZone);
 
     const shelfZone = document.createElement('div');
-    shelfZone.style.cssText = 'display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:2px;row-gap:14px;max-width:100%;';
+    shelfZone.style.cssText = 'display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:2px;row-gap:14px;max-width:100%;' +
+        'background:#fff;border-radius:16px;padding:14px 10px;box-shadow:0 1px 3px rgba(35,38,47,.08);';
     board.appendChild(shelfZone);
+
+    let over = false;
+    function armTimer() {
+        let left = TEMPS_MS;
+        bar.style.width = '100%';
+        clearInterval(window.speedTimer);
+        window.speedTimer = setInterval(() => {
+            if (isPaused || over) return;
+            left -= 50;
+            bar.style.width = Math.max(0, (left / TEMPS_MS) * 100) + '%';
+            if (left <= 0) {
+                clearInterval(window.speedTimer);
+                lives--;
+                haptic(50);
+                renderHud();
+                if (lives <= 0) {
+                    over = true;
+                    endGame('Le temps a eu raison de la rangée…', false);
+                } else {
+                    resultDisplay.textContent = 'Trop lent — une vie en moins !';
+                    resultDisplay.style.color = '#E0533D';
+                    setTimeout(() => { if (!isPaused && !over) resultDisplay.textContent = ''; }, 1200);
+                    armTimer();
+                }
+            }
+        }, 50);
+    }
 
     function renderHud() {
         hud.innerHTML = `<span>Placés <b style="color:#4A6CFA">${placed}/${toPlace}</b></span>` +
@@ -111,7 +153,7 @@ function startGameInsertion() {
             slot.textContent = '+';
             const slotIdx = s;
             slot.addEventListener('click', () => {
-                if (isPaused) return;
+                if (isPaused || over) return;
                 const left = slotIdx > 0 ? shelf[slotIdx - 1] : null;
                 const right = slotIdx < shelf.length ? shelf[slotIdx] : null;
                 const ok = (left === null || left < cand) && (right === null || cand < right);
@@ -121,11 +163,14 @@ function startGameInsertion() {
                     placed++;
                     haptic(10);
                     if (placed >= toPlace) {
+                        over = true;
+                        clearInterval(window.speedTimer);
                         render();
                         // La rangée finale s'affiche complète, victoire
                         endGame('Rangée parfaitement ordonnée !', true);
                         renderFinalShelf();
                     } else {
+                        armTimer();
                         render();
                     }
                 } else {
@@ -140,6 +185,8 @@ function startGameInsertion() {
                         const slots = shelfZone.querySelectorAll('.slot-btn');
                         const target = slots[correctIdx === -1 ? shelf.length : correctIdx];
                         if (target) target.classList.add('slot-correct');
+                        over = true;
+                        clearInterval(window.speedTimer);
                         endGame('Plus de vies — le bon emplacement est en vert.', false);
                     }
                 }
@@ -157,4 +204,5 @@ function startGameInsertion() {
     }
 
     render();
+    armTimer();
 }

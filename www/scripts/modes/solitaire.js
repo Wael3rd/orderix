@@ -6,7 +6,10 @@
 // ALTERNANT les couleurs. Aucun coup surligné — c'est à vous de voir.
 // Annulation illimitée. Donne vérifiée gagnable par solveur.
 
-const _SOL_MAX = 12;
+// Retour #63 (« on dirait que la partie est infaisable ») : jeu resserré
+// 1→10 (20 cartes), rappel de gagnabilité affiché et bouton pour
+// recommencer la même donne à zéro.
+const _SOL_MAX = 10;
 const _SOL_SUITS = [
     { color: '#E0533D', soft: '#FCE9E5', symbol: '♦' },
     { color: '#3553D1', soft: '#EEF2FF', symbol: '♣' }
@@ -209,6 +212,10 @@ function startGameSolitaire() {
     tableau.style.cssText = 'display:flex;gap:12px;align-items:flex-start;min-height:280px;';
     board.appendChild(tableau);
 
+    const initialSnap = JSON.stringify({ cols, stock, waste, foundV });
+
+    const btnRow = document.createElement('div');
+    btnRow.style.cssText = 'display:flex;gap:10px;';
     const undoBtn = document.createElement('button');
     undoBtn.className = 'btn btn-ghost';
     undoBtn.textContent = '↩ Annuler';
@@ -220,7 +227,25 @@ function startGameSolitaire() {
         haptic(8);
         render();
     });
-    board.appendChild(undoBtn);
+    const resetBtn = document.createElement('button');
+    resetBtn.className = 'btn btn-ghost';
+    resetBtn.textContent = '↻ Recommencer la donne';
+    resetBtn.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        if (isPaused || over) return;
+        restore(initialSnap);
+        history = [];
+        selected = null;
+        haptic(10);
+        render();
+    });
+    btnRow.append(undoBtn, resetBtn);
+    board.appendChild(btnRow);
+
+    const reassure = document.createElement('div');
+    reassure.style.cssText = 'font-weight:bold;font-size:.78rem;color:#34B871;';
+    reassure.textContent = '✓ Cette donne est vérifiée gagnable — un chemin existe toujours.';
+    board.appendChild(reassure);
 
     function push() { history.push(snapshot()); if (history.length > 200) history.shift(); }
 
