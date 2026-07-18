@@ -169,6 +169,7 @@ function handleFeedback(feedbackValue) {
     feedbackContainer.classList.add('hidden');
     resultActions.classList.remove('hidden');
     document.getElementById('comment-zone').classList.remove('hidden');
+    renderCommentOutbox();
     leaderboardSection.classList.remove('hidden');
     if (feedbackValue !== 'none' && getPlayerName()) {
         dbMessage.textContent = 'Envoi de votre avis…';
@@ -197,19 +198,57 @@ document.getElementById('comment-send').addEventListener('click', () => {
         `**Résultat** : ${result}\n**Env** : ${ENV_NAME}\n\n**Commentaire** :\n${txt}\n\n` +
         `_Envoyé depuis l'app le ${new Date().toLocaleString('fr-FR')}_`;
 
-    // Sauvegarde locale de secours (consultable même sans réseau)
+    // Sauvegarde locale de secours (consultable même sans réseau) —
+    // le titre et le corps sont conservés pour pouvoir RENVOYER tel quel :
+    // le formulaire GitHub restaure parfois son ancien brouillon et ignore
+    // le nouveau texte pré-rempli (retours perdus / doublons #19-#20).
     try {
         const all = JSON.parse(getStorage('orderix_comments') || '[]') || [];
-        all.push({ date: new Date().toISOString(), day: day ? day.id : 0, modeId: day ? day.modeId : '', txt: txt, result: result });
+        all.push({ date: new Date().toISOString(), day: day ? day.id : 0, modeId: day ? day.modeId : '', txt: txt, result: result, title: title, body: body });
         setStorage('orderix_comments', JSON.stringify(all));
     } catch (e) { }
 
-    const url = 'https://github.com/Wael3rd/orderix/issues/new?labels=feedback&title=' +
-        encodeURIComponent(title) + '&body=' + encodeURIComponent(body);
-    window.open(url, '_system');
-    status.textContent = 'GitHub s\'ouvre : appuyez sur « Submit new issue » et Claude prendra le relais.';
+    window.open(_commentIssueUrl(title, body), '_system');
+    status.innerHTML = '<b style="color:var(--rouge)">Vérifiez sur GitHub que c\'est bien CE texte</b> — ' +
+        'si un ancien commentaire s\'affiche, effacez-le d\'abord. Votre texte est gardé dans le filet de secours ci-dessous.';
     box.value = '';
+    renderCommentOutbox();
 });
+
+function _commentIssueUrl(title, body) {
+    return 'https://github.com/Wael3rd/orderix/issues/new?labels=feedback&title=' +
+        encodeURIComponent(title) + '&body=' + encodeURIComponent(body);
+}
+
+// Filet de secours : les 5 derniers commentaires, chacun renvoyable en un tap
+function renderCommentOutbox() {
+    const zone = document.getElementById('comment-outbox');
+    const list = document.getElementById('comment-outbox-list');
+    let all = [];
+    try { all = JSON.parse(getStorage('orderix_comments') || '[]') || []; } catch (e) { }
+    if (!all.length) { zone.classList.add('hidden'); return; }
+    zone.classList.remove('hidden');
+    list.innerHTML = '';
+    all.slice(-5).reverse().forEach(entry => {
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:7px 10px;margin-bottom:6px;' +
+            'background:var(--fond);border-radius:10px;font-size:.8rem;';
+        const label = document.createElement('div');
+        label.style.cssText = 'flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--gris);';
+        label.innerHTML = `<b style="color:var(--encre)">J${entry.day}</b> · ${entry.txt}`;
+        const resend = document.createElement('button');
+        resend.style.cssText = 'flex-shrink:0;padding:6px 12px;border-radius:999px;background:var(--pale);' +
+            'color:var(--bleu-fonce);font-weight:900;font-size:.75rem;';
+        resend.textContent = '↻ Renvoyer';
+        resend.addEventListener('click', () => {
+            const t = entry.title || `[feedback] Jour ${entry.day} — commentaire`;
+            const b = entry.body || `**Commentaire** :\n${entry.txt}\n\n_Renvoyé depuis le filet de secours_`;
+            window.open(_commentIssueUrl(t, b), '_system');
+        });
+        row.append(label, resend);
+        list.appendChild(row);
+    });
+}
 
 // ─── Zone de test (staging uniquement) ───────────────────────────
 if (ENV_NAME === 'staging') {
