@@ -19,7 +19,7 @@ const GAME_MODES = {
     // ── Vague janvier 2027 : les 30 gameplays d'ordonnancement (audit v2.2) ──
     fontaine: { name: "La Fontaine", isFontaine: true, typeAgnostic: true, desc: "Les balles rebondissent dans la boîte : éclatez-les de la plus petite à la plus grande. 2 manches, 3 vies." },
     metronome: { name: "Le Métronome", isMetronome: true, typeAgnostic: true, desc: "Touchez les nombres du plus petit au plus grand avant la fin de chaque barre de temps. Le rythme accélère doucement. 2 vies." },
-    laSuite: { name: "La Suite", isLaSuite: true, typeAgnostic: true, desc: "Chaque carte doit partir sur une pile : sur ↑ posez PLUS GRAND, sur ↓ posez PLUS PETIT. Reculer d'exactement 10 est permis !" },
+    tripeaks: { name: "Le Sommet", isTripeaks: true, typeAgnostic: true, desc: "Démontez la pyramide : enchaînez les cartes à ±1 de la carte active. La pioche vous relance quand ça coince." },
     patience: { name: "Patience", isPatience: true, typeAgnostic: true, desc: "Posez chaque carte sur une colonne VERTE (sa dernière carte est plus petite). Colonne vide = toujours permis. 3 défausses." },
     duel: { name: "Duel", isDuel: true, typeAgnostic: true, desc: "Contre la montre : posez vos cartes à ±1 des piles centrales avant la fin du temps. Les cartes jouables s'illuminent en vert." },
     rummy: { name: "Suites", isRummy: true, typeAgnostic: true, desc: "15 tuiles, 5 suites de 3 nombres consécutifs à reconstituer. 2 vies." },
@@ -38,12 +38,13 @@ const GAME_MODES = {
     ordreCache: { name: "L'Ordre Caché", isOrdreCache: true, typeAgnostic: true, desc: "Devinez l'ordre secret des 5 gemmes en 6 essais. Les ✓ marquent les positions justes." },
     indices: { name: "Les Indices", isIndices: true, typeAgnostic: true, desc: "Lisez les indices, reconstituez l'ordre exact, puis validez. 2 essais." },
     chronologie: { name: "Chronologie", isChronologie: true, typeAgnostic: true, desc: "Ordonnez ces 5 réalités de la plus petite à la plus grande : dates, tailles, poids… 1 joker." },
-    aiguillage: { name: "L'Aiguillage", isAiguillage: true, typeAgnostic: true, desc: "Garez chaque wagon sur une voie — chaque voie doit rester strictement croissante. 3 vies." },
-    ascenseur: { name: "L'Ascenseur", isAscenseur: true, typeAgnostic: true, desc: "Faites monter les passagers dans l'ordre de leurs étages. 2 manches, 1 joker." },
-    guichet: { name: "Le Guichet", isGuichet: true, typeAgnostic: true, desc: "Servez les tickets dans l'ordre… même quand ils se retournent ! 2 vies." },
+    deux048: { name: "2048", isDeux048: true, typeAgnostic: true, desc: "Glissez la grille : deux tuiles égales fusionnent en une plus grande (2+2=4, 4+4=8…). Créez la tuile 128 !" },
+    laFoule: { name: "À Bord !", isLaFoule: true, typeAgnostic: true, desc: "Faites monter les passagères dans le bus dans l'ordre 1, 2, 3… Seules les têtes de colonnes sont accessibles — 3 sièges d'attente pour vous aider." },
+    tripleOrdre: { name: "Triple Suite", isTripleOrdre: true, typeAgnostic: true, desc: "Prenez les tuiles libres pour réunir les trios de nombres qui se suivent (même couleur). Si la barre déborde à 7, c'est perdu !" },
     photoClasse: { name: "Photo de Classe", isPhotoClasse: true, typeAgnostic: true, desc: "Mémorisez qui est où, puis reformez le rang d'origine après le mélange. 2 vies." },
-    memoryChain: { name: "Tri de Mémoire", isMemoryChain: true, typeAgnostic: true, desc: "Observez, puis touchez les cartes cachées dans l'ordre croissant. 3 vies." },
-    fusion: { name: "Fusion", isFusion: true, typeAgnostic: true, desc: "Reliez des chaînes de nombres consécutifs pour les fusionner. Atteignez la tuile 8 !" },
+    filsEmmeles: { name: "Les Fils", isFilsEmmeles: true, typeAgnostic: true, desc: "Échangez deux pastilles à la fois pour dénouer tous les fils vers les prises 1 à 8. Zéro croisement = gagné !" },
+    fusion: { name: "Fusion", isFusion: true, typeAgnostic: true, desc: "Glissez le doigt pour relier des nombres qui SE SUIVENT (1→2→3…) : la chaîne fusionne en une seule tuile plus grande. Fabriquez la tuile 8 !" },
+    chemin: { name: "Le Chemin", isChemin: true, typeAgnostic: true, desc: "Traversez toute la grille case par case, en passant sur chaque jalon doré exactement au bon pas. Touchez votre dernière case pour reculer." },
 
     // ── Tris (validation par bouton) ──
     sortAsc: { name: "Tri Croissant", isSort: true, order: 1, desc: "Touchez les éléments du plus petit au plus grand, puis validez." },
@@ -86,7 +87,7 @@ const GAME_MODES = {
     mathQuizDiv: { name: "Calcul · Divisions", isMathQuiz: true, mathOp: '/', typeAgnostic: true, desc: "3 calculs à résoudre : touchez la bonne réponse." },
     speedLetters: { name: "Lettres Chrono", isSpeedLetters: true, typeAgnostic: true, desc: "Recopiez les lettres avant la fin du temps. Plusieurs manches !" },
     dragDropMath: { name: "Pair ou Impair", isDragDrop: true, typeAgnostic: true, desc: "Touchez un nombre, puis sa boîte : PAIR ou IMPAIR." },
-    conveyorBelt: { name: "Tapis Roulant", isConveyor: true, desc: "Touchez en bas l'objet qui se présente dans le cadre doré." },
+    conveyorBelt: { name: "Tapis Roulant", isConveyor: true, avoidTypes: ['shadow', 'blur', 'opacity', 'radius', 'borderWidth'], desc: "Touchez en bas l'objet qui se présente dans le cadre doré." },
     speedQuiz: { name: "Quiz Rapide", isSpeedQuiz: true, desc: "5 manches : trouvez toutes les bonnes réponses à chaque question." },
     guessNumber: { name: "Le Juste Prix", isGuessNumber: true, typeAgnostic: true, desc: "Devinez le nombre caché grâce aux indices « plus » et « moins »." },
     dobble: { name: "Symbole Commun", isDobble: true, desc: "Un seul élément figure dans les 4 colonnes : sélectionnez-le dans chacune." }

@@ -7,17 +7,19 @@
 // perdue). Seule défaite : blocage réel (aucun domino de la main ne
 // se connecte). Victoire : main vide.
 
+// Dominos affichés à la verticale (retour de test, issue #22) :
+// la chaîne se lit de haut en bas, comme une colonne.
 function _dominoEl(a, b, small) {
     const d = document.createElement('div');
-    const w = small ? 28 : 34, h = Math.round((small ? 28 : 34) * 1.25);
-    d.style.cssText = 'display:flex;flex-shrink:0;border-radius:8px;overflow:hidden;' +
+    const w = small ? 40 : 48, h = Math.round((small ? 40 : 48) * 0.72);
+    d.style.cssText = 'display:flex;flex-direction:column;flex-shrink:0;border-radius:8px;overflow:hidden;' +
         'box-shadow:0 1px 2px rgba(35,38,47,.18);user-select:none;touch-action:manipulation;' +
         'transition:transform .12s ease,box-shadow .12s ease;';
     [a, b].forEach((v, i) => {
         const half = document.createElement('div');
         half.style.cssText = `width:${w}px;height:${h}px;background:#4A6CFA;color:#FFFFFF;font-weight:900;` +
             `font-size:${small ? '.9rem' : '1.05rem'};display:flex;align-items:center;justify-content:center;` +
-            `pointer-events:none;` + (i === 0 ? 'border-right:2px solid #3553D1;' : '');
+            `pointer-events:none;` + (i === 0 ? 'border-bottom:2px solid #3553D1;' : '');
         half.textContent = v;
         d.appendChild(half);
     });
@@ -28,8 +30,10 @@ function showExampleDominoOrder(day, row, vals) {
     const ex = document.createElement('div');
     ex.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:10px;margin:6px auto;';
 
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'display:flex;gap:18px;align-items:center;';
     const chain = document.createElement('div');
-    chain.style.cssText = 'display:flex;gap:6px;align-items:center;';
+    chain.style.cssText = 'display:flex;flex-direction:column;gap:6px;align-items:center;';
     chain.append(_dominoEl(2, 5, true), _dominoEl(5, 3, true));
 
     const hand = document.createElement('div');
@@ -38,7 +42,8 @@ function showExampleDominoOrder(day, row, vals) {
     d.style.boxShadow = '0 0 0 3px #FFFFFF, 0 0 0 5px #F5B227';
     hand.append(d, document.createTextNode('→ se connecte au 3'));
 
-    ex.append(chain, hand);
+    wrap.append(chain, hand);
+    ex.append(wrap);
     row.style.flexDirection = 'column';
     row.append(ex);
 }
@@ -59,18 +64,28 @@ function startGameDominoOrder() {
     hud.style.cssText = 'display:flex;gap:18px;align-items:center;justify-content:center;font-weight:bold;color:#8B90A0;font-size:.95rem;margin-bottom:12px;';
     board.appendChild(hud);
 
+    // Chaîne verticale (haut = extrémité gauche, bas = extrémité droite),
+    // main à côté pour limiter la hauteur de l'écran
+    const mainWrap = document.createElement('div');
+    mainWrap.style.cssText = 'display:flex;gap:26px;justify-content:center;align-items:flex-start;';
+    board.appendChild(mainWrap);
+
     const chainZone = document.createElement('div');
-    chainZone.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center;max-width:420px;margin-bottom:16px;min-height:46px;';
-    board.appendChild(chainZone);
+    chainZone.style.cssText = 'display:flex;flex-direction:column;gap:6px;align-items:center;min-height:46px;min-width:60px;';
+    mainWrap.appendChild(chainZone);
+
+    const handCol = document.createElement('div');
+    handCol.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:6px;';
+    mainWrap.appendChild(handCol);
 
     const handLbl = document.createElement('div');
-    handLbl.style.cssText = 'font-weight:bold;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:#8B90A0;margin-bottom:6px;';
+    handLbl.style.cssText = 'font-weight:bold;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:#8B90A0;';
     handLbl.textContent = 'Votre main :';
-    board.appendChild(handLbl);
+    handCol.appendChild(handLbl);
 
     const handZone = document.createElement('div');
-    handZone.style.cssText = 'display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:420px;';
-    board.appendChild(handZone);
+    handZone.style.cssText = 'display:grid;grid-template-columns:repeat(2,auto);gap:10px;justify-content:center;';
+    handCol.appendChild(handZone);
 
     const leftEnd = () => chain[0][0];
     const rightEnd = () => chain[chain.length - 1][1];
@@ -80,7 +95,7 @@ function startGameDominoOrder() {
 
     function renderHud() {
         hud.innerHTML = `<span>Restants <b style="color:#4A6CFA">${hand.length}</b></span>` +
-            `<span style="font-size:1.3rem;color:#23262F">Extrémités : ◀ <b style="color:#4A6CFA">${leftEnd()}</b> … <b style="color:#4A6CFA">${rightEnd()}</b> ▶</span>`;
+            `<span style="font-size:1.15rem;color:#23262F">Extrémités : ▲ <b style="color:#4A6CFA">${leftEnd()}</b> … <b style="color:#4A6CFA">${rightEnd()}</b> ▼</span>`;
     }
 
     function renderChain() {

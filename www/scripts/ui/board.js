@@ -78,8 +78,8 @@ function showExample(day, container) {
         showExampleFontaine(day, row, vals);
     } else if (mode.isMetronome) {
         showExampleMetronome(day, row, vals);
-    } else if (mode.isLaSuite) {
-        showExampleLaSuite(day, row, vals);
+    } else if (mode.isTripeaks) {
+        showExampleTripeaks(day, row, vals);
     } else if (mode.isPatience) {
         showExamplePatience(day, row, vals);
     } else if (mode.isDuel) {
@@ -116,16 +116,18 @@ function showExample(day, container) {
         showExampleIndices(day, row, vals);
     } else if (mode.isChronologie) {
         showExampleChronologie(day, row, vals);
-    } else if (mode.isAiguillage) {
-        showExampleAiguillage(day, row, vals);
-    } else if (mode.isAscenseur) {
-        showExampleAscenseur(day, row, vals);
-    } else if (mode.isGuichet) {
-        showExampleGuichet(day, row, vals);
+    } else if (mode.isDeux048) {
+        showExampleDeux048(day, row, vals);
+    } else if (mode.isLaFoule) {
+        showExampleLaFoule(day, row, vals);
+    } else if (mode.isTripleOrdre) {
+        showExampleTripleOrdre(day, row, vals);
     } else if (mode.isPhotoClasse) {
         showExamplePhotoClasse(day, row, vals);
-    } else if (mode.isMemoryChain) {
-        showExampleMemoryChain(day, row, vals);
+    } else if (mode.isFilsEmmeles) {
+        showExampleFilsEmmeles(day, row, vals);
+    } else if (mode.isChemin) {
+        showExampleChemin(day, row, vals);
     } else if (mode.isFusion) {
         showExampleFusion(day, row, vals);
     } else if (mode.isReflex) {

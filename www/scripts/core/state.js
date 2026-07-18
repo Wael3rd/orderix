@@ -34,13 +34,17 @@ let returnScreen = 'home'; // écran d'origine avant d'entrer dans un jour (reto
 // un par jour, dans l'ordre de la liste validée (session de test).
 // Jour 31 + FÉVRIER→DÉCEMBRE : rotation de tous les anciens modes
 // (rien n'est supprimé du roster).
+// v2.3 (retours de test du 18/07) : laSuite→tripeaks, aiguillage→deux048,
+// ascenseur→laFoule, guichet→tripleOrdre, memoryChain→filsEmmeles,
+// + jour 31 inédit (chemin). Janvier fait désormais 31 jours d'originaux.
 const JANUARY_LINEUP = [
     'orderChain', 'cascade', 'insertion', 'fontaine', 'metronome',
-    'laSuite', 'patience', 'duel', 'rummy', 'dominoOrder',
+    'tripeaks', 'patience', 'duel', 'rummy', 'dominoOrder',
     'escalier', 'tubes', 'swapSort', 'boulons', 'fileBloquee',
     'grille', 'hanoi', 'etageres', 'futoshiki', 'balance',
-    'ordreCache', 'indices', 'chronologie', 'conveyorBelt', 'aiguillage',
-    'ascenseur', 'guichet', 'photoClasse', 'memoryChain', 'fusion'
+    'ordreCache', 'indices', 'chronologie', 'conveyorBelt', 'deux048',
+    'laFoule', 'tripleOrdre', 'photoClasse', 'filsEmmeles', 'fusion',
+    'chemin'
 ];
 const LEGACY_MODES = Object.keys(GAME_MODES)
     .filter(k => !JANUARY_LINEUP.includes(k) || ['orderChain', 'cascade', 'insertion', 'conveyorBelt'].includes(k));
@@ -49,13 +53,17 @@ let ALL_DAYS = [];
 let legacyIdx = 0;
 for (let id = 1; id <= 365; id++) {
     let mKey;
-    if (id <= 30) mKey = JANUARY_LINEUP[id - 1];
+    if (id <= 31) mKey = JANUARY_LINEUP[id - 1];
     else mKey = LEGACY_MODES[legacyIdx++ % LEGACY_MODES.length];
 
     const mode = GAME_MODES[mKey];
     // Certains modes exigent un type précis (ex. additions → nombres lisibles)
+    // ou refusent les types illisibles dans leur contexte (ex. tapis roulant
+    // × ombre, issue #26) → repli sur des nombres.
     const base = BASE_TYPES[(id * 13) % BASE_TYPES.length];
-    ALL_DAYS.push({ id: id, type: mode.forceType || base.type, modeId: mKey });
+    let type = mode.forceType || base.type;
+    if (mode.avoidTypes && mode.avoidTypes.indexOf(type) !== -1) type = 'numbers';
+    ALL_DAYS.push({ id: id, type: type, modeId: mKey });
 }
 ALL_DAYS.forEach(d => { d.title = buildDayTitle(d); });
 const DAYS = ALL_DAYS;

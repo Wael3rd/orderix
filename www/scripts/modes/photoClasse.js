@@ -95,7 +95,8 @@ function startGamePhotoClasse() {
 
     function startRound() {
         const count = round === 1 ? 6 : 8;
-        const memoMs = round === 1 ? 3500 : 4000;
+        // Temps de mémorisation doublé suite au retour de test (issue #30)
+        const memoMs = round === 1 ? 7000 : 8000;
         // Ordre du rang : arbitraire (mélange des personnages)
         const cast = [..._PHOTO_CAST.slice(0, count)].sort(() => Math.random() - 0.5);
         const size = count > 6 ? 52 : 60;      // taille de jeu (phase mélangée)

@@ -74,8 +74,8 @@ function startGame() {
         startGameFontaine();
     } else if (mode.isMetronome) {
         startGameMetronome();
-    } else if (mode.isLaSuite) {
-        startGameLaSuite();
+    } else if (mode.isTripeaks) {
+        startGameTripeaks();
     } else if (mode.isPatience) {
         startGamePatience();
     } else if (mode.isDuel) {
@@ -112,16 +112,18 @@ function startGame() {
         startGameIndices();
     } else if (mode.isChronologie) {
         startGameChronologie();
-    } else if (mode.isAiguillage) {
-        startGameAiguillage();
-    } else if (mode.isAscenseur) {
-        startGameAscenseur();
-    } else if (mode.isGuichet) {
-        startGameGuichet();
+    } else if (mode.isDeux048) {
+        startGameDeux048();
+    } else if (mode.isLaFoule) {
+        startGameLaFoule();
+    } else if (mode.isTripleOrdre) {
+        startGameTripleOrdre();
     } else if (mode.isPhotoClasse) {
         startGamePhotoClasse();
-    } else if (mode.isMemoryChain) {
-        startGameMemoryChain();
+    } else if (mode.isFilsEmmeles) {
+        startGameFilsEmmeles();
+    } else if (mode.isChemin) {
+        startGameChemin();
     } else if (mode.isFusion) {
         startGameFusion();
     } else if (mode.isReflex) {
