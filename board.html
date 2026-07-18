@@ -111,7 +111,7 @@ const EPICS = [
   ]
 },
 {
-  id:'viral', title:'E4 · Viralité & Partage', status:'afaire',
+  id:'viral', title:'E4 · Viralité & Partage', status:'encours',
   goal:"Chaque victoire est une publicité. Le modèle Wordle : partage sans spoiler.",
   tasks:[
     {s:'fait', t:"Partage de résultat façon Wordle", n:"carte emoji : jour, mode, temps, série 🔥, barre d'année 🟩 + lien défi « Tu fais mieux ? » — via le partage natif Android"},
@@ -139,10 +139,10 @@ const EPICS = [
   ]
 },
 {
-  id:'release', title:'E7 · Release & Qualité', status:'afaire',
+  id:'release', title:'E7 · Release & Qualité', status:'encours',
   goal:"Du dépôt GitHub au Play Store, proprement.",
   tasks:[
-    {s:'encours', t:"CI GitHub Actions : APK à chaque push", n:"smoke test bloquant → build → publication auto sur staging-latest · jeton feedback via secret ORDERIX_FEEDBACK_TOKEN"},
+    {s:'fait', t:"CI GitHub Actions : APK à chaque push", n:"smoke test bloquant → build → publication auto sur staging-latest (1 min 33 par run) · jeton feedback via secret · première CI verte le 18/07"},
     {s:'afaire', t:"Signing release + AAB + versioning auto", n:"keystore sécurisé, versionCode incrémental"},
     {s:'bloque', t:"Compte Google Play Developer", n:"ACTION PROPRIÉTAIRE : créer le compte (25 $ une fois)"},
     {s:'afaire', t:"Fiche Play Store", n:"captures, description, icône, privacy policy (obligatoire)"},
