@@ -11,10 +11,14 @@ const SCREENS = {
 const tabbar = document.getElementById('tabbar');
 
 let _screenTransitioning = false;
+// Position de défilement mémorisée par écran : revenir d'un jeu (ou
+// changer d'onglet) ramène exactement là où on était dans la liste.
+const _screenScroll = {};
 
 function showScreen(name) {
     if (_screenTransitioning) return;
     const prev = currentScreen;
+    if (prev !== name) _screenScroll[prev] = window.scrollY || 0;
     currentScreen = name;
 
     tabbar.classList.toggle('away', name === 'game');
@@ -32,13 +36,17 @@ function showScreen(name) {
         incoming.style.animation = 'none';
         void incoming.offsetWidth;
         incoming.style.animation = '';
-        window.scrollTo(0, 0);
         _screenTransitioning = false;
 
         if (name === 'home') buildHome();
         if (name === 'calendar') buildCalendar();
         if (name === 'league') buildLeague();
         if (name === 'profile') buildProfile();
+
+        // Restaurer la position APRÈS reconstruction (le contenu doit
+        // exister pour que la hauteur permette d'y défiler). L'écran de
+        // jeu, lui, démarre toujours en haut.
+        window.scrollTo(0, name === 'game' ? 0 : (_screenScroll[name] || 0));
     }
 
     if (outgoing && outgoing !== incoming && !outgoing.classList.contains('hidden')) {
