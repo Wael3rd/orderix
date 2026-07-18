@@ -318,6 +318,107 @@
     z-index: 5;
 }
 
+/* ── Calendrier : toggle grille / liste ───────────────────── */
+
+.cal-toggle {
+    display: flex;
+    gap: 6px;
+    background: var(--carte);
+    border: 1px solid var(--ligne);
+    border-radius: 999px;
+    padding: 4px;
+    margin: 0 auto 16px;
+    width: fit-content;
+}
+.cal-toggle button {
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: .82rem;
+    color: var(--gris);
+    background: transparent;
+}
+.cal-toggle button.on {
+    background: var(--bleu);
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(74, 108, 250, .3);
+}
+
+/* ── Calendrier : vue liste (une ligne par jour + nom du jeu) ── */
+
+.month-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.day-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: var(--carte);
+    border: 1px solid var(--ligne);
+    text-align: left;
+}
+.day-row:active { transform: scale(.98); }
+.day-row .dr-num {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: var(--fond);
+    color: var(--gris);
+    font-weight: 800;
+    font-size: .82rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.day-row .dr-name {
+    flex: 1;
+    font-weight: 700;
+    font-size: .92rem;
+    color: var(--encre);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.day-row .dr-state {
+    font-weight: 900;
+    font-size: .95rem;
+    color: var(--gris);
+    flex-shrink: 0;
+}
+.day-row .dr-totest {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--or);
+    color: #fff;
+    font-weight: 900;
+    font-size: .72rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 1px 3px rgba(35, 38, 47, .25);
+}
+.day-row.win { border-color: var(--vert); }
+.day-row.win .dr-num { background: var(--vert); color: #fff; }
+.day-row.win .dr-state { color: var(--vert); }
+.day-row.fail { border-color: var(--rouge-pale); }
+.day-row.fail .dr-num { background: var(--rouge-pale); color: var(--rouge); }
+.day-row.fail .dr-state { color: var(--rouge); }
+.day-row.today {
+    border: 2px solid var(--bleu);
+    background: var(--bleu-pale);
+}
+.day-row.today .dr-num { background: var(--bleu); color: #fff; }
+.day-row.off { opacity: .35; }
+
 /* ── PROFIL ───────────────────────────────────────────────── */
 
 .profile-card { padding: 20px; margin-bottom: 12px; border-radius: var(--radius-sm); }

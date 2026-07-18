@@ -155,6 +155,19 @@ function buildLeague() {
 }
 
 // ── CALENDRIER ───────────────────────────────────────────────────
+// Deux affichages au choix (toggle en haut de l'écran) :
+//  · 'grid' — les mois en grilles de pastilles (vue d'origine)
+//  · 'list' — une ligne par jour, avec le nom du jeu
+let calendarView = getStorage('orderix_cal_view') || 'grid';
+
+function setCalendarView(v) {
+    calendarView = v;
+    setStorage('orderix_cal_view', v);
+    document.getElementById('cal-view-grid').classList.toggle('on', v === 'grid');
+    document.getElementById('cal-view-list').classList.toggle('on', v === 'list');
+    buildCalendar();
+}
+
 function buildCalendar() {
     const container = document.getElementById('calendar-months');
     container.innerHTML = '';
@@ -187,37 +200,20 @@ function buildCalendar() {
 
         let monthWon = 0;
 
-        const grid = document.createElement('div');
-        grid.className = 'month-grid';
-        const gridFrag = document.createDocumentFragment();
+        const body = document.createElement('div');
+        body.className = calendarView === 'list' ? 'month-list' : 'month-grid';
+        const bodyFrag = document.createDocumentFragment();
 
         for (let d = 1; d <= daysInMonth && dayId <= 365; d++, dayId++) {
             const id = dayId;
             const day = DAYS.find(x => x.id === id);
-            const chip = document.createElement('button');
-            chip.className = 'day-chip';
-            chip.textContent = d;
-
-            if (!enabledIds[id]) { chip.style.opacity = '.3'; chip.disabled = true; gridFrag.appendChild(chip); continue; }
-
             const info = getPlayedInfo(id);
-            if (info && info.isWin) { chip.classList.add('win'); chip.textContent = '✓'; monthWon++; }
-            else if (info) { chip.classList.add('fail'); }
-            if (id === tid) chip.classList.add('today');
-
-            // Version de test : « ! » sur les gameplays modifiés depuis
-            // la dernière partie (nouveaux, corrigés ou remplacés)
-            if (needsTest(day)) {
-                const t = document.createElement('span');
-                t.className = 'totest';
-                t.textContent = '!';
-                chip.appendChild(t);
-            }
-
-            chip.addEventListener('click', () => selectDay(day));
-            gridFrag.appendChild(chip);
+            if (info && info.isWin) monthWon++;
+            bodyFrag.appendChild(calendarView === 'list'
+                ? buildDayRow(day, d, id, tid, enabledIds[id], info)
+                : buildDayChip(day, d, id, tid, enabledIds[id], info));
         }
-        grid.appendChild(gridFrag);
+        body.appendChild(bodyFrag);
 
         const count = document.createElement('span');
         count.className = 'month-count';
@@ -225,10 +221,83 @@ function buildCalendar() {
         name.appendChild(count);
 
         block.appendChild(name);
-        block.appendChild(grid);
+        block.appendChild(body);
         calFrag.appendChild(block);
     }
     container.appendChild(calFrag);
+}
+
+// Pastille de la vue grille (vue d'origine)
+function buildDayChip(day, d, id, tid, enabled, info) {
+    const chip = document.createElement('button');
+    chip.className = 'day-chip';
+    chip.textContent = d;
+
+    if (!enabled) { chip.style.opacity = '.3'; chip.disabled = true; return chip; }
+
+    if (info && info.isWin) { chip.classList.add('win'); chip.textContent = '✓'; }
+    else if (info) { chip.classList.add('fail'); }
+    if (id === tid) chip.classList.add('today');
+
+    // Version de test : « ! » sur les gameplays modifiés depuis
+    // la dernière partie (nouveaux, corrigés ou remplacés)
+    if (needsTest(day)) {
+        const t = document.createElement('span');
+        t.className = 'totest';
+        t.textContent = '!';
+        chip.appendChild(t);
+    }
+
+    chip.addEventListener('click', () => selectDay(day));
+    return chip;
+}
+
+// Ligne de la vue liste : numéro du jour + nom du jeu + état
+function buildDayRow(day, d, id, tid, enabled, info) {
+    const row = document.createElement('button');
+    row.className = 'day-row';
+
+    const num = document.createElement('span');
+    num.className = 'dr-num';
+    num.textContent = d;
+    row.appendChild(num);
+
+    const name = document.createElement('span');
+    name.className = 'dr-name';
+    name.textContent = GAME_MODES[day.modeId].name;
+    row.appendChild(name);
+
+    if (!enabled) {
+        row.classList.add('off');
+        row.disabled = true;
+        return row;
+    }
+
+    if (needsTest(day)) {
+        const t = document.createElement('span');
+        t.className = 'dr-totest';
+        t.textContent = '!';
+        row.appendChild(t);
+    }
+
+    const state = document.createElement('span');
+    state.className = 'dr-state';
+    if (info && info.isWin) { state.textContent = '✓'; row.classList.add('win'); }
+    else if (info) { state.textContent = '✗'; row.classList.add('fail'); }
+    else { state.textContent = '›'; }
+    row.appendChild(state);
+
+    if (id === tid) row.classList.add('today');
+
+    row.addEventListener('click', () => selectDay(day));
+    return row;
+}
+
+document.getElementById('cal-view-grid').addEventListener('click', () => setCalendarView('grid'));
+document.getElementById('cal-view-list').addEventListener('click', () => setCalendarView('list'));
+if (calendarView === 'list') {
+    document.getElementById('cal-view-grid').classList.remove('on');
+    document.getElementById('cal-view-list').classList.add('on');
 }
 
 // ── PROFIL ───────────────────────────────────────────────────────
