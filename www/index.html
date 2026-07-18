@@ -159,11 +159,18 @@
                 <div id="comment-zone" class="hidden"
                     style="margin-top:18px;text-align:left;border-top:1px solid var(--ligne);padding-top:16px;">
                     <div style="font-weight:700;font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gris);margin-bottom:8px;text-align:center;">
-                        Commentaire pour Claude</div>
-                    <textarea id="comment-box" rows="3" placeholder="Bug, idée, réglage… tout ce qui vous passe par la tête sur ce mode."
+                        Votre verdict sur ce gameplay</div>
+                    <div id="verdict-row" style="display:flex;gap:8px;margin-bottom:10px;">
+                        <button type="button" class="verdict-chip" data-verdict="valide"
+                            style="flex:1;padding:10px 6px;border-radius:12px;border:2px solid var(--ligne);background:var(--carte);color:var(--gris);font-weight:900;font-size:.78rem;">✅<br>Validé</button>
+                        <button type="button" class="verdict-chip" data-verdict="modifier"
+                            style="flex:1;padding:10px 6px;border-radius:12px;border:2px solid var(--ligne);background:var(--carte);color:var(--gris);font-weight:900;font-size:.78rem;">🔧<br>À modifier</button>
+                        <button type="button" class="verdict-chip" data-verdict="remplacer"
+                            style="flex:1;padding:10px 6px;border-radius:12px;border:2px solid var(--ligne);background:var(--carte);color:var(--gris);font-weight:900;font-size:.78rem;">❌<br>Remplacer</button>
+                    </div>
+                    <textarea id="comment-box" rows="3" placeholder="Commentaire (obligatoire pour À modifier / Remplacer : dites quoi changer)."
                         style="width:100%;padding:12px 14px;border:1.5px solid var(--ligne);border-radius:12px;background:var(--fond);color:var(--encre);font-family:inherit;font-size:.95rem;resize:vertical;outline:none;"></textarea>
-                    <button id="comment-send" class="btn btn-plum" style="width:100%;margin-top:8px;">Envoyer le
-                        commentaire</button>
+                    <button id="comment-send" class="btn btn-plum" style="width:100%;margin-top:8px;">Envoyer</button>
                     <div id="comment-status"
                         style="font-size:.82rem;font-weight:700;color:var(--gris);margin-top:6px;min-height:1.2em;text-align:center;">
                     </div>

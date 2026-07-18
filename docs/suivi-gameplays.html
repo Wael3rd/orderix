@@ -118,7 +118,7 @@ const BADGES = {
 };
 
 // Version de la base curée — sert à détecter une page en cache périmée
-const SUIVI_VERSION = '2026-07-18-3';
+const SUIVI_VERSION = '2026-07-18-4';
 
 let filter = 'tous';
 let issuesByDay = {};
@@ -140,10 +140,18 @@ async function fetchIssues() {
           const body = i.body || '';
           const cm = body.match(/\*\*Commentaire\*\*\s*:\s*([\s\S]+?)\s*_Envoy/);
           const rm = body.match(/\*\*R[ée]sultat\*\*\s*:\s*(.+?)\s*\*\*/);
+          const vm = body.match(/\*\*Verdict\*\*\s*:\s*(.+)/);
+          let verdict = null;
+          if (vm) {
+            if (/VALID/i.test(vm[1])) verdict = 'valide';
+            else if (/MODIF/i.test(vm[1])) verdict = 'modifier';
+            else if (/REMPLA/i.test(vm[1])) verdict = 'remplacer';
+          }
           out[d] = {
             number: i.number, state: i.state, url: i.html_url,
             comment: cm ? cm[1].trim().replace(/\s+/g, ' ') : '(commentaire non lisible)',
             result: rm ? rm[1].trim() : '?',
+            verdict: verdict,
             date: (i.created_at || '').slice(0, 10)
           };
         }
@@ -160,9 +168,14 @@ async function fetchIssues() {
 
 function statusOf(day) {
   const iss = issuesByDay[day.d];
-  // Seuls les retours POSTÉRIEURS à la base curée changent le badge :
-  // ouverts = pas encore traités par Claude, fermés = traités entre-temps.
-  if (iss && iss.number > LAST_CURATED_ISSUE) return iss.state === 'open' ? 'ouvert' : 'recent';
+  // Seuls les retours POSTÉRIEURS à la base curée changent le badge.
+  // Le VERDICT envoyé depuis l'app prime : « Validé » s'affiche en vert
+  // immédiatement, même si l'issue est encore ouverte.
+  if (iss && iss.number > LAST_CURATED_ISSUE) {
+    if (iss.verdict === 'valide') return 'valide';
+    if (iss.verdict === 'remplacer') return 'remplacer';
+    return iss.state === 'open' ? 'ouvert' : 'recent';
+  }
   return day.s;
 }
 
@@ -191,6 +204,7 @@ function render() {
     const fb = iss
       ? `<div class="fb"><div class="meta">Dernier retour reçu (historique) :
            <a href="${iss.url}" target="_blank">#${iss.number}</a> · ${iss.date} ·
+           ${iss.verdict ? ({ valide: '✅ Validé', modifier: '🔧 À modifier', remplacer: '❌ Remplacer' })[iss.verdict] + ' · ' : ''}
            <span class="${/réussi/i.test(iss.result) ? 'ok' : 'ko'}">${iss.result}</span> ·
            ${iss.state === 'open' ? '🟠 ouverte — pas encore traité' : '⚪ fermée — traité'}</div>
            « ${iss.comment} »</div>`

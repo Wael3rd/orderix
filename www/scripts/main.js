@@ -207,7 +207,7 @@ function sendCommentDirect(entry) {
             'Accept': 'application/vnd.github+json',
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ title: entry.title, body: entry.body, labels: ['feedback'] })
+        body: JSON.stringify({ title: entry.title, body: entry.body, labels: entry.labels || ['feedback'] })
     }).then(r => r.ok).catch(() => false);
 }
 
@@ -225,31 +225,68 @@ function retryPendingComments() {
     });
 }
 
+// ── Verdict : Validé / À modifier / Remplacer (choix unique) ─────
+const VERDICTS = {
+    valide: { texte: '✅ VALIDÉ', label: 'valide', titre: '[VALIDÉ]' },
+    modifier: { texte: '🔧 À MODIFIER', label: 'a-modifier', titre: '[À MODIFIER]' },
+    remplacer: { texte: '❌ REMPLACER PAR UN AUTRE GAMEPLAY', label: 'remplacer', titre: '[REMPLACER]' }
+};
+let selectedVerdict = null;
+
+function renderVerdictChips() {
+    document.querySelectorAll('#verdict-row .verdict-chip').forEach(b => {
+        const on = b.dataset.verdict === selectedVerdict;
+        const couleur = { valide: 'var(--vert)', modifier: 'var(--or)', remplacer: 'var(--rouge)' }[b.dataset.verdict];
+        b.style.borderColor = on ? couleur : 'var(--ligne)';
+        b.style.color = on ? couleur : 'var(--gris)';
+        b.style.background = on ? 'var(--fond)' : 'var(--carte)';
+    });
+}
+document.querySelectorAll('#verdict-row .verdict-chip').forEach(b => {
+    b.addEventListener('click', () => {
+        selectedVerdict = (selectedVerdict === b.dataset.verdict) ? null : b.dataset.verdict;
+        haptic(8);
+        renderVerdictChips();
+    });
+});
+
 document.getElementById('comment-send').addEventListener('click', () => {
     const box = document.getElementById('comment-box');
     const status = document.getElementById('comment-status');
     const txt = box.value.trim();
-    if (!txt) { status.textContent = 'Écrivez d\'abord un commentaire.'; return; }
+    if (!selectedVerdict) {
+        status.textContent = 'Choisissez d\'abord : Validé, À modifier ou Remplacer.';
+        status.style.color = 'var(--rouge)';
+        return;
+    }
+    if (!txt && selectedVerdict !== 'valide') {
+        status.textContent = 'Dites en un mot quoi changer (commentaire obligatoire pour ce verdict).';
+        status.style.color = 'var(--rouge)';
+        return;
+    }
+    const verdict = VERDICTS[selectedVerdict];
 
     const day = currentDayConfig;
     const info = day ? getPlayedInfo(day.id) : null;
     const result = info
         ? (info.isWin ? `réussi en ${Math.abs(info.time).toFixed(3)} s` : (info.time === -999999 ? 'abandonné' : 'raté'))
         : '—';
-    const title = `[feedback] Jour ${day ? day.id : '?'} — ${day ? GAME_MODES[day.modeId].name : 'général'}`;
+    const title = `[feedback] Jour ${day ? day.id : '?'} — ${day ? GAME_MODES[day.modeId].name : 'général'} ${verdict.titre}`;
     const body = `**Mode** : ${day ? day.title : '—'} (\`${day ? day.modeId : ''}\` · type \`${day ? day.type : ''}\`)\n` +
-        `**Résultat** : ${result}\n**Env** : ${ENV_NAME}\n\n**Commentaire** :\n${txt}\n\n` +
+        `**Résultat** : ${result}\n**Env** : ${ENV_NAME}\n**Verdict** : ${verdict.texte}\n\n**Commentaire** :\n${txt || '(aucun — verdict seul)'}\n\n` +
         `_Envoyé depuis l'app le ${new Date().toLocaleString('fr-FR')}_`;
 
     const entry = {
         id: Date.now(), date: new Date().toISOString(), day: day ? day.id : 0,
-        modeId: day ? day.modeId : '', txt: txt, result: result,
-        title: title, body: body, sent: false
+        modeId: day ? day.modeId : '', txt: txt || verdict.texte, result: result,
+        title: title, body: body, labels: ['feedback', verdict.label], sent: false
     };
     const all = _loadComments();
     all.push(entry);
     _saveComments(all);
     box.value = '';
+    selectedVerdict = null;
+    renderVerdictChips();
     renderCommentOutbox();
 
     if (GH_TOKEN) {
@@ -303,7 +340,7 @@ function renderCommentOutbox() {
                 const t = entry.title || `[feedback] Jour ${entry.day} — commentaire`;
                 const b = entry.body || `**Commentaire** :\n${entry.txt}\n\n_Renvoyé depuis le filet de secours_`;
                 if (GH_TOKEN) {
-                    sendCommentDirect({ title: t, body: b }).then(ok => {
+                    sendCommentDirect({ title: t, body: b, labels: entry.labels }).then(ok => {
                         if (ok) { _markSent(entry.id); renderCommentOutbox(); haptic([10, 30, 10]); }
                     });
                 } else {
