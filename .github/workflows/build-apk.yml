@@ -1,0 +1,68 @@
+# Build automatique de l'APK staging à chaque push sur main.
+# L'APK est publié sur la release roulante `staging-latest` — le lien de
+# téléchargement ne change jamais :
+# https://github.com/Wael3rd/orderix/releases/download/staging-latest/Orderix-dev.apk
+name: Build APK staging
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'www/**'
+      - 'android/**'
+      - 'config/**'
+      - 'set-env.js'
+      - 'package.json'
+      - '.github/workflows/build-apk.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: build-apk
+  cancel-in-progress: true
+
+permissions:
+  contents: write # nécessaire pour publier l'APK sur la release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Dépendances npm
+        run: npm ci
+
+      - name: Smoke test (aucun APK ne part si les tests échouent)
+        run: node smoke-test.js
+
+      - name: Config staging (+ jeton feedback via secret)
+        env:
+          ORDERIX_FEEDBACK_TOKEN: ${{ secrets.ORDERIX_FEEDBACK_TOKEN }}
+        run: node set-env.js staging
+
+      - name: Copie des assets web vers Android
+        run: npx cap sync android
+
+      - name: Build APK (flavor dev, debug)
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDevDebug --no-daemon
+
+      - name: Publier sur la release staging-latest
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp android/app/build/outputs/apk/dev/debug/app-dev-debug.apk Orderix-dev.apk
+          gh release upload staging-latest Orderix-dev.apk --clobber
+          echo "APK publié : https://github.com/${{ github.repository }}/releases/download/staging-latest/Orderix-dev.apk"

@@ -129,11 +129,30 @@ shareBtn.addEventListener('click', () => {
         timeVal = Math.abs(info.time);
     }
 
-    const status = isWin ? "réussi" : "tenté";
+    // Carte de partage façon Wordle : résultat + série + progression de
+    // l'année en emojis, sans jamais révéler la solution du puzzle.
     const playerName = getStorage('orderix_player_name') || '';
     const url = 'https://orderix.app/?ref=' + encodeURIComponent(playerName) + '&day=' + currentDayConfig.id;
-    const timeStr = timeVal === 999999 ? '' : ` en ${timeVal}s`;
-    const textToShare = `J'ai ${status} le puzzle du jour ${currentDayConfig.id} d'Orderix (${currentDayConfig.title})${timeStr} — à votre tour : ${url}`;
+    const mode = GAME_MODES[currentDayConfig.modeId];
+    const stats = computeStats();
+
+    const timeStr = (isWin && timeVal !== 999999)
+        ? `Réussi en ${timeVal.toFixed(2).replace('.', ',')} s ⏱`
+        : (isWin ? 'Réussi !' : 'Tenté — il me résiste encore !');
+
+    // Barre d'année : 10 blocs, remplis au prorata des puzzles réussis
+    const blocs = Math.round(10 * stats.won / 365);
+    const barre = '🟩'.repeat(Math.max(isWin ? 1 : 0, blocs)) + '⬜'.repeat(10 - Math.max(isWin ? 1 : 0, blocs));
+
+    const lignes = [
+        `🧩 Orderix — Jour ${currentDayConfig.id} · ${mode ? mode.name : ''}`,
+        `${isWin ? '✅' : '🔶'} ${timeStr}`
+    ];
+    if (stats.streak > 1) lignes.push(`🔥 Série : ${stats.streak} jour${stats.streak > 1 ? 's' : ''}`);
+    lignes.push(`${barre} ${stats.won}/365`);
+    lignes.push('');
+    lignes.push(isWin ? `Tu fais mieux ? 👉 ${url}` : `À toi de jouer 👉 ${url}`);
+    const textToShare = lignes.join('\n');
 
     const afterShare = () => {
         if (!hasSharedThisGame && pendingTimeVal !== 0) {

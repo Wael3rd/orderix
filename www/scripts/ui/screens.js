@@ -406,6 +406,47 @@ function buildProfile() {
         cell.append(ico, lbl, prog);
         row.appendChild(cell);
     });
+
+    buildYearFresque();
+}
+
+// ── « Mon année » : fresque des 365 jours + trophées de paliers ──
+function buildYearFresque() {
+    const zone = document.getElementById('year-fresque');
+    zone.innerHTML = '';
+    const tid = todayDayId();
+    const grid = document.createElement('div');
+    grid.style.cssText = 'display:grid;grid-template-columns:repeat(21,1fr);gap:2px;';
+    let wonTotal = 0;
+    for (let id = 1; id <= 365; id++) {
+        const day = DAYS.find(x => x.id === id);
+        const cell = document.createElement('div');
+        let bg = '#E8EAF1'; // pas encore joué
+        if (!day || day.empty) bg = '#F4F6FA';
+        else {
+            const info = getPlayedInfo(id);
+            if (info && info.isWin) { bg = info.late ? '#8FD8B0' : '#34B871'; wonTotal++; }
+            else if (info) bg = '#F5B8AD';
+        }
+        cell.style.cssText = `aspect-ratio:1;border-radius:2px;background:${bg};` +
+            (id === tid ? 'outline:2px solid #4A6CFA;outline-offset:-1px;' : '');
+        grid.appendChild(cell);
+    }
+    zone.appendChild(grid);
+
+    const troph = document.getElementById('year-trophies');
+    troph.innerHTML = '';
+    [[50, '🌱', '50 jours'], [100, '🌿', '100 jours'], [200, '🌳', '200 jours'], [365, '🏆', 'Année parfaite']]
+        .forEach(([seuil, emo, lbl]) => {
+            const t = document.createElement('div');
+            const atteint = wonTotal >= seuil;
+            t.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 12px;' +
+                `border-radius:12px;background:${atteint ? '#FFF6E3' : 'var(--fond)'};` +
+                (atteint ? '' : 'opacity:.45;filter:grayscale(.8);');
+            t.innerHTML = `<span style="font-size:1.2rem;line-height:1;">${emo}</span>` +
+                `<span style="font-size:.62rem;font-weight:800;color:var(--gris);">${lbl}</span>`;
+            troph.appendChild(t);
+        });
 }
 
 // ── OUVERTURE D'UN JOUR (écran de jeu, phase intro) ──────────────

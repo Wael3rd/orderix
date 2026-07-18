@@ -27,6 +27,13 @@ if (fs.existsSync(localPath)) {
     hasLocal = true;
 }
 
+// CI (GitHub Actions) : pas de fichier local — le jeton feedback arrive
+// par variable d'environnement (secret ORDERIX_FEEDBACK_TOKEN).
+if (process.env.ORDERIX_FEEDBACK_TOKEN) {
+    cfg.githubToken = process.env.ORDERIX_FEEDBACK_TOKEN;
+    hasLocal = true;
+}
+
 const out = `// ─── Configuration d'environnement (GÉNÉRÉ par set-env.js, ne pas éditer) ───
 // Environnement actif : ${cfg.envName}
 const ORDERIX_ENV = ${JSON.stringify(cfg, null, 4)};
