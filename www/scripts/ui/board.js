@@ -78,10 +78,10 @@ function showExample(day, container) {
         showExampleFontaine(day, row, vals);
     } else if (mode.isMetronome) {
         showExampleMetronome(day, row, vals);
-    } else if (mode.isTripeaks) {
-        showExampleTripeaks(day, row, vals);
-    } else if (mode.isDegrade) {
-        showExampleDegrade(day, row, vals);
+    } else if (mode.isCadenas) {
+        showExampleCadenas(day, row, vals);
+    } else if (mode.isMemoCroissant) {
+        showExampleMemoCroissant(day, row, vals);
     } else if (mode.isSolitaire) {
         showExampleSolitaire(day, row, vals);
     } else if (mode.isBlocs) {

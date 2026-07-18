@@ -39,9 +39,11 @@ let returnScreen = 'home'; // écran d'origine avant d'entrer dans un jour (reto
 // + jour 31 inédit (chemin). Janvier fait désormais 31 jours d'originaux.
 // v2.4 (retours #40/#43/#47) : patience→degrade (I Love Hue),
 // rummy→blocs (Block Blast), escalier→paires (Tile Connect).
+// v2.5 (retours #58/#60) : tripeaks→cadenas (cadenas à combinaison),
+// degrade→memoCroissant (mémoire), sur demande explicite du produit.
 const JANUARY_LINEUP = [
     'orderChain', 'cascade', 'insertion', 'fontaine', 'metronome',
-    'tripeaks', 'degrade', 'solitaire', 'blocs', 'dominoOrder',
+    'cadenas', 'memoCroissant', 'solitaire', 'blocs', 'dominoOrder',
     'paires', 'tubes', 'swapSort', 'boulons', 'fileBloquee',
     'grille', 'hanoi', 'etageres', 'futoshiki', 'balance',
     'ordreCache', 'indices', 'chronologie', 'conveyorBelt', 'deux048',

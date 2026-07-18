@@ -74,10 +74,10 @@ function startGame() {
         startGameFontaine();
     } else if (mode.isMetronome) {
         startGameMetronome();
-    } else if (mode.isTripeaks) {
-        startGameTripeaks();
-    } else if (mode.isDegrade) {
-        startGameDegrade();
+    } else if (mode.isCadenas) {
+        startGameCadenas();
+    } else if (mode.isMemoCroissant) {
+        startGameMemoCroissant();
     } else if (mode.isSolitaire) {
         startGameSolitaire();
     } else if (mode.isBlocs) {

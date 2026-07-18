@@ -19,8 +19,8 @@ const GAME_MODES = {
     // ── Vague janvier 2027 : les 30 gameplays d'ordonnancement (audit v2.2) ──
     fontaine: { name: "La Fontaine", isFontaine: true, typeAgnostic: true, desc: "Les balles rebondissent dans la boîte : éclatez-les de la plus petite à la plus grande. 2 manches, 3 vies." },
     metronome: { name: "Le Métronome", isMetronome: true, typeAgnostic: true, desc: "Touchez les nombres du plus petit au plus grand avant la fin de chaque barre de temps. Le rythme accélère doucement. 2 vies." },
-    tripeaks: { name: "Le Sommet", isTripeaks: true, typeAgnostic: true, desc: "La carte ACTIVE est en bas. Touchez une carte verte de la pyramide (= 1 de plus ou de moins que l'active) : elle devient la nouvelle active. Videz la pyramide ; la pioche vous relance quand rien ne brille." },
-    degrade: { name: "Dégradé", isDegrade: true, typeAgnostic: true, desc: "Échangez les tuiles deux à deux pour reconstituer le dégradé de couleurs parfait. Les coins marqués d'un point sont déjà à leur place." },
+    cadenas: { name: "Le Cadenas", isCadenas: true, typeAgnostic: true, desc: "Faites tourner chaque molette (▲ / ▼) jusqu'à ce que la ligne du milieu affiche la suite dans l'ordre croissant, de gauche à droite." },
+    memoCroissant: { name: "Mémo Croissant", isMemoCroissant: true, typeAgnostic: true, desc: "Retournez deux cartes à la fois pour retrouver les paires, dans l'ordre : d'abord la paire 1, puis la 2, puis la 3… La valeur recherchée est affichée en haut." },
     solitaire: { name: "Le Solitaire", isSolitaire: true, typeAgnostic: true, desc: "Un vrai solitaire, en petit : descendez les cartes en alternant les couleurs sur le tableau, retournez les cartes cachées, et montez les 1→12 aux deux fondations. Pioche recyclable, annulation illimitée." },
     blocs: { name: "Blocs", isBlocs: true, typeAgnostic: true, desc: "Posez les pièces sur la grille : chaque ligne ou colonne complète s'efface. Effacez 6 lignes sans saturer la grille !" },
     dominoOrder: { name: "Dominos", isDominoOrder: true, typeAgnostic: true, desc: "Prolongez la chaîne par ses extrémités. Attention : l'ordre de pose compte, ne vous retrouvez pas bloquée !" },
