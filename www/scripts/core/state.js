@@ -173,6 +173,12 @@ function saveLocalResult(dayId, count, time, isWin) {
     }
     // La série ne bouge que sur la victoire DU JOUR, jouée le jour même
     if (isWin && !late) updateStreakOnWin();
+    if (typeof logEvent === 'function') {
+        logEvent('game_result', {
+            jour: dayId, mode: day && day.modeId, win: isWin, late: late,
+            temps: Math.abs(parseFloat(time)) || 0
+        });
+    }
 }
 // Résultat connu pour un jour : priorité au serveur, sinon local
 function getPlayedInfo(dayId) {
@@ -248,6 +254,9 @@ function updateStreakOnWin() {
     }
     streakData.lastDay = today;
     saveStreakData();
+    if (streakData.frozenUsed > 0 && typeof logEvent === 'function') {
+        logEvent('gel_utilise', { nb: streakData.frozenUsed, serie: streakData.count });
+    }
 }
 
 // Série affichée : celle du registre, éteinte si trop de jours ont

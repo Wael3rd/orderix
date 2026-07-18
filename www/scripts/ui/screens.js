@@ -11,12 +11,15 @@ const SCREENS = {
 const tabbar = document.getElementById('tabbar');
 
 let _screenTransitioning = false;
+let _pendingTransition = null; // fin de la transition en cours (appelable)
 // Position de défilement mémorisée par écran : revenir d'un jeu (ou
 // changer d'onglet) ramène exactement là où on était dans la liste.
 const _screenScroll = {};
 
 function showScreen(name) {
-    if (_screenTransitioning) return;
+    // Naviguer PENDANT une transition termine celle-ci immédiatement au
+    // lieu d'avaler le tap (double-tap rapide entre onglets)
+    if (_pendingTransition) _pendingTransition();
     const prev = currentScreen;
     if (prev !== name) _screenScroll[prev] = window.scrollY || 0;
     currentScreen = name;
@@ -56,9 +59,15 @@ function showScreen(name) {
         if (supportsAnim) {
             _screenTransitioning = true;
             outgoing.style.animation = 'screenOut .2s ease-in forwards';
-            const done = () => { outgoing.style.animation = ''; showIncoming(); };
+            const done = () => {
+                if (_pendingTransition !== done) return; // déjà terminée
+                _pendingTransition = null;
+                outgoing.style.animation = '';
+                showIncoming();
+            };
+            _pendingTransition = done;
             outgoing.addEventListener('animationend', done, { once: true });
-            setTimeout(() => { if (_screenTransitioning) done(); }, 250);
+            setTimeout(done, 250);
         } else {
             showIncoming();
         }
@@ -77,7 +86,8 @@ function buildHome() {
     const stats = computeStats();
     const name = getPlayerName();
     document.getElementById('hud-name').textContent = name || 'Invitée';
-    document.getElementById('hud-avatar').textContent = name ? name[0].toUpperCase() : '☺';
+    const avatar = currentAvatar();
+    document.getElementById('hud-avatar').textContent = avatar || (name ? name[0].toUpperCase() : '☺');
     document.getElementById('hud-level').textContent = 'NIVEAU ' + (1 + Math.floor(stats.won / 10));
     document.getElementById('hud-stars').textContent = stats.won;
 
@@ -408,6 +418,7 @@ function buildProfile() {
     });
 
     buildYearFresque();
+    renderCosmetics();
 }
 
 // ── « Mon année » : fresque des 365 jours + trophées de paliers ──

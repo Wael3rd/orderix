@@ -155,6 +155,7 @@ shareBtn.addEventListener('click', () => {
     const textToShare = lignes.join('\n');
 
     const afterShare = () => {
+        logEvent('partage', { jour: currentDayConfig.id, win: isWin });
         if (!hasSharedThisGame && pendingTimeVal !== 0) {
             hasSharedThisGame = true;
             submitScore(Math.abs(pendingTimeVal), '', true);
@@ -171,6 +172,60 @@ shareBtn.addEventListener('click', () => {
         });
     }
 });
+
+// ─── Rappel quotidien (notification locale, opt-in) ──────────────
+// Plugin Capacitor LocalNotifications : absent dans le navigateur, on
+// se protège. Une seule notification par jour, à 19 h, jamais plus.
+const _LN = (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) || null;
+const notifToggle = document.getElementById('notif-toggle');
+const notifStatus = document.getElementById('notif-status');
+
+function renderNotifToggle() {
+    const on = getStorage('orderix_notif') === '1';
+    notifToggle.textContent = on ? '🔕 Désactiver le rappel' : '🔔 Activer le rappel';
+    notifStatus.textContent = !_LN
+        ? 'Disponible dans l\'application Android uniquement.'
+        : (on ? '✓ Rappel actif — tous les jours à 19 h.' : '');
+}
+
+async function scheduleDailyReminder() {
+    if (!_LN) return false;
+    try {
+        const perm = await _LN.requestPermissions();
+        if (perm.display !== 'granted') {
+            notifStatus.textContent = 'Autorisation refusée — activez les notifications dans les réglages Android.';
+            return false;
+        }
+        await _LN.cancel({ notifications: [{ id: 1 }] }).catch(() => { });
+        await _LN.schedule({
+            notifications: [{
+                id: 1,
+                title: 'Votre puzzle du jour vous attend 🧩',
+                body: 'Trois petites minutes pour garder la série au chaud !',
+                schedule: { on: { hour: 19, minute: 0 }, allowWhileIdle: true }
+            }]
+        });
+        return true;
+    } catch (e) { return false; }
+}
+
+if (notifToggle) {
+    notifToggle.addEventListener('click', async () => {
+        const on = getStorage('orderix_notif') === '1';
+        if (on) {
+            setStorage('orderix_notif', '0');
+            if (_LN) await _LN.cancel({ notifications: [{ id: 1 }] }).catch(() => { });
+            logEvent('notif_off');
+        } else {
+            const ok = await scheduleDailyReminder();
+            if (ok) { setStorage('orderix_notif', '1'); logEvent('notif_on'); }
+        }
+        renderNotifToggle();
+    });
+    renderNotifToggle();
+    // Re-programme à chaque lancement (les reboots Android purgent parfois)
+    if (getStorage('orderix_notif') === '1') scheduleDailyReminder();
+}
 
 // ─── Pseudo ──────────────────────────────────────────────────────
 verifyNameBtn.addEventListener('click', verifyPlayerName);

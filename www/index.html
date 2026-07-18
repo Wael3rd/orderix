@@ -119,6 +119,21 @@
             </div>
 
             <div class="profile-card card">
+                <h3>Personnalisation</h3>
+                <p class="hint">Se débloque en montant de niveau (10 réussites = 1 niveau). Que de la beauté,
+                    jamais d'avantage en jeu.</p>
+                <div id="cosmetics-zone" style="margin-top:10px;"></div>
+            </div>
+
+            <div class="profile-card card">
+                <h3>Rappel quotidien</h3>
+                <p class="hint">Une petite notification à 19 h si le puzzle du jour vous attend encore. Jamais
+                    plus d'une par jour.</p>
+                <button id="notif-toggle" class="btn btn-quiet" style="margin-top:8px;">🔔 Activer le rappel</button>
+                <div id="notif-status" class="hint" style="margin-top:6px;"></div>
+            </div>
+
+            <div class="profile-card card">
                 <h3>Mon année</h3>
                 <p class="hint">Chaque case est un jour. Une année entière à colorier, un jour à la fois.</p>
                 <div id="year-fresque" style="margin-top:10px;"></div>
@@ -296,8 +311,10 @@
     <script src="scripts/modes/guessNumber.js"></script>
     <script src="scripts/modes/dobble.js"></script>
     <script src="scripts/core/state.js"></script>
+    <script src="scripts/core/analytics.js"></script>
     <script src="scripts/api/database.js"></script>
     <script src="scripts/ui/board.js"></script>
+    <script src="scripts/ui/cosmetics.js"></script>
     <script src="scripts/ui/screens.js"></script>
     <script src="scripts/core/logic.js"></script>
     <script src="scripts/core/gameLoop.js"></script>
