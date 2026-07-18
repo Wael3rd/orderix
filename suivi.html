@@ -117,6 +117,9 @@ const BADGES = {
   remplacer: ['b-remplacer', '❌ À remplacer']
 };
 
+// Version de la base curée — sert à détecter une page en cache périmée
+const SUIVI_VERSION = '2026-07-18-3';
+
 let filter = 'tous';
 let issuesByDay = {};
 
@@ -186,9 +189,10 @@ function render() {
     const el = document.createElement('div');
     el.className = 'day';
     const fb = iss
-      ? `<div class="fb"><div class="meta"><a href="${iss.url}" target="_blank">#${iss.number}</a> · ${iss.date} ·
+      ? `<div class="fb"><div class="meta">Dernier retour reçu (historique) :
+           <a href="${iss.url}" target="_blank">#${iss.number}</a> · ${iss.date} ·
            <span class="${/réussi/i.test(iss.result) ? 'ok' : 'ko'}">${iss.result}</span> ·
-           ${iss.state === 'open' ? '🟠 ouverte' : '⚪ fermée'}</div>
+           ${iss.state === 'open' ? '🟠 ouverte — pas encore traité' : '⚪ fermée — traité'}</div>
            « ${iss.comment} »</div>`
       : `<div class="fb empty">Aucun commentaire reçu pour ce jour.</div>`;
     el.innerHTML = `
@@ -206,6 +210,22 @@ document.getElementById('refresh').addEventListener('click', fetchIssues);
 setInterval(fetchIssues, 5 * 60 * 1000);
 render();
 fetchIssues();
+
+// ── Anti-cache : GitHub Pages sert la page avec 10 min de cache et le
+// navigateur du téléphone peut garder une version périmée bien plus
+// longtemps. Au chargement, on re-télécharge la page en contournant le
+// cache ; si sa version diffère, on recharge sur une URL horodatée.
+(async function verifFraicheur() {
+  try {
+    const r = await fetch(location.pathname + '?nc=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) return;
+    const m = (await r.text()).match(/SUIVI_VERSION = '([^']+)'/);
+    if (m && m[1] !== SUIVI_VERSION) {
+      document.getElementById('last-sync').textContent = 'nouvelle version détectée — rechargement…';
+      location.replace(location.pathname + '?v=' + encodeURIComponent(m[1]));
+    }
+  } catch (e) { /* hors-ligne : on garde la version affichée */ }
+})();
 </script>
 </body>
 </html>
