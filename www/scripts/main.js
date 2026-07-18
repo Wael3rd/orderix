@@ -42,6 +42,15 @@ function applyDayConfig(cfg) {
     // rotation des modes phares). Le serveur conserve deux leviers :
     // `count` (nombre d'éléments) et `enabled` (désactivation d'urgence).
     dayConfig = cfg || {};
+    // Version de test : le verrou `enabled` du Sheet est ignoré pour que
+    // tous les jours restent testables (le Sheet garde la main en prod).
+    // Sans ça, les vieilles lignes enabled=FALSE (jours 23-31) grisaient
+    // la fin du calendrier de janvier.
+    if (ENV_NAME === 'staging') {
+        Object.keys(dayConfig).forEach(k => {
+            if (dayConfig[k] && dayConfig[k].enabled === false) delete dayConfig[k].enabled;
+        });
+    }
 }
 
 function recoverPendingGame() {
