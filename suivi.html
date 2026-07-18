@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Orderix — Suivi des 31 gameplays de janvier</title>
+<title>Orderix — Suivi des gameplays (janvier → 10 mars)</title>
 <style>
 :root{--bleu:#4A6CFA;--bleu2:#3553D1;--pale:#EEF2FF;--encre:#23262F;--gris:#8B90A0;
 --fond:#F4F6FA;--carte:#fff;--ligne:#E8EAF1;--or:#F5B227;--vert:#34B871;--rouge:#E0533D;--violet:#8B5CF6}
@@ -56,7 +56,7 @@ letter-spacing:.05em;white-space:nowrap}
 </head>
 <body>
 <div class="wrap">
-<h1>Order<b>ix</b> — Suivi des gameplays de janvier</h1>
+<h1>Order<b>ix</b> — Suivi des gameplays · janvier → 10 mars</h1>
 <p class="sub">Commentaires lus en direct depuis les issues GitHub · <b id="last-sync">chargement…</b></p>
 <p style="text-align:center;margin:10px 0 4px;">
   <a href="https://github.com/Wael3rd/orderix/releases/download/staging-latest/Orderix-dev.apk"
@@ -109,7 +109,45 @@ const DAYS = [
  {d:28, n:"Photo de Classe", g:"mémoire spatiale", s:"valide", note:"#30 « très bien » — temps de mémorisation doublé comme demandé."},
  {d:29, n:"Le Taquin", g:"15-puzzle classique (indémodable du casual)", s:"valide", note:"#112 : ✅ Validé ✓"},
  {d:30, n:"Fusion", g:"chaînes à fusionner", s:"valide", note:"#32 « vraiment très bien » — consigne réécrite comme demandé."},
- {d:31, n:"Le Nonogramme", g:"picross 6×6 (Nonogram.com, top charts mondial)", s:"corrige", note:"#110 : grille passée en 6×6 (max 2 blocs par ligne/colonne conservé). À re-tester."}
+ {d:31, n:"Le Nonogramme", g:"picross 6×6 (Nonogram.com, top charts mondial)", s:"corrige", note:"#110 : grille passée en 6×6 (max 2 blocs par ligne/colonne conservé). À re-tester."},
+ {d:32, n:"Le Rangement", g:"ancien mode · 1 févr.", s:'retest', note:"Campagne de re-test (1 févr.) — verdict à donner via les cases de l'app."},
+ {d:33, n:"Tri Croissant", g:"ancien mode · 2 févr.", s:'retest', note:"Campagne de re-test (2 févr.) — verdict à donner via les cases de l'app."},
+ {d:34, n:"Tri Décroissant", g:"ancien mode · 3 févr.", s:'retest', note:"Campagne de re-test (3 févr.) — verdict à donner via les cases de l'app."},
+ {d:35, n:"Pairs Uniquement", g:"ancien mode · 4 févr.", s:'retest', note:"Campagne de re-test (4 févr.) — verdict à donner via les cases de l'app."},
+ {d:36, n:"Impairs Uniquement", g:"ancien mode · 5 févr.", s:'retest', note:"Campagne de re-test (5 févr.) — verdict à donner via les cases de l'app."},
+ {d:37, n:"Tri Flash", g:"ancien mode · 6 févr.", s:'retest', note:"Campagne de re-test (6 févr.) — verdict à donner via les cases de l'app."},
+ {d:38, n:"Tri à l'Aveugle", g:"ancien mode · 7 févr.", s:'retest', note:"Campagne de re-test (7 févr.) — verdict à donner via les cases de l'app."},
+ {d:39, n:"Monde Miroir", g:"ancien mode · 8 févr.", s:'retest', note:"Campagne de re-test (8 févr.) — verdict à donner via les cases de l'app."},
+ {d:40, n:"Tremblement", g:"ancien mode · 9 févr.", s:'retest', note:"Campagne de re-test (9 févr.) — verdict à donner via les cases de l'app."},
+ {d:41, n:"Coupure de Courant", g:"ancien mode · 10 févr.", s:'retest', note:"Campagne de re-test (10 févr.) — verdict à donner via les cases de l'app."},
+ {d:42, n:"Rétrécissement", g:"ancien mode · 11 févr.", s:'retest', note:"Campagne de re-test (11 févr.) — verdict à donner via les cases de l'app."},
+ {d:43, n:"Chasse au Max", g:"ancien mode · 12 févr.", s:'retest', note:"Campagne de re-test (12 févr.) — verdict à donner via les cases de l'app."},
+ {d:44, n:"Chasse au Min", g:"ancien mode · 13 févr.", s:'retest', note:"Campagne de re-test (13 févr.) — verdict à donner via les cases de l'app."},
+ {d:45, n:"La Médiane", g:"ancien mode · 14 févr.", s:'retest', note:"Campagne de re-test (14 févr.) — verdict à donner via les cases de l'app."},
+ {d:46, n:"Mémoire Flash", g:"ancien mode · 15 févr.", s:'retest', note:"Campagne de re-test (15 févr.) — verdict à donner via les cases de l'app."},
+ {d:47, n:"Double Frappe", g:"ancien mode · 16 févr.", s:'retest', note:"Campagne de re-test (16 févr.) — verdict à donner via les cases de l'app."},
+ {d:48, n:"Pression Longue", g:"ancien mode · 17 févr.", s:'retest', note:"Campagne de re-test (17 févr.) — verdict à donner via les cases de l'app."},
+ {d:49, n:"L'Intrus", g:"ancien mode · 18 févr.", s:'retest', note:"Campagne de re-test (18 févr.) — verdict à donner via les cases de l'app."},
+ {d:50, n:"Les Jumeaux", g:"ancien mode · 19 févr.", s:'retest', note:"Campagne de re-test (19 févr.) — verdict à donner via les cases de l'app."},
+ {d:51, n:"Recherche Exacte", g:"ancien mode · 20 févr.", s:'retest', note:"Campagne de re-test (20 févr.) — verdict à donner via les cases de l'app."},
+ {d:52, n:"Curseur Fou", g:"ancien mode · 21 févr.", s:'retest', note:"Campagne de re-test (21 févr.) — verdict à donner via les cases de l'app."},
+ {d:53, n:"Addition Cible", g:"ancien mode · 22 févr.", s:'retest', note:"Campagne de re-test (22 févr.) — verdict à donner via les cases de l'app."},
+ {d:54, n:"Soustraction Cible", g:"ancien mode · 23 févr.", s:'retest', note:"Campagne de re-test (23 févr.) — verdict à donner via les cases de l'app."},
+ {d:55, n:"Paires", g:"ancien mode · 24 févr.", s:'retest', note:"Campagne de re-test (24 févr.) — verdict à donner via les cases de l'app."},
+ {d:56, n:"Survie", g:"ancien mode · 25 févr.", s:'retest', note:"Campagne de re-test (25 févr.) — verdict à donner via les cases de l'app."},
+ {d:57, n:"Chasse en Série", g:"ancien mode · 26 févr.", s:'retest', note:"Campagne de re-test (26 févr.) — verdict à donner via les cases de l'app."},
+ {d:58, n:"Cibles Mobiles", g:"ancien mode · 27 févr.", s:'retest', note:"Campagne de re-test (27 févr.) — verdict à donner via les cases de l'app."},
+ {d:59, n:"Dactylographie", g:"ancien mode · 28 févr.", s:'retest', note:"Campagne de re-test (28 févr.) — verdict à donner via les cases de l'app."},
+ {d:60, n:"Relier les Points", g:"ancien mode · 1 mars", s:'retest', note:"Campagne de re-test (1 mars) — verdict à donner via les cases de l'app."},
+ {d:61, n:"Calcul · Additions", g:"ancien mode · 2 mars", s:'retest', note:"Campagne de re-test (2 mars) — verdict à donner via les cases de l'app."},
+ {d:62, n:"Calcul · Soustractions", g:"ancien mode · 3 mars", s:'retest', note:"Campagne de re-test (3 mars) — verdict à donner via les cases de l'app."},
+ {d:63, n:"Calcul · Multiplications", g:"ancien mode · 4 mars", s:'retest', note:"Campagne de re-test (4 mars) — verdict à donner via les cases de l'app."},
+ {d:64, n:"Calcul · Divisions", g:"ancien mode · 5 mars", s:'retest', note:"Campagne de re-test (5 mars) — verdict à donner via les cases de l'app."},
+ {d:65, n:"Lettres Chrono", g:"ancien mode · 6 mars", s:'retest', note:"Campagne de re-test (6 mars) — verdict à donner via les cases de l'app."},
+ {d:66, n:"Pair ou Impair", g:"ancien mode · 7 mars", s:'retest', note:"Campagne de re-test (7 mars) — verdict à donner via les cases de l'app."},
+ {d:67, n:"Quiz Rapide", g:"ancien mode · 8 mars", s:'retest', note:"Campagne de re-test (8 mars) — verdict à donner via les cases de l'app."},
+ {d:68, n:"Le Juste Prix", g:"ancien mode · 9 mars", s:'retest', note:"Campagne de re-test (9 mars) — verdict à donner via les cases de l'app."},
+ {d:69, n:"Symbole Commun", g:"ancien mode · 10 mars", s:'retest', note:"Campagne de re-test (10 mars) — verdict à donner via les cases de l'app."}
 ];
 
 const LAST_CURATED_ISSUE = 113; // dernier retour intégré à la base curée ci-dessus
@@ -121,11 +159,12 @@ const BADGES = {
   ouvert:    ['b-ouvert', '🗣 Retour ouvert'],
   recent:    ['b-recent', '💬 Retour récent traité'],
   chantier:  ['b-chantier', '🚧 En chantier'],
-  remplacer: ['b-remplacer', '❌ À remplacer']
+  remplacer: ['b-remplacer', '❌ À remplacer'],
+  retest:    ['b-corrige', '🧪 Ancien — à re-tester']
 };
 
 // Version de la base curée — sert à détecter une page en cache périmée
-const SUIVI_VERSION = '2026-07-18-6';
+const SUIVI_VERSION = '2026-07-18-7';
 
 let filter = 'tous';
 let issuesByDay = {};
@@ -191,8 +230,9 @@ function render() {
   DAYS.forEach(x => { const s = statusOf(x); counts[s] = (counts[s] || 0) + 1; });
 
   const chips = [['tous', 'Tous'], ['valide', '✅ Validés'], ['corrige', '🔧 À re-tester'],
-    ['nouveau', '🆕 Nouveaux'], ['chantier', '🚧 En chantier'], ['remplacer', '❌ À remplacer'],
-    ['aucun', '❓ Sans retour'], ['ouvert', '🗣 Ouverts'], ['recent', '💬 Récents']];
+    ['retest', '🧪 Anciens'], ['nouveau', '🆕 Nouveaux'], ['chantier', '🚧 En chantier'],
+    ['remplacer', '❌ À remplacer'], ['aucun', '❓ Sans retour'], ['ouvert', '🗣 Ouverts'],
+    ['recent', '💬 Récents']];
   document.getElementById('chips').innerHTML = chips
     .filter(([k]) => k === 'tous' || counts[k])
     .map(([k, lbl]) => `<span class="chip ${filter === k ? 'on' : ''}" onclick="filter='${k}';render()">${lbl} <span class="n">${counts[k] || 0}</span></span>`)
