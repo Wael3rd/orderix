@@ -118,8 +118,8 @@ function showExample(day, container) {
         showExampleChronologie(day, row, vals);
     } else if (mode.isDeux048) {
         showExampleDeux048(day, row, vals);
-    } else if (mode.isLaFoule) {
-        showExampleLaFoule(day, row, vals);
+    } else if (mode.isEmbouteillage) {
+        showExampleEmbouteillage(day, row, vals);
     } else if (mode.isTripleOrdre) {
         showExampleTripleOrdre(day, row, vals);
     } else if (mode.isPhotoClasse) {

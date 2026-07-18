@@ -114,8 +114,8 @@ function startGame() {
         startGameChronologie();
     } else if (mode.isDeux048) {
         startGameDeux048();
-    } else if (mode.isLaFoule) {
-        startGameLaFoule();
+    } else if (mode.isEmbouteillage) {
+        startGameEmbouteillage();
     } else if (mode.isTripleOrdre) {
         startGameTripleOrdre();
     } else if (mode.isPhotoClasse) {

@@ -17,8 +17,11 @@ function _triCard(val, size, opts) {
         'align-items:center;justify-content:center;font-weight:900;flex-shrink:0;user-select:none;' +
         `font-size:${Math.round(s * 0.44)}px;transition:transform .12s,opacity .2s;touch-action:manipulation;` +
         (o.blocked
-            ? 'background:#D8DCE8;color:#9AA0AE;box-shadow:0 2px 0 #C2C7D6;'
+            ? 'background:#D8DCE8;color:#B9BDC9;box-shadow:0 2px 0 #C2C7D6;'
             : 'background:#FFFFFF;color:#23262F;box-shadow:0 2px 0 #D8DCE8, 0 3px 8px rgba(35,38,47,.10);');
+    // Retour #51 (« incompréhensible ») : les cartes réellement JOUABLES
+    // (libres ET à ±1 de l'active) brillent en vert — on voit quoi faire.
+    if (o.playable) el.style.cssText += 'box-shadow:0 2px 0 #1E7A4A, 0 0 0 2.5px #34B871;color:#1E7A4A;';
     if (o.active) el.style.cssText += 'background:#4A6CFA;color:#fff;box-shadow:0 3px 0 #3553D1, 0 0 0 3px #FFFFFF, 0 0 0 5px #F5B227;';
     el.textContent = val;
     return el;
@@ -132,7 +135,9 @@ function startGameTripeaks() {
 
     function render() {
         const left = removed.filter(x => !x).length;
-        hud.innerHTML = `<span>Cartes restantes : <b style="color:#4A6CFA">${left}</b></span>`;
+        const lo = active - 1, hi = active + 1;
+        hud.innerHTML = `<span>Cartes restantes : <b style="color:#4A6CFA">${left}</b></span>` +
+            `<span>Jouez un <b style="color:#34B871">${lo >= 1 ? lo : '—'}</b> ou un <b style="color:#34B871">${hi <= 9 ? hi : '—'}</b></span>`;
 
         pyramid.innerHTML = '';
         let idx = 0;
@@ -141,7 +146,8 @@ function startGameTripeaks() {
                 if (removed[idx]) continue;
                 const i = idx;
                 const freeNow = isFree(i);
-                const el = _triCard(cards[i], 46, { blocked: !freeNow });
+                const playable = freeNow && Math.abs(cards[i] - active) === 1;
+                const el = _triCard(cards[i], 46, { blocked: !freeNow, playable: playable });
                 el.style.position = 'absolute';
                 el.style.left = (150 - 26 + (c - r / 2) * 56) + 'px';
                 el.style.top = (r * 47) + 'px';

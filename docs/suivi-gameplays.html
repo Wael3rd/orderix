@@ -75,14 +75,14 @@ const DAYS = [
  {d:1, n:"La Chaîne", g:"Schulte / enchaînement", s:"aucun", note:"Mode phare v2.1 — aucun retour dans cette campagne."},
  {d:2, n:"Tri Cascade", g:"tri de flux façon Speed Match", s:"aucun", note:"Mode phare v2.1 — aucun retour dans cette campagne."},
  {d:3, n:"L'Insertion", g:"timeline", s:"aucun", note:"Mode phare v2.1 — aucun retour dans cette campagne."},
- {d:4, n:"La Fontaine", g:"balles rebondissantes à éclater dans l'ordre", s:"chantier", note:"#39 : « ça marche bien » ✓ — reste à BORNER la zone de rebond (les balles montent sous le texte). Réglage en attente."},
- {d:5, n:"Le Métronome", g:"rythme", s:"corrige", note:"#2 : temps allongé, consigne simplifiée. À re-tester."},
- {d:6, n:"Le Sommet", g:"TriPeaks (Solitaire Grand Harvest)", s:"chantier", note:"#34 : « pyramide bonne idée, application incompréhensible » — clarté à retravailler (consigne + lisibilité des cartes jouables)."},
- {d:7, n:"Dégradé", g:"I Love Hue (culte chez les 35+)", s:"nouveau", note:"Remplace Patience (#40). Reconstituer le dégradé de couleurs en échangeant les tuiles — coins fixes, budget d'échanges."},
+ {d:4, n:"La Fontaine", g:"balles rebondissantes à éclater dans l'ordre", s:"valide", note:"#49 : « Jeu validé » ✓"},
+ {d:5, n:"Le Métronome", g:"rythme", s:"valide", note:"#50 : « Jeu validé » ✓"},
+ {d:6, n:"Le Sommet", g:"TriPeaks (Solitaire Grand Harvest)", s:"corrige", note:"#51 : refait pour la clarté — les cartes jouables BRILLENT EN VERT, rappel « jouez un X ou un Y », consigne réécrite. À re-tester."},
+ {d:7, n:"Dégradé", g:"I Love Hue (culte chez les 35+)", s:"corrige", note:"#52 « impossible » : toute la bordure est fixe (6 tuiles centrales à replacer), teintes resserrées. À re-tester."},
  {d:8, n:"Duel", g:"speed-solitaire contre la montre", s:"chantier", note:"#41 : pas challenging avec les cartes illuminées ; doit ressembler à un vrai solitaire simplifié (recherche demandée). Refonte à faire."},
- {d:9, n:"Blocs", g:"Block Blast (n°1 mondial, 366 M dl)", s:"nouveau", note:"Remplace Suites (#43). Poser des pièces, effacer 6 lignes sans saturer la grille 8×8."},
+ {d:9, n:"Blocs", g:"Block Blast (n°1 mondial, 366 M dl)", s:"corrige", note:"#53 « pourquoi pas mais bugs de pose » : la pièce se pose désormais en COUVRANT la case touchée, cases vertes fiables. À re-tester."},
  {d:10, n:"Dominos", g:"chaîne de dominos", s:"chantier", note:"#44 : « gagné en appuyant comme un timbré » — la routine a ajouté 3 vies (le spam coûte désormais). Si ça ne suffit pas au re-test → remplacement."},
- {d:11, n:"Paires Reliées", g:"Tile Connect / Onet (86 M+ dl)", s:"nouveau", note:"Remplace L'Escalier (#47). Relier les paires par un chemin ≤ 2 virages, dans l'ordre croissant. Disposition vérifiée résoluble."},
+ {d:11, n:"Paires Reliées", g:"Tile Connect / Onet (86 M+ dl)", s:"corrige", note:"#54 « trop facile » : plateau 6×5 (15 paires) et la paire recherchée n'est plus surlignée — il faut chercher. À re-tester."},
  {d:12, n:"Les Tubes", g:"water-sort ordonné", s:"corrige", note:"#9 « vraiment super » ; #24 (encore + de fioles) analysé sans agrandissement. À trancher au re-test."},
  {d:13, n:"Échange Minimal", g:"tri par échanges voisins", s:"corrige", note:"#10 : seuls les échanges possibles s'illuminent. À re-tester."},
  {d:14, n:"Les Boulons", g:"screw-sort (Screwdom)", s:"valide", note:"#11 puis #25 « Ok comme gameplay là ! » — doublement confirmé."},
@@ -96,16 +96,16 @@ const DAYS = [
  {d:22, n:"Les Indices", g:"logique par indices", s:"corrige", note:"#19 « mille fois trop simples » : générateur durci. À re-tester."},
  {d:23, n:"Chronologie", g:"culture générale ordonnée", s:"aucun", note:"Jamais testé (grisé par le bug du Sheet jusqu'au 18/07)."},
  {d:24, n:"Tapis Roulant", g:"réactivité", s:"corrige", note:"#26 : types illisibles bannis (repli nombres). À re-tester."},
- {d:25, n:"2048", g:"LE classique merge", s:"nouveau", note:"Remplace L'Aiguillage (#27, générateur non gagnable). Objectif : tuile 128."},
- {d:26, n:"À Bord !", g:"Bus Jam", s:"nouveau", note:"Remplace L'Ascenseur (#28). Donne vérifiée gagnable par solveur."},
+ {d:25, n:"2048", g:"LE classique merge", s:"valide", note:"#55 : « Très bien, c'est validé ! » ✓"},
+ {d:26, n:"L'Embouteillage", g:"Rush Hour / Unblock Me", s:"nouveau", note:"Remplace À Bord ! (#56 « nul, à changer complètement »). Glisser les véhicules pour libérer la voiture dorée — annulation illimitée, grilles pré-vérifiées."},
  {d:27, n:"Triple Suite", g:"tile-match (Vita Mahjong, Triple Tile)", s:"valide", note:"#36 : « Ça marche super super bien » ✓"},
  {d:28, n:"Photo de Classe", g:"mémoire spatiale", s:"valide", note:"#30 « très bien » — temps de mémorisation doublé comme demandé."},
  {d:29, n:"Les Fils", g:"démêlage (Twisted Tangle)", s:"corrige", note:"#37 « pas challenging » : budget resserré au minimum théorique +1 par la routine. À re-tester."},
  {d:30, n:"Fusion", g:"chaînes à fusionner", s:"valide", note:"#32 « vraiment très bien » — consigne réécrite comme demandé."},
- {d:31, n:"Le Chemin", g:"Hidato / Flow Free", s:"nouveau", note:"Inédit (#33) — janvier compte désormais 31 originaux."}
+ {d:31, n:"Le Chemin", g:"Hidato / Flow Free", s:"corrige", note:"#57 « grille vide » : vrai bug de génération corrigé (le jeu ne s'était jamais affiché !). Départ bleu + jalons dorés visibles — re-testez avant verdict, sinon je remplace."}
 ];
 
-const LAST_CURATED_ISSUE = 48; // dernier retour intégré à la base curée ci-dessus
+const LAST_CURATED_ISSUE = 57; // dernier retour intégré à la base curée ci-dessus
 const BADGES = {
   valide:    ['b-valide', '✅ Validé'],
   corrige:   ['b-corrige', '🔧 Corrigé — à re-tester'],

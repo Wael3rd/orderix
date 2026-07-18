@@ -99,7 +99,7 @@ function startGameBlocs() {
 
     const hint = document.createElement('div');
     hint.style.cssText = 'font-weight:bold;color:#9AA0AE;font-size:.78rem;';
-    hint.textContent = 'Touchez une pièce, puis la case où poser son coin haut-gauche.';
+    hint.textContent = 'Touchez une pièce, puis une case verte : elle se pose dessus.';
     board.appendChild(hint);
 
     function canPlace(shape, r0, c0) {
@@ -112,6 +112,16 @@ function startGameBlocs() {
         for (let r = 0; r < S; r++) for (let c = 0; c < S; c++) if (canPlace(shape, r, c)) return true;
         return false;
     }
+    // Retour #53 (« bugs de détection ») : on ne pose plus par le coin
+    // haut-gauche — la pièce se pose de façon à COUVRIR la case touchée.
+    // Renvoie l'ancrage [r0, c0] d'un placement valide couvrant (r, c).
+    function placementCovering(shape, r, c) {
+        for (const [dr, dc] of shape) {
+            const r0 = r - dr, c0 = c - dc;
+            if (canPlace(shape, r0, c0)) return [r0, c0];
+        }
+        return null;
+    }
 
     function render() {
         hud.innerHTML = `<span>Lignes effacées : <b style="color:#34B871">${lines}</b> / <b style="color:#F5B227">${GOAL}</b></span>`;
@@ -120,7 +130,8 @@ function startGameBlocs() {
         for (let r = 0; r < S; r++) for (let c = 0; c < S; c++) {
             const rr = r, cc = c;
             const cell = document.createElement('div');
-            const valid = selected !== -1 && !tray[selected].used && canPlace(tray[selected].shape, r, c);
+            const valid = selected !== -1 && !tray[selected].used && !grid[r][c] &&
+                placementCovering(tray[selected].shape, r, c) !== null;
             cell.style.cssText = `width:${CELL}px;height:${CELL}px;border-radius:6px;touch-action:manipulation;` +
                 `background:${grid[r][c] ? grid[r][c] : (valid ? '#C9E7D4' : '#F4F6FA')};` +
                 (grid[r][c] ? 'box-shadow:inset 0 -2px 0 rgba(0,0,0,.18);' : '');
@@ -152,14 +163,16 @@ function startGameBlocs() {
         });
     }
 
-    function place(r0, c0) {
+    function place(rt, ct) {
         const p = tray[selected];
-        if (!canPlace(p.shape, r0, c0)) {
+        const anchor = placementCovering(p.shape, rt, ct);
+        if (!anchor) {
             haptic(30);
             gridEl.style.animation = 'wobble .25s';
             setTimeout(() => { gridEl.style.animation = ''; }, 300);
             return;
         }
+        const [r0, c0] = anchor;
         p.shape.forEach(([r, c]) => { grid[r0 + r][c0 + c] = p.color; });
         p.used = true;
         selected = -1;

@@ -65,7 +65,9 @@ function startGamePaires() {
     board.style.alignItems = 'center';
     board.style.gap = '12px';
 
-    const C = 5, R = 4, PAIRS = 10, TILE = 48, GAP = 6;
+    // Retour #54 (« trop facile ») : plateau agrandi à 6×5 (15 paires) et
+    // la paire recherchée n'est PLUS surlignée — c'est à l'œil de chercher.
+    const C = 6, R = 5, PAIRS = 15, TILE = 44, GAP = 6;
 
     // Chemin ≤ 2 virages sur la grille étendue (tour extérieur vide)
     function pathBetween(g, a, b) {
@@ -147,7 +149,7 @@ function startGamePaires() {
         grid.innerHTML = '';
         cells.forEach((v, idx) => {
             const i = idx;
-            const el = _pairesTuile(v, TILE, { done: done[idx], next: v === next && !done[idx], selected: selected === idx });
+            const el = _pairesTuile(v, TILE, { done: done[idx], selected: selected === idx });
             if (!done[idx]) el.addEventListener('pointerdown', (e) => {
                 e.preventDefault();
                 if (isPaused) return;

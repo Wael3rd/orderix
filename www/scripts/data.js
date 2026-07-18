@@ -19,7 +19,7 @@ const GAME_MODES = {
     // ── Vague janvier 2027 : les 30 gameplays d'ordonnancement (audit v2.2) ──
     fontaine: { name: "La Fontaine", isFontaine: true, typeAgnostic: true, desc: "Les balles rebondissent dans la boîte : éclatez-les de la plus petite à la plus grande. 2 manches, 3 vies." },
     metronome: { name: "Le Métronome", isMetronome: true, typeAgnostic: true, desc: "Touchez les nombres du plus petit au plus grand avant la fin de chaque barre de temps. Le rythme accélère doucement. 2 vies." },
-    tripeaks: { name: "Le Sommet", isTripeaks: true, typeAgnostic: true, desc: "Démontez la pyramide : enchaînez les cartes à ±1 de la carte active. La pioche vous relance quand ça coince." },
+    tripeaks: { name: "Le Sommet", isTripeaks: true, typeAgnostic: true, desc: "La carte ACTIVE est en bas. Touchez une carte verte de la pyramide (= 1 de plus ou de moins que l'active) : elle devient la nouvelle active. Videz la pyramide ; la pioche vous relance quand rien ne brille." },
     degrade: { name: "Dégradé", isDegrade: true, typeAgnostic: true, desc: "Échangez les tuiles deux à deux pour reconstituer le dégradé de couleurs parfait. Les coins marqués d'un point sont déjà à leur place." },
     duel: { name: "Duel", isDuel: true, typeAgnostic: true, desc: "Contre la montre : posez vos cartes à ±1 des piles centrales avant la fin du temps. Les cartes jouables s'illuminent en vert." },
     blocs: { name: "Blocs", isBlocs: true, typeAgnostic: true, desc: "Posez les pièces sur la grille : chaque ligne ou colonne complète s'efface. Effacez 6 lignes sans saturer la grille !" },
@@ -39,7 +39,7 @@ const GAME_MODES = {
     indices: { name: "Les Indices", isIndices: true, typeAgnostic: true, desc: "Lisez les indices, reconstituez l'ordre exact, puis validez. 2 essais." },
     chronologie: { name: "Chronologie", isChronologie: true, typeAgnostic: true, desc: "Ordonnez ces 5 réalités de la plus petite à la plus grande : dates, tailles, poids… 1 joker." },
     deux048: { name: "2048", isDeux048: true, typeAgnostic: true, desc: "Glissez la grille : deux tuiles égales fusionnent en une plus grande (2+2=4, 4+4=8…). Créez la tuile 128 !" },
-    laFoule: { name: "À Bord !", isLaFoule: true, typeAgnostic: true, desc: "Faites monter les passagères dans le bus dans l'ordre 1, 2, 3… Seules les têtes de colonnes sont accessibles — 3 sièges d'attente pour vous aider." },
+    embouteillage: { name: "L'Embouteillage", isEmbouteillage: true, typeAgnostic: true, desc: "Faites glisser les véhicules dans leur axe pour ouvrir la voie : la voiture DORÉE doit atteindre la sortie à droite. Annulation illimitée." },
     tripleOrdre: { name: "Triple Suite", isTripleOrdre: true, typeAgnostic: true, desc: "Prenez les tuiles libres pour réunir les trios de nombres qui se suivent (même couleur). Si la barre déborde à 7, c'est perdu !" },
     photoClasse: { name: "Photo de Classe", isPhotoClasse: true, typeAgnostic: true, desc: "Mémorisez qui est où, puis reformez le rang d'origine après le mélange. 2 vies." },
     filsEmmeles: { name: "Les Fils", isFilsEmmeles: true, typeAgnostic: true, desc: "Échangez deux pastilles à la fois pour dénouer tous les fils vers les prises 1 à 8. Zéro croisement = gagné !" },

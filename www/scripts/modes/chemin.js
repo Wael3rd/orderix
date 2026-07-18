@@ -45,7 +45,11 @@ function startGameChemin() {
 
     const S = 5, TOTAL = S * S, CELL = 56;
 
-    // Génère un chemin hamiltonien aléatoire par backtracking
+    // Génère un chemin hamiltonien aléatoire par backtracking.
+    // CORRECTIF (issue #57, « grille vide ») : sur une grille 5×5, un chemin
+    // hamiltonien n'existe que depuis une case de la couleur majoritaire du
+    // damier ((ligne+colonne) paire). Un départ mal choisi faisait échouer la
+    // génération → solution vide → plateau sans jalons ni départ.
     function genPath() {
         const path = [];
         const used = new Array(TOTAL).fill(false);
@@ -64,11 +68,17 @@ function startGameChemin() {
             path.pop(); used[p] = false;
             return false;
         }
-        dfs(Math.floor(Math.random() * TOTAL));
+        const starts = [];
+        for (let p = 0; p < TOTAL; p++) {
+            if ((Math.floor(p / S) + p % S) % 2 === 0) starts.push(p);
+        }
+        dfs(starts[Math.floor(Math.random() * starts.length)]);
         return path;
     }
 
-    const solution = genPath();
+    let solution = genPath();
+    // Filet de sécurité : jamais de plateau vide
+    for (let attempt = 0; attempt < 5 && solution.length !== TOTAL; attempt++) solution = genPath();
     // Jalons révélés : départ, arrivée, et un pas sur ~4
     const hints = new Map(); // cellule → numéro de pas (1-based)
     [0, 4, 8, 12, 16, 20, 24].forEach(step => hints.set(solution[step], step + 1));

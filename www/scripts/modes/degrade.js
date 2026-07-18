@@ -48,13 +48,15 @@ function startGameDegrade() {
 
     const C = 4, R = 5, TILE = 64, GAP = 5;
 
-    // Dégradé 2D : 4 couleurs de coins interpolées bilinéairement (en RGB)
+    // Dégradé 2D : 4 couleurs de coins interpolées bilinéairement (en RGB).
+    // Retour #52 (« impossible ») : teintes des coins resserrées (span ~110°)
+    // pour un dégradé lisible et progressif, sans couleurs parasites.
     const baseHue = Math.floor(Math.random() * 360);
     const corners = [
-        `hsl(${baseHue}, 75%, 62%)`,
-        `hsl(${(baseHue + 55) % 360}, 70%, 55%)`,
-        `hsl(${(baseHue + 200) % 360}, 60%, 42%)`,
-        `hsl(${(baseHue + 130) % 360}, 65%, 50%)`
+        `hsl(${baseHue}, 75%, 68%)`,
+        `hsl(${(baseHue + 40) % 360}, 72%, 55%)`,
+        `hsl(${(baseHue + 70) % 360}, 62%, 40%)`,
+        `hsl(${(baseHue + 110) % 360}, 68%, 50%)`
     ].map(h => {
         // hsl → rgb via un élément fantôme n'est pas fiable en jsdom : conversion manuelle
         const m = h.match(/hsl\((\d+), (\d+)%, (\d+)%\)/);
@@ -79,9 +81,15 @@ function startGameDegrade() {
         return `rgb(${mix(0)}, ${mix(1)}, ${mix(2)})`;
     }
 
-    // perm[pos] = indice de la tuile actuellement à cette position
+    // perm[pos] = indice de la tuile actuellement à cette position.
+    // Retour #52 : toute la BORDURE est fixe — seules les 6 tuiles du
+    // centre sont mélangées. Abordable, mais l'œil doit encore juger.
     const N = C * R;
-    const fixed = new Set([0, C - 1, N - C, N - 1]); // les 4 coins
+    const fixed = new Set();
+    for (let i = 0; i < N; i++) {
+        const r = Math.floor(i / C), c = i % C;
+        if (r === 0 || r === R - 1 || c === 0 || c === C - 1) fixed.add(i);
+    }
     const free = [];
     for (let i = 0; i < N; i++) if (!fixed.has(i)) free.push(i);
 
@@ -132,7 +140,7 @@ function startGameDegrade() {
             if (fixed.has(pos)) {
                 const dot = document.createElement('div');
                 dot.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);' +
-                    'width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.85);box-shadow:0 0 3px rgba(0,0,0,.35);';
+                    'width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.65);';
                 el.appendChild(dot);
             } else {
                 if (selected === pos) el.style.cssText += 'box-shadow:0 0 0 3px #FFFFFF, 0 0 0 6px #F5B227;transform:scale(1.06);z-index:5;';

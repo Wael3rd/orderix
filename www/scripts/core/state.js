@@ -45,7 +45,7 @@ const JANUARY_LINEUP = [
     'paires', 'tubes', 'swapSort', 'boulons', 'fileBloquee',
     'grille', 'hanoi', 'etageres', 'futoshiki', 'balance',
     'ordreCache', 'indices', 'chronologie', 'conveyorBelt', 'deux048',
-    'laFoule', 'tripleOrdre', 'photoClasse', 'filsEmmeles', 'fusion',
+    'embouteillage', 'tripleOrdre', 'photoClasse', 'filsEmmeles', 'fusion',
     'chemin'
 ];
 const LEGACY_MODES = Object.keys(GAME_MODES)
