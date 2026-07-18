@@ -80,16 +80,16 @@ function showExample(day, container) {
         showExampleMetronome(day, row, vals);
     } else if (mode.isTripeaks) {
         showExampleTripeaks(day, row, vals);
-    } else if (mode.isPatience) {
-        showExamplePatience(day, row, vals);
+    } else if (mode.isDegrade) {
+        showExampleDegrade(day, row, vals);
     } else if (mode.isDuel) {
         showExampleDuel(day, row, vals);
-    } else if (mode.isRummy) {
-        showExampleRummy(day, row, vals);
+    } else if (mode.isBlocs) {
+        showExampleBlocs(day, row, vals);
     } else if (mode.isDominoOrder) {
         showExampleDominoOrder(day, row, vals);
-    } else if (mode.isEscalier) {
-        showExampleEscalier(day, row, vals);
+    } else if (mode.isPaires) {
+        showExamplePaires(day, row, vals);
     } else if (mode.isTubes) {
         showExampleTubes(day, row, vals);
     } else if (mode.isSwapSort) {

@@ -76,16 +76,16 @@ function startGame() {
         startGameMetronome();
     } else if (mode.isTripeaks) {
         startGameTripeaks();
-    } else if (mode.isPatience) {
-        startGamePatience();
+    } else if (mode.isDegrade) {
+        startGameDegrade();
     } else if (mode.isDuel) {
         startGameDuel();
-    } else if (mode.isRummy) {
-        startGameRummy();
+    } else if (mode.isBlocs) {
+        startGameBlocs();
     } else if (mode.isDominoOrder) {
         startGameDominoOrder();
-    } else if (mode.isEscalier) {
-        startGameEscalier();
+    } else if (mode.isPaires) {
+        startGamePaires();
     } else if (mode.isTubes) {
         startGameTubes();
     } else if (mode.isSwapSort) {

@@ -37,10 +37,12 @@ let returnScreen = 'home'; // écran d'origine avant d'entrer dans un jour (reto
 // v2.3 (retours de test du 18/07) : laSuite→tripeaks, aiguillage→deux048,
 // ascenseur→laFoule, guichet→tripleOrdre, memoryChain→filsEmmeles,
 // + jour 31 inédit (chemin). Janvier fait désormais 31 jours d'originaux.
+// v2.4 (retours #40/#43/#47) : patience→degrade (I Love Hue),
+// rummy→blocs (Block Blast), escalier→paires (Tile Connect).
 const JANUARY_LINEUP = [
     'orderChain', 'cascade', 'insertion', 'fontaine', 'metronome',
-    'tripeaks', 'patience', 'duel', 'rummy', 'dominoOrder',
-    'escalier', 'tubes', 'swapSort', 'boulons', 'fileBloquee',
+    'tripeaks', 'degrade', 'duel', 'blocs', 'dominoOrder',
+    'paires', 'tubes', 'swapSort', 'boulons', 'fileBloquee',
     'grille', 'hanoi', 'etageres', 'futoshiki', 'balance',
     'ordreCache', 'indices', 'chronologie', 'conveyorBelt', 'deux048',
     'laFoule', 'tripleOrdre', 'photoClasse', 'filsEmmeles', 'fusion',
