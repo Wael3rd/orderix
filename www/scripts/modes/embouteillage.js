@@ -10,32 +10,49 @@ const _EMB_COLORS = ['#4A6CFA', '#34B871', '#8B5CF6', '#3553D1', '#1E7A74', '#E0
 
 // {r, c, len, dir 'h'|'v', num?} — les voitures numérotées sont
 // horizontales et sortent par la droite de leur ligne.
+// Retour #93 (« mille fois trop facile ») : niveaux générés puis
+// vérifiés par solveur BFS hors-ligne — minimum 22 / 28 / 30 pas.
 const _EMB_LEVELS = [
     [
-        { r: 1, c: 0, len: 2, dir: 'h', num: 1 },
-        { r: 3, c: 1, len: 2, dir: 'h', num: 2 },
-        { r: 5, c: 0, len: 2, dir: 'h', num: 3 },
-        { r: 0, c: 4, len: 2, dir: 'v' },
-        { r: 2, c: 3, len: 2, dir: 'v' },
-        { r: 4, c: 5, len: 2, dir: 'v' }
-    ],
-    [
-        { r: 2, c: 1, len: 2, dir: 'h', num: 1 },
-        { r: 0, c: 0, len: 2, dir: 'h', num: 2 },
-        { r: 4, c: 2, len: 2, dir: 'h', num: 3 },
-        { r: 1, c: 3, len: 2, dir: 'v' },
-        { r: 0, c: 5, len: 3, dir: 'v' },
-        { r: 5, c: 2, len: 2, dir: 'h' },
-        { r: 3, c: 4, len: 2, dir: 'v' }
-    ],
-    [
-        { r: 3, c: 2, len: 2, dir: 'h', num: 1 },
-        { r: 1, c: 1, len: 2, dir: 'h', num: 2 },
-        { r: 5, c: 3, len: 2, dir: 'h', num: 3 },
-        { r: 2, c: 4, len: 2, dir: 'v' },
+        { r: 2, c: 2, len: 2, dir: 'h', num: 1 },
+        { r: 0, c: 1, len: 2, dir: 'h', num: 2 },
+        { r: 4, c: 0, len: 2, dir: 'h', num: 3 },
+        { r: 4, c: 4, len: 2, dir: 'v' },
+        { r: 0, c: 0, len: 2, dir: 'v' },
         { r: 0, c: 5, len: 2, dir: 'v' },
+        { r: 3, c: 3, len: 2, dir: 'v' },
+        { r: 5, c: 0, len: 3, dir: 'h' },
         { r: 3, c: 5, len: 2, dir: 'v' },
-        { r: 0, c: 2, len: 2, dir: 'h' }
+        { r: 2, c: 0, len: 2, dir: 'h' },
+        { r: 0, c: 4, len: 2, dir: 'v' },
+        { r: 0, c: 3, len: 2, dir: 'v' }
+    ],
+    [
+        { r: 1, c: 0, len: 2, dir: 'h', num: 1 },
+        { r: 2, c: 1, len: 2, dir: 'h', num: 2 },
+        { r: 5, c: 1, len: 2, dir: 'h', num: 3 },
+        { r: 0, c: 5, len: 2, dir: 'v' },
+        { r: 0, c: 1, len: 3, dir: 'h' },
+        { r: 4, c: 5, len: 2, dir: 'v' },
+        { r: 2, c: 4, len: 2, dir: 'v' },
+        { r: 3, c: 1, len: 2, dir: 'v' },
+        { r: 3, c: 0, len: 3, dir: 'v' },
+        { r: 4, c: 2, len: 2, dir: 'h' },
+        { r: 2, c: 3, len: 2, dir: 'v' },
+        { r: 0, c: 4, len: 2, dir: 'v' }
+    ],
+    [
+        { r: 2, c: 2, len: 2, dir: 'h', num: 1 },
+        { r: 3, c: 2, len: 2, dir: 'h', num: 2 },
+        { r: 0, c: 1, len: 2, dir: 'h', num: 3 },
+        { r: 2, c: 4, len: 2, dir: 'v' },
+        { r: 1, c: 4, len: 2, dir: 'h' },
+        { r: 0, c: 3, len: 2, dir: 'v' },
+        { r: 2, c: 0, len: 2, dir: 'v' },
+        { r: 4, c: 4, len: 2, dir: 'v' },
+        { r: 3, c: 5, len: 2, dir: 'v' },
+        { r: 5, c: 0, len: 2, dir: 'h' },
+        { r: 2, c: 1, len: 2, dir: 'v' }
     ]
 ];
 

@@ -82,8 +82,8 @@ function startGame() {
         startGameSolitaire();
     } else if (mode.isBlocs) {
         startGameBlocs();
-    } else if (mode.isDominoOrder) {
-        startGameDominoOrder();
+    } else if (mode.isDominosa) {
+        startGameDominosa();
     } else if (mode.isPaires) {
         startGamePaires();
     } else if (mode.isTubes) {
@@ -120,8 +120,8 @@ function startGame() {
         startGameTripleOrdre();
     } else if (mode.isPhotoClasse) {
         startGamePhotoClasse();
-    } else if (mode.isBulles) {
-        startGameBulles();
+    } else if (mode.isTaquin) {
+        startGameTaquin();
     } else if (mode.isNonogramme) {
         startGameNonogramme();
     } else if (mode.isFusion) {

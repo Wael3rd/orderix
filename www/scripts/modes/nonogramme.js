@@ -1,14 +1,14 @@
 // ─── Mode : Le Nonogramme (jour 31) ──────────────────────────────
-// Picross 5×5 inspiré de Nonogram.com (Easybrain). Un motif secret
+// Picross 7×7 inspiré de Nonogram.com (Easybrain). Un motif secret
 // est généré ; seuls les indices classiques (longueurs des blocs
 // consécutifs remplis, par ligne et par colonne) sont affichés.
 // Deux outils : ■ Remplir et ✕ Marquer vide. Les indices passent au
 // vert quand leur ligne/colonne est satisfaite. Victoire dès que les
-// 5 lignes ET les 5 colonnes correspondent — toute solution valide
+// 7 lignes ET les 7 colonnes correspondent — toute solution valide
 // compte, même différente du motif d'origine. Pas de défaite : le
 // chrono départage.
 
-const _NONO_N = 5;
+const _NONO_N = 7;
 
 // Longueurs des blocs consécutifs remplis d'une ligne/colonne ([0] si vide)
 function _nonoClues(cells) {
@@ -119,7 +119,7 @@ function startGameNonogramme() {
 
     // État du joueur : 0 = vide · 1 = rempli · 2 = marqué vide (✕)
     const grid = [];
-    for (let r = 0; r < _NONO_N; r++) grid.push([0, 0, 0, 0, 0]);
+    for (let r = 0; r < _NONO_N; r++) grid.push(new Array(_NONO_N).fill(0));
     let tool = 1; // outil actif : 1 = remplir, 2 = marquer vide
     let over = false;
 
@@ -129,10 +129,10 @@ function startGameNonogramme() {
     board.appendChild(hud);
 
     // ── Table : coin vide + indices de colonnes + indices de lignes + cellules ─
-    const CELL = 46;
+    const CELL = 38;
     const table = document.createElement('div');
     table.style.cssText = `display:grid;grid-template-columns:auto repeat(${_NONO_N},${CELL}px);` +
-        `grid-template-rows:auto repeat(${_NONO_N},${CELL}px);gap:4px;align-items:stretch;`;
+        `grid-template-rows:auto repeat(${_NONO_N},${CELL}px);gap:3px;align-items:stretch;`;
     board.appendChild(table);
 
     table.appendChild(document.createElement('div')); // coin haut-gauche vide
@@ -164,7 +164,7 @@ function startGameNonogramme() {
         cellEls.push([]);
         for (let c = 0; c < _NONO_N; c++) {
             const cell = document.createElement('div');
-            cell.style.cssText = `width:${CELL}px;height:${CELL}px;border-radius:8px;background:#E8EAF1;` +
+            cell.style.cssText = `width:${CELL}px;height:${CELL}px;border-radius:7px;background:#E8EAF1;` +
                 'display:flex;align-items:center;justify-content:center;user-select:none;' +
                 'touch-action:manipulation;transition:background .08s;cursor:pointer;';
             const rr = r, cc = c;

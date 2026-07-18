@@ -43,11 +43,11 @@ let returnScreen = 'home'; // écran d'origine avant d'entrer dans un jour (reto
 // degrade→memoCroissant (mémoire), sur demande explicite du produit.
 const JANUARY_LINEUP = [
     'orderChain', 'cascade', 'insertion', 'fontaine', 'metronome',
-    'code', 'memoCroissant', 'solitaire', 'blocs', 'dominoOrder',
+    'code', 'memoCroissant', 'solitaire', 'blocs', 'dominosa',
     'paires', 'tubes', 'swapSort', 'boulons', 'fileBloquee',
     'grille', 'hanoi', 'mahjong', 'futoshiki', 'balance',
     'ordreCache', 'indices', 'chronologie', 'piles', 'deux048',
-    'embouteillage', 'tripleOrdre', 'photoClasse', 'bulles', 'fusion',
+    'embouteillage', 'tripleOrdre', 'photoClasse', 'taquin', 'fusion',
     'nonogramme'
 ];
 const LEGACY_MODES = Object.keys(GAME_MODES)

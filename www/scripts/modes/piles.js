@@ -135,6 +135,12 @@ function startGamePiles() {
     zone.style.cssText = 'display:flex;gap:8px;justify-content:center;align-items:flex-end;';
     board.appendChild(zone);
 
+    const aide = document.createElement('div');
+    aide.style.cssText = 'font-weight:bold;color:#8B90A0;font-size:.78rem;text-align:center;max-width:330px;line-height:1.35;';
+    aide.textContent = 'Réunissez 7 jetons de même couleur d’affilée sur une pile : ils s’envolent ! ' +
+        'Le compteur doré au-dessus d’une pile montre la série en cours.';
+    board.appendChild(aide);
+
     const slotEls = [];
 
     // ── Logique ─────────────────────────────────────────────────────
@@ -207,11 +213,24 @@ function startGamePiles() {
         slotEls.length = 0;
         for (let i = 0; i < NB_SLOTS; i++) {
             const slot = document.createElement('div');
+            // Bordure rouge quand la pile frôle le débordement (12 max)
+            const danger = slots[i].length > HAUTEUR_MAX - 3;
             slot.style.cssText = 'display:flex;flex-direction:column-reverse;align-items:center;gap:2px;' +
-                'width:52px;height:208px;padding:4px 0;background:#EEF0F5;border:2px dashed #C2C7D6;' +
+                'width:52px;height:208px;padding:4px 0;background:#EEF0F5;' +
+                'border:2px dashed ' + (danger ? '#E0533D' : '#C2C7D6') + ';' +
                 'border-radius:10px;box-sizing:border-box;position:relative;touch-action:manipulation;' +
                 'flex-shrink:0;user-select:none;';
             slots[i].forEach(c => slot.appendChild(_pilesJeton(_PILES_COULEURS[c], 40, 14)));
+            // Compteur de série au sommet : « k/7 » dès 2 jetons identiques d'affilée
+            const k = serieSommet(slots[i]);
+            if (k >= 2) {
+                const chip = document.createElement('div');
+                chip.style.cssText = 'position:absolute;top:-11px;left:50%;transform:translateX(-50%);' +
+                    'background:#F5B227;color:#fff;font-weight:900;font-size:.66rem;padding:2px 7px;' +
+                    'border-radius:9px;white-space:nowrap;pointer-events:none;box-shadow:0 1px 3px rgba(35,38,47,.25);';
+                chip.textContent = k + '/' + SEUIL_ENVOL;
+                slot.appendChild(chip);
+            }
             const si = i;
             slot.addEventListener('pointerdown', e => {
                 e.preventDefault();

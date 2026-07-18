@@ -1,35 +1,44 @@
 // ─── Mode : Chronologie ──────────────────────────────────────────
-// Culture générale : composer son ordre sur 5 emplacements puis
-// valider. Les bonnes positions se verrouillent en vert (valeur
-// révélée), les autres reviennent dans la réserve. On recommence
-// jusqu'au sans-faute. Données factuelles embarquées.
+// Culture générale : 8 cartes dans une colonne, à réordonner par
+// GLISSER-DÉPOSER, puis valider. Les bonnes positions se verrouillent
+// en vert (valeur révélée), les mauvaises clignotent et restent en
+// place. On recommence jusqu'au sans-faute. Données embarquées.
 
 const DATASETS = [
     {
         question: 'Du plus ancien au plus récent', unite: 'année',
         items: [
+            { label: 'Machine à vapeur', valeur: 1769 },
+            { label: 'Photographie', valeur: 1826 },
             { label: 'Téléphone', valeur: 1876 },
             { label: 'Avion', valeur: 1903 },
             { label: 'Télévision', valeur: 1926 },
             { label: 'Four à micro-ondes', valeur: 1945 },
+            { label: 'Web (Internet grand public)', valeur: 1989 },
             { label: 'Smartphone tactile', valeur: 2007 }
         ]
     },
     {
         question: 'Du plus léger au plus lourd', unite: 'kg',
         items: [
+            { label: 'Écureuil', valeur: 0.5 },
             { label: 'Chat', valeur: 4 },
             { label: 'Loup', valeur: 40 },
             { label: 'Lion', valeur: 190 },
             { label: 'Cheval', valeur: 500 },
+            { label: 'Girafe', valeur: 800 },
+            { label: 'Hippopotame', valeur: 1500 },
             { label: 'Éléphant d\'Afrique', valeur: 5000 }
         ]
     },
     {
         question: 'Du plus bas au plus haut', unite: 'm',
         items: [
+            { label: 'Arc de Triomphe', valeur: 50 },
+            { label: 'Notre-Dame de Paris', valeur: 69 },
             { label: 'Statue de la Liberté', valeur: 93 },
             { label: 'Grande Pyramide', valeur: 139 },
+            { label: 'Tour Montparnasse', valeur: 210 },
             { label: 'Tour Eiffel', valeur: 330 },
             { label: 'Empire State Building', valeur: 443 },
             { label: 'Burj Khalifa', valeur: 828 }
@@ -38,6 +47,9 @@ const DATASETS = [
     {
         question: 'Du moins élevé au plus élevé', unite: 'm',
         items: [
+            { label: 'Ben Nevis (Écosse)', valeur: 1345 },
+            { label: 'Mont Fuji', valeur: 3776 },
+            { label: 'Cervin', valeur: 4478 },
             { label: 'Mont Blanc', valeur: 4809 },
             { label: 'Kilimandjaro', valeur: 5895 },
             { label: 'Denali', valeur: 6190 },
@@ -48,49 +60,64 @@ const DATASETS = [
     {
         question: 'Du plus court au plus long', unite: 'km',
         items: [
+            { label: 'Tamise', valeur: 346 },
             { label: 'Seine', valeur: 777 },
             { label: 'Loire', valeur: 1006 },
             { label: 'Rhin', valeur: 1233 },
             { label: 'Danube', valeur: 2850 },
+            { label: 'Volga', valeur: 3531 },
+            { label: 'Yangzi Jiang', valeur: 6300 },
             { label: 'Nil', valeur: 6650 }
         ]
     },
     {
-        question: 'De la plus petite à la plus grande', unite: 'km',
+        question: 'De la plus petite à la plus grande (diamètre)', unite: 'km',
         items: [
+            { label: 'La Lune', valeur: 3474 },
             { label: 'Mercure', valeur: 4879 },
             { label: 'Mars', valeur: 6779 },
             { label: 'Vénus', valeur: 12104 },
             { label: 'Terre', valeur: 12742 },
+            { label: 'Neptune', valeur: 49244 },
+            { label: 'Saturne', valeur: 116460 },
             { label: 'Jupiter', valeur: 139820 }
         ]
     },
     {
         question: 'Du plus lent au plus rapide', unite: 'km/h',
         items: [
+            { label: 'Tortue terrestre', valeur: 0.3 },
             { label: 'Poule', valeur: 14 },
+            { label: 'Éléphant', valeur: 40 },
             { label: 'Chat', valeur: 48 },
             { label: 'Lévrier', valeur: 72 },
             { label: 'Antilope', valeur: 88 },
+            { label: 'Guépard', valeur: 110 },
             { label: 'Faucon pèlerin en piqué', valeur: 320 }
         ]
     },
     {
         question: 'De la vie la plus courte à la plus longue', unite: 'ans',
         items: [
+            { label: 'Souris', valeur: 2 },
             { label: 'Hamster', valeur: 3 },
             { label: 'Lapin', valeur: 9 },
             { label: 'Chien', valeur: 13 },
             { label: 'Cheval', valeur: 28 },
-            { label: 'Tortue géante', valeur: 150 }
+            { label: 'Éléphant d\'Asie', valeur: 65 },
+            { label: 'Tortue géante', valeur: 150 },
+            { label: 'Baleine boréale', valeur: 200 }
         ]
     },
     {
         question: 'Du moins peuplé au plus peuplé', unite: 'millions d\'habitants',
         items: [
+            { label: 'Islande', valeur: 0.4 },
             { label: 'Portugal', valeur: 10 },
+            { label: 'Espagne', valeur: 48 },
             { label: 'France', valeur: 68 },
             { label: 'Japon', valeur: 124 },
+            { label: 'Brésil', valeur: 216 },
             { label: 'États-Unis', valeur: 335 },
             { label: 'Inde', valeur: 1440 }
         ]
@@ -98,11 +125,14 @@ const DATASETS = [
     {
         question: 'Du plus ancien au plus récent', unite: 'année',
         items: [
+            { label: 'Harpe', valeur: -3000 },
             { label: 'Orgue', valeur: -250 },
             { label: 'Violon', valeur: 1550 },
             { label: 'Piano', valeur: 1700 },
+            { label: 'Trompette à pistons', valeur: 1814 },
             { label: 'Saxophone', valeur: 1846 },
-            { label: 'Thérémine', valeur: 1920 }
+            { label: 'Thérémine', valeur: 1920 },
+            { label: 'Synthétiseur Moog', valeur: 1964 }
         ]
     }
 ];
@@ -160,7 +190,7 @@ function showExampleChronologie(day, row, vals) {
 
     const note = document.createElement('div');
     note.style.cssText = 'font-size:.78rem;color:#8B90A0;font-weight:bold;';
-    note.textContent = 'Placez les cartes puis validez — les bonnes se verrouillent';
+    note.textContent = 'Glissez les cartes pour les réordonner, puis validez — les bonnes se verrouillent';
 
     ex.append(q, cardsRow, note);
     row.style.flexDirection = 'column';
@@ -168,28 +198,30 @@ function showExampleChronologie(day, row, vals) {
 }
 
 function startGameChronologie() {
-    // Retour #79 : on COMPOSE son ordre, on VALIDE, le jeu dit position
-    // par position ce qui est juste (verrouillé en vert) et on réessaie
-    // jusqu'à tout trouver. Pas de défaite : le chrono départage.
+    // Retours #79 puis #91 : 8 cartes déjà en colonne, on les réordonne
+    // par GLISSER-DÉPOSER, on valide, les bonnes positions se
+    // verrouillent en vert et les mauvaises restent en place (flash
+    // rouge). Pas de défaite : le chrono départage.
     board.style.display = 'flex';
     board.style.flexDirection = 'column';
     board.style.alignItems = 'center';
     board.style.gap = '12px';
 
     const set = DATASETS[Math.floor(Math.random() * DATASETS.length)];
+    const N = set.items.length;
     const sorted = [...set.items].sort((a, b) => a.valeur - b.valeur);
-    const items = [...set.items].sort(() => Math.random() - 0.5);
 
-    // slots[i] = item posé en position i (null si vide) ; locked[i] = validé
-    const slots = [null, null, null, null, null];
-    const locked = [false, false, false, false, false];
+    // order[i] = item en position i ; locked[i] = position validée
+    let order = [...set.items].sort(() => Math.random() - 0.5);
+    if (order.every((it, i) => it === sorted[i])) order.reverse();
+    const locked = new Array(N).fill(false);
     let essais = 0;
     let finished = false;
 
     const header = document.createElement('div');
     header.style.cssText = 'text-align:center;';
     header.innerHTML = `<div style="font-weight:900;color:#23262F;font-size:1.02rem;">${set.question}</div>` +
-        `<div style="font-weight:bold;color:#8B90A0;font-size:.8rem;">Unité : ${set.unite}</div>`;
+        `<div style="font-weight:bold;color:#8B90A0;font-size:.8rem;">Unité : ${set.unite} · glissez les cartes pour les réordonner</div>`;
     board.appendChild(header);
 
     const hud = document.createElement('div');
@@ -197,7 +229,7 @@ function startGameChronologie() {
     board.appendChild(hud);
 
     const slotZone = document.createElement('div');
-    slotZone.style.cssText = 'display:flex;flex-direction:column;gap:8px;align-items:stretch;min-width:250px;';
+    slotZone.style.cssText = 'display:flex;flex-direction:column;gap:6px;align-items:stretch;width:300px;max-width:92vw;';
     board.appendChild(slotZone);
 
     const validateBtn = document.createElement('button');
@@ -205,81 +237,148 @@ function startGameChronologie() {
     validateBtn.textContent = 'Valider mon ordre';
     board.appendChild(validateBtn);
 
-    const poolZone = document.createElement('div');
-    poolZone.style.cssText = 'display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:400px;';
-    board.appendChild(poolZone);
+    // ── Glisser-déposer (écouteurs sur document : la ligne d'origine
+    //    est détruite par les re-rendus pendant le drag) ─────────────
+    const drag = { item: null, insertIdx: -1, clone: null };
 
-    function inSlots(item) { return slots.indexOf(item) !== -1; }
+    function unlockedPositions() {
+        const p = [];
+        for (let i = 0; i < N; i++) if (!locked[i]) p.push(i);
+        return p;
+    }
+
+    // Position d'insertion parmi les positions non verrouillées, d'après Y
+    function insertIdxFromY(y) {
+        const free = unlockedPositions();
+        let idx = 0;
+        for (const i of free) {
+            const line = slotZone.children[i];
+            if (!line) continue;
+            const r = line.getBoundingClientRect();
+            if (y > r.top + r.height / 2) idx++;
+        }
+        return Math.min(idx, free.length - 1);
+    }
+
+    function onDragMove(e) {
+        if (!drag.item) return;
+        drag.clone.style.left = (e.clientX - 130) + 'px';
+        drag.clone.style.top = (e.clientY - 58) + 'px';
+        const idx = insertIdxFromY(e.clientY);
+        if (idx !== drag.insertIdx) {
+            drag.insertIdx = idx;
+            render();
+        }
+    }
+
+    function onDragEnd() {
+        document.removeEventListener('pointermove', onDragMove);
+        document.removeEventListener('pointerup', onDragEnd);
+        document.removeEventListener('pointercancel', onDragEnd);
+        if (!drag.item) return;
+        if (drag.clone && drag.clone.parentNode) drag.clone.parentNode.removeChild(drag.clone);
+        // Reconstruire l'ordre : les positions verrouillées gardent leur
+        // carte, les libres reçoivent la séquence non-verrouillée avec
+        // l'item glissé inséré à insertIdx.
+        const seq = order.filter((it, i) => !locked[i] && it !== drag.item);
+        seq.splice(drag.insertIdx, 0, drag.item);
+        const next = new Array(N);
+        let k = 0;
+        for (let i = 0; i < N; i++) next[i] = locked[i] ? order[i] : seq[k++];
+        order = next;
+        drag.item = null;
+        drag.clone = null;
+        drag.insertIdx = -1;
+        haptic(8);
+        render();
+    }
+
+    function startDrag(item, e) {
+        if (isPaused || finished || drag.item) return;
+        drag.item = item;
+        drag.insertIdx = insertIdxFromY(e.clientY);
+        const clone = _chronoCard(item.label, false);
+        clone.style.position = 'fixed';
+        clone.style.zIndex = '60';
+        clone.style.width = '250px';
+        clone.style.left = (e.clientX - 130) + 'px';
+        clone.style.top = (e.clientY - 58) + 'px';
+        clone.style.transform = 'scale(1.06)';
+        clone.style.pointerEvents = 'none';
+        clone.style.borderColor = '#4A6CFA';
+        document.body.appendChild(clone);
+        drag.clone = clone;
+        haptic(8);
+        document.addEventListener('pointermove', onDragMove);
+        document.addEventListener('pointerup', onDragEnd);
+        document.addEventListener('pointercancel', onDragEnd);
+        render();
+    }
 
     function render() {
         const lockedCount = locked.filter(Boolean).length;
-        hud.innerHTML = `<span>Bien placées : <b style="color:#34B871">${lockedCount}/5</b></span>` +
+        hud.innerHTML = `<span>Bien placées : <b style="color:#34B871">${lockedCount}/${N}</b></span>` +
             `<span>Essais : <b style="color:#4A6CFA">${essais}</b></span>`;
 
+        // Ordre affiché pendant un drag : item retiré + trou en pointillés
+        let display = order;
+        let holeAt = -1;
+        if (drag.item) {
+            const seq = order.filter((it, i) => !locked[i] && it !== drag.item);
+            seq.splice(drag.insertIdx, 0, null); // null = emplacement visé
+            display = new Array(N);
+            let k = 0;
+            for (let i = 0; i < N; i++) display[i] = locked[i] ? order[i] : seq[k++];
+            holeAt = display.indexOf(null);
+        }
+
         slotZone.innerHTML = '';
-        slots.forEach((item, i) => {
+        display.forEach((item, i) => {
             const line = document.createElement('div');
-            line.style.cssText = 'display:flex;align-items:center;gap:10px;';
+            line.style.cssText = 'display:flex;align-items:center;gap:8px;';
             const num = document.createElement('div');
-            num.style.cssText = 'width:26px;height:26px;border-radius:50%;background:#EEF2FF;color:#3553D1;' +
-                'font-weight:900;font-size:.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;';
+            num.style.cssText = 'width:24px;height:24px;border-radius:50%;background:#EEF2FF;color:#3553D1;' +
+                'font-weight:900;font-size:.76rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;';
             num.textContent = i + 1;
             line.appendChild(num);
-            if (item) {
-                const card = _chronoCard(item.label, false);
+
+            if (i === holeAt) {
+                const hole = document.createElement('div');
+                hole.style.cssText = 'flex:1;height:40px;border:2px dashed #4A6CFA;border-radius:12px;background:#EEF2FF;';
+                line.appendChild(hole);
+            } else {
+                const card = _chronoCard(item.label, true);
                 card.style.flex = '1';
+                card.style.padding = '7px 12px';
+                card.style.touchAction = 'none';
                 if (locked[i]) {
                     card.style.borderColor = '#34B871';
                     card._val.textContent = _chronoFmt(item.valeur, set.unite);
                     card._val.style.color = '#34B871';
                 } else {
-                    card.style.cursor = 'pointer';
+                    card.style.cursor = 'grab';
+                    const it = item;
                     card.addEventListener('pointerdown', (e) => {
                         e.preventDefault();
-                        if (isPaused || finished) return;
-                        slots[i] = null; // renvoyer au réservoir
-                        haptic(8);
-                        render();
+                        startDrag(it, e);
                     });
                 }
                 line.appendChild(card);
-            } else {
-                const empty = document.createElement('div');
-                empty.style.cssText = 'flex:1;height:48px;border:2px dashed #C9D4FB;border-radius:12px;background:#F4F6FA;';
-                line.appendChild(empty);
             }
             slotZone.appendChild(line);
         });
 
-        poolZone.innerHTML = '';
-        items.forEach(item => {
-            if (inSlots(item)) return;
-            const card = _chronoCard(item.label, true);
-            card.style.cursor = 'pointer';
-            card.addEventListener('pointerdown', (e) => {
-                e.preventDefault();
-                if (isPaused || finished) return;
-                const free = slots.findIndex((s, k) => s === null && !locked[k]);
-                if (free === -1) return;
-                slots[free] = item;
-                haptic(8);
-                render();
-            });
-            poolZone.appendChild(card);
-        });
-
-        const full = slots.every(s => s !== null);
-        validateBtn.style.opacity = full ? '1' : '.4';
-        validateBtn.disabled = !full;
+        validateBtn.style.opacity = drag.item ? '.4' : '1';
+        validateBtn.disabled = !!drag.item;
     }
 
     validateBtn.addEventListener('pointerdown', (e) => {
         e.preventDefault();
-        if (isPaused || finished || slots.some(s => s === null)) return;
+        if (isPaused || finished || drag.item) return;
         essais++;
         let allGood = true;
         const wrongIdx = [];
-        slots.forEach((item, i) => {
+        order.forEach((item, i) => {
             if (locked[i]) return;
             if (item.valeur === sorted[i].valeur && item.label === sorted[i].label) {
                 locked[i] = true;
@@ -295,8 +394,8 @@ function startGameChronologie() {
             endGame(`Chronologie reconstituée en ${essais} essai${essais > 1 ? 's' : ''} !`, true);
             return;
         }
-        // Feedback : les mauvaises positions clignotent en rouge puis
-        // retournent au réservoir, les bonnes restent verrouillées en vert
+        // Les mauvaises clignotent en rouge mais RESTENT en place :
+        // on les réarrange en glissant.
         haptic(40);
         render();
         const lines = slotZone.children;
@@ -311,10 +410,9 @@ function startGameChronologie() {
         resultDisplay.style.color = '#E0533D';
         setTimeout(() => {
             if (isPaused || finished) return;
-            wrongIdx.forEach(i => { slots[i] = null; });
             resultDisplay.textContent = '';
             render();
-        }, 750);
+        }, 900);
     });
 
     render();

@@ -86,8 +86,8 @@ function showExample(day, container) {
         showExampleSolitaire(day, row, vals);
     } else if (mode.isBlocs) {
         showExampleBlocs(day, row, vals);
-    } else if (mode.isDominoOrder) {
-        showExampleDominoOrder(day, row, vals);
+    } else if (mode.isDominosa) {
+        showExampleDominosa(day, row, vals);
     } else if (mode.isPaires) {
         showExamplePaires(day, row, vals);
     } else if (mode.isTubes) {
@@ -124,8 +124,8 @@ function showExample(day, container) {
         showExampleTripleOrdre(day, row, vals);
     } else if (mode.isPhotoClasse) {
         showExamplePhotoClasse(day, row, vals);
-    } else if (mode.isBulles) {
-        showExampleBulles(day, row, vals);
+    } else if (mode.isTaquin) {
+        showExampleTaquin(day, row, vals);
     } else if (mode.isNonogramme) {
         showExampleNonogramme(day, row, vals);
     } else if (mode.isFusion) {
