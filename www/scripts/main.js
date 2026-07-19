@@ -255,6 +255,13 @@ if (typeof SB_ENABLED !== 'undefined' && SB_ENABLED) {
     setInterval(() => sbFlushEvents(), 5 * 60 * 1000);
 }
 
+// ─── Boutique : bouton d'achat du Pass (stub avant Play Billing) ─
+const passBuyBtn = document.getElementById('pass-buy');
+if (passBuyBtn) passBuyBtn.addEventListener('click', () => {
+    if (typeof _shopBuyMessage === 'function') _shopBuyMessage();
+    logEvent('pass_achat_intention');
+});
+
 // ─── RGPD : export et suppression du compte en ligne ─────────────
 if (typeof SB_ENABLED !== 'undefined' && SB_ENABLED) {
     const rgpdCard = document.getElementById('rgpd-card');
@@ -674,14 +681,14 @@ if (ENV_NAME === 'staging') {
         buildProfile();
         alert('Progression effacée — le calendrier est vierge.');
     });
-    // Simulation d'achat des packs premium (staging uniquement) : permet
-    // de tester les thèmes/avatars 💎 avant l'intégration Play Billing
+    // Simulation d'achat (staging uniquement) : packs, pass premium et
+    // fonds boutique — pour tout tester avant l'intégration Play Billing
     document.getElementById('packs-btn').addEventListener('click', () => {
         const on = hasPack('pack-aurore');
-        setStorage('orderix_packs', on ? '' : 'pack-aurore,pack-foret');
+        setStorage('orderix_packs', on ? '' : 'pack-aurore,pack-foret,pass-premium,fond-petales,fond-aquarelle');
         logEvent(on ? 'packs_test_off' : 'packs_test_on');
         renderCosmetics();
-        alert(on ? 'Packs retirés.' : 'Packs Aurore + Forêt débloqués (simulation de test).');
+        alert(on ? 'Achats retirés.' : 'Tout débloqué (simulation) : packs, Pass Premium, fonds exclusifs.');
     });
 
     // Visionneuse du journal analytics local (les 40 derniers)

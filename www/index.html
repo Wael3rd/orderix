@@ -79,6 +79,41 @@
             <div id="calendar-months"></div>
         </section>
 
+        <!-- ══ BOUTIQUE ══ -->
+        <section id="screen-shop" class="screen hidden">
+            <h2 class="screen-title">Boutique</h2>
+            <p class="screen-sub">Que de la beauté — jamais d'avantage en jeu</p>
+
+            <div class="card" id="pass-card" style="padding:18px;margin-bottom:14px;border-radius:18px;">
+                <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;">
+                    <h3 style="font-size:1.05rem;font-weight:900;flex:1;">🎫 Le Carnet de Saison</h3>
+                    <span class="hint" id="pass-mois" style="font-size:.74rem;"></span>
+                </div>
+                <p class="hint" style="margin-top:2px;">Vos étoiles du mois débloquent les paliers. Piste
+                    gratuite pour toutes · piste Premium pour les exclusifs.</p>
+                <div id="pass-progress" style="margin:12px 0 4px;"></div>
+                <div id="pass-tiers"
+                    style="display:flex;gap:8px;overflow-x:auto;padding:6px 2px 10px;-webkit-overflow-scrolling:touch;">
+                </div>
+                <button id="pass-buy" class="btn btn-primary" style="width:100%;margin-top:6px;">🎫 Pass Premium ·
+                    4,99 € / saison</button>
+                <div id="pass-status" class="hint" style="margin-top:6px;text-align:center;"></div>
+            </div>
+
+            <div class="card" style="padding:18px;margin-bottom:14px;border-radius:18px;">
+                <h3 style="font-size:1.05rem;font-weight:900;">🎨 Packs de thèmes</h3>
+                <div id="shop-packs" style="margin-top:10px;"></div>
+            </div>
+
+            <div class="card" style="padding:18px;margin-bottom:14px;border-radius:18px;">
+                <h3 style="font-size:1.05rem;font-weight:900;">🖼 Arrière-plans exclusifs</h3>
+                <p class="hint">Introuvables ailleurs — ni par niveau, ni au Carnet.</p>
+                <div id="shop-fonds" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+                </div>
+            </div>
+            <div id="shop-status" class="hint" style="text-align:center;min-height:1.2em;"></div>
+        </section>
+
         <!-- ══ CLASSEMENT ══ -->
         <section id="screen-league" class="screen hidden">
             <h2 class="screen-title">Classement</h2>
@@ -314,6 +349,14 @@
                     <path d="M7 6H4a2 2 0 0 0 2 4h1M17 6h3a2 2 0 0 1-2 4h-1" />
                 </svg>
                 Classement
+            </button>
+            <button class="tab" data-screen="shop">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M5 8h14l-1 12H6z" />
+                    <path d="M9 8V6a3 3 0 0 1 6 0v2" />
+                </svg>
+                Boutique
             </button>
             <button class="tab" data-screen="profile">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">

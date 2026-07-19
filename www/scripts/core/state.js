@@ -205,8 +205,14 @@ function saveLocalResult(dayId, count, time, isWin) {
         if (typeof logEvent === 'function') logEvent('event_premier_gagne');
     }
 
-    localResults[dayId] = { count: count, time: time, isWin: isWin, rev: rev, late: late, stars: isWin ? stars : 0 };
+    // `saison` = mois réel de la partie : nourrit le Carnet de Saison
+    const now = new Date();
+    localResults[dayId] = {
+        count: count, time: time, isWin: isWin, rev: rev, late: late,
+        stars: isWin ? stars : 0, saison: now.getFullYear() + '-' + (now.getMonth() + 1)
+    };
     setStorage('orderix_local_results', JSON.stringify(localResults));
+    if (isWin && typeof claimPassRewards === 'function') claimPassRewards();
     if (day && !day.empty && rev > (testedRevs[day.modeId] || 0)) {
         testedRevs[day.modeId] = rev;
         setStorage('orderix_tested_revs', JSON.stringify(testedRevs));

@@ -14,6 +14,104 @@ const THEMES = [
     { id: 'foret', nom: 'Forêt', premium: 'pack-foret', bleu: '#2E7D5B', fonce: '#1F5C42', pale: '#E9F4EE', bord: '#CBE5D7' }
 ];
 
+// ─── Arrière-plans (fonds d'écran de l'app) ──────────────────────
+// Trois familles : progression (niveau), Carnet de Saison (gratuit ou
+// premium), et boutique (exclusifs, uniquement achetables).
+const BACKGROUNDS = [
+    { id: 'lin', nom: 'Lin', niveau: 1, css: '#F4F6FA' },
+    { id: 'aube', nom: 'Aube', niveau: 4, css: 'linear-gradient(180deg,#FDF0E8 0%,#F4F6FA 45%)' },
+    { id: 'brume', nom: 'Brume', niveau: 7, css: 'linear-gradient(180deg,#EAF0FB 0%,#F4F6FA 50%)' },
+    { id: 'jardin', nom: 'Jardin', pass: { tier: 2, piste: 'gratuit' }, css: 'linear-gradient(180deg,#E9F6EC 0%,#F4F6FA 55%)' },
+    { id: 'constellation', nom: 'Constellation', pass: { tier: 1, piste: 'premium' }, css: 'radial-gradient(circle at 20% 10%, #E4E9FB 1.5px, transparent 2px), radial-gradient(circle at 70% 30%, #E4E9FB 1.5px, transparent 2px), linear-gradient(180deg,#EDF0FC 0%,#F4F6FA 60%)' },
+    { id: 'opale', nom: 'Opale', pass: { tier: 4, piste: 'premium' }, css: 'linear-gradient(135deg,#FDEFF2 0%,#EEF3FD 50%,#EDFAF3 100%)' },
+    { id: 'petales', nom: 'Pétales', boutique: 'fond-petales', prix: '1,99 €', css: 'radial-gradient(circle at 85% 15%, #FBE3EE 0%, transparent 40%), linear-gradient(180deg,#FDF1F6 0%,#F4F6FA 60%)' },
+    { id: 'aquarelle', nom: 'Aquarelle', boutique: 'fond-aquarelle', prix: '1,99 €', css: 'linear-gradient(120deg,#FDF3E7 0%,#F3EEFB 45%,#EAF5F1 100%)' }
+];
+
+function currentBackground() {
+    const id = getStorage('orderix_bg') || 'lin';
+    return BACKGROUNDS.find(b => b.id === id) || BACKGROUNDS[0];
+}
+
+function applyBackground() {
+    const b = currentBackground();
+    document.body.style.background = b.css;
+    document.body.style.backgroundAttachment = 'fixed';
+}
+
+function backgroundUnlocked(b) {
+    if (b.boutique) return hasPack(b.boutique);
+    if (b.pass) return passTierReached(b.pass.tier) && (b.pass.piste === 'gratuit' || hasPack('pass-premium'));
+    return playerLevel() >= b.niveau;
+}
+
+function selectBackground(id) {
+    const b = BACKGROUNDS.find(x => x.id === id);
+    if (!b) return;
+    if (!backgroundUnlocked(b)) {
+        if (b.boutique || (b.pass && b.pass.piste === 'premium')) _boutiqueMessage();
+        return;
+    }
+    setStorage('orderix_bg', id);
+    applyBackground();
+    haptic(8);
+    renderCosmetics();
+}
+
+// ─── Le Carnet de Saison (battle pass mensuel, tout en douceur) ──
+// Saison = mois calendaire (aligné sur l'album). Progression = étoiles
+// gagnées ce mois-ci (les rattrapages comptent). Deux pistes : gratuite
+// pour toutes, premium (achat unique 4,99 €/saison) pour les exclusifs.
+const PASS_TIERS = [
+    { etoiles: 3, gratuit: { type: 'gel', lbl: '🧊 1 gel' }, premium: { type: 'fond', id: 'constellation', lbl: '🌌 Fond Constellation' } },
+    { etoiles: 6, gratuit: { type: 'fond', id: 'jardin', lbl: '🌿 Fond Jardin' }, premium: { type: 'avatar', id: '🌺', lbl: 'Avatar 🌺' } },
+    { etoiles: 10, gratuit: { type: 'avatar', id: '🍵', lbl: 'Avatar 🍵' }, premium: { type: 'avatar', id: '🕊️', lbl: 'Avatar 🕊️' } },
+    { etoiles: 14, gratuit: { type: 'gel', lbl: '🧊 1 gel' }, premium: { type: 'fond', id: 'opale', lbl: '💠 Fond Opale' } },
+    { etoiles: 19, gratuit: { type: 'avatar', id: '🧶', lbl: 'Avatar 🧶' }, premium: { type: 'avatar', id: '👑', lbl: 'Avatar 👑' } },
+    { etoiles: 24, gratuit: { type: 'gel', lbl: '🧊 1 gel' }, premium: { type: 'avatar', id: '✨', lbl: 'Avatar ✨' } }
+];
+
+function seasonKey() {
+    const n = new Date();
+    return n.getFullYear() + '-' + (n.getMonth() + 1);
+}
+
+// Étoiles gagnées pendant la saison (mois réel) en cours
+function seasonStars() {
+    const key = seasonKey();
+    let total = 0;
+    Object.keys(localResults).forEach(id => {
+        const r = localResults[id];
+        if (r && r.isWin && r.saison === key) total += r.stars || 1;
+    });
+    return total;
+}
+
+function passTierReached(tierIdx) {
+    return seasonStars() >= PASS_TIERS[Math.max(0, tierIdx - 1)].etoiles;
+}
+
+// Récompenses « gel » : créditées une seule fois par palier et par saison
+function claimPassRewards() {
+    let claim = null;
+    try { claim = JSON.parse(getStorage('orderix_pass_claim') || 'null'); } catch (e) { }
+    if (!claim || claim.saison !== seasonKey()) claim = { saison: seasonKey(), tiers: [] };
+    const stars = seasonStars();
+    let nouveaux = 0;
+    PASS_TIERS.forEach((t, i) => {
+        if (stars < t.etoiles || claim.tiers.indexOf(i) !== -1) return;
+        claim.tiers.push(i);
+        nouveaux++;
+        if (t.gratuit.type === 'gel') {
+            streakData.freezes = Math.min(GELS_MAX, streakData.freezes + 1);
+            saveStreakData();
+        }
+        if (typeof logEvent === 'function') logEvent('pass_palier', { palier: i + 1, premium: hasPack('pass-premium') });
+    });
+    if (nouveaux) setStorage('orderix_pass_claim', JSON.stringify(claim));
+    return nouveaux;
+}
+
 // Droits premium (au lancement : Google Play Billing ; en attendant,
 // la zone de test permet de les simuler)
 function hasPack(id) {
@@ -34,7 +132,11 @@ const AVATARS = [
     { e: '🎁', niveau: 1, parrainage: true },
     // Avatars des packs premium
     { e: '🦩', premium: 'pack-aurore' }, { e: '🌅', premium: 'pack-aurore' },
-    { e: '🦚', premium: 'pack-foret' }, { e: '🌲', premium: 'pack-foret' }
+    { e: '🦚', premium: 'pack-foret' }, { e: '🌲', premium: 'pack-foret' },
+    // Avatars du Carnet de Saison (piste gratuite / premium)
+    { e: '🍵', pass: { tier: 3, piste: 'gratuit' } }, { e: '🧶', pass: { tier: 5, piste: 'gratuit' } },
+    { e: '🌺', pass: { tier: 2, piste: 'premium' } }, { e: '🕊️', pass: { tier: 3, piste: 'premium' } },
+    { e: '👑', pass: { tier: 5, piste: 'premium' } }, { e: '✨', pass: { tier: 6, piste: 'premium' } }
 ];
 
 function playerLevel() {
@@ -84,6 +186,7 @@ function selectTheme(id) {
 function avatarUnlocked(a) {
     if (a.parrainage) return getStorage('orderix_referred') === '1';
     if (a.premium) return hasPack(a.premium);
+    if (a.pass) return passTierReached(a.pass.tier) && (a.pass.piste === 'gratuit' || hasPack('pass-premium'));
     return playerLevel() >= a.niveau;
 }
 
@@ -166,6 +269,40 @@ function renderCosmetics() {
     });
     zone.appendChild(rowA);
 
+    // ── Arrière-plans ────────────────────────────────────────────
+    const lblB = document.createElement('div');
+    lblB.style.cssText = 'font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--gris);margin:16px 0 8px;';
+    lblB.textContent = 'Arrière-plan';
+    zone.appendChild(lblB);
+
+    const bgActif = currentBackground().id;
+    const rowB = document.createElement('div');
+    rowB.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:8px;';
+    BACKGROUNDS.forEach(b => {
+        const ok = backgroundUnlocked(b);
+        const btn = document.createElement('button');
+        btn.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:4px;background:none;padding:0;' +
+            (ok ? '' : 'opacity:.5;');
+        const sw = document.createElement('div');
+        sw.style.cssText = `width:100%;aspect-ratio:3/4;border-radius:10px;background:${b.css};position:relative;` +
+            'border:1.5px solid var(--ligne);' +
+            (b.id === bgActif ? 'outline:3px solid var(--bleu);outline-offset:1px;' : '');
+        if (!ok) {
+            const lock = document.createElement('span');
+            lock.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1rem;';
+            lock.textContent = b.boutique ? '💎' : (b.pass ? '🎫' : '🔒');
+            sw.appendChild(lock);
+        }
+        const nm = document.createElement('span');
+        nm.style.cssText = 'font-size:.58rem;font-weight:800;color:var(--gris);';
+        nm.textContent = b.nom + (!ok && b.niveau ? ' · niv. ' + b.niveau : '') +
+            (!ok && b.boutique ? ' 💎' : '') + (!ok && b.pass ? ' 🎫' : '');
+        btn.append(sw, nm);
+        btn.addEventListener('click', () => selectBackground(b.id));
+        rowB.appendChild(btn);
+    });
+    zone.appendChild(rowB);
+
     const st = document.createElement('div');
     st.id = 'cosmetics-status';
     st.style.cssText = 'font-size:.75rem;font-weight:700;color:var(--gris);margin-top:10px;text-align:center;min-height:1.1em;';
@@ -173,3 +310,4 @@ function renderCosmetics() {
 }
 
 applyTheme();
+applyBackground();

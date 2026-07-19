@@ -5,6 +5,7 @@ const SCREENS = {
     home: document.getElementById('screen-home'),
     calendar: document.getElementById('screen-calendar'),
     league: document.getElementById('screen-league'),
+    shop: document.getElementById('screen-shop'),
     profile: document.getElementById('screen-profile'),
     game: document.getElementById('screen-game')
 };
@@ -44,6 +45,7 @@ function showScreen(name) {
         if (name === 'home') buildHome();
         if (name === 'calendar') buildCalendar();
         if (name === 'league') buildLeague();
+        if (name === 'shop') buildShop();
         if (name === 'profile') buildProfile();
 
         // Restaurer la position APRÈS reconstruction (le contenu doit
@@ -633,6 +635,107 @@ function buildYearFresque() {
                 `<span style="font-size:.62rem;font-weight:800;color:var(--gris);">${lbl}</span>`;
             troph.appendChild(t);
         });
+}
+
+// ── BOUTIQUE : Carnet de Saison, packs, arrière-plans exclusifs ──
+const MOIS_LONGS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet',
+    'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+
+function _shopBuyMessage() {
+    const st = document.getElementById('shop-status');
+    st.textContent = '💛 Les achats ouvriront avec la version Play Store — tout est déjà prêt de notre côté !';
+    haptic(8);
+}
+
+function buildShop() {
+    claimPassRewards();
+    const stars = seasonStars();
+    const premium = hasPack('pass-premium');
+    const now = new Date();
+
+    document.getElementById('pass-mois').textContent =
+        'Saison de ' + MOIS_LONGS[now.getMonth()] + ' · ⭐ ' + stars;
+
+    // Barre de progression vers le dernier palier
+    const maxEtoiles = PASS_TIERS[PASS_TIERS.length - 1].etoiles;
+    const prog = document.getElementById('pass-progress');
+    prog.innerHTML = `<div style="height:10px;border-radius:999px;background:var(--ligne);overflow:hidden;">
+        <div style="height:100%;width:${Math.min(100, Math.round(100 * stars / maxEtoiles))}%;
+        background:linear-gradient(90deg,var(--or),#FFD778);border-radius:999px;"></div></div>`;
+
+    // Paliers : colonne par palier, piste gratuite en haut, premium en bas
+    const tiers = document.getElementById('pass-tiers');
+    tiers.innerHTML = '';
+    PASS_TIERS.forEach((t, i) => {
+        const reached = stars >= t.etoiles;
+        const col = document.createElement('div');
+        col.style.cssText = 'flex-shrink:0;width:96px;display:flex;flex-direction:column;gap:6px;';
+        const et = document.createElement('div');
+        et.style.cssText = 'text-align:center;font-weight:900;font-size:.72rem;' +
+            `color:${reached ? 'var(--or)' : 'var(--gris)'};`;
+        et.textContent = '⭐ ' + t.etoiles;
+        const mk = (r, locked, piste) => {
+            const c = document.createElement('div');
+            c.style.cssText = 'border-radius:10px;padding:8px 6px;text-align:center;font-size:.66rem;font-weight:800;' +
+                'min-height:52px;display:flex;flex-direction:column;justify-content:center;gap:2px;' +
+                (locked ? 'background:var(--fond);color:var(--gris);opacity:.75;'
+                    : 'background:var(--vert-pale,#E3F7ED);color:#1E7A4A;');
+            c.innerHTML = `<span style="font-size:1rem;">${r.lbl.split(' ')[0]}</span>` +
+                `<span>${r.lbl.substring(r.lbl.indexOf(' ') + 1)}</span>` +
+                (locked && piste === 'premium' ? '<span style="font-size:.58rem;">🎫 Premium</span>' : '');
+            return c;
+        };
+        col.append(et, mk(t.gratuit, !reached, 'gratuit'), mk(t.premium, !reached || !premium, 'premium'));
+        tiers.appendChild(col);
+    });
+
+    const buy = document.getElementById('pass-buy');
+    buy.style.display = premium ? 'none' : '';
+    document.getElementById('pass-status').textContent = premium
+        ? '✓ Pass Premium actif pour cette saison — merci ! 💛' : '';
+
+    // Packs de thèmes
+    const packs = document.getElementById('shop-packs');
+    packs.innerHTML = '';
+    [{ id: 'pack-aurore', nom: 'Pack Aurore', desc: 'Thème terracotta doré + avatars 🦩 🌅', theme: 'aurore' },
+    { id: 'pack-foret', nom: 'Pack Forêt', desc: 'Thème vert profond + avatars 🦚 🌲', theme: 'foret' }]
+        .forEach(p => {
+            const owned = hasPack(p.id);
+            const t = THEMES.find(x => x.id === p.theme);
+            const row = document.createElement('div');
+            row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--ligne);';
+            row.innerHTML = `<div style="width:44px;height:44px;border-radius:50%;background:${t.bleu};flex-shrink:0;
+                box-shadow:inset 0 -4px 0 rgba(0,0,0,.15);"></div>
+                <div style="flex:1;"><b style="font-size:.92rem;">${p.nom}</b>
+                <div class="hint" style="font-size:.74rem;">${p.desc}</div></div>`;
+            const b = document.createElement('button');
+            b.className = owned ? 'btn btn-quiet' : 'btn btn-plum';
+            b.style.cssText = 'flex-shrink:0;padding:9px 14px;font-size:.8rem;';
+            b.textContent = owned ? '✓ À vous' : '2,99 €';
+            if (!owned) b.addEventListener('click', _shopBuyMessage);
+            row.appendChild(b);
+            packs.appendChild(row);
+        });
+
+    // Arrière-plans exclusifs boutique
+    const fonds = document.getElementById('shop-fonds');
+    fonds.innerHTML = '';
+    BACKGROUNDS.filter(b => b.boutique).forEach(b => {
+        const owned = hasPack(b.boutique);
+        const cell = document.createElement('div');
+        cell.style.cssText = 'display:flex;flex-direction:column;gap:6px;';
+        cell.innerHTML = `<div style="aspect-ratio:4/3;border-radius:12px;background:${b.css};
+            border:1.5px solid var(--ligne);"></div>
+            <b style="font-size:.8rem;text-align:center;">${b.nom}</b>`;
+        const btn = document.createElement('button');
+        btn.className = owned ? 'btn btn-quiet' : 'btn btn-plum';
+        btn.style.cssText = 'padding:8px;font-size:.78rem;';
+        btn.textContent = owned ? '✓ À vous' : b.prix;
+        if (!owned) btn.addEventListener('click', _shopBuyMessage);
+        else btn.addEventListener('click', () => { selectBackground(b.id); showScreen('profile'); });
+        cell.appendChild(btn);
+        fonds.appendChild(cell);
+    });
 }
 
 // ── OUVERTURE D'UN JOUR (écran de jeu, phase intro) ──────────────
