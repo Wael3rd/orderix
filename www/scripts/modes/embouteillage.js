@@ -112,7 +112,8 @@ function startGameEmbouteillage() {
 
     // Retour #104 (10×10) exploré puis abandonné : les grilles Rush Hour
     // au-delà de 6×6 sont soit triviales soit invérifiables par solveur.
-    const S = 6, CELL = 52, GAP = 4;
+    // CELL 48 : la grille + flèches de sortie tiennent dans 360 px
+    const S = 6, CELL = 48, GAP = 4;
     const level = _EMB_LEVELS[Math.floor(Math.random() * _EMB_LEVELS.length)];
     let colorIdx = 0;
     const cars = level.map(c => ({

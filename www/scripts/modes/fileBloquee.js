@@ -108,8 +108,13 @@ function startGameFileBloquee() {
         fleche.textContent = '◄';
         ligne.append(guichet, fleche);
 
+        // Taille des clientes calculée pour que la file ENTIÈRE tienne à
+        // l'écran, même en 360 px (guichet ≈ 84 px + flèche + espaces)
+        const dispo = Math.min(window.innerWidth || 400, 420) - 32;
+        const nbF = Math.max(1, file.length);
+        const tBase = Math.max(28, Math.min(44, Math.floor((dispo - 104 - 8 * (nbF + 1)) / nbF)));
         file.forEach((t, i) => {
-            const c = cercleCliente(t, i === 0 ? 50 : 44);
+            const c = cercleCliente(t, i === 0 ? tBase + 6 : tBase);
             if (i === 0) {
                 if (selTete) {
                     c.style.transform = 'translateY(-6px)';

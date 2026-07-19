@@ -67,7 +67,8 @@ function startGamePaires() {
 
     // Retour #54 (« trop facile ») : plateau agrandi à 6×5 (15 paires) et
     // la paire recherchée n'est PLUS surlignée — c'est à l'œil de chercher.
-    const C = 6, R = 5, PAIRS = 15, TILE = 44, GAP = 6;
+    // TILE 40 : tient dans 360 px de large avec la marge du chemin SVG
+    const C = 6, R = 5, PAIRS = 15, TILE = 40, GAP = 6;
 
     // Chemin ≤ 2 virages sur la grille étendue (tour extérieur vide)
     function pathBetween(g, a, b) {
