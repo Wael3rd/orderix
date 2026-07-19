@@ -142,6 +142,23 @@ async function sbClaimPseudo(name) {
 // téléphone, un code à 6 chiffres reçu par e-mail restaure tout
 // (pseudo, scores, ligue, achats). Aucun mot de passe, jamais.
 
+// État réel du compte auth : { email, confirme } ou null
+async function sbGetUser() {
+    if (!SB_ENABLED) return null;
+    const s = await sbEnsureSession();
+    if (!s) return null;
+    try {
+        const r = await fetch(SUPABASE_URL + '/auth/v1/user', { headers: _sbHeaders(true) });
+        if (!r.ok) return null;
+        const d = await r.json();
+        return {
+            email: d.email || (d.new_email || ''),
+            confirme: !!d.email_confirmed_at,
+            enAttente: !!d.new_email
+        };
+    } catch (e) { return null; }
+}
+
 // Attache un e-mail au compte anonyme courant (envoie un lien de
 // confirmation). Résout 'ok' | 'pris' | 'erreur'.
 async function sbAttachEmail(email) {

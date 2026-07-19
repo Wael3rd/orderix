@@ -267,13 +267,26 @@ if (typeof SB_ENABLED !== 'undefined' && SB_ENABLED) {
     const accCard = document.getElementById('account-card');
     const accStatus = document.getElementById('account-status');
     accCard.hidden = false;
-    const majStatutCompte = () => {
+    const majStatutCompte = async () => {
+        // Affichage immédiat depuis le cache local, puis vérité serveur
         const mail = getStorage('orderix_email_lie');
         accStatus.textContent = mail
             ? '✓ Compte protégé par ' + mail
             : '⚠ Compte non protégé : une désinstallation le perdrait.';
         accStatus.style.color = mail ? 'var(--vert)' : 'var(--rouge)';
         document.getElementById('account-link-row').style.display = mail ? 'none' : 'flex';
+
+        const u = await sbGetUser();
+        if (!u) return;
+        if (u.email && u.confirme) {
+            setStorage('orderix_email_lie', u.email);
+            accStatus.textContent = '✓ Compte protégé et confirmé : ' + u.email;
+            accStatus.style.color = 'var(--vert)';
+            document.getElementById('account-link-row').style.display = 'none';
+        } else if (u.email && u.enAttente) {
+            accStatus.textContent = '⏳ Confirmation en attente pour ' + u.email + ' — cliquez le lien reçu par e-mail.';
+            accStatus.style.color = 'var(--or)';
+        }
     };
     majStatutCompte();
 
