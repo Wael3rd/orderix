@@ -223,6 +223,20 @@
                 <p class="hint">Liez un e-mail (aucun mot de passe) : si vous changez de téléphone ou réinstallez
                     l'app, un code à 6 chiffres restaure pseudo, scores, ligue et achats.</p>
                 <div id="account-status" class="hint" style="font-weight:800;margin-top:6px;"></div>
+                <div id="social-login-row" style="display:flex;gap:8px;margin-top:10px;">
+                    <button id="login-google" class="btn"
+                        style="flex:1;background:#fff;border:1.5px solid var(--ligne);color:var(--encre);font-weight:800;padding:11px 6px;font-size:.85rem;">
+                        <span style="font-weight:900;color:#4285F4">G</span>oogle</button>
+                    <button id="login-facebook" class="btn"
+                        style="flex:1;background:#1877F2;color:#fff;font-weight:800;padding:11px 6px;font-size:.85rem;">Facebook</button>
+                    <button id="login-apple" class="btn"
+                        style="flex:1;background:#111;color:#fff;font-weight:800;padding:11px 6px;font-size:.85rem;"> Apple</button>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;margin:12px 0 2px;">
+                    <span style="flex:1;height:1px;background:var(--ligne);"></span>
+                    <span class="hint" style="font-size:.7rem;">ou par e-mail (code, sans mot de passe)</span>
+                    <span style="flex:1;height:1px;background:var(--ligne);"></span>
+                </div>
                 <div id="account-link-row" style="display:flex;gap:8px;margin-top:8px;">
                     <input type="email" id="account-email" placeholder="votre@email.fr" autocomplete="email"
                         style="flex:1;padding:10px 12px;border:1.5px solid var(--ligne);border-radius:10px;background:var(--fond);">

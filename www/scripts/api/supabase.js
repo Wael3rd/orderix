@@ -209,6 +209,69 @@ async function sbRecoverWithCode(email, code) {
     } catch (e) { return false; }
 }
 
+// ── Connexions sociales (Google / Facebook / Apple via Supabase) ─
+// Flux navigateur système + retour par deep link orderix://auth-callback.
+// Chaque fournisseur doit être configuré dans le dashboard Supabase
+// (identifiants créés par le propriétaire) — sinon le bouton explique.
+const SB_OAUTH_REDIRECT = 'orderix://auth-callback';
+
+async function sbOAuthLogin(provider) {
+    if (!SB_ENABLED) return false;
+    const url = SUPABASE_URL + '/auth/v1/authorize?provider=' + provider +
+        '&redirect_to=' + encodeURIComponent(SB_OAUTH_REDIRECT);
+    const plug = window.Capacitor && window.Capacitor.Plugins;
+    logEvent('oauth_ouvert', { provider: provider });
+    if (plug && plug.Browser) {
+        await plug.Browser.open({ url: url, presentationStyle: 'popover' });
+        return true;
+    }
+    // Repli web (test navigateur) : même URL dans un nouvel onglet
+    window.open(url, '_blank');
+    return true;
+}
+
+// Retour du deep link : récupère les jetons du fragment d'URL, bascule
+// la session et restaure les données du compte (comme la récupération)
+async function sbHandleOAuthCallback(rawUrl) {
+    try {
+        const frag = String(rawUrl).split('#')[1] || '';
+        const p = new URLSearchParams(frag);
+        const access = p.get('access_token'), refresh = p.get('refresh_token');
+        if (p.get('error_description')) {
+            logEvent('oauth_erreur', { msg: p.get('error_description').slice(0, 120) });
+            return { ok: false, msg: p.get('error_description') };
+        }
+        if (!access) return { ok: false, msg: 'jetons absents' };
+        _sbStoreTokens({
+            access_token: access, refresh_token: refresh,
+            expires_in: parseInt(p.get('expires_in')) || 3600,
+            user: { id: (JSON.parse(atob(access.split('.')[1])) || {}).sub }
+        });
+        logEvent('oauth_connecte');
+        // Restauration des données du compte connecté
+        const data = await sbExportMyData();
+        if (data && data.profile && data.profile.pseudo) {
+            setStorage('orderix_player_name', data.profile.pseudo);
+        }
+        if (data && Array.isArray(data.results)) {
+            const annee = new Date().getFullYear();
+            data.results.forEach(res => {
+                if (res.year !== annee || localResults[res.day]) return;
+                const t = res.status === 'win' ? res.time_ms / 1000
+                    : (res.status === 'abandon' ? -999999 : -res.time_ms / 1000);
+                const dC = new Date(res.created_at);
+                localResults[res.day] = {
+                    count: res.item_count, time: t, isWin: res.status === 'win',
+                    rev: 0, late: true, stars: res.status === 'win' ? 1 : 0,
+                    saison: dC.getFullYear() + '-' + (dC.getMonth() + 1)
+                };
+            });
+            setStorage('orderix_local_results', JSON.stringify(localResults));
+        }
+        return { ok: true };
+    } catch (e) { return { ok: false, msg: String(e).slice(0, 120) }; }
+}
+
 // ── RGPD : export de ses données (art. 20) ───────────────────────
 function sbExportMyData() {
     if (!SB_ENABLED) return Promise.resolve(null);

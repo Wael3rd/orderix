@@ -300,6 +300,45 @@ if (typeof SB_ENABLED !== 'undefined' && SB_ENABLED) {
         }
     });
 
+    // Connexions sociales : Google / Facebook / Apple (via Supabase OAuth)
+    [['login-google', 'google'], ['login-facebook', 'facebook'], ['login-apple', 'apple']].forEach(([id, provider]) => {
+        document.getElementById(id).addEventListener('click', async () => {
+            const mail = getStorage('orderix_email_lie');
+            if (!mail && getPlayerName()) {
+                if (!confirm('Vous allez vous connecter avec ' + provider.charAt(0).toUpperCase() + provider.slice(1) +
+                    '.\n\nSi ce compte social a déjà des données Orderix, elles remplaceront votre session actuelle. Continuer ?')) return;
+            }
+            accStatus.textContent = 'Ouverture de ' + provider + '…';
+            accStatus.style.color = 'var(--gris)';
+            await sbOAuthLogin(provider);
+        });
+    });
+
+    // Retour du deep link OAuth (Android) : orderix://auth-callback#tokens
+    const capApp = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App;
+    if (capApp && capApp.addListener) {
+        capApp.addListener('appUrlOpen', async (ev) => {
+            if (!ev || !ev.url || ev.url.indexOf('auth-callback') === -1) return;
+            const plug = window.Capacitor.Plugins;
+            if (plug.Browser && plug.Browser.close) plug.Browser.close().catch(() => { });
+            const res = await sbHandleOAuthCallback(ev.url);
+            if (res.ok) {
+                setStorage('orderix_email_lie', 'connexion sociale');
+                majStatutCompte();
+                accStatus.textContent = '✓ Connectée — pseudo, scores et achats synchronisés !';
+                accStatus.style.color = 'var(--vert)';
+                const nom = getPlayerName();
+                if (nom) lockName(nom);
+                if (currentScreen === 'profile') buildProfile();
+                if (currentScreen === 'home') buildHome();
+            } else {
+                accStatus.textContent = 'Connexion refusée : ' + (res.msg || 'réessayez.') +
+                    ' (Le fournisseur est-il configuré dans Supabase ?)';
+                accStatus.style.color = 'var(--rouge)';
+            }
+        });
+    }
+
     document.getElementById('account-recover-btn').addEventListener('click', async () => {
         const email = prompt('L\'e-mail lié à votre ancien compte :');
         if (!email || !email.trim()) return;
