@@ -132,7 +132,8 @@ shareBtn.addEventListener('click', () => {
     // Carte de partage façon Wordle : résultat + série + progression de
     // l'année en emojis, sans jamais révéler la solution du puzzle.
     const playerName = getStorage('orderix_player_name') || '';
-    const url = 'https://orderix.app/?ref=' + encodeURIComponent(playerName) + '&day=' + currentDayConfig.id;
+    const url = 'https://orderix.app/?ref=' + encodeURIComponent(playerName) + '&day=' + currentDayConfig.id +
+        (isWin && timeVal !== 999999 ? '&t=' + timeVal.toFixed(2) : '');
     const mode = GAME_MODES[currentDayConfig.modeId];
     const stats = computeStats();
 
@@ -226,6 +227,103 @@ if (notifToggle) {
     // Re-programme à chaque lancement (les reboots Android purgent parfois)
     if (getStorage('orderix_notif') === '1') scheduleDailyReminder();
 }
+
+// ─── Onboarding (premier lancement, 3 écrans max) ────────────────
+const OB_SLIDES = [
+    { e: '🧩', t: 'Un puzzle par jour', x: 'Chaque jour, un nouveau défi de trois petites minutes. Pas plus — c\'est votre rendez-vous cerveau.' },
+    { e: '🏅', t: 'Remplissez votre album', x: 'Chaque victoire colorie une case du calendrier. Un mois complet = une médaille. Et les jours manqués se rattrapent !' },
+    { e: '🔥', t: 'Gardez la série au chaud', x: 'Jouer chaque jour fait grandir votre série. Un oubli ? Vos gels 🧊 vous pardonnent — vous n\'avez rien à perdre, que des étoiles à gagner.' }
+];
+let _obIdx = 0;
+
+function renderOnboarding() {
+    const s = OB_SLIDES[_obIdx];
+    document.getElementById('ob-emoji').textContent = s.e;
+    document.getElementById('ob-title').textContent = s.t;
+    document.getElementById('ob-text').textContent = s.x;
+    document.getElementById('ob-next').textContent = _obIdx === OB_SLIDES.length - 1 ? 'C\'est parti !' : 'Suivant';
+    const dots = document.getElementById('ob-dots');
+    dots.innerHTML = '';
+    OB_SLIDES.forEach((_, i) => {
+        const d = document.createElement('span');
+        d.style.cssText = 'width:9px;height:9px;border-radius:50%;transition:background .2s;' +
+            `background:${i === _obIdx ? 'var(--bleu)' : '#D8DCE8'};`;
+        dots.appendChild(d);
+    });
+}
+
+function closeOnboarding() {
+    document.getElementById('onboarding').classList.add('hidden');
+    setStorage('orderix_onboarded', '1');
+    logEvent('onboarding_termine', { slide: _obIdx + 1 });
+}
+
+if (!getStorage('orderix_onboarded')) {
+    document.getElementById('onboarding').classList.remove('hidden');
+    renderOnboarding();
+    logEvent('onboarding_debut');
+}
+document.getElementById('ob-next').addEventListener('click', () => {
+    if (_obIdx < OB_SLIDES.length - 1) { _obIdx++; haptic(8); renderOnboarding(); }
+    else closeOnboarding();
+});
+document.getElementById('ob-skip').addEventListener('click', closeOnboarding);
+
+// ─── FTUE : proposer le rappel APRÈS la première victoire ────────
+function proposeReminderAfterFirstWin() {
+    if (getStorage('orderix_notif') === '1' || !_LN) return;
+    if (document.getElementById('first-win-cta')) return;
+    const cta = document.createElement('div');
+    cta.id = 'first-win-cta';
+    cta.style.cssText = 'margin-top:14px;padding:14px;border-radius:14px;background:var(--bleu-pale);text-align:center;';
+    const txt = document.createElement('div');
+    txt.style.cssText = 'font-size:.85rem;font-weight:700;color:var(--bleu-fonce);margin-bottom:10px;';
+    txt.textContent = 'Envie de ne jamais rater votre puzzle ? Un petit rappel à 19 h, jamais plus.';
+    const yes = document.createElement('button');
+    yes.className = 'btn btn-plum';
+    yes.style.cssText = 'width:100%;';
+    yes.textContent = '🔔 Oui, rappelle-moi';
+    yes.addEventListener('click', async () => {
+        const ok = await scheduleDailyReminder();
+        if (ok) { setStorage('orderix_notif', '1'); logEvent('notif_on', { source: 'premiere_victoire' }); }
+        cta.remove();
+        renderNotifToggle();
+    });
+    const later = document.createElement('button');
+    later.style.cssText = 'margin-top:8px;background:none;color:var(--gris);font-weight:700;font-size:.78rem;';
+    later.textContent = 'Plus tard';
+    later.addEventListener('click', () => cta.remove());
+    cta.append(txt, yes, later);
+    resultPhrase.parentNode.insertBefore(cta, resultPhrase.nextSibling);
+}
+
+// ─── Défi par lien : ?day=N (&t=temps &ref=pseudo) ───────────────
+// Le lien de partage ouvre directement le jour concerné, avec le temps
+// à battre affiché dans l'intro. (Version web ; l'ouverture in-app
+// Android nécessitera les App Links — noté au board.)
+(function handleChallengeLink() {
+    try {
+        const q = new URLSearchParams(window.location.search);
+        const dayId = parseInt(q.get('day'));
+        if (!dayId) return;
+        const day = DAYS.find(d => d.id === dayId);
+        if (!day || day.empty) return;
+        const t = parseFloat(q.get('t'));
+        const ref = (q.get('ref') || '').slice(0, 15);
+        setTimeout(() => {
+            selectDay(day);
+            const banner = document.getElementById('challenge-banner');
+            if (t > 0) {
+                banner.textContent = `⚔️ Défi${ref ? ' de ' + ref : ''} : battez ${t.toFixed(2).replace('.', ',')} s !`;
+                banner.classList.remove('hidden');
+            } else if (ref) {
+                banner.textContent = `💌 ${ref} vous met au défi sur ce puzzle !`;
+                banner.classList.remove('hidden');
+            }
+            logEvent('defi_ouvert', { jour: dayId, ref: ref, t: t || 0 });
+        }, 400);
+    } catch (e) { }
+})();
 
 // ─── Pseudo ──────────────────────────────────────────────────────
 verifyNameBtn.addEventListener('click', verifyPlayerName);
@@ -455,6 +553,16 @@ if (ENV_NAME === 'staging') {
         saveStreakData();
         buildProfile();
         alert('Progression effacée — le calendrier est vierge.');
+    });
+    // Visionneuse du journal analytics local (les 40 derniers)
+    document.getElementById('events-btn').addEventListener('click', () => {
+        const list = document.getElementById('events-list');
+        if (!list.classList.contains('hidden')) { list.classList.add('hidden'); return; }
+        const evts = getEvents().slice(-40).reverse();
+        list.textContent = evts.length
+            ? evts.map(e => `${e.t.slice(5, 16).replace('T', ' ')} · ${e.n} ${JSON.stringify(e.p)}`).join('\n')
+            : 'Aucun événement enregistré.';
+        list.classList.remove('hidden');
     });
 }
 

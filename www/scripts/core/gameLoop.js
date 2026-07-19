@@ -460,6 +460,17 @@ function endGame(message, isWin, isAbandon = false) {
         haptic(60);
     }
 
+    // FTUE : la TOUTE première victoire mérite une vraie fête — message
+    // dédié, double célébration, et c'est LE bon moment pour proposer le
+    // rappel quotidien (jamais au premier écran).
+    if (isWin && computeStats().won === 1 && !getStorage('orderix_first_win_done')) {
+        setStorage('orderix_first_win_done', '1');
+        resultPhrase.textContent = '🎉 Votre toute première victoire — bienvenue dans le club !';
+        setTimeout(() => { if (!isPaused) return; celebrate(); }, 600);
+        if (typeof proposeReminderAfterFirstWin === 'function') proposeReminderAfterFirstWin();
+        if (typeof logEvent === 'function') logEvent('premiere_victoire', { jour: currentDayConfig.id });
+    }
+
     // Première soumission immédiate (sans avis)
     submitScore(pendingTimeVal, '', false);
 }

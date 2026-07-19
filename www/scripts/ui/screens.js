@@ -463,6 +463,9 @@ function buildYearFresque() {
 // ── OUVERTURE D'UN JOUR (écran de jeu, phase intro) ──────────────
 function selectDay(day) {
     if (day.empty) return; // jour sans défi (après la campagne de test)
+    // La bannière de défi (lien partagé) ne concerne qu'une ouverture
+    const chalBanner = document.getElementById('challenge-banner');
+    if (chalBanner) chalBanner.classList.add('hidden');
     currentDayConfig = day;
     // Mémorise l'écran d'origine : le bouton retour y ramènera
     if (currentScreen !== 'game') returnScreen = currentScreen;

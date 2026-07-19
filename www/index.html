@@ -22,6 +22,18 @@
         <div class="boot-spin"></div>
     </div>
 
+    <!-- ══ ONBOARDING (premier lancement uniquement) ══ -->
+    <div id="onboarding" class="hidden"
+        style="position:fixed;inset:0;z-index:200;background:var(--fond);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;text-align:center;">
+        <div id="ob-emoji" style="font-size:4.2rem;line-height:1;margin-bottom:22px;"></div>
+        <h2 id="ob-title" style="font-size:1.5rem;font-weight:900;margin-bottom:10px;"></h2>
+        <p id="ob-text" style="color:var(--gris);font-size:.98rem;max-width:300px;line-height:1.55;min-height:4.6em;"></p>
+        <div id="ob-dots" style="display:flex;gap:8px;margin:26px 0;"></div>
+        <button id="ob-next" class="btn btn-primary" style="min-width:220px;">Suivant</button>
+        <button id="ob-skip"
+            style="margin-top:14px;background:none;color:var(--gris);font-weight:700;font-size:.82rem;">Passer</button>
+    </div>
+
     <div id="app">
 
         <!-- ══ ACCUEIL (layout SNG) ══ -->
@@ -146,6 +158,11 @@
                 <p class="hint">Efface la progression locale : toutes les cases du calendrier redeviennent jouables.</p>
                 <button id="reset-progress-btn" class="btn btn-ghost" style="width:100%">Réinitialiser la
                     progression</button>
+                <button id="events-btn" class="btn btn-quiet" style="width:100%;margin-top:8px;">📊 Voir les
+                    événements analytics</button>
+                <div id="events-list" class="hidden"
+                    style="margin-top:10px;max-height:260px;overflow-y:auto;background:var(--fond);border-radius:10px;padding:10px;font-size:.68rem;font-family:monospace;line-height:1.5;">
+                </div>
             </div>
 
             <p class="about-note">Orderix — 365 jours d'agilité mentale.</p>
@@ -164,6 +181,9 @@
             </div>
 
             <div id="intro-panel" class="card">
+                <div id="challenge-banner" class="hidden"
+                    style="background:var(--bleu-pale);border:1.5px solid var(--bleu-bord);border-radius:12px;padding:10px 14px;margin-bottom:12px;font-weight:800;font-size:.88rem;color:var(--bleu-fonce);text-align:center;">
+                </div>
                 <p class="intro-rule" id="intro-rule"></p>
                 <div id="example-zone"></div>
                 <button id="start-btn" class="btn btn-primary">Commencer</button>

@@ -23,3 +23,19 @@ function getEvents() {
 
 // Une session = un chargement de l'app
 logEvent('session_start', { env: ENV_NAME, jour: todayDayId() });
+
+// Crash reporting léger : toute erreur JS non rattrapée est journalisée
+// (plafonné pour qu'une boucle d'erreurs ne noie pas le journal)
+let _errCount = 0;
+window.addEventListener('error', (e) => {
+    if (_errCount++ >= 20) return;
+    logEvent('js_error', {
+        msg: String(e.message || '').slice(0, 200),
+        src: String(e.filename || '').split('/').pop(),
+        ligne: e.lineno || 0
+    });
+});
+window.addEventListener('unhandledrejection', (e) => {
+    if (_errCount++ >= 20) return;
+    logEvent('js_promesse_rejetee', { msg: String(e.reason && e.reason.message || e.reason || '').slice(0, 200) });
+});
