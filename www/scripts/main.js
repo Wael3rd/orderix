@@ -19,10 +19,29 @@
     const remaining = Math.max(0, 1200 - (Date.now() - bootStart));
     setTimeout(() => document.getElementById('boot-loader').classList.add('fade'), remaining);
 
+    // Config des jours : Supabase (table day_config) en source primaire,
+    // repli GAS si indisponible. Cache local pour le démarrage hors-ligne.
     const ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
     if (ctrl) setTimeout(() => ctrl.abort(), 4000);
-    fetch(`${GAS_URL}?getConfig=1&nocache=${Date.now()}`, ctrl ? { signal: ctrl.signal } : {})
-        .then(r => r.json())
+    const viaGasConfig = () =>
+        fetch(`${GAS_URL}?getConfig=1&nocache=${Date.now()}`, ctrl ? { signal: ctrl.signal } : {})
+            .then(r => r.json());
+    const viaSupabaseConfig = () =>
+        fetch(`${SUPABASE_URL}/rest/v1/day_config?select=*`, {
+            headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY },
+            signal: ctrl ? ctrl.signal : undefined
+        })
+            .then(r => { if (!r.ok) throw new Error('day_config ' + r.status); return r.json(); })
+            .then(rows => {
+                const cfg = {};
+                (rows || []).forEach(x => {
+                    cfg[x.day] = { count: x.item_count || undefined, enabled: x.enabled };
+                });
+                return cfg;
+            });
+    ((typeof SB_ENABLED !== 'undefined' && SB_ENABLED)
+        ? viaSupabaseConfig().catch(viaGasConfig)
+        : viaGasConfig())
         .then(cfg => {
             setStorage('orderix_day_config', JSON.stringify(cfg));
             applyDayConfig(cfg);
@@ -201,6 +220,40 @@ document.getElementById('week-share').addEventListener('click', () => {
         setTimeout(() => b.textContent = 'Partager ma semaine', 1500);
     }
 });
+
+// ─── Groupes d'amies : créer / rejoindre ─────────────────────────
+if (typeof SB_ENABLED !== 'undefined' && SB_ENABLED) {
+    const fStatus = document.getElementById('friends-status');
+    document.getElementById('friend-create-btn').addEventListener('click', async () => {
+        const name = prompt('Nom du groupe (ex. « Les sœurs », « Bureau ») :');
+        if (!name || !name.trim()) return;
+        fStatus.textContent = 'Création…';
+        const g = await sbCreateFriendGroup(name.trim().slice(0, 24));
+        if (g && g.code) {
+            fStatus.textContent = `✓ Groupe créé — partagez le code ${g.code} !`;
+            logEvent('amies_groupe_cree');
+            buildFriendBoards();
+        } else fStatus.textContent = 'Création impossible — réessayez.';
+    });
+    document.getElementById('friend-join-btn').addEventListener('click', async () => {
+        const code = document.getElementById('friend-code-input').value.trim().toUpperCase();
+        if (code.length !== 6) { fStatus.textContent = 'Le code fait 6 caractères.'; return; }
+        fStatus.textContent = 'Vérification…';
+        const g = await sbJoinFriendGroup(code);
+        if (g === 'inconnu') fStatus.textContent = 'Code inconnu — vérifiez avec votre amie.';
+        else if (g === 'complet') fStatus.textContent = 'Ce groupe est complet (30 max).';
+        else if (g && g.name) {
+            fStatus.textContent = `✓ Bienvenue dans « ${g.name} » !`;
+            document.getElementById('friend-code-input').value = '';
+            logEvent('amies_groupe_rejoint');
+            buildFriendBoards();
+        } else fStatus.textContent = 'Impossible pour le moment — réessayez.';
+    });
+
+    // Synchronisation du journal analytics : au démarrage puis toutes les 5 min
+    setTimeout(() => sbFlushEvents(), 6000);
+    setInterval(() => sbFlushEvents(), 5 * 60 * 1000);
+}
 
 // ─── RGPD : export et suppression du compte en ligne ─────────────
 if (typeof SB_ENABLED !== 'undefined' && SB_ENABLED) {

@@ -165,3 +165,46 @@ function sbGetLeague() {
     if (!SB_ENABLED) return Promise.resolve(null);
     return sbRpc('get_league', {}, true).catch(() => null);
 }
+
+// ── Groupes d'amies ──────────────────────────────────────────────
+function sbCreateFriendGroup(name) {
+    if (!SB_ENABLED) return Promise.resolve(null);
+    return sbRpc('create_friend_group', { p_name: name }, true).catch(() => null);
+}
+
+// Résout {code, name} ou une chaîne d'erreur lisible
+function sbJoinFriendGroup(code) {
+    if (!SB_ENABLED) return Promise.resolve(null);
+    return sbRpc('join_friend_group', { p_code: code }, true).catch(err => {
+        const m = String(err);
+        if (m.indexOf('code inconnu') !== -1) return 'inconnu';
+        if (m.indexOf('groupe complet') !== -1) return 'complet';
+        return null;
+    });
+}
+
+function sbLeaveFriendGroup(code) {
+    if (!SB_ENABLED) return Promise.resolve(false);
+    return sbRpc('leave_friend_group', { p_code: code }, true).then(() => true).catch(() => false);
+}
+
+// Renvoie [{code, name, pseudo, wins, total_time_ms, is_me}] ou null
+function sbFriendBoards() {
+    if (!SB_ENABLED) return Promise.resolve(null);
+    return sbRpc('get_friend_boards', {}, true).catch(() => null);
+}
+
+// ── Synchronisation du journal analytics (par lots de 100) ───────
+function sbFlushEvents() {
+    if (!SB_ENABLED || typeof getEvents !== 'function') return Promise.resolve(0);
+    const all = getEvents();
+    const synced = parseInt(getStorage('orderix_events_synced') || '0') || 0;
+    if (all.length <= synced) return Promise.resolve(0);
+    // Le journal local est plafonné (rotation) : si le pointeur dépasse, on repart
+    const start = synced > all.length ? 0 : synced;
+    const lot = all.slice(start, start + 100);
+    return sbRpc('log_events', { p_events: lot }, true).then(n => {
+        setStorage('orderix_events_synced', String(start + lot.length));
+        return n || lot.length;
+    }).catch(() => 0);
+}

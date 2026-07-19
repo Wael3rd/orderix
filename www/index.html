@@ -91,6 +91,20 @@
                 <ul id="weekly-league-list"></ul>
             </div>
 
+            <div class="lead" id="friends-zone" style="animation:none;margin-bottom:14px;" hidden>
+                <div class="lt">— Entre amies —</div>
+                <div id="friends-boards"></div>
+                <div style="display:flex;gap:8px;margin-top:10px;">
+                    <input type="text" id="friend-code-input" placeholder="Code (ex. K7KM2A)" maxlength="6"
+                        autocapitalize="characters" autocomplete="off"
+                        style="flex:1;padding:10px 12px;border:1.5px solid var(--ligne);border-radius:10px;background:var(--fond);font-weight:800;letter-spacing:.12em;text-transform:uppercase;">
+                    <button id="friend-join-btn" class="btn btn-plum" style="flex-shrink:0;">Rejoindre</button>
+                </div>
+                <button id="friend-create-btn" class="btn btn-quiet" style="width:100%;margin-top:8px;">＋ Créer un
+                    groupe d'amies</button>
+                <div id="friends-status" class="hint" style="margin-top:6px;text-align:center;"></div>
+            </div>
+
             <div class="lead" style="animation:none">
                 <div class="lt" id="league-title">— Top 10 du jour —</div>
                 <ul id="league-list"></ul>

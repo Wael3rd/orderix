@@ -199,6 +199,7 @@ function buildHome() {
 // ── CLASSEMENT (écran Ligue) ─────────────────────────────────────
 function buildLeague() {
     buildWeeklyLeague();
+    buildFriendBoards();
     const tid = todayDayId();
     const day = DAYS.find(d => d.id === tid) || DAYS[0];
     if (day.empty) {
@@ -258,6 +259,59 @@ function buildWeeklyLeague() {
         .catch(() => {
             list.innerHTML = '<li class="empty">Ligue indisponible pour le moment.</li>';
         });
+}
+
+// ── Classements entre amies (groupes à code) ─────────────────────
+function buildFriendBoards() {
+    const zone = document.getElementById('friends-zone');
+    if (typeof SB_ENABLED === 'undefined' || !SB_ENABLED) { zone.hidden = true; return; }
+    zone.hidden = false;
+    const boards = document.getElementById('friends-boards');
+    boards.innerHTML = '<div class="hint" style="text-align:center;">Chargement…</div>';
+
+    sbFriendBoards().then(rows => {
+        boards.innerHTML = '';
+        if (!rows || !rows.length) {
+            boards.innerHTML = '<div class="hint" style="text-align:center;">Créez un groupe et partagez son code ' +
+                'à votre sœur, vos collègues… Classement de la semaine entre vous !</div>';
+            return;
+        }
+        // Regroupe par code
+        const parCode = {};
+        rows.forEach(r => { (parCode[r.code] = parCode[r.code] || { name: r.name, rows: [] }).rows.push(r); });
+        Object.keys(parCode).forEach(code => {
+            const g = parCode[code];
+            const head = document.createElement('div');
+            head.style.cssText = 'display:flex;align-items:center;gap:8px;margin:10px 2px 6px;';
+            head.innerHTML = `<b style="flex:1;font-size:.9rem;">${g.name}</b>` +
+                `<span class="hint" style="font-size:.7rem;">code <b style="letter-spacing:.1em;">${code}</b></span>`;
+            const share = document.createElement('button');
+            share.className = 'btn btn-quiet';
+            share.style.cssText = 'padding:5px 12px;font-size:.72rem;flex-shrink:0;';
+            share.textContent = 'Inviter';
+            share.addEventListener('click', () => {
+                const txt = `Rejoins mon groupe « ${g.name} » sur Orderix 🧩 — code : ${code}\n` +
+                    'https://wael3rd.github.io/orderix/defi.html';
+                if (navigator.share) navigator.share({ text: txt }).catch(() => { });
+                else if (navigator.clipboard) navigator.clipboard.writeText(txt);
+                if (typeof logEvent === 'function') logEvent('amies_invitation', { code: code });
+            });
+            head.appendChild(share);
+            boards.appendChild(head);
+
+            const ul = document.createElement('ul');
+            g.rows.forEach((entry, index) => {
+                const li = document.createElement('li');
+                li.className = 'lrow' + (entry.is_me ? ' me' : '');
+                li.innerHTML = `<span class="rk${index < 3 ? ' r' + (index + 1) : ''}">${index + 1}</span>` +
+                    `<span class="av">${(entry.pseudo || '?')[0].toUpperCase()}</span>` +
+                    `<span class="nm">${entry.pseudo}${entry.is_me ? ' (vous)' : ''}</span>` +
+                    `<span class="sc">${entry.wins} ✓${entry.wins > 0 ? ` · ${(entry.total_time_ms / 1000).toFixed(0)} s` : ''}</span>`;
+                ul.appendChild(li);
+            });
+            boards.appendChild(ul);
+        });
+    });
 }
 
 // ── CALENDRIER ───────────────────────────────────────────────────
