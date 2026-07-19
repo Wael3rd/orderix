@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orderix — On vous met au défi !</title>
+<meta property="og:title" content="Orderix — On vous met au défi ! 🧩">
+<meta property="og:description" content="Un puzzle par jour, 365 jours par an. Saurez-vous faire mieux ?">
+<meta property="og:image" content="https://wael3rd.github.io/orderix/og-defi.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+:root{--bleu:#4A6CFA;--bleu2:#3553D1;--pale:#EEF2FF;--encre:#23262F;--gris:#8B90A0;
+--fond:#F4F6FA;--carte:#fff;--or:#F5B227;--vert:#34B871}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Roboto,sans-serif;background:linear-gradient(160deg,#3553D1,#4A6CFA 60%,#6B87FB);
+min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 16px;color:var(--encre)}
+.card{background:var(--carte);border-radius:26px;max-width:420px;width:100%;padding:36px 28px;
+text-align:center;box-shadow:0 20px 60px rgba(20,30,80,.35)}
+.logo{font-size:2rem;font-weight:900}
+.logo b{color:var(--bleu)}
+.swords{font-size:3.2rem;margin:18px 0 8px}
+h1{font-size:1.25rem;font-weight:900;line-height:1.35;margin-bottom:8px}
+h1 b{color:var(--bleu2)}
+.time{display:inline-block;background:var(--pale);color:var(--bleu2);font-weight:900;font-size:1.6rem;
+padding:10px 26px;border-radius:16px;margin:10px 0 4px}
+.time small{font-size:.9rem}
+.sub{color:var(--gris);font-size:.88rem;margin:10px 0 24px;line-height:1.5}
+.btn{display:block;background:var(--bleu);color:#fff;font-weight:900;font-size:1.05rem;
+padding:16px;border-radius:999px;text-decoration:none;box-shadow:0 6px 18px rgba(74,108,250,.45)}
+.btn:active{transform:scale(.98)}
+.note{color:var(--gris);font-size:.7rem;margin-top:14px}
+.pitch{margin-top:26px;padding-top:20px;border-top:1px solid #E8EAF1;display:flex;gap:6px;justify-content:center;
+flex-wrap:wrap;color:var(--gris);font-size:.74rem;font-weight:700}
+.pitch span{background:var(--fond);padding:5px 12px;border-radius:999px}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">Order<b>ix</b></div>
+  <div class="swords" id="emo">⚔️</div>
+  <h1 id="titre">On vous met au défi !</h1>
+  <div class="time" id="temps" style="display:none"></div>
+  <p class="sub" id="soustitre">Un puzzle de logique par jour, 365 jours par an. Trois petites minutes pour
+    prouver que votre cerveau est le plus rapide.</p>
+  <a class="btn" id="dl" href="https://github.com/Wael3rd/orderix/releases/download/staging-latest/Orderix-dev.apk">
+    Relever le défi — télécharger Orderix</a>
+  <div class="note">Android · gratuit · sans pub</div>
+  <div class="pitch">
+    <span>🧩 1 puzzle/jour</span><span>🏅 des médailles</span><span>🔥 une série à défendre</span>
+  </div>
+</div>
+<script>
+// Personnalisation depuis le lien de partage : ?day=N&t=temps&ref=pseudo
+(function(){
+  var q = new URLSearchParams(location.search);
+  var day = parseInt(q.get('day'));
+  var t = parseFloat(q.get('t'));
+  var ref = (q.get('ref') || '').slice(0, 15).replace(/[<>&"]/g, '');
+  var titre = document.getElementById('titre');
+  if (ref && day) titre.innerHTML = '<b>' + ref + '</b> vous défie sur le puzzle du jour ' + day + ' !';
+  else if (day) titre.textContent = 'Saurez-vous réussir le puzzle du jour ' + day + ' ?';
+  if (t > 0) {
+    var el = document.getElementById('temps');
+    el.style.display = 'inline-block';
+    el.innerHTML = '⏱ ' + t.toFixed(2).replace('.', ',') + '<small> s à battre</small>';
+    document.getElementById('soustitre').textContent =
+      'Installez Orderix, ouvrez le jour ' + day + ' depuis le calendrier, et faites mieux. On y croit.';
+  }
+})();
+</script>
+</body>
+</html>

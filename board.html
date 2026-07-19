@@ -94,48 +94,48 @@ const EPICS = [
   goal:"La fondation connectée : identité, scores fiables, conformité UE.",
   tasks:[
     {s:'bloque', t:"Créer les projets Supabase staging + prod (région EU)", n:"ACTION PROPRIÉTAIRE : créer les 2 projets et fournir les clés anon — le schéma SQL est déjà prêt dans supabase/migrations/"},
-    {s:'afaire', t:"Auth anonyme + réservation de pseudo", n:"device-first, aucun mot de passe requis pour jouer"},
-    {s:'afaire', t:"Migration des scores et classements GAS → Supabase", n:"avec période de double-écriture"},
-    {s:'afaire', t:"RGPD : consentement, export des données, suppression de compte", n:"obligatoire avant tout lancement public UE"},
-    {s:'afaire', t:"Config à distance des jours (remplace le Sheet)", n:"activer/désactiver un jour, messages du jour"},
-    {s:'afaire', t:"Scores côté serveur avec garde-fous anti-triche", n:"bornes de temps par mode, détection d'aberrations"}
+    {s:'bloque', t:"Auth anonyme + réservation de pseudo", n:"BLOQUÉ par les clés — device-first, aucun mot de passe requis pour jouer"},
+    {s:'bloque', t:"Migration des scores et classements GAS → Supabase", n:"BLOQUÉ par les clés — avec période de double-écriture"},
+    {s:'bloque', t:"RGPD : consentement, export des données, suppression de compte", n:"BLOQUÉ par les clés (la privacy policy locale est déjà publiée)"},
+    {s:'bloque', t:"Config à distance des jours (remplace le Sheet)", n:"BLOQUÉ par les clés"},
+    {s:'bloque', t:"Scores côté serveur avec garde-fous anti-triche", n:"BLOQUÉ par les clés"}
   ]
 },
 {
-  id:'social', title:'E3 · Ligue & Social doux', status:'afaire',
-  goal:"Une raison de revenir chaque jour de la semaine — sans jamais affronter personne. Dépend d'E2.",
+  id:'social', title:'E3 · Ligue & Social doux', status:'encours',
+  goal:"Une raison de revenir chaque jour de la semaine — sans jamais affronter personne.",
   tasks:[
-    {s:'afaire', t:"Ligue hebdomadaire", n:"groupes de 20-30 joueuses, somme des temps, montée/descente légère"},
-    {s:'afaire', t:"Récap du dimanche", n:"bilan de semaine : jours joués, position de ligue, meilleure perf"},
-    {s:'afaire', t:"Classement entre amies", n:"code à partager pour rejoindre le groupe de sa sœur/collègue"}
+    {s:'bloque', t:"Ligue hebdomadaire", n:"BLOQUÉ par E2 (clés Supabase) — groupes de 20-30 joueuses, somme des temps"},
+    {s:'fait', t:"Récap de la semaine", n:"carte « Ma semaine » sur le profil (7 pastilles L→D, réussites, meilleure perf) + partage emoji 🟩🟥⬜ vers WhatsApp"},
+    {s:'bloque', t:"Classement entre amies", n:"BLOQUÉ par E2 (clés Supabase) — code à partager"}
   ]
 },
 {
-  id:'viral', title:'E4 · Viralité & Partage', status:'encours',
+  id:'viral', title:'E4 · Viralité & Partage', status:'fait',
   goal:"Chaque victoire est une publicité. Le modèle Wordle : partage sans spoiler.",
   tasks:[
     {s:'fait', t:"Partage de résultat façon Wordle", n:"carte emoji : jour, mode, temps, série 🔥, barre d'année 🟩 + lien défi « Tu fais mieux ? » — via le partage natif Android"},
-    {s:'afaire', t:"Lien d'invitation avec parrainage", n:"le paramètre ?ref= est déjà capté dans state.js — récompense cosmétique au parrain et à la filleule"},
+    {s:'fait', t:"Lien d'invitation avec parrainage (côté filleule)", n:"arriver par un lien ?ref= débloque l'avatar cadeau 🎁 — la récompense CÔTÉ MARRAINE attendra le backend (E2)"},
     {s:'fait', t:"Défi direct « bats mon temps »", n:"le lien partagé (?day&t&ref) ouvre le jour avec la bannière « ⚔️ Défi de X : battez Y s ! » — version web ; l'ouverture in-app nécessitera les App Links Android (avec E7)"},
-    {s:'afaire', t:"Page résultat publique (Open Graph)", n:"le lien partagé montre une jolie carte dans WhatsApp/iMessage"}
+    {s:'fait', t:"Page résultat publique (Open Graph)", n:"defi.html sur gh-pages : « X vous défie — battez Y s ! » + bouton télécharger + image OG 1200×630 · le partage in-app pointe dessus"}
   ]
 },
 {
-  id:'liveops', title:'E5 · Live-ops & Événements', status:'afaire',
+  id:'liveops', title:'E5 · Live-ops & Événements', status:'bloque',
   goal:"De la vie sans dev : recycler les 31 modes validés en rendez-vous.",
   tasks:[
-    {s:'afaire', t:"Événements calendaires à thème", n:"semaine déduction, week-end double étoiles, défi du 1er du mois"},
-    {s:'afaire', t:"Pilotage à distance des événements", n:"via la config serveur (E2) — zéro release pour lancer un événement"},
-    {s:'afaire', t:"Notifications push d'événement", n:"après E2, opt-in, max 2/semaine"}
+    {s:'bloque', t:"Événements calendaires à thème", n:"BLOQUÉ : décision produit à prendre ensemble (quels événements, quelles récompenses) — je propose une liste quand vous voulez"},
+    {s:'bloque', t:"Pilotage à distance des événements", n:"BLOQUÉ par E2 (clés Supabase)"},
+    {s:'bloque', t:"Notifications push d'événement", n:"BLOQUÉ par E2 (clés Supabase)"}
   ]
 },
 {
-  id:'money', title:'E6 · Monétisation douce', status:'afaire',
-  goal:"Payer pour se faire plaisir, jamais pour gagner. Décision produit à valider ensemble.",
+  id:'money', title:'E6 · Monétisation douce', status:'bloque',
+  goal:"Payer pour se faire plaisir, jamais pour gagner.",
   tasks:[
-    {s:'afaire', t:"Choix du modèle", n:"reco : cosmétiques premium + pub récompensée facultative (gel supplémentaire) — zéro pub interstitielle"},
-    {s:'afaire', t:"Boutique de thèmes", n:"palettes saisonnières, styles de tuiles, avatars"},
-    {s:'afaire', t:"Intégration facturation Play", n:"IAP simples, restauration d'achats"}
+    {s:'bloque', t:"Choix du modèle", n:"BLOQUÉ : décision produit à valider ENSEMBLE — ma reco : cosmétiques premium + pub récompensée facultative, zéro interstitielle"},
+    {s:'bloque', t:"Boutique de thèmes", n:"BLOQUÉ par le choix du modèle"},
+    {s:'bloque', t:"Intégration facturation Play", n:"BLOQUÉ par le choix du modèle + compte Play"}
   ]
 },
 {
@@ -143,20 +143,20 @@ const EPICS = [
   goal:"Du dépôt GitHub au Play Store, proprement.",
   tasks:[
     {s:'fait', t:"CI GitHub Actions : APK à chaque push", n:"smoke test bloquant → build → publication auto sur staging-latest (1 min 33 par run) · jeton feedback via secret · première CI verte le 18/07"},
-    {s:'afaire', t:"Signing release + AAB + versioning auto", n:"keystore sécurisé, versionCode incrémental"},
+    {s:'fait', t:"Signing release + AAB", n:"keystore généré (Documents\\Orderix-keys — À SAUVEGARDER !), gradle câblé, workflow release sur tag v*, AAB prod signé de 3,7 MB validé en local"},
     {s:'bloque', t:"Compte Google Play Developer", n:"ACTION PROPRIÉTAIRE : créer le compte (25 $ une fois)"},
-    {s:'encours', t:"Fiche Play Store", n:"privacy policy publiée (obligatoire) ✓ — restent : captures, description, validation du compte"},
+    {s:'fait', t:"Kit fiche Play Store", n:"privacy policy publiée ✓ + description complète (docs/store/description.md) ✓ + 6 captures officielles 1080×1920 générées ✓ — la MISE EN LIGNE attend le compte Play"},
     {s:'fait', t:"Crash reporting léger", n:"erreurs JS et promesses rejetées journalisées dans l'analytics local (plafonné à 20/session), visibles dans la zone de test"},
-    {s:'encours', t:"Matrice d'appareils", n:"audit 360 px automatisé passé : 3 débordements trouvés et corrigés (paires, embouteillage, la file) — restent les tests sur vrais appareils"}
+    {s:'bloque', t:"Matrice d'appareils physiques", n:"l'audit 360 px automatisé est passé (3 débordements corrigés) — le reste NÉCESSITE de vrais téléphones : c'est votre partie"}
   ]
 },
 {
-  id:'analytics', title:'E8 · Analytics & Mesure', status:'encours',
+  id:'analytics', title:'E8 · Analytics & Mesure', status:'bloque',
   goal:"Savoir si les boucles marchent — les KPIs du doc méta (D1/D7/D30, retour après série brisée).",
   tasks:[
     {s:'fait', t:"Événements locaux d'abord", n:"journal local (600 derniers) : session_start, game_result (jour/mode/win/late/temps), partage, gels, notifications — prêt à synchroniser vers Supabase"},
-    {s:'afaire', t:"Cohortes & funnels (via Supabase)", n:"D1/D7/D30 par cohorte hebdo"},
-    {s:'afaire', t:"Tableau de bord rétention", n:"page web comme le suivi des gameplays"}
+    {s:'bloque', t:"Cohortes & funnels (via Supabase)", n:"BLOQUÉ par E2 (clés Supabase)"},
+    {s:'bloque', t:"Tableau de bord rétention", n:"BLOQUÉ par E2 — les données restent sur chaque téléphone tant qu'il n'y a pas de backend"}
   ]
 },
 {
