@@ -74,20 +74,30 @@ __check('écran calendrier', () => showScreen('calendar'));
 __check('écran profil', () => showScreen('profile'));
 __check('écran accueil', () => showScreen('home'));
 __check('365 jours générés', () => { if (DAYS.length !== 365) throw new Error('DAYS=' + DAYS.length); });
-// Jours retirés sans remplacement sur demande : 15 (La File, #120),
-// 32 (Le Rangement, #118), 35 (Pairs Uniquement, #119) — jours vides
-// intentionnels, seules exceptions admises avant le jour 70.
-const KNOWN_EMPTY_RETEST_DAYS = [15, 32, 35];
-__check('modes et types valides (jours vides admis après la campagne)', () => {
+// Structure du calendrier : séquence 1→69 (janvier-mars) + son MIROIR
+// aux jours 200→268 (« en vrai » depuis le 19/07). Jours retirés sur
+// demande (15, 32, 35) vides dans les deux copies. Tout le reste vide.
+const KNOWN_EMPTY_VIRTUAL_DAYS = [15, 32, 35];
+const vidOf = (id) => id <= 69 ? id : (id >= 200 && id <= 268 ? id - 199 : null);
+__check('modes et types valides (calendrier + miroir du 19/07)', () => {
     DAYS.forEach(d => {
-        if (d.empty) {
-            if (d.id < 70 && KNOWN_EMPTY_RETEST_DAYS.indexOf(d.id) === -1) throw new Error('jour vide avant la fin de la campagne : ' + d.id);
+        const vid = vidOf(d.id);
+        const doitEtreVide = vid === null || KNOWN_EMPTY_VIRTUAL_DAYS.indexOf(vid) !== -1;
+        if (doitEtreVide) {
+            if (!d.empty) throw new Error('jour ' + d.id + ' devrait être vide');
             return;
         }
-        if (d.id >= 70) throw new Error('jour non vide après la campagne : ' + d.id);
+        if (d.empty) throw new Error('jour ' + d.id + ' (virtuel ' + vid + ') vide à tort');
         if (!GAME_MODES[d.modeId]) throw new Error('mode inconnu: ' + d.modeId);
         if (!BASE_TYPES.find(b => b.type === d.type)) throw new Error('type inconnu: ' + d.type);
     });
+    // Le miroir propose exactement les mêmes puzzles que l'original
+    for (let id = 200; id <= 268; id++) {
+        const m = DAYS.find(x => x.id === id), o = DAYS.find(x => x.id === id - 199);
+        if ((m.modeId || '') !== (o.modeId || '') || (m.empty !== o.empty)) {
+            throw new Error('miroir incohérent au jour ' + id);
+        }
+    }
 });
 
 // Modes retirés du calendrier (retours #118/#119/#120) mais conservés

@@ -42,9 +42,10 @@ files will cause bugs.
   numeric types; `typeAgnostic` hides the theme), `BASE_TYPES` (50 visual types), `TEXT_TYPES`
   whitelist, `buildDayTitle()`. Calendar: days 1-31 = `JANUARY_LINEUP` (one new gameplay per
   day, testing phase — do not reorder without the owner's ask), days 32-69 = `LEGACY_RETEST`
-  (each legacy mode once, neutral `numbers` type, auto `rev:1` for test badges), day 70+ =
-  EMPTY (`day.empty` — no mode, disabled in calendar, "pause" card on home) until the final
-  roster is decided.
+  (each legacy mode once, neutral `numbers` type), days 200-268 = MIRROR of days 1-69
+  (anchored July 19 so the real "daily puzzle" exists — streak/events/pass live for real;
+  `_virtualDay()` in state.js), all other days EMPTY (`day.empty`). Feedback from mirror days
+  maps back to virtual rows on the dashboard.
 - **Feedback loop**: end-of-game comment box opens a prefilled GitHub issue (label `feedback`);
   a cloud routine ("Orderix — correctifs depuis les feedbacks", every 2h) reads them, implements
   fixes, runs `node smoke-test.js`, commits to main and answers/closes the issue. APK rebuilds

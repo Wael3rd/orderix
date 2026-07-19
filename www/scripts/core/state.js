@@ -68,23 +68,42 @@ const LEGACY_RETEST = Object.keys(GAME_MODES).filter(k => !JANUARY_LINEUP.includ
 // simplement pas assigné ce jour-là.
 // Jour 35 (retour #119) : Pairs Uniquement retiré comme le Rangement
 const RETEST_SKIP_DAYS = new Set([32, 35]);
+
+// MIROIR « en vrai » (demande du 19/07) : la séquence de test 1→69
+// rejoue à partir du jour 200 (19 juillet), pour que le puzzle DU JOUR
+// existe vraiment — série, événements et Carnet vivent en conditions
+// réelles. Le calendrier de janvier reste intact.
+const MIRROR_START = 200;
+
+// id réel → jour « virtuel » de la séquence de test (1→69), ou null
+function _virtualDay(id) {
+    if (id <= 69) return id;
+    if (id >= MIRROR_START && id <= MIRROR_START + 68) return id - MIRROR_START + 1;
+    return null;
+}
+
 let ALL_DAYS = [];
 for (let id = 1; id <= 365; id++) {
+    const vid = _virtualDay(id);
+    const vide = () => ALL_DAYS.push({ id: id, empty: true, modeId: null, type: 'numbers', title: '' });
+    if (vid === null) { vide(); continue; }
+
     let mKey;
     let retest = false;
-    if (id <= 31) {
-        mKey = JANUARY_LINEUP[id - 1];
-        if (!mKey) { ALL_DAYS.push({ id: id, empty: true, modeId: null, type: 'numbers', title: '' }); continue; }
+    if (vid <= 31) {
+        mKey = JANUARY_LINEUP[vid - 1];
+        if (!mKey) { vide(); continue; }
     }
-    else if (RETEST_SKIP_DAYS.has(id)) { ALL_DAYS.push({ id: id, empty: true, modeId: null, type: 'numbers', title: '' }); continue; }
-    else if (id - 32 < LEGACY_RETEST.length) { mKey = LEGACY_RETEST[id - 32]; retest = true; }
-    else { ALL_DAYS.push({ id: id, empty: true, modeId: null, type: 'numbers', title: '' }); continue; }
+    else if (RETEST_SKIP_DAYS.has(vid)) { vide(); continue; }
+    else if (vid - 32 < LEGACY_RETEST.length) { mKey = LEGACY_RETEST[vid - 32]; retest = true; }
+    else { vide(); continue; }
 
     const mode = GAME_MODES[mKey];
     // Certains modes exigent un type précis (ex. additions → nombres lisibles)
     // ou refusent les types illisibles dans leur contexte (ex. tapis roulant
-    // × ombre, issue #26) → repli sur des nombres.
-    const base = BASE_TYPES[(id * 13) % BASE_TYPES.length];
+    // × ombre, issue #26) → repli sur des nombres. Le type suit le jour
+    // VIRTUEL : le miroir propose exactement les mêmes puzzles.
+    const base = BASE_TYPES[(vid * 13) % BASE_TYPES.length];
     let type = retest ? (mode.forceType || 'numbers') : (mode.forceType || base.type);
     if (mode.avoidTypes && mode.avoidTypes.indexOf(type) !== -1) type = 'numbers';
     ALL_DAYS.push({ id: id, type: type, modeId: mKey });
