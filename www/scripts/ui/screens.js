@@ -235,7 +235,10 @@ function buildWeeklyLeague() {
                 list.innerHTML = '<li class="empty">La ligue s\'ouvre avec votre première victoire de la semaine !</li>';
                 return;
             }
-            note.textContent = `Groupe de ${rows.length} joueuse${rows.length > 1 ? 's' : ''} · victoires de la semaine · fin dimanche soir`;
+            const div = rows[0] && rows[0].division;
+            const divLbl = ({ 1: '🥇 Ligue Or', 2: '🥈 Ligue Argent', 3: '🥉 Ligue Bronze' })[div] || '';
+            note.textContent = `${divLbl ? divLbl + ' · ' : ''}groupe de ${rows.length} joueuse${rows.length > 1 ? 's' : ''} ` +
+                '· top 5 = promotion, 5 dernières = relégation · fin dimanche soir';
             rows.forEach((entry, index) => {
                 const li = document.createElement('li');
                 li.className = 'lrow' + (entry.is_me ? ' me' : '');

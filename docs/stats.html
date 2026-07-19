@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orderix — Rétention & activité</title>
+<style>
+:root{--bleu:#4A6CFA;--bleu2:#3553D1;--pale:#EEF2FF;--encre:#23262F;--gris:#8B90A0;
+--fond:#F4F6FA;--carte:#fff;--ligne:#E8EAF1;--or:#F5B227;--vert:#34B871;--rouge:#E0533D}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Roboto,sans-serif;background:var(--fond);color:var(--encre);padding:18px 12px 80px;line-height:1.5}
+.wrap{max-width:820px;margin:0 auto}
+h1{font-size:1.5rem;font-weight:900;text-align:center}
+h1 b{color:var(--bleu)}
+.sub{text-align:center;color:var(--gris);font-size:.82rem;margin:4px 0 20px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:24px}
+.kpi{background:var(--carte);border-radius:16px;padding:18px 10px;text-align:center;box-shadow:0 2px 8px rgba(35,38,47,.06)}
+.kpi .v{font-size:1.7rem;font-weight:900;color:var(--bleu)}
+.kpi .l{font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--gris);margin-top:2px}
+.panel{background:var(--carte);border-radius:18px;padding:20px;box-shadow:0 2px 10px rgba(35,38,47,.06);margin-bottom:16px}
+.panel h2{font-size:.95rem;font-weight:900;margin-bottom:14px}
+.chart{display:flex;align-items:flex-end;gap:3px;height:140px}
+.bar{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;min-width:8px}
+.bar i{display:block;width:100%;border-radius:4px 4px 0 0;background:var(--bleu);min-height:2px}
+.bar.b2 i{background:var(--vert)}
+.bar small{font-size:.52rem;color:var(--gris);font-weight:700;white-space:nowrap;transform:rotate(-45deg);height:22px}
+.legend{display:flex;gap:16px;justify-content:center;margin-top:10px;font-size:.72rem;font-weight:700;color:var(--gris)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:4px;vertical-align:-2px;margin-right:5px}
+#status{text-align:center;color:var(--gris);padding:30px;font-size:.85rem}
+.foot{margin-top:30px;text-align:center;color:var(--gris);font-size:.7rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Order<b>ix</b> — Rétention & activité</h1>
+<p class="sub">Agrégats pseudonymes lus en direct depuis Supabase (staging) · <b id="sync">chargement…</b></p>
+<div class="cards" id="kpis"></div>
+<div class="panel">
+  <h2>Activité des 30 derniers jours</h2>
+  <div class="chart" id="chart"></div>
+  <div class="legend">
+    <span><i style="background:var(--bleu)"></i>Joueuses actives (DAU)</span>
+    <span><i style="background:var(--vert)"></i>Parties jouées</span>
+  </div>
+</div>
+<div id="status"></div>
+<div class="foot">Les cibles du doc méta : D1 ≥ 45 % · D7 ≥ 35 % · D30 ≥ 15 %. Basculera sur la base
+prod au lancement. Aucune donnée individuelle : uniquement des comptages.</div>
+</div>
+
+<script>
+const URL_SB = 'https://gzrquivrysbmodlwhslb.supabase.co';
+const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6cnF1aXZyeXNibW9kbHdoc2xiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0NjIxMzYsImV4cCI6MjEwMDAzODEzNn0.Nz32d6CZh-iWt7bWH7q463yIY4iYQfL2MWsvvRYf2-o';
+
+async function load() {
+  try {
+    const r = await fetch(URL_SB + '/rest/v1/rpc/get_public_stats', {
+      method: 'POST',
+      headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json' },
+      body: '{}'
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const s = await r.json();
+    document.getElementById('sync').textContent = 'à jour · ' + new Date().toLocaleTimeString('fr-FR');
+
+    const jours = s.jours || [];
+    const tot = (champ) => jours.reduce((a, j) => a + (j[champ] || 0), 0);
+    const kpis = [
+      [s.joueuses_total ?? '—', 'joueuses uniques'],
+      [(s.retention && s.retention.d1_pct != null) ? s.retention.d1_pct + ' %' : '—', 'rétention D1'],
+      [(s.retention && s.retention.d7_pct != null) ? s.retention.d7_pct + ' %' : '—', 'rétention D7'],
+      [tot('parties'), 'parties (30 j)'],
+      [tot('parties') ? Math.round(100 * tot('victoires') / tot('parties')) + ' %' : '—', 'taux de réussite'],
+      [tot('partages'), 'partages (30 j)']
+    ];
+    document.getElementById('kpis').innerHTML = kpis.map(([v, l]) =>
+      `<div class="kpi"><div class="v">${v}</div><div class="l">${l}</div></div>`).join('');
+
+    const chart = document.getElementById('chart');
+    chart.innerHTML = '';
+    if (!jours.length) {
+      document.getElementById('status').textContent =
+        'Pas encore de données — elles arrivent au fil des parties jouées avec la nouvelle APK.';
+      return;
+    }
+    const maxDau = Math.max(1, ...jours.map(j => j.dau || 0));
+    const maxP = Math.max(1, ...jours.map(j => j.parties || 0));
+    jours.forEach(j => {
+      const d = new Date(j.d);
+      const lbl = d.getDate() + '/' + (d.getMonth() + 1);
+      const b1 = document.createElement('div');
+      b1.className = 'bar';
+      b1.innerHTML = `<i style="height:${Math.round(100 * (j.dau || 0) / maxDau)}%"></i><small>${lbl}</small>`;
+      b1.title = `${lbl} · ${j.dau} joueuse(s) · ${j.parties} partie(s) · ${j.victoires} victoire(s)`;
+      const b2 = document.createElement('div');
+      b2.className = 'bar b2';
+      b2.innerHTML = `<i style="height:${Math.round(100 * (j.parties || 0) / maxP)}%"></i><small></small>`;
+      b2.title = b1.title;
+      chart.append(b1, b2);
+    });
+  } catch (e) {
+    document.getElementById('status').textContent =
+      'Statistiques indisponibles (la migration 0004 est-elle appliquée ?) — ' + e.message;
+  }
+}
+load();
+setInterval(load, 5 * 60 * 1000);
+</script>
+</body>
+</html>
