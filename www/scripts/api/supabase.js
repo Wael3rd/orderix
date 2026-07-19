@@ -109,13 +109,16 @@ function sbSetFeedback(dayId, feedback, shared) {
     }, true).then(() => true).catch(() => false);
 }
 
-// ── Classement (lecture publique, aucune session requise) ────────
+// ── Classement : tout le monde apparaît (« Invitée-xxxx » sans
+// pseudo) ; appelé avec la session pour marquer SA propre ligne ──────
 function sbLeaderboard(dayId, itemCount, limit) {
     if (!SB_ENABLED) return Promise.resolve(null);
-    return sbRpc('get_leaderboard', {
+    const appel = (auth) => sbRpc('get_leaderboard', {
         p_year: new Date().getFullYear(), p_day: dayId,
         p_item_count: itemCount, p_limit: limit || 10
-    }, false).then(rows => (rows || []).map(x => ({ name: x.pseudo, time: x.time_ms / 1000 })))
+    }, auth);
+    return appel(true).catch(() => appel(false))
+        .then(rows => (rows || []).map(x => ({ name: x.pseudo, time: x.time_ms / 1000, isMe: !!x.is_me })))
         .catch(() => null);
 }
 

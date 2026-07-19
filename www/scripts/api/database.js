@@ -90,8 +90,10 @@ function submitScore(timeVal, feedback, isUpdate = false) {
         const gagne = parseFloat(timeVal) >= 0;
         if (!SB_ENABLED) {
             dbMessage.textContent = 'Mode test — rien n\'est envoyé au serveur.';
-        } else if (!nom) {
-            dbMessage.textContent = 'Partie enregistrée (compte anonyme). Choisissez un pseudo dans Profil pour apparaître au classement — vos victoires passées s\'afficheront aussi !';
+        } else if (!nom && gagne && !isUpdate) {
+            dbMessage.textContent = '✓ Publié au classement en tant qu\'Invitée — choisissez un pseudo dans Profil pour y mettre votre nom.';
+        } else if (!nom && !isUpdate) {
+            dbMessage.textContent = 'Partie enregistrée — seules les réussites apparaissent au classement.';
         } else if (!gagne && !isUpdate) {
             dbMessage.textContent = 'Partie enregistrée — seules les réussites apparaissent au classement.';
         } else if (!isUpdate) {
@@ -196,7 +198,8 @@ function fetchBoardInto(dayId, listEl, topN) {
             }
             data.slice(0, topN).forEach((entry, index) => {
                 const li = document.createElement('li');
-                li.className = 'lrow' + (me && entry.name === me ? ' me' : '');
+                const estMoi = entry.isMe || (me && entry.name === me);
+                li.className = 'lrow' + (estMoi ? ' me' : '');
 
                 const rk = document.createElement('span');
                 rk.className = 'rk' + (index < 3 ? ' r' + (index + 1) : '');
@@ -208,7 +211,7 @@ function fetchBoardInto(dayId, listEl, topN) {
 
                 const nm = document.createElement('span');
                 nm.className = 'nm';
-                nm.textContent = entry.name + (me && entry.name === me ? ' (vous)' : '');
+                nm.textContent = entry.name + (estMoi ? ' (vous)' : '');
 
                 const sc = document.createElement('span');
                 const isWin = entry.time >= 0;
@@ -250,7 +253,8 @@ function fetchLeaderboard() {
                 rank.className = 'rank' + (index < 3 ? ' r' + (index + 1) : '');
                 rank.textContent = '#' + (index + 1);
                 left.appendChild(rank);
-                left.appendChild(document.createTextNode(entry.name));
+                left.appendChild(document.createTextNode(entry.name + (entry.isMe ? ' (vous)' : '')));
+                if (entry.isMe) left.style.fontWeight = '900';
 
                 const right = document.createElement('span');
                 const isWin = entry.time >= 0;
