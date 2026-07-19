@@ -28,7 +28,7 @@ const GAME_MODES = {
     tubes: { rev: 2, name: "Les Tubes", isTubes: true, typeAgnostic: true, desc: "Reversez les jetons pour reconstituer HUIT piles parfaitement ordonnées, sur dix tubes. Annulation illimitée." },
     swapSort: { rev: 3, name: "Le Tri Minimal", isSwapSort: true, typeAgnostic: true, desc: "Glissez les tuiles pour trier la colonne (petit en haut) — mais chaque déplacement compte, et le budget est au strict minimum. Trouvez quelles tuiles NE PAS bouger !" },
     boulons: { name: "Les Boulons", isBoulons: true, typeAgnostic: true, desc: "Réempilez les écrous du plus large au plus fin sur chaque vis. Annulation illimitée." },
-    grille: { name: "La Grille", isGrille: true, typeAgnostic: true, desc: "Remettez les nombres dans l'ordre : on n'échange qu'avec les cases qui se touchent, diagonales comprises. 2 manches." },
+    grille: { rev: 1, name: "La Grille", isGrille: true, typeAgnostic: true, desc: "Remettez les nombres dans l'ordre : GLISSEZ une tuile vers sa voisine pour les échanger, comme dans un match-3 — diagonales comprises. 2 manches." },
     hanoi: { name: "La Tour", isHanoi: true, typeAgnostic: true, desc: "Déplacez la tour entière vers la droite — jamais un grand disque sur un petit. 22 coups maximum." },
     fileBloquee: { name: "La File", isFileBloquee: true, typeAgnostic: true, desc: "Faites passer les clientes au guichet dans l'ordre des tickets, grâce aux sièges d'attente." },
     mahjong: { rev: 2, name: "Le Mahjong", isMahjong: true, typeAgnostic: true, desc: "Tapez deux tuiles LIBRES identiques pour les faire s'envoler. Une tuile est libre si rien ne la recouvre. Videz tout le plateau !" },

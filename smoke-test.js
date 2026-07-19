@@ -74,9 +74,10 @@ __check('écran calendrier', () => showScreen('calendar'));
 __check('écran profil', () => showScreen('profile'));
 __check('écran accueil', () => showScreen('home'));
 __check('365 jours générés', () => { if (DAYS.length !== 365) throw new Error('DAYS=' + DAYS.length); });
-// Jour 32 retiré sans remplacement (retour #118) : jour vide intentionnel
-// au sein de la campagne de retest, seule exception admise avant jour 70.
-const KNOWN_EMPTY_RETEST_DAYS = [32];
+// Jours retirés sans remplacement sur demande : 15 (La File, #120),
+// 32 (Le Rangement, #118), 35 (Pairs Uniquement, #119) — jours vides
+// intentionnels, seules exceptions admises avant le jour 70.
+const KNOWN_EMPTY_RETEST_DAYS = [15, 32, 35];
 __check('modes et types valides (jours vides admis après la campagne)', () => {
     DAYS.forEach(d => {
         if (d.empty) {
@@ -89,9 +90,9 @@ __check('modes et types valides (jours vides admis après la campagne)', () => {
     });
 });
 
-// rangement : retiré de la rotation du calendrier (retour #118) mais
-// conservé dans GAME_MODES — reste jouable via son propre écran de test.
-const MODES_WITHOUT_DAY = ['rangement'];
+// Modes retirés du calendrier (retours #118/#119/#120) mais conservés
+// dans GAME_MODES — plus aucun jour ne les référence.
+const MODES_WITHOUT_DAY = ['rangement', 'evensAsc', 'fileBloquee'];
 Object.keys(GAME_MODES).forEach(modeId => {
     __check('mode ' + modeId + ' (intro + partie)', () => {
         const day = DAYS.find(d => d.modeId === modeId);

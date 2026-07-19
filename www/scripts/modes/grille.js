@@ -56,7 +56,7 @@ function startGameGrille() {
 
     const astuce = document.createElement('div');
     astuce.style.cssText = 'font-size:.85rem;color:#8B90A0;font-style:italic;margin-top:12px;text-align:center;max-width:300px;';
-    astuce.textContent = '« Une tuile s’échange avec celles qui la touchent — même en diagonale. »';
+    astuce.textContent = '« Glissez une tuile vers sa voisine pour les échanger — même en diagonale. »';
     board.appendChild(astuce);
 
     let taille = 3;      // 3 puis 4
@@ -124,9 +124,64 @@ function startGameGrille() {
             }
             if (pulses && pulses.indexOf(i) !== -1) t.style.animation = 'pulse .3s';
 
-            t.addEventListener('pointerdown', e => { e.preventDefault(); tap(i); });
+            // Retour #121 : swap façon match-3 — on GLISSE la tuile vers
+            // sa voisine (8 directions) ; le tap-tap reste possible.
+            t.style.touchAction = 'none';
+            t.addEventListener('pointerdown', e => { e.preventDefault(); startTileDrag(i, e); });
             grille.appendChild(t);
         });
+    }
+
+    // ── Glissement match-3 : direction dominante → voisine visée ────
+    let tileDrag = null; // { i, sx, sy, done }
+
+    function startTileDrag(i, e) {
+        if (isPaused || fini) return;
+        tileDrag = { i: i, sx: e.clientX, sy: e.clientY, done: false };
+        document.addEventListener('pointermove', onTileDragMove);
+        document.addEventListener('pointerup', onTileDragEnd);
+        document.addEventListener('pointercancel', onTileDragEnd);
+    }
+
+    function onTileDragMove(e) {
+        if (!tileDrag || tileDrag.done) return;
+        const dx = e.clientX - tileDrag.sx, dy = e.clientY - tileDrag.sy;
+        if (Math.hypot(dx, dy) < 16) return;
+        // Secteur de 45° → décalage -1/0/1 sur chaque axe (diagonales OK)
+        const ang = Math.atan2(dy, dx);
+        const dc = Math.round(Math.cos(ang)), dr = Math.round(Math.sin(ang));
+        const r = Math.floor(tileDrag.i / taille) + dr, c = (tileDrag.i % taille) + dc;
+        tileDrag.done = true;
+        if (r < 0 || r >= taille || c < 0 || c >= taille) return;
+        const j = r * taille + c;
+        // Animation de glissement croisé, puis échange réel
+        const px = taille === 3 ? 64 : 48;
+        const pas = px + 8;
+        const ei = grille.children[tileDrag.i], ej = grille.children[j];
+        if (ei && ej) {
+            ei.style.transition = ej.style.transition = 'transform .13s ease';
+            ei.style.transform = `translate(${dc * pas}px, ${dr * pas}px)`;
+            ej.style.transform = `translate(${-dc * pas}px, ${-dr * pas}px)`;
+            ei.style.zIndex = '5';
+        }
+        const from = tileDrag.i;
+        setTimeout(() => {
+            if (isPaused || fini) return;
+            sel = null;
+            echangeTuiles(from, j);
+        }, 140);
+    }
+
+    function onTileDragEnd(e) {
+        document.removeEventListener('pointermove', onTileDragMove);
+        document.removeEventListener('pointerup', onTileDragEnd);
+        document.removeEventListener('pointercancel', onTileDragEnd);
+        if (!tileDrag) return;
+        const wasTap = !tileDrag.done &&
+            Math.hypot(e.clientX - tileDrag.sx, e.clientY - tileDrag.sy) < 16;
+        const i = tileDrag.i;
+        tileDrag = null;
+        if (wasTap) tap(i);
     }
 
     function estRangee() {
@@ -142,39 +197,43 @@ function startGameGrille() {
         render();
     }
 
+    // Échange effectif de deux positions voisines + logique de manche
+    function echangeTuiles(a, b) {
+        const tmp = tuiles[a];
+        tuiles[a] = tuiles[b];
+        tuiles[b] = tmp;
+        echanges++;
+        haptic(10);
+        render([a, b]);
+
+        if (estRangee()) {
+            if (currentRound < totalRounds) {
+                currentRound++;
+                taille = 4;
+                resultDisplay.textContent = 'Grille rangée — place au 4×4 !';
+                resultDisplay.style.color = '#34B871';
+                haptic([12, 40, 12]);
+                setTimeout(() => {
+                    if (isPaused) return;
+                    resultDisplay.textContent = '';
+                    nouvelleManche();
+                }, 700);
+            } else {
+                fini = true;
+                endGame('Les deux grilles sont rangées en ' + echanges + ' échanges !', true);
+            }
+        }
+    }
+
     function tap(i) {
         if (isPaused || fini) return;
         if (sel === null) { sel = i; haptic(6); render(); return; }
         if (sel === i) { sel = null; render(); return; }
 
         if (sontVoisines(sel, i)) {
-            // Échange avec une voisine
-            const tmp = tuiles[sel];
-            tuiles[sel] = tuiles[i];
-            tuiles[i] = tmp;
-            echanges++;
-            haptic(10);
-            const bouges = [sel, i];
+            const a = sel;
             sel = null;
-            render(bouges);
-
-            if (estRangee()) {
-                if (currentRound < totalRounds) {
-                    currentRound++;
-                    taille = 4;
-                    resultDisplay.textContent = 'Grille rangée — place au 4×4 !';
-                    resultDisplay.style.color = '#34B871';
-                    haptic([12, 40, 12]);
-                    setTimeout(() => {
-                        if (isPaused) return;
-                        resultDisplay.textContent = '';
-                        nouvelleManche();
-                    }, 700);
-                } else {
-                    fini = true;
-                    endGame('Les deux grilles sont rangées en ' + echanges + ' échanges !', true);
-                }
-            }
+            echangeTuiles(a, i);
         } else {
             // Tuile non voisine : la sélection se déplace
             sel = i;

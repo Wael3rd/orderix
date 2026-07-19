@@ -41,19 +41,24 @@ let returnScreen = 'home'; // écran d'origine avant d'entrer dans un jour (reto
 // rummy→blocs (Block Blast), escalier→paires (Tile Connect).
 // v2.5 (retours #58/#60) : tripeaks→cadenas (cadenas à combinaison),
 // degrade→memoCroissant (mémoire), sur demande explicite du produit.
+// Jour 15 : La File retirée sans remplacement (retour #120 « pas au
+// niveau des autres ») — journée laissée vide, le mode reste dans le code.
 const JANUARY_LINEUP = [
     'orderChain', 'cascade', 'insertion', 'fontaine', 'metronome',
     'code', 'memoCroissant', 'solitaire', 'blocs', 'dominosa',
-    'paires', 'tubes', 'swapSort', 'boulons', 'fileBloquee',
+    'paires', 'tubes', 'swapSort', 'boulons', null,
     'grille', 'hanoi', 'mahjong', 'futoshiki', 'balance',
     'ordreCache', 'indices', 'chronologie', 'suites', 'deux048',
     'embouteillage', 'tripleOrdre', 'photoClasse', 'taquin', 'fusion',
     'nonogramme'
 ];
+// Retirés du calendrier sur demande, mais PAS de la campagne de re-test
+// (le filtre ci-dessous les exclut pour ne pas décaler les jours déjà testés)
+const CALENDAR_REMOVED = ['fileBloquee'];
 // FÉVRIER (et début mars) : campagne de re-test des ANCIENS gameplays
 // — un par jour, SANS variation de thème (type neutre), pour les
 // revalider un à un. Ils reçoivent rev:1 → badge « ! » en staging.
-const LEGACY_RETEST = Object.keys(GAME_MODES).filter(k => !JANUARY_LINEUP.includes(k));
+const LEGACY_RETEST = Object.keys(GAME_MODES).filter(k => !JANUARY_LINEUP.includes(k) && !CALENDAR_REMOVED.includes(k));
 LEGACY_RETEST.forEach(k => { if (!GAME_MODES[k].rev) GAME_MODES[k].rev = 1; });
 
 // Après la campagne (11 mars et au-delà) : RIEN — le reste de l'année
@@ -62,12 +67,16 @@ LEGACY_RETEST.forEach(k => { if (!GAME_MODES[k].rev) GAME_MODES[k].rev = 1; });
 // de la campagne déjà validé → journée retirée sans remplacement, sur
 // demande explicite ; le mode reste dans le roster (rien n'est supprimé),
 // simplement pas assigné ce jour-là.
-const RETEST_SKIP_DAYS = new Set([32]);
+// Jour 35 (retour #119) : Pairs Uniquement retiré comme le Rangement
+const RETEST_SKIP_DAYS = new Set([32, 35]);
 let ALL_DAYS = [];
 for (let id = 1; id <= 365; id++) {
     let mKey;
     let retest = false;
-    if (id <= 31) mKey = JANUARY_LINEUP[id - 1];
+    if (id <= 31) {
+        mKey = JANUARY_LINEUP[id - 1];
+        if (!mKey) { ALL_DAYS.push({ id: id, empty: true, modeId: null, type: 'numbers', title: '' }); continue; }
+    }
     else if (RETEST_SKIP_DAYS.has(id)) { ALL_DAYS.push({ id: id, empty: true, modeId: null, type: 'numbers', title: '' }); continue; }
     else if (id - 32 < LEGACY_RETEST.length) { mKey = LEGACY_RETEST[id - 32]; retest = true; }
     else { ALL_DAYS.push({ id: id, empty: true, modeId: null, type: 'numbers', title: '' }); continue; }
