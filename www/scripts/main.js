@@ -327,13 +327,34 @@ if (typeof SB_ENABLED !== 'undefined' && SB_ENABLED) {
         });
     });
 
-    // Retour du deep link OAuth (Android) : orderix://auth-callback#tokens
+    // Retour du deep link (Android) : orderix://auth-callback
+    // — soit une connexion OAuth (#access_token…), soit le retour du
+    // lien de confirmation d'e-mail (l'app se rouvre → on affiche ✓)
     const capApp = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App;
     if (capApp && capApp.addListener) {
         capApp.addListener('appUrlOpen', async (ev) => {
             if (!ev || !ev.url || ev.url.indexOf('auth-callback') === -1) return;
             const plug = window.Capacitor.Plugins;
             if (plug.Browser && plug.Browser.close) plug.Browser.close().catch(() => { });
+
+            // Cas confirmation d'e-mail : pas de jetons dans l'URL
+            if (ev.url.indexOf('access_token') === -1) {
+                showScreen('profile');
+                document.getElementById('account-card').scrollIntoView({ block: 'center' });
+                accStatus.textContent = 'Vérification de la confirmation…';
+                accStatus.style.color = 'var(--gris)';
+                await majStatutCompte();
+                const u = await sbGetUser();
+                if (u && u.confirme) {
+                    accStatus.textContent = '🎉 E-mail validé — votre compte est protégé pour toujours !';
+                    accStatus.style.color = 'var(--vert)';
+                    haptic([15, 40, 20]);
+                    celebrate();
+                    logEvent('email_confirme');
+                }
+                return;
+            }
+
             const res = await sbHandleOAuthCallback(ev.url);
             if (res.ok) {
                 setStorage('orderix_email_lie', 'connexion sociale');

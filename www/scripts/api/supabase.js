@@ -166,7 +166,11 @@ async function sbAttachEmail(email) {
     const s = await sbEnsureSession();
     if (!s) return 'erreur';
     try {
-        const r = await fetch(SUPABASE_URL + '/auth/v1/user', {
+        // redirect_to = deep link : le clic sur le lien du mail ROUVRE
+        // l'application (nécessite orderix://auth-callback dans les
+        // Redirect URLs du projet Supabase)
+        const r = await fetch(SUPABASE_URL + '/auth/v1/user?redirect_to=' +
+            encodeURIComponent(SB_OAUTH_REDIRECT), {
             method: 'PUT', headers: _sbHeaders(true),
             body: JSON.stringify({ email: email })
         });
