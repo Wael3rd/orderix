@@ -16,10 +16,26 @@ android {
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    // Signature release : lue depuis les variables d'environnement
+    // (CI : secrets GitHub · local : voir Documents\Orderix-keys).
+    // Sans variables, le build release reste non signé (debug OK).
+    signingConfigs {
+        if (System.getenv("ORDERIX_KEYSTORE_FILE") != null) {
+            release {
+                storeFile file(System.getenv("ORDERIX_KEYSTORE_FILE"))
+                storePassword System.getenv("ORDERIX_KEYSTORE_PASSWORD")
+                keyAlias System.getenv("ORDERIX_KEY_ALIAS")
+                keyPassword System.getenv("ORDERIX_KEY_PASSWORD")
+            }
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (System.getenv("ORDERIX_KEYSTORE_FILE") != null) {
+                signingConfig signingConfigs.release
+            }
         }
     }
     // Environnements : « Orderix Dev » (staging) installable à côté de la prod

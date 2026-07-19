@@ -1,0 +1,65 @@
+# Build release SIGNÉ (AAB prod, prêt pour le Play Store).
+# Déclenché par un tag `v*` (ex. v2.1.0) ou à la main.
+# L'AAB est attaché à une release GitHub du même nom.
+name: Release AAB signé
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Dépendances npm
+        run: npm ci
+
+      - name: Smoke test
+        run: node smoke-test.js
+
+      - name: Config production
+        run: node set-env.js prod
+
+      - name: Copie des assets web
+        run: npx cap sync android
+
+      - name: Restaurer le keystore
+        run: echo "${{ secrets.ORDERIX_KEYSTORE_B64 }}" | base64 -d > /tmp/orderix-release.keystore
+
+      - name: Build AAB prod signé
+        working-directory: android
+        env:
+          ORDERIX_KEYSTORE_FILE: /tmp/orderix-release.keystore
+          ORDERIX_KEYSTORE_PASSWORD: ${{ secrets.ORDERIX_KEYSTORE_PASSWORD }}
+          ORDERIX_KEY_ALIAS: ${{ secrets.ORDERIX_KEY_ALIAS }}
+          ORDERIX_KEY_PASSWORD: ${{ secrets.ORDERIX_KEY_PASSWORD }}
+        run: |
+          chmod +x gradlew
+          ./gradlew bundleProdRelease --no-daemon
+
+      - name: Publier l'AAB sur la release GitHub
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp android/app/build/outputs/bundle/prodRelease/app-prod-release.aab Orderix-${{ github.ref_name }}.aab
+          gh release create ${{ github.ref_name }} Orderix-${{ github.ref_name }}.aab \
+            --title "Orderix ${{ github.ref_name }}" \
+            --notes "AAB signé, prêt pour l'upload sur la Google Play Console." || \
+          gh release upload ${{ github.ref_name }} Orderix-${{ github.ref_name }}.aab --clobber

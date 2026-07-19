@@ -15,7 +15,10 @@ const AVATARS = [
     { e: '☺', niveau: 1 }, { e: '🦊', niveau: 2 }, { e: '🐱', niveau: 3 },
     { e: '🦉', niveau: 4 }, { e: '🌸', niveau: 5 }, { e: '🐝', niveau: 6 },
     { e: '🌙', niveau: 7 }, { e: '🍀', niveau: 8 }, { e: '🦋', niveau: 9 },
-    { e: '⭐', niveau: 10 }, { e: '🌷', niveau: 11 }, { e: '🧠', niveau: 12 }
+    { e: '⭐', niveau: 10 }, { e: '🌷', niveau: 11 }, { e: '🧠', niveau: 12 },
+    // Avatar de bienvenue : réservé aux joueuses arrivées par un lien
+    // d'invitation (?ref=) — le cadeau de la marraine
+    { e: '🎁', niveau: 1, parrainage: true }
 ];
 
 function playerLevel() {
@@ -50,9 +53,14 @@ function selectTheme(id) {
     renderCosmetics();
 }
 
+function avatarUnlocked(a) {
+    if (a.parrainage) return getStorage('orderix_referred') === '1';
+    return playerLevel() >= a.niveau;
+}
+
 function selectAvatar(e) {
     const a = AVATARS.find(x => x.e === e);
-    if (!a || playerLevel() < a.niveau) return;
+    if (!a || !avatarUnlocked(a)) return;
     setStorage('orderix_avatar', e);
     haptic(8);
     renderCosmetics();
@@ -106,7 +114,7 @@ function renderCosmetics() {
     const rowA = document.createElement('div');
     rowA.style.cssText = 'display:grid;grid-template-columns:repeat(6,1fr);gap:8px;';
     AVATARS.forEach(a => {
-        const ok = niveau >= a.niveau;
+        const ok = avatarUnlocked(a);
         const b = document.createElement('button');
         b.style.cssText = 'aspect-ratio:1;border-radius:14px;background:var(--fond);font-size:1.35rem;' +
             'display:flex;align-items:center;justify-content:center;position:relative;' +
@@ -116,7 +124,8 @@ function renderCosmetics() {
         if (!ok) {
             const lv = document.createElement('span');
             lv.style.cssText = 'position:absolute;bottom:2px;right:5px;font-size:.55rem;font-weight:900;color:var(--gris);';
-            lv.textContent = a.niveau;
+            lv.textContent = a.parrainage ? '💌' : a.niveau;
+            b.title = a.parrainage ? 'Réservé aux invitées : arrivez via le lien d\'une amie !' : '';
             b.appendChild(lv);
         }
         b.addEventListener('click', () => selectAvatar(a.e));

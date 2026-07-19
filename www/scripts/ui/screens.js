@@ -419,6 +419,69 @@ function buildProfile() {
 
     buildYearFresque();
     renderCosmetics();
+    buildWeekRecap();
+}
+
+// ── « Ma semaine » : bilan de la semaine calendaire en cours ─────
+const WEEKDAY_LETTRES = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+
+function computeWeekRecap() {
+    const tid = todayDayId();
+    const dow = (new Date().getDay() + 6) % 7; // 0 = lundi
+    const lundi = tid - dow;
+    const jours = [];
+    let joues = 0, gagnes = 0, best = null;
+    for (let i = 0; i < 7; i++) {
+        const id = lundi + i;
+        const day = (id >= 1 && id <= 365) ? DAYS.find(d => d.id === id) : null;
+        const info = day && !day.empty ? getPlayedInfo(id) : null;
+        let etat = 'futur';
+        if (!day || day.empty) etat = 'vide';
+        else if (info && info.isWin) { etat = 'win'; joues++; gagnes++; }
+        else if (info) { etat = 'fail'; joues++; }
+        else if (i <= dow) etat = 'manque';
+        if (info && info.isWin) {
+            const t = Math.abs(parseFloat(info.time));
+            if (best === null || t < best) best = t;
+        }
+        jours.push({ id: id, etat: etat, aujourdhui: id === tid });
+    }
+    return { jours: jours, joues: joues, gagnes: gagnes, best: best };
+}
+
+function buildWeekRecap() {
+    const zone = document.getElementById('week-recap');
+    if (!zone) return;
+    const r = computeWeekRecap();
+    zone.innerHTML = '';
+
+    const strip = document.createElement('div');
+    strip.style.cssText = 'display:flex;gap:6px;justify-content:center;';
+    const COUL = { win: '#34B871', fail: '#F5B8AD', manque: '#E8EAF1', futur: '#F4F6FA', vide: '#F4F6FA' };
+    r.jours.forEach((j, i) => {
+        const c = document.createElement('div');
+        c.style.cssText = 'flex:1;max-width:44px;display:flex;flex-direction:column;align-items:center;gap:3px;';
+        const dot = document.createElement('div');
+        dot.style.cssText = `width:100%;aspect-ratio:1;border-radius:10px;background:${COUL[j.etat]};` +
+            'display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:.85rem;' +
+            (j.aujourdhui ? 'outline:2px solid var(--bleu);outline-offset:1px;' : '');
+        if (j.etat === 'win') dot.textContent = '✓';
+        if (j.etat === 'fail') { dot.textContent = '✗'; dot.style.color = '#E0533D'; }
+        const lbl = document.createElement('span');
+        lbl.style.cssText = 'font-size:.62rem;font-weight:800;color:var(--gris);';
+        lbl.textContent = WEEKDAY_LETTRES[i];
+        c.append(dot, lbl);
+        strip.appendChild(c);
+    });
+    zone.appendChild(strip);
+
+    const bilan = document.createElement('div');
+    bilan.style.cssText = 'text-align:center;font-size:.82rem;font-weight:700;color:var(--gris);margin-top:10px;';
+    bilan.textContent = r.joues === 0
+        ? 'Aucune partie cette semaine — le puzzle du jour vous attend !'
+        : `${r.gagnes} réussite${r.gagnes > 1 ? 's' : ''} sur ${r.joues} jouée${r.joues > 1 ? 's' : ''}` +
+        (r.best !== null ? ` · meilleure perf ${r.best.toFixed(2).replace('.', ',')} s` : '');
+    zone.appendChild(bilan);
 }
 
 // ── « Mon année » : fresque des 365 jours + trophées de paliers ──

@@ -132,7 +132,9 @@ shareBtn.addEventListener('click', () => {
     // Carte de partage façon Wordle : résultat + série + progression de
     // l'année en emojis, sans jamais révéler la solution du puzzle.
     const playerName = getStorage('orderix_player_name') || '';
-    const url = 'https://orderix.app/?ref=' + encodeURIComponent(playerName) + '&day=' + currentDayConfig.id +
+    // Page de défi publique (gh-pages) : jolie carte + lien de téléchargement
+    const url = 'https://wael3rd.github.io/orderix/defi.html?ref=' + encodeURIComponent(playerName) +
+        '&day=' + currentDayConfig.id +
         (isWin && timeVal !== 999999 ? '&t=' + timeVal.toFixed(2) : '');
     const mode = GAME_MODES[currentDayConfig.modeId];
     const stats = computeStats();
@@ -171,6 +173,32 @@ shareBtn.addEventListener('click', () => {
             setTimeout(() => shareBtn.textContent = 'Partager', 2000);
             afterShare();
         });
+    }
+});
+
+// ─── Partage du récap hebdo (« Ma semaine Orderix ») ─────────────
+document.getElementById('week-share').addEventListener('click', () => {
+    const r = computeWeekRecap();
+    const stats = computeStats();
+    const EMOJI = { win: '🟩', fail: '🟥', manque: '⬜', futur: '⬛', vide: '⬛' };
+    const barre = r.jours.map(j => EMOJI[j.etat]).join('');
+    const lignes = [
+        '🧩 Ma semaine Orderix',
+        barre + ` ${r.gagnes}/7`,
+        (r.best !== null ? `⏱ Meilleure perf : ${r.best.toFixed(2).replace('.', ',')} s` : null),
+        (stats.streak > 1 ? `🔥 Série : ${stats.streak} jours` : null),
+        '',
+        'Rejoins-moi 👉 https://wael3rd.github.io/orderix/defi.html?ref=' +
+        encodeURIComponent(getStorage('orderix_player_name') || '')
+    ].filter(x => x !== null);
+    const txt = lignes.join('\n');
+    logEvent('partage_semaine');
+    if (navigator.share) navigator.share({ text: txt }).catch(() => { });
+    else if (navigator.clipboard) {
+        navigator.clipboard.writeText(txt);
+        const b = document.getElementById('week-share');
+        b.textContent = 'Copié !';
+        setTimeout(() => b.textContent = 'Partager ma semaine', 1500);
     }
 });
 
@@ -262,6 +290,13 @@ if (!getStorage('orderix_onboarded')) {
     document.getElementById('onboarding').classList.remove('hidden');
     renderOnboarding();
     logEvent('onboarding_debut');
+}
+
+// Parrainage (côté filleule, 100 % local) : arriver par un lien ?ref=
+// débloque l'avatar cadeau 🎁 — définitivement
+if (sessionReferredBy && getStorage('orderix_referred') !== '1') {
+    setStorage('orderix_referred', '1');
+    logEvent('parrainage_filleule', { ref: sessionReferredBy.slice(0, 15) });
 }
 document.getElementById('ob-next').addEventListener('click', () => {
     if (_obIdx < OB_SLIDES.length - 1) { _obIdx++; haptic(8); renderOnboarding(); }
