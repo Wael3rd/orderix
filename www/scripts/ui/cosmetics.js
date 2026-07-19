@@ -8,8 +8,21 @@ const THEMES = [
     { id: 'corail', nom: 'Corail', niveau: 3, bleu: '#F26B5E', fonce: '#D14C40', pale: '#FEEDEA', bord: '#FBD4CE' },
     { id: 'amethyste', nom: 'Améthyste', niveau: 5, bleu: '#8B5CF6', fonce: '#6D3FD4', pale: '#F2ECFE', bord: '#E0D2FB' },
     { id: 'rose', nom: 'Rose Poudré', niveau: 8, bleu: '#E754A6', fonce: '#C43A88', pale: '#FDECF5', bord: '#F9CFE6' },
-    { id: 'minuit', nom: 'Minuit', niveau: 12, bleu: '#3B4B8C', fonce: '#2A3768', pale: '#EAEDF7', bord: '#CDD4EC' }
+    { id: 'minuit', nom: 'Minuit', niveau: 12, bleu: '#3B4B8C', fonce: '#2A3768', pale: '#EAEDF7', bord: '#CDD4EC' },
+    // Packs premium (monétisation douce : parure uniquement, 2,99 €)
+    { id: 'aurore', nom: 'Aurore', premium: 'pack-aurore', bleu: '#D96C57', fonce: '#B8503D', pale: '#FBEDE9', bord: '#F3CFC6' },
+    { id: 'foret', nom: 'Forêt', premium: 'pack-foret', bleu: '#2E7D5B', fonce: '#1F5C42', pale: '#E9F4EE', bord: '#CBE5D7' }
 ];
+
+// Droits premium (au lancement : Google Play Billing ; en attendant,
+// la zone de test permet de les simuler)
+function hasPack(id) {
+    return ((getStorage('orderix_packs') || '').split(',').indexOf(id) !== -1);
+}
+function themeUnlocked(t) {
+    if (t.premium) return hasPack(t.premium);
+    return playerLevel() >= t.niveau;
+}
 
 const AVATARS = [
     { e: '☺', niveau: 1 }, { e: '🦊', niveau: 2 }, { e: '🐱', niveau: 3 },
@@ -18,7 +31,10 @@ const AVATARS = [
     { e: '⭐', niveau: 10 }, { e: '🌷', niveau: 11 }, { e: '🧠', niveau: 12 },
     // Avatar de bienvenue : réservé aux joueuses arrivées par un lien
     // d'invitation (?ref=) — le cadeau de la marraine
-    { e: '🎁', niveau: 1, parrainage: true }
+    { e: '🎁', niveau: 1, parrainage: true },
+    // Avatars des packs premium
+    { e: '🦩', premium: 'pack-aurore' }, { e: '🌅', premium: 'pack-aurore' },
+    { e: '🦚', premium: 'pack-foret' }, { e: '🌲', premium: 'pack-foret' }
 ];
 
 function playerLevel() {
@@ -44,9 +60,20 @@ function applyTheme() {
     r.setProperty('--bleu-bord', t.bord);
 }
 
+function _boutiqueMessage() {
+    const st = document.getElementById('cosmetics-status');
+    if (!st) return;
+    st.textContent = '💎 Les packs Aurore et Forêt (2,99 € pièce : thème + 2 avatars) arriveront avec la version Play Store — que de la beauté, jamais d\'avantage en jeu.';
+    haptic(8);
+}
+
 function selectTheme(id) {
     const t = THEMES.find(x => x.id === id);
-    if (!t || playerLevel() < t.niveau) return;
+    if (!t) return;
+    if (!themeUnlocked(t)) {
+        if (t.premium) _boutiqueMessage();
+        return;
+    }
     setStorage('orderix_theme', id);
     applyTheme();
     haptic(8);
@@ -55,12 +82,17 @@ function selectTheme(id) {
 
 function avatarUnlocked(a) {
     if (a.parrainage) return getStorage('orderix_referred') === '1';
+    if (a.premium) return hasPack(a.premium);
     return playerLevel() >= a.niveau;
 }
 
 function selectAvatar(e) {
     const a = AVATARS.find(x => x.e === e);
-    if (!a || !avatarUnlocked(a)) return;
+    if (!a) return;
+    if (!avatarUnlocked(a)) {
+        if (a.premium) _boutiqueMessage();
+        return;
+    }
     setStorage('orderix_avatar', e);
     haptic(8);
     renderCosmetics();
@@ -83,10 +115,10 @@ function renderCosmetics() {
     const rowT = document.createElement('div');
     rowT.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;';
     THEMES.forEach(t => {
-        const ok = niveau >= t.niveau;
+        const ok = themeUnlocked(t);
         const b = document.createElement('button');
         b.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:4px;background:none;padding:0;' +
-            (ok ? '' : 'opacity:.4;');
+            (ok ? '' : 'opacity:.45;');
         const sw = document.createElement('div');
         sw.style.cssText = `width:44px;height:44px;border-radius:50%;background:${t.bleu};position:relative;` +
             `box-shadow:inset 0 -4px 0 rgba(0,0,0,.15);` +
@@ -94,12 +126,12 @@ function renderCosmetics() {
         if (!ok) {
             const lock = document.createElement('span');
             lock.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1rem;';
-            lock.textContent = '🔒';
+            lock.textContent = t.premium ? '💎' : '🔒';
             sw.appendChild(lock);
         }
         const nm = document.createElement('span');
         nm.style.cssText = 'font-size:.6rem;font-weight:800;color:var(--gris);';
-        nm.textContent = ok ? t.nom : 'niv. ' + t.niveau;
+        nm.textContent = ok ? t.nom : (t.premium ? t.nom + ' 💎' : 'niv. ' + t.niveau);
         b.append(sw, nm);
         b.addEventListener('click', () => selectTheme(t.id));
         rowT.appendChild(b);
@@ -124,7 +156,7 @@ function renderCosmetics() {
         if (!ok) {
             const lv = document.createElement('span');
             lv.style.cssText = 'position:absolute;bottom:2px;right:5px;font-size:.55rem;font-weight:900;color:var(--gris);';
-            lv.textContent = a.parrainage ? '💌' : a.niveau;
+            lv.textContent = a.parrainage ? '💌' : (a.premium ? '💎' : a.niveau);
             b.title = a.parrainage ? 'Réservé aux invitées : arrivez via le lien d\'une amie !' : '';
             b.appendChild(lv);
         }
@@ -132,6 +164,11 @@ function renderCosmetics() {
         rowA.appendChild(b);
     });
     zone.appendChild(rowA);
+
+    const st = document.createElement('div');
+    st.id = 'cosmetics-status';
+    st.style.cssText = 'font-size:.75rem;font-weight:700;color:var(--gris);margin-top:10px;text-align:center;min-height:1.1em;';
+    zone.appendChild(st);
 }
 
 applyTheme();

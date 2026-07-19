@@ -674,6 +674,16 @@ if (ENV_NAME === 'staging') {
         buildProfile();
         alert('Progression effacée — le calendrier est vierge.');
     });
+    // Simulation d'achat des packs premium (staging uniquement) : permet
+    // de tester les thèmes/avatars 💎 avant l'intégration Play Billing
+    document.getElementById('packs-btn').addEventListener('click', () => {
+        const on = hasPack('pack-aurore');
+        setStorage('orderix_packs', on ? '' : 'pack-aurore,pack-foret');
+        logEvent(on ? 'packs_test_off' : 'packs_test_on');
+        renderCosmetics();
+        alert(on ? 'Packs retirés.' : 'Packs Aurore + Forêt débloqués (simulation de test).');
+    });
+
     // Visionneuse du journal analytics local (les 40 derniers)
     document.getElementById('events-btn').addEventListener('click', () => {
         const list = document.getElementById('events-list');
