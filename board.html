@@ -116,7 +116,7 @@ const EPICS = [
   tasks:[
     {s:'fait', t:"Partage de résultat façon Wordle", n:"carte emoji : jour, mode, temps, série 🔥, barre d'année 🟩 + lien défi « Tu fais mieux ? » — via le partage natif Android"},
     {s:'afaire', t:"Lien d'invitation avec parrainage", n:"le paramètre ?ref= est déjà capté dans state.js — récompense cosmétique au parrain et à la filleule"},
-    {s:'afaire', t:"Défi direct « bats mon temps »", n:"deep link vers le jour joué avec le temps à battre affiché"},
+    {s:'fait', t:"Défi direct « bats mon temps »", n:"le lien partagé (?day&t&ref) ouvre le jour avec la bannière « ⚔️ Défi de X : battez Y s ! » — version web ; l'ouverture in-app nécessitera les App Links Android (avec E7)"},
     {s:'afaire', t:"Page résultat publique (Open Graph)", n:"le lien partagé montre une jolie carte dans WhatsApp/iMessage"}
   ]
 },
@@ -146,7 +146,7 @@ const EPICS = [
     {s:'afaire', t:"Signing release + AAB + versioning auto", n:"keystore sécurisé, versionCode incrémental"},
     {s:'bloque', t:"Compte Google Play Developer", n:"ACTION PROPRIÉTAIRE : créer le compte (25 $ une fois)"},
     {s:'afaire', t:"Fiche Play Store", n:"captures, description, icône, privacy policy (obligatoire)"},
-    {s:'afaire', t:"Crash reporting léger", n:"remontée des erreurs JS + crashes natifs"},
+    {s:'fait', t:"Crash reporting léger", n:"erreurs JS et promesses rejetées journalisées dans l'analytics local (plafonné à 20/session), visibles dans la zone de test"},
     {s:'afaire', t:"Matrice d'appareils", n:"petits écrans (360 px), Android 8+, mode économie d'énergie"}
   ]
 },
@@ -160,12 +160,12 @@ const EPICS = [
   ]
 },
 {
-  id:'ftue', title:'E9 · Onboarding & FTUE', status:'afaire',
+  id:'ftue', title:'E9 · Onboarding & FTUE', status:'fait',
   goal:"Les 90 premières secondes décident du D1.",
   tasks:[
-    {s:'afaire', t:"Tutoriel premier lancement", n:"3 écrans max : le rendez-vous quotidien, l'album, la série"},
-    {s:'afaire', t:"Premier puzzle en douceur", n:"garanti gagnable + grosse célébration + première étoile"},
-    {s:'afaire', t:"Opt-in notifications au bon moment", n:"demandé APRÈS la première victoire, jamais au premier écran"}
+    {s:'fait', t:"Tutoriel premier lancement", n:"3 écrans (rendez-vous · album · série+gels), points d'étape, bouton Passer, une seule fois"},
+    {s:'fait', t:"Célébration de la première victoire", n:"message dédié + double pluie de confettis + événement analytics"},
+    {s:'fait', t:"Opt-in notifications au bon moment", n:"proposé dans le panneau de résultat APRÈS la première victoire (jamais au premier écran), bouton « Plus tard » sans friction"}
   ]
 }
 ];
