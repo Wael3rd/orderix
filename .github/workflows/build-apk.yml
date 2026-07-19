@@ -54,7 +54,8 @@ jobs:
         run: npx cap sync android
 
       - name: Restaurer le keystore stable (signature cohérente entre builds)
-        run: echo "${{ secrets.ORDERIX_KEYSTORE_B64 }}" | base64 -d > /tmp/orderix-release.keystore
+        # base64 -di : ignore les CR/LF Windows présents dans le secret
+        run: printf '%s' "${{ secrets.ORDERIX_KEYSTORE_B64 }}" | base64 -di > /tmp/orderix-release.keystore
 
       - name: Build APK (flavor dev, debug, signé avec le keystore stable)
         working-directory: android
