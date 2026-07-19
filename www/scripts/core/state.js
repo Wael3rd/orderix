@@ -59,7 +59,6 @@ const CALENDAR_REMOVED = ['fileBloquee'];
 // — un par jour, SANS variation de thème (type neutre), pour les
 // revalider un à un. Ils reçoivent rev:1 → badge « ! » en staging.
 const LEGACY_RETEST = Object.keys(GAME_MODES).filter(k => !JANUARY_LINEUP.includes(k) && !CALENDAR_REMOVED.includes(k));
-LEGACY_RETEST.forEach(k => { if (!GAME_MODES[k].rev) GAME_MODES[k].rev = 1; });
 
 // Après la campagne (11 mars et au-delà) : RIEN — le reste de l'année
 // est vide tant que le roster définitif n'est pas arrêté.
@@ -230,14 +229,11 @@ function saveLocalResult(dayId, count, time, isWin) {
 function getPlayedInfo(dayId) {
     return serverPlayedDays[dayId] || localResults[dayId] || null;
 }
-// Badge « ! » (version de test) : le gameplay de ce jour a changé depuis
-// le dernier test — registre `testedRevs`, indépendant de la progression
-// (survit au « reset progression »).
+// Badge « ! » : système RETIRÉ sur demande du propriétaire (19/07) —
+// la campagne de test se pilote via le tableau de suivi web. La
+// fonction reste pour les appelants mais ne signale plus jamais rien.
 function needsTest(day) {
-    if (ENV_NAME !== 'staging' || day.empty) return false;
-    const rev = GAME_MODES[day.modeId].rev || 0;
-    if (rev === 0) return false;
-    return rev > (testedRevs[day.modeId] || 0);
+    return false;
 }
 
 // ─── Calendrier : jour 1..365 ↔ date de l'année courante ─────────

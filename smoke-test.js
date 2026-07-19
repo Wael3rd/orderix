@@ -209,26 +209,15 @@ __check('staging : rejouer efface le résultat et rouvre l intro', () => {
     goHome();
 });
 
-__check('badge « ! » : registre par mode, survit au reset progression', () => {
+__check('badges « ! » : système retiré, plus jamais affichés', () => {
     localResults = {}; serverPlayedDays = {}; testedRevs = {};
     buildCalendar();
-    const before = document.querySelectorAll('#calendar-months .totest').length;
-    if (before < 5) throw new Error('badges attendus sur les modes en rev, trouvés : ' + before);
-    // Jouer un jour flaggé enregistre la rev DU MODE → le badge disparaît
-    // sur TOUS les jours où ce gameplay apparaît
-    const flagged = DAYS.find(d => needsTest(d));
-    const sameMode = DAYS.filter(d => d.modeId === flagged.modeId && needsTest(d)).length;
-    saveLocalResult(flagged.id, 10, 5.0, true);
-    buildCalendar();
-    const after = document.querySelectorAll('#calendar-months .totest').length;
-    if (after !== before - sameMode) throw new Error('badges avant=' + before + ' après=' + after + ', attendu ' + (before - sameMode));
-    // Reset progression : le calendrier se vide mais les badges des
-    // gameplays déjà testés ne réapparaissent PAS
-    localResults = {};
-    buildCalendar();
-    const apresReset = document.querySelectorAll('#calendar-months .totest').length;
-    if (apresReset !== after) throw new Error('le reset a fait réapparaître des badges : ' + after + ' → ' + apresReset);
-    if (needsTest(flagged)) throw new Error('badge revenu après reset sur un mode déjà testé');
+    const grid = document.querySelectorAll('#calendar-months .totest').length;
+    setCalendarView('list');
+    const liste = document.querySelectorAll('#calendar-months .dr-totest').length;
+    setCalendarView('grid');
+    if (grid + liste !== 0) throw new Error('badges encore visibles : ' + (grid + liste));
+    if (DAYS.some(d => needsTest(d))) throw new Error('needsTest signale encore des jours');
 });
 
 __check('série : gel consommé sur un jour manqué, cassée sans gel', () => {
