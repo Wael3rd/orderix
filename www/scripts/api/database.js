@@ -74,12 +74,14 @@ function getPlayerName() {
 }
 
 function submitScore(timeVal, feedback, isUpdate = false) {
-    // Supabase : double écriture silencieuse dès que les clés sont là.
-    // En staging elle vise le projet orderix-staging (bac à sable) —
-    // c'est même le SEUL envoi, GAS restant coupé en mode test.
+    // Supabase : double écriture dès que les clés sont là. En staging
+    // elle vise orderix-staging (bac à sable) — c'est même le SEUL envoi,
+    // GAS restant coupé en mode test. On ATTEND l'écriture avant de
+    // rafraîchir le classement, sinon sa propre victoire n'y est pas encore.
+    let envoiScore = Promise.resolve();
     if (SB_ENABLED && currentDayConfig) {
         if (isUpdate) sbSetFeedback(currentDayConfig.id, feedback, hasSharedThisGame);
-        else sbSubmitScore(timeVal, activeItemCount, currentDayConfig.id);
+        else envoiScore = sbSubmitScore(timeVal, activeItemCount, currentDayConfig.id);
     }
 
     // Version de test : aucun envoi à GAS (le classement réel n'est
@@ -100,7 +102,7 @@ function submitScore(timeVal, feedback, isUpdate = false) {
             dbMessage.textContent = '✓ Temps publié au classement !';
         }
         dbMessage.style.color = 'var(--gris-clair)';
-        if (!isUpdate) fetchLeaderboard();
+        if (!isUpdate) envoiScore.then(() => fetchLeaderboard());
         return;
     }
 
@@ -238,11 +240,31 @@ function fetchLeaderboard() {
         ? sbLeaderboard(currentDayConfig.id, activeItemCount, 10).then(rows => rows === null ? viaGas() : rows)
         : viaGas();
 
+    // Sa propre partie s'affiche TOUJOURS : si elle n'est pas au
+    // classement (défaite, abandon), une ligne personnelle la montre
+    const _ligneMoi = () => {
+        const info = currentDayConfig ? getPlayedInfo(currentDayConfig.id) : null;
+        if (!info || info.isWin) return null;
+        const li = document.createElement('li');
+        li.style.cssText = 'justify-content:space-between;opacity:.8;border-top:1.5px dashed var(--ligne);margin-top:4px;padding-top:8px;';
+        const g = document.createElement('span');
+        g.style.fontWeight = '900';
+        g.textContent = 'Vous';
+        const d = document.createElement('span');
+        d.style.cssText = 'color:var(--rouge);font-weight:700;';
+        d.textContent = info.time === -999999 ? 'Abandon — non classé'
+            : `Raté (${Math.abs(info.time).toFixed(3)}s) — non classé`;
+        li.append(g, d);
+        return li;
+    };
+
     source
         .then(data => {
             leaderboardList.innerHTML = '';
             if (!data || data.length === 0) {
                 leaderboardList.innerHTML = '<li style="justify-content:center;color:var(--ink-3)">Soyez la première au classement !</li>';
+                const moi = _ligneMoi();
+                if (moi) leaderboardList.appendChild(moi);
                 return;
             }
             data.forEach((entry, index) => {
@@ -267,6 +289,8 @@ function fetchLeaderboard() {
                 li.appendChild(right);
                 leaderboardList.appendChild(li);
             });
+            const moi = _ligneMoi();
+            if (moi) leaderboardList.appendChild(moi);
         })
         .catch(() => {
             leaderboardList.innerHTML = '<li style="justify-content:center;color:var(--ink-3)">Classement indisponible hors-ligne.</li>';
