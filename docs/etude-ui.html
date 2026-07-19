@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orderix — Étude UI des tops casual & plan d'uplift</title>
+<style>
+:root{--bleu:#4A6CFA;--bleu-fonce:#3553D1;--bleu-pale:#EEF2FF;--encre:#23262F;--gris:#8B90A0;--fond:#F4F6FA;--carte:#FFF;--ligne:#E8EAF1;--or:#F5B227;--or-pale:#FFF6E3;--vert:#34B871;--vert-pale:#E3F7ED;--rouge:#E0533D;--rouge-pale:#FCE9E5}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Roboto,system-ui,sans-serif;background:var(--fond);color:var(--encre);line-height:1.6;padding:24px 16px 80px}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-size:1.7rem;font-weight:900;letter-spacing:-.01em}
+.sub{color:var(--gris);margin:4px 0 28px;font-size:.95rem}
+h2{font-size:1.25rem;font-weight:900;margin:40px 0 12px;padding-top:24px;border-top:2px solid var(--ligne)}
+h3{font-size:1.02rem;font-weight:700;margin:20px 0 8px}
+p{margin:8px 0}
+.card{background:var(--carte);border-radius:16px;box-shadow:0 1px 3px rgba(35,38,47,.07);padding:18px 20px;margin:14px 0}
+table{width:100%;border-collapse:collapse;font-size:.85rem;margin:10px 0}
+th{text-align:left;color:var(--gris);font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;padding:8px 10px;border-bottom:2px solid var(--ligne)}
+td{padding:8px 10px;border-bottom:1px solid var(--ligne);vertical-align:top}
+.tag{display:inline-block;padding:2px 10px;border-radius:99px;font-size:.72rem;font-weight:700}
+.t-bleu{background:var(--bleu-pale);color:var(--bleu-fonce)}
+.t-vert{background:var(--vert-pale);color:#1F7A4A}
+.t-or{background:var(--or-pale);color:#A87413}
+.t-rouge{background:var(--rouge-pale);color:#B03A28}
+.num{font-weight:900;color:var(--bleu);font-variant-numeric:tabular-nums}
+ul,ol{margin:8px 0 8px 22px}
+li{margin:5px 0}
+.gap{border-left:4px solid var(--rouge);padding-left:14px;margin:10px 0}
+.ok{border-left:4px solid var(--vert);padding-left:14px;margin:10px 0}
+.phase{display:flex;gap:14px;align-items:flex-start;margin:16px 0}
+.phase .badge{flex:0 0 auto;width:40px;height:40px;border-radius:12px;background:var(--bleu);color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:1.05rem}
+.phase.done .badge{background:var(--vert)}
+code{background:var(--bleu-pale);color:var(--bleu-fonce);padding:1px 6px;border-radius:6px;font-size:.85em}
+.small{font-size:.8rem;color:var(--gris)}
+.big-rule{background:var(--or-pale);border-radius:12px;padding:12px 16px;margin:10px 0;font-weight:500}
+@media(max-width:640px){body{padding:16px 10px 60px}.card{padding:14px}td,th{padding:6px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Étude UI — top 50 casual & plan d'uplift Orderix</h1>
+<p class="sub">Synthèse de 4 recherches (classements AppMagic/Sensor Tower 2025-26, Game UI Database, teardowns Royal Match/Candy Crush, deep-dive Easybrain & Tripledot, catalogue chiffré du « juice ») · 19 juillet 2026</p>
+
+<h2>1. Le marché : trois écoles d'UI, une seule est la nôtre</h2>
+<div class="card">
+<table>
+<tr><th>École</th><th>Qui</th><th>Signature</th><th>Pour Orderix ?</th></tr>
+<tr><td><span class="tag t-rouge">Candy brillant</span></td><td>King, Dream Games (Royal Match 1,4 Md$), Toon Blast</td><td>Dégradés glossy, boutons biseautés 3D, or partout, mascotte</td><td>Non — hors de portée solo, et pas notre ton</td></tr>
+<tr><td><span class="tag t-or">Cozy narratif</span></td><td>Playrix (Gardenscapes), Gossip Harbor, Merge Mansion, June's Journey</td><td>Illustration chaleureuse, méta déco/histoire</td><td>Non — exige une DA illustrée lourde</td></tr>
+<tr><td><span class="tag t-vert">Flat utilitaire / zen</span></td><td><b>Easybrain</b> (Sudoku.com, 2 Md de DL), <b>Tripledot</b> (Woodoku, Solitaire.com), Block Blast (n°1 mondial DL 2025), Vita Mahjong</td><td>Blanc-gris + UN bleu, cartes plates, or réservé aux récompenses, polices système</td><td><b>Oui — c'est déjà notre base.</b> Le problème n'est pas le style choisi, c'est le niveau d'exécution</td></tr>
+</table>
+<p class="small">La cible femmes 35-55 est massivement présente dans le cluster flat/zen : logique, chiffres, mots, sudoku, mahjong (75 % des joueuses de puzzle US sont des femmes ; l'archétype « Thinkers » de GameRefinery : 58 % de femmes, 41 % de plus de 44 ans).</p>
+</div>
+
+<h2>2. Les 10 règles de l'école Easybrain × Tripledot</h2>
+<div class="card">
+<ol>
+<li><b>Un seul accent.</b> Le bleu possède TOUTE l'interactivité. Rien d'autre ne rivalise.</li>
+<li><b>L'or est sanctuarisé.</b> Il n'apparaît QUE sur les récompenses (trophées, médailles, couronnes). Jamais sur les boutons ou le chrome. C'est ce contraste qui fait « briller » le prix.</li>
+<li><b>Le seul élément 3D/brillant de toute l'app, c'est le trophée.</b> Chrome 100 % plat, récompense skeuomorphe avec rayons lumineux (« flare »).</li>
+<li><b>Hiérarchie par la graisse, pas par la taille</b> : regular gris vs bold encre navy. Polices système, pas de fantaisie.</li>
+<li><b>Le Daily Challenge est la colonne vertébrale</b>, toujours la même anatomie en 5 points (cf. §3).</li>
+<li><b>Home = pile verticale de cartes</b> : barre statut (trophées + rouage) → carte du jour avec date & progression → carte événement avec compte à rebours → CTA géant → tabbar 4-5 onglets.</li>
+<li><b>Écran de victoire :</b> confettis courts (≤1,5 s), carte blanche de stats, et la récompense <i>s'anime VERS sa collection</i> (la médaille vole sur la case du calendrier).</li>
+<li><b>Réglages toujours derrière un rouage en haut à droite</b> (home ET en jeu), jamais un onglet.</li>
+<li><b>Tabbar</b> : blanche, bord hairline, icônes trait, actif = icône pleine + label accent.</li>
+<li><b>Montrer, pas expliquer.</b> Une ligne de texte max par carte ; le visuel porte l'info.</li>
+</ol>
+</div>
+
+<h2>3. Le pattern n°1 à copier : le calendrier-trophée de Sudoku.com</h2>
+<div class="card">
+<p>C'est LE concurrent direct d'un jeu à puzzle quotidien, et son écran Daily Challenges est identique depuis des années parce qu'il marche :</p>
+<ol>
+<li><b>Héros du mois</b> : gros trophée doré en haut de l'écran, posé sur des rayons lumineux. Silhouette grise tant qu'il n'est pas gagné, doré quand il l'est.</li>
+<li><b>Compteur « N/30 »</b> juste dessous — LA métrique qui pilote tout.</li>
+<li><b>Grille 7 colonnes</b> où chaque jour réussi est <i>remplacé</i> par une petite médaille dorée (pas une coche sur fond coloré — un vrai glyphe médaillon). Aujourd'hui = cerclé bleu.</li>
+<li><b>Rattrapage permis</b> : les jours manqués restent jouables — le mois est toujours « sauvable » (Solitaire.com : « il y a quelque chose d'uniquement motivant dans une rangée ininterrompue de couronnes sur un calendrier »).</li>
+<li><b>Mois complet = trophée unique</b> (art différent chaque mois) ajouté à une <b>vitrine de trophées</b> permanente — la collection est la méta.</li>
+</ol>
+<p class="big-rule">Orderix a déjà les briques (médailles or/argent mensuelles, rattrapage, calendrier) — il manque toute la <b>mise en scène</b> : le trophée-héros, le N/30, les glyphes dans les cases, la vitrine.</p>
+</div>
+
+<h2>4. Le catalogue chiffré du juice (valeurs à implémenter telles quelles)</h2>
+<div class="card">
+<table>
+<tr><th>Élément</th><th>Valeur standard</th></tr>
+<tr><td>Appui bouton</td><td>scale <span class="num">0.96</span>, <span class="num">120 ms</span> ease-out ; relâche avec overshoot 1.03</td></tr>
+<tr><td>Plancher / plafond de perception</td><td><span class="num">80 ms</span> / <span class="num">500 ms</span> (en-dessous : invisible ; au-dessus : mou)</td></tr>
+<tr><td>Transition d'écran</td><td><span class="num">250-350 ms</span>, <code>cubic-bezier(.2,0,0,1)</code></td></tr>
+<tr><td>Popup entrée / sortie</td><td><span class="num">300 ms</span> easeOutBack (overshoot ~1.05) / <span class="num">180 ms</span> ease-in — la sortie toujours plus rapide</td></tr>
+<tr><td>Récompense « vole au compteur »</td><td>3-8 items, <span class="num">400-700 ms</span> chacun, décalés de 50-80 ms, ease-in vers la cible ; le compteur pulse ×1.2 à chaque arrivée</td></tr>
+<tr><td>Étoiles à la victoire</td><td>tampon scale <span class="num">300 ms</span> chacune, décalées de <span class="num">250-400 ms</span>, « ding » au pitch montant (étoile 1 grave → 3 aiguë)</td></tr>
+<tr><td>Count-up du score</td><td><span class="num">0,5-1,5 s</span> odomètre, tenir le chiffre final</td></tr>
+<tr><td>CTA de l'écran de victoire</td><td>apparaît EN DERNIER, <span class="num">800-1500 ms</span> après le panneau (force à regarder la récompense, évite le tap accidentel)</td></tr>
+<tr><td>Confettis</td><td><span class="num">50</span> particules max, vélocité 45, spread 45°, gravité 1, decay 0.9 — deux canons depuis les bords</td></tr>
+<tr><td>Pulsation CTA au repos</td><td>1.0 ↔ 1.05, boucle ~1 s (déjà en place sur « Jouer »)</td></tr>
+<tr><td>Haptique</td><td>léger 10-20 ms au tap ; succès [30,60,30] ; actions significatives seulement</td></tr>
+<tr><td>Time-to-fun (FTUE)</td><td>premier input &lt; <span class="num">30 s</span>, « j'ai compris » &lt; 2-3 min ; les tops sautent le home au 1er lancement → direct dans le niveau 1</td></tr>
+<tr><td>Badges/pastilles</td><td>max <span class="num">2</span> sources (puzzle du jour non joué, récompense à réclamer) ; s'efface à la visite, jamais sur du pur upsell</td></tr>
+</table>
+<p class="small">Chorégraphie canonique de la victoire : scrim 200 ms → panneau springIn → titre → stats → étoiles une à une → récompenses volent au HUD → confettis en continu derrière → CTA retardé. Total 2,5-4 s, tap = avance rapide (jamais un skip sec).</p>
+</div>
+
+<h2>5. Audit Orderix — ce qui est déjà bon, ce qui manque</h2>
+<div class="card">
+<h3>Déjà au niveau</h3>
+<div class="ok">La bonne école (flat blanc-gris + un bleu), les bonnes fondations méta (streak + gels, médailles mensuelles, rattrapage, pass saison gratuit/premium, ligue), tabbar 5 onglets, entrées d'écran en cascade, compteur de temps animé, press states, pulsation du CTA.</div>
+<h3>Les écarts, par gravité</h3>
+<div class="gap"><b>G1 — Aucun moment de gloire.</b> Pas de trophée-héros, pas de vitrine, pas de glyphes-médailles dans le calendrier, pas de rayons lumineux. L'or existe dans la palette mais ne « paie » jamais. C'est l'écart n°1 avec Sudoku.com.</div>
+<div class="gap"><b>G2 — Victoire sans chorégraphie.</b> Le panneau arrive d'un bloc : pas de séquence scrim → étoiles une à une → récompense qui vole → CTA retardé. Pas de son du tout dans l'app.</div>
+<div class="gap"><b>G3 — Murs de texte.</b> Intro de jeu : 4 blocs de texte redondants. Boutique : des paragraphes là où les tops mettent un visuel + 5 mots. L'école dit : montrer, pas expliquer.</div>
+<div class="gap"><b>G4 — Emojis en guise d'icônes</b> (💳 🌸 🖼 🔔 ⚙️…) : signal amateur immédiat. Les tops utilisent des pictos dessinés cohérents.</div>
+<div class="gap"><b>G5 — Réglages mal placés.</b> L'école : rouage en haut à droite du home ET en jeu. Chez nous : accordéon en bas du Profil (mieux qu'avant, pas encore la convention).</div>
+<div class="gap"><b>G6 — FTUE lent.</b> 3 slides d'onboarding avant de toucher le jeu ; les tops mettent le joueur dans le niveau en &lt; 30 s.</div>
+<div class="gap"><b>G7 — Pas de badges</b> sur la tabbar (récompense de pass à réclamer, puzzle non joué) ni de thème sombre (citoyen de 1ère classe chez Easybrain).</div>
+</div>
+
+<h2>6. Le plan d'uplift — 6 phases</h2>
+<div class="card">
+<div class="phase"><div class="badge">A</div><div><b>Fondations motion (tokens)</b> — figer 3 easings et 4 durées en variables CSS, aligner transitions d'écran (250-350 ms), popups (300/180 ms easeOutBack), press states partout. <span class="small">Petit chantier, tout le reste s'appuie dessus.</span></div></div>
+<div class="phase"><div class="badge">B</div><div><b>Le moment de victoire</b> — chorégraphie complète : scrim → panneau springIn → temps en count-up (fait) → étoiles tamponnées une à une → étoiles gagnées volent vers le compteur HUD avec pulse → CTA retardé ~900 ms → confettis 2 canons. + Catalogue de sons WebAudio (tap, juste, faux, ding-étoile pitch montant, jingle 2 s) avec réglage on/off.</div></div>
+<div class="phase"><div class="badge">C</div><div><b>Le calendrier-trophée</b> — héros du mois avec rayons (silhouette → doré), compteur N/30, cases réussies remplacées par un glyphe-médaille SVG, vitrine des trophées mensuels dans le Profil, la médaille du jour vole sur sa case après la victoire.</div></div>
+<div class="phase"><div class="badge">D</div><div><b>Dégraissage & iconographie</b> — chaque carte ramenée à 1 ligne + visuel (intro de jeu, boutique, profil) ; remplacement des emojis par un set d'icônes SVG maison cohérent ; rouage réglages en haut à droite du home et de l'écran de jeu.</div></div>
+<div class="phase"><div class="badge">E</div><div><b>FTUE éclair</b> — onboarding réduit à 1 écran (ou zéro : direct dans le puzzle du jour avec tutoriel-main sur le premier geste), demande de pseudo/notifications seulement APRÈS la première victoire (déjà en partie fait).</div></div>
+<div class="phase"><div class="badge">F</div><div><b>Badges & thème sombre</b> — pastilles sur tabbar (2 sources max : jour non joué, récompense pass à réclamer, effacées à la visite) ; thème sombre gratuit de 1ère classe.</div></div>
+<p class="small" style="margin-top:14px">Ordre = impact décroissant sur la perception « pro » : B et C sont ce qui sépare visuellement Orderix de Sudoku.com aujourd'hui. Chaque phase se livre seule (commit + APK CI), testable sur téléphone avant la suivante.</p>
+</div>
+
+<p class="small" style="margin-top:30px">Sources principales : AppMagic Casual Report 2025, Sensor Tower Q4 2025, Game UI Database, Deconstructor of Fun (Royal Match), Unity LevelUp Design Deep Dive, Balancy (shops), GameMakers (Royal Pass), sudoku.com/challenges & /awards, docs Tripledot (Woodoku, Solitaire.com), Material Design 3 (durées/easings), canvas-confetti, GameRefinery, GameAnalytics FTUE.</p>
+</div>
+</body>
+</html>
