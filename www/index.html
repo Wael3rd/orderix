@@ -89,8 +89,9 @@
                     <h3 style="font-size:1.05rem;font-weight:900;flex:1;">🎫 Le Carnet de Saison</h3>
                     <span class="hint" id="pass-mois" style="font-size:.74rem;"></span>
                 </div>
-                <p class="hint" style="margin-top:2px;">Vos étoiles du mois débloquent les paliers. Piste
-                    gratuite pour toutes · piste Premium pour les exclusifs.</p>
+                <p class="hint" style="margin-top:2px;">Vos étoiles du mois débloquent les paliers — la piste
+                    GRATUITE récompense toutes les joueuses, sans rien payer. La piste Premium ajoute les
+                    exclusifs.</p>
                 <div id="pass-progress" style="margin:12px 0 4px;"></div>
                 <div id="pass-tiers"
                     style="display:flex;gap:8px;overflow-x:auto;padding:6px 2px 10px;-webkit-overflow-scrolling:touch;">
@@ -215,6 +216,20 @@
                 <div id="year-fresque" style="margin-top:10px;"></div>
                 <div id="year-trophies"
                     style="display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap;"></div>
+            </div>
+
+            <div class="profile-card card" id="account-card" hidden>
+                <h3>Sauvegarde du compte</h3>
+                <p class="hint">Liez un e-mail (aucun mot de passe) : si vous changez de téléphone ou réinstallez
+                    l'app, un code à 6 chiffres restaure pseudo, scores, ligue et achats.</p>
+                <div id="account-status" class="hint" style="font-weight:800;margin-top:6px;"></div>
+                <div id="account-link-row" style="display:flex;gap:8px;margin-top:8px;">
+                    <input type="email" id="account-email" placeholder="votre@email.fr" autocomplete="email"
+                        style="flex:1;padding:10px 12px;border:1.5px solid var(--ligne);border-radius:10px;background:var(--fond);">
+                    <button id="account-link-btn" class="btn btn-plum" style="flex-shrink:0;">Lier</button>
+                </div>
+                <button id="account-recover-btn" class="btn btn-quiet" style="width:100%;margin-top:8px;">🔑 J'ai
+                    déjà un compte — le récupérer</button>
             </div>
 
             <div class="profile-card card" id="rgpd-card" hidden>

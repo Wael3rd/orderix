@@ -68,7 +68,7 @@ function showExampleSolitaire(day, row, vals) {
 
     const note = document.createElement('div');
     note.style.cssText = 'font-weight:bold;color:#8B90A0;font-size:.8rem;text-align:center;max-width:270px;';
-    note.textContent = 'Le 7 rouge se pose sur le 8 bleu (descendant, couleurs alternées). Montez les 1→12 aux fondations.';
+    note.textContent = 'Glissez les cartes (descendant, couleurs alternées) — double-tap = envoi à la fondation. Une colonne vide n\'accueille qu\'un 10.';
 
     ex.append(wrap, note);
     row.style.flexDirection = 'column';
@@ -126,6 +126,7 @@ function _solSolvable(deal) {
             }
         }
         // 3. Suffixe complet de face visible → autre colonne (déterre une carte)
+        // Règle « roi » (retour) : une colonne vide n'accueille qu'un 10
         for (let i = 0; i < cols.length; i++) {
             const up = cols[i].up;
             if (!up.length) continue;
@@ -135,7 +136,7 @@ function _solSolvable(deal) {
                 const dst = cols[j].up;
                 const ok = dst.length
                     ? (dst[dst.length - 1].v === head.v + 1 && dst[dst.length - 1].s !== head.s)
-                    : true;
+                    : head.v === _SOL_MAX;
                 if (!ok) continue;
                 // Inutile de déplacer une pile entière vers une colonne vide si rien à déterrer
                 if (!dst.length && !cols[i].down.length) continue;
@@ -153,7 +154,7 @@ function _solSolvable(deal) {
                 const dst = cols[j].up;
                 const ok = dst.length
                     ? (dst[dst.length - 1].v === card.v + 1 && dst[dst.length - 1].s !== card.s)
-                    : true;
+                    : card.v === _SOL_MAX;
                 if (!ok) continue;
                 const s = clone();
                 s.pool.splice(p, 1);
@@ -257,6 +258,117 @@ function startGameSolitaire() {
 
     function tryFoundation(card) { return foundV[card.s] === card.v - 1; }
 
+    // ── Drag & drop (comme les Suites) + double-tap vers la fondation ─
+    let cardDrag = null; // { source, el, sx, sy, dx, dy, moved, ghost }
+    let _lastTap = { key: '', t: 0 };
+    let colEls = [], foundEls = [];
+
+    function cardsOf(source) {
+        if (source.type === 'waste') return waste.length ? [waste[waste.length - 1]] : [];
+        return cols[source.col].up.slice(source.idx);
+    }
+
+    function startCardDrag(source, e, el) {
+        if (isPaused || over || cardDrag) return;
+        cardDrag = { source: source, el: el, sx: e.clientX, sy: e.clientY, moved: false, ghost: null };
+        document.addEventListener('pointermove', onCardDragMove);
+        document.addEventListener('pointerup', onCardDragEnd);
+        document.addEventListener('pointercancel', onCardDragEnd);
+    }
+
+    function onCardDragMove(e) {
+        if (!cardDrag) return;
+        if (!cardDrag.moved) {
+            if (Math.hypot(e.clientX - cardDrag.sx, e.clientY - cardDrag.sy) < 10) return;
+            cardDrag.moved = true;
+            const rect = cardDrag.el.getBoundingClientRect();
+            cardDrag.dx = cardDrag.sx - rect.left;
+            cardDrag.dy = cardDrag.sy - rect.top;
+            const cards = cardsOf(cardDrag.source);
+            const g = document.createElement('div');
+            g.style.cssText = `position:fixed;z-index:80;pointer-events:none;width:56px;` +
+                `height:${74 + (cards.length - 1) * 24}px;transform:scale(1.05);`;
+            cards.forEach((card, i) => {
+                const c = _solCard(card, {});
+                c.style.cssText += `position:absolute;top:${i * 24}px;left:0;box-shadow:0 8px 22px rgba(35,38,47,.3);`;
+                g.appendChild(c);
+            });
+            document.body.appendChild(g);
+            cardDrag.ghost = g;
+            cardDrag.el.style.opacity = '.35';
+            selected = null;
+        }
+        cardDrag.ghost.style.left = (e.clientX - cardDrag.dx) + 'px';
+        cardDrag.ghost.style.top = (e.clientY - cardDrag.dy) + 'px';
+    }
+
+    function onCardDragEnd(e) {
+        document.removeEventListener('pointermove', onCardDragMove);
+        document.removeEventListener('pointerup', onCardDragEnd);
+        document.removeEventListener('pointercancel', onCardDragEnd);
+        if (!cardDrag) return;
+        const d = cardDrag;
+        cardDrag = null;
+        if (d.ghost) d.ghost.remove();
+        if (d.el) d.el.style.opacity = '';
+        if (!d.moved) { handleTap(d.source, d.el); return; }
+
+        const x = e.clientX, y = e.clientY;
+        const hit = (r) => x >= r.left - 6 && x <= r.right + 6 && y >= r.top - 10 && y <= r.bottom + 10;
+        for (let s = 0; s < foundEls.length; s++) {
+            if (foundEls[s] && hit(foundEls[s].getBoundingClientRect())) {
+                selected = d.source;
+                dropOnFoundation(s, foundEls[s]);
+                return;
+            }
+        }
+        for (let ci = 0; ci < colEls.length; ci++) {
+            if (colEls[ci] && hit(colEls[ci].getBoundingClientRect())) {
+                if (d.source.type === 'col' && d.source.col === ci) { render(); return; }
+                selected = d.source;
+                dropOnCol(ci, colEls[ci]);
+                return;
+            }
+        }
+        render();
+    }
+
+    function handleTap(source, el) {
+        if (isPaused || over) return;
+        const key = source.type === 'waste' ? 'w' : source.col + ':' + source.idx;
+        const now = Date.now();
+        const isDouble = _lastTap.key === key && now - _lastTap.t < 380;
+        _lastTap = { key: key, t: now };
+
+        if (isDouble) {
+            // Double-tap : la carte du dessus file directement à sa fondation
+            const cards = cardsOf(source);
+            const isTop = source.type === 'waste' ||
+                source.idx === cols[source.col].up.length - 1;
+            if (cards.length === 1 && isTop && tryFoundation(cards[0])) {
+                selected = source;
+                push();
+                const card = cards[0];
+                removeMoving();
+                foundV[card.s]++;
+                afterMove();
+                return;
+            }
+            shake(el);
+            selected = null;
+            render();
+            return;
+        }
+
+        if (source.type === 'waste') {
+            selected = (selected && selected.type === 'waste') ? null : { type: 'waste' };
+            haptic(8);
+            render();
+            return;
+        }
+        tapCol(source.col, source.idx, el);
+    }
+
     function afterMove() {
         selected = null;
         haptic(10);
@@ -289,18 +401,19 @@ function startGameSolitaire() {
 
         const wasteTop = waste.length ? waste[waste.length - 1] : null;
         const wasteEl = _solCard(wasteTop, wasteTop ? { selected: selected && selected.type === 'waste' } : { label: '—' });
-        if (wasteTop) wasteEl.addEventListener('pointerdown', (e) => {
-            e.preventDefault();
-            if (isPaused || over) return;
-            selected = (selected && selected.type === 'waste') ? null : { type: 'waste' };
-            haptic(8);
-            render();
-        });
+        if (wasteTop) {
+            wasteEl.style.touchAction = 'none';
+            wasteEl.addEventListener('pointerdown', (e) => {
+                e.preventDefault();
+                startCardDrag({ type: 'waste' }, e, wasteEl);
+            });
+        }
 
         const gapEl = document.createElement('div');
         gapEl.style.cssText = 'width:14px;';
 
         topRow.append(stockWrap, wasteEl, gapEl);
+        foundEls = [];
         for (let s = 0; s < 2; s++) {
             const suit = _SOL_SUITS[s];
             const fEl = foundV[s] > 0
@@ -313,11 +426,13 @@ function startGameSolitaire() {
                 if (isPaused || over || !selected) return;
                 dropOnFoundation(si, fEl);
             });
+            foundEls.push(fEl);
             topRow.appendChild(fEl);
         }
 
         // Tableau
         tableau.innerHTML = '';
+        colEls = [];
         cols.forEach((col, ci) => {
             const colEl = document.createElement('div');
             colEl.style.cssText = 'position:relative;width:56px;min-height:96px;';
@@ -331,18 +446,17 @@ function startGameSolitaire() {
             col.up.forEach((card, ui) => {
                 const isSel = selected && selected.type === 'col' && selected.col === ci && selected.idx <= ui;
                 const c = _solCard(card, { selected: isSel });
-                c.style.cssText += `position:absolute;top:${y}px;left:0;z-index:${5 + ui};`;
+                c.style.cssText += `position:absolute;top:${y}px;left:0;z-index:${5 + ui};touch-action:none;`;
                 const uidx = ui;
                 c.addEventListener('pointerdown', (e) => {
                     e.preventDefault();
-                    if (isPaused || over) return;
-                    tapCol(ci, uidx, c);
+                    startCardDrag({ type: 'col', col: ci, idx: uidx }, e, c);
                 });
                 colEl.appendChild(c);
                 y += 24;
             });
             if (!col.down.length && !col.up.length) {
-                const empty = _solCard(null, {});
+                const empty = _solCard(null, { label: '10' });
                 empty.addEventListener('pointerdown', (e) => {
                     e.preventDefault();
                     if (isPaused || over || !selected) return;
@@ -351,6 +465,7 @@ function startGameSolitaire() {
                 colEl.appendChild(empty);
             }
             colEl.style.height = Math.max(96, y + 74) + 'px';
+            colEls.push(colEl);
             tableau.appendChild(colEl);
         });
     }
@@ -388,9 +503,10 @@ function startGameSolitaire() {
         if (!cards.length) return;
         const head = cards[0];
         const dst = cols[ci].up;
+        // Règle « roi » : seule un 10 peut ouvrir une colonne vide
         const legal = dst.length
             ? (dst[dst.length - 1].v === head.v + 1 && dst[dst.length - 1].s !== head.s)
-            : true;
+            : head.v === _SOL_MAX;
         if (!legal) { shake(el); selected = null; render(); return; }
         push();
         removeMoving();

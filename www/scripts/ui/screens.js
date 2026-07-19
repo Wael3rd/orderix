@@ -663,9 +663,19 @@ function buildShop() {
         <div style="height:100%;width:${Math.min(100, Math.round(100 * stars / maxEtoiles))}%;
         background:linear-gradient(90deg,var(--or),#FFD778);border-radius:999px;"></div></div>`;
 
-    // Paliers : colonne par palier, piste gratuite en haut, premium en bas
+    // Paliers : colonne par palier, piste GRATUITE en haut (pour toutes),
+    // piste Premium en bas — avec une colonne de libellés pour que la
+    // gratuité saute aux yeux
     const tiers = document.getElementById('pass-tiers');
     tiers.innerHTML = '';
+    const legend = document.createElement('div');
+    legend.style.cssText = 'flex-shrink:0;width:64px;display:flex;flex-direction:column;gap:6px;position:sticky;left:0;background:var(--carte);z-index:2;';
+    legend.innerHTML = '<div style="height:15px;"></div>' +
+        '<div style="min-height:52px;display:flex;align-items:center;justify-content:center;text-align:center;' +
+        'font-size:.62rem;font-weight:900;color:#1E7A4A;background:var(--vert-pale,#E3F7ED);border-radius:10px;">GRATUITE<br>pour toutes</div>' +
+        '<div style="min-height:52px;display:flex;align-items:center;justify-content:center;text-align:center;' +
+        'font-size:.62rem;font-weight:900;color:var(--bleu-fonce);background:var(--bleu-pale);border-radius:10px;">🎫 PREMIUM<br>4,99 €</div>';
+    tiers.appendChild(legend);
     PASS_TIERS.forEach((t, i) => {
         const reached = stars >= t.etoiles;
         const col = document.createElement('div');

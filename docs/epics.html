@@ -95,6 +95,7 @@ const EPICS = [
   tasks:[
     {s:'fait', t:"Créer les projets Supabase staging + prod (région EU)", n:"✓ orderix-staging + orderix-prod créés à Paris (eu-west-3), clés anon branchées dans les configs"},
     {s:'fait', t:"Auth anonyme + réservation de pseudo", n:"✓ vérifié en conditions réelles : session anonyme, refresh, pseudo unique (casse ignorée, 409 sur doublon)"},
+    {s:'fait', t:"Sauvegarde & récupération de compte (e-mail sans mot de passe)", n:"✓ carte « Sauvegarde du compte » : lier un e-mail rend le compte permanent ; sur un nouveau téléphone, code à 6 chiffres → pseudo, scores, ligue et achats restaurés (résultats ré-hydratés dans le calendrier)"},
     {s:'fait', t:"Migration des scores et classements GAS → Supabase", n:"✓ double-écriture active, classement lu depuis Supabase avec repli GAS — test bout en bout 12/12 le 19/07"},
     {s:'fait', t:"RGPD : consentement, export des données, suppression de compte", n:"✓ carte « Mes données » sur le profil : export JSON partageable, suppression double-confirmée avec cascade vérifiée (ligue + classements), consentement explicite + lien privacy"},
     {s:'fait', t:"Config à distance des jours (remplace le Sheet)", n:"✓ l'app lit day_config (Supabase) au démarrage — count + désactivation d'urgence — avec repli GAS et cache hors-ligne"},

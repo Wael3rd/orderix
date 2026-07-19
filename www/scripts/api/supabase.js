@@ -137,6 +137,78 @@ async function sbClaimPseudo(name) {
     } catch (e) { return 'erreur'; }
 }
 
+// ── Sauvegarde de compte : e-mail sans mot de passe ──────────────
+// Lier un e-mail rend le compte anonyme PERMANENT : sur un nouveau
+// téléphone, un code à 6 chiffres reçu par e-mail restaure tout
+// (pseudo, scores, ligue, achats). Aucun mot de passe, jamais.
+
+// Attache un e-mail au compte anonyme courant (envoie un lien de
+// confirmation). Résout 'ok' | 'pris' | 'erreur'.
+async function sbAttachEmail(email) {
+    if (!SB_ENABLED) return 'erreur';
+    const s = await sbEnsureSession();
+    if (!s) return 'erreur';
+    try {
+        const r = await fetch(SUPABASE_URL + '/auth/v1/user', {
+            method: 'PUT', headers: _sbHeaders(true),
+            body: JSON.stringify({ email: email })
+        });
+        const d = await r.json();
+        if (r.ok) { logEvent('email_lie'); return 'ok'; }
+        const msg = (d && (d.msg || d.error_description || d.message) || '').toLowerCase();
+        return msg.indexOf('already') !== -1 ? 'pris' : 'erreur';
+    } catch (e) { return 'erreur'; }
+}
+
+// Étape 1 de la récupération : envoie le code à 6 chiffres
+async function sbSendRecoveryCode(email) {
+    if (!SB_ENABLED) return false;
+    try {
+        const r = await fetch(SUPABASE_URL + '/auth/v1/otp', {
+            method: 'POST', headers: _sbHeaders(false),
+            body: JSON.stringify({ email: email, create_user: false })
+        });
+        return r.ok;
+    } catch (e) { return false; }
+}
+
+// Étape 2 : vérifie le code → bascule la session sur l'ancien compte,
+// puis restaure pseudo + résultats serveur dans la progression locale
+async function sbRecoverWithCode(email, code) {
+    if (!SB_ENABLED) return false;
+    try {
+        const r = await fetch(SUPABASE_URL + '/auth/v1/verify', {
+            method: 'POST', headers: _sbHeaders(false),
+            body: JSON.stringify({ type: 'email', email: email, token: code })
+        });
+        const d = await r.json();
+        if (!r.ok || !_sbStoreTokens(d)) return false;
+        logEvent('compte_recupere');
+
+        // Restauration : pseudo public + résultats de l'année
+        const data = await sbExportMyData();
+        if (data && data.profile && data.profile.pseudo) {
+            setStorage('orderix_player_name', data.profile.pseudo);
+        }
+        if (data && Array.isArray(data.results)) {
+            const annee = new Date().getFullYear();
+            data.results.forEach(res => {
+                if (res.year !== annee || localResults[res.day]) return;
+                const t = res.status === 'win' ? res.time_ms / 1000
+                    : (res.status === 'abandon' ? -999999 : -res.time_ms / 1000);
+                const dCreation = new Date(res.created_at);
+                localResults[res.day] = {
+                    count: res.item_count, time: t, isWin: res.status === 'win',
+                    rev: 0, late: true, stars: res.status === 'win' ? 1 : 0,
+                    saison: dCreation.getFullYear() + '-' + (dCreation.getMonth() + 1)
+                };
+            });
+            setStorage('orderix_local_results', JSON.stringify(localResults));
+        }
+        return true;
+    } catch (e) { return false; }
+}
+
 // ── RGPD : export de ses données (art. 20) ───────────────────────
 function sbExportMyData() {
     if (!SB_ENABLED) return Promise.resolve(null);

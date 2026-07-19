@@ -262,6 +262,74 @@ if (passBuyBtn) passBuyBtn.addEventListener('click', () => {
     logEvent('pass_achat_intention');
 });
 
+// ─── Sauvegarde de compte : lier un e-mail / récupérer ───────────
+if (typeof SB_ENABLED !== 'undefined' && SB_ENABLED) {
+    const accCard = document.getElementById('account-card');
+    const accStatus = document.getElementById('account-status');
+    accCard.hidden = false;
+    const majStatutCompte = () => {
+        const mail = getStorage('orderix_email_lie');
+        accStatus.textContent = mail
+            ? '✓ Compte protégé par ' + mail
+            : '⚠ Compte non protégé : une désinstallation le perdrait.';
+        accStatus.style.color = mail ? 'var(--vert)' : 'var(--rouge)';
+        document.getElementById('account-link-row').style.display = mail ? 'none' : 'flex';
+    };
+    majStatutCompte();
+
+    document.getElementById('account-link-btn').addEventListener('click', async () => {
+        const email = document.getElementById('account-email').value.trim();
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+            accStatus.textContent = 'Adresse e-mail invalide.';
+            accStatus.style.color = 'var(--rouge)';
+            return;
+        }
+        accStatus.textContent = 'Envoi…';
+        const res = await sbAttachEmail(email);
+        if (res === 'ok') {
+            setStorage('orderix_email_lie', email);
+            accStatus.textContent = '✓ E-mail de confirmation envoyé à ' + email + ' — cliquez le lien reçu pour finaliser.';
+            accStatus.style.color = 'var(--vert)';
+            document.getElementById('account-link-row').style.display = 'none';
+        } else if (res === 'pris') {
+            accStatus.textContent = 'Cet e-mail protège déjà un compte — utilisez « Récupérer » ci-dessous.';
+            accStatus.style.color = 'var(--rouge)';
+        } else {
+            accStatus.textContent = 'Impossible pour le moment — vérifiez la connexion.';
+            accStatus.style.color = 'var(--rouge)';
+        }
+    });
+
+    document.getElementById('account-recover-btn').addEventListener('click', async () => {
+        const email = prompt('L\'e-mail lié à votre ancien compte :');
+        if (!email || !email.trim()) return;
+        accStatus.textContent = 'Envoi du code à ' + email.trim() + '…';
+        accStatus.style.color = 'var(--gris)';
+        const sent = await sbSendRecoveryCode(email.trim());
+        if (!sent) {
+            accStatus.textContent = 'Aucun compte trouvé pour cet e-mail (ou hors-ligne).';
+            accStatus.style.color = 'var(--rouge)';
+            return;
+        }
+        const code = prompt('Entrez le code à 6 chiffres reçu par e-mail :');
+        if (!code || !code.trim()) return;
+        accStatus.textContent = 'Vérification…';
+        const ok = await sbRecoverWithCode(email.trim(), code.trim());
+        if (ok) {
+            setStorage('orderix_email_lie', email.trim());
+            majStatutCompte();
+            accStatus.textContent = '✓ Compte restauré — pseudo, scores et achats récupérés !';
+            accStatus.style.color = 'var(--vert)';
+            const nom = getPlayerName();
+            if (nom) lockName(nom);
+            buildProfile();
+        } else {
+            accStatus.textContent = 'Code invalide ou expiré — réessayez.';
+            accStatus.style.color = 'var(--rouge)';
+        }
+    });
+}
+
 // ─── RGPD : export et suppression du compte en ligne ─────────────
 if (typeof SB_ENABLED !== 'undefined' && SB_ENABLED) {
     const rgpdCard = document.getElementById('rgpd-card');
