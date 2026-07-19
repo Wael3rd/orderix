@@ -165,7 +165,7 @@ const BADGES = {
 };
 
 // Version de la base curée — sert à détecter une page en cache périmée
-const SUIVI_VERSION = '2026-07-19-1';
+const SUIVI_VERSION = '2026-07-19-2';
 
 let filter = 'tous';
 let issuesByDay = {};
@@ -182,7 +182,9 @@ async function fetchIssues() {
         if (i.pull_request) return;
         const m = (i.title || '').match(/Jour\s+(\d+)/i);
         if (!m) return;
-        const d = parseInt(m[1]);
+        // Les jours 200-268 sont le MIROIR « en vrai » de la séquence 1-69
+        const dBrut = parseInt(m[1]);
+        const d = (dBrut >= 200 && dBrut <= 268) ? dBrut - 199 : dBrut;
         if (!out[d] || i.number > out[d].number) {
           const body = i.body || '';
           const cm = body.match(/\*\*Commentaire\*\*\s*:\s*([\s\S]+?)\s*_Envoy/);
