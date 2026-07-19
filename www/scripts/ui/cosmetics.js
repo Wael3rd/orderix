@@ -63,12 +63,12 @@ function selectBackground(id) {
 // gagnées ce mois-ci (les rattrapages comptent). Deux pistes : gratuite
 // pour toutes, premium (achat unique 4,99 €/saison) pour les exclusifs.
 const PASS_TIERS = [
-    { etoiles: 3, gratuit: { type: 'gel', lbl: '🧊 1 gel' }, premium: { type: 'fond', id: 'constellation', lbl: '🌌 Fond Constellation' } },
-    { etoiles: 6, gratuit: { type: 'fond', id: 'jardin', lbl: '🌿 Fond Jardin' }, premium: { type: 'avatar', id: '🌺', lbl: 'Avatar 🌺' } },
+    { etoiles: 3, gratuit: { type: 'gel', ico: 'gel', lbl: '1 gel' }, premium: { type: 'fond', id: 'constellation', ico: 'etoile', lbl: 'Fond Constellation' } },
+    { etoiles: 6, gratuit: { type: 'fond', id: 'jardin', ico: 'herbe', lbl: 'Fond Jardin' }, premium: { type: 'avatar', id: '🌺', lbl: 'Avatar 🌺' } },
     { etoiles: 10, gratuit: { type: 'avatar', id: '🍵', lbl: 'Avatar 🍵' }, premium: { type: 'avatar', id: '🕊️', lbl: 'Avatar 🕊️' } },
-    { etoiles: 14, gratuit: { type: 'gel', lbl: '🧊 1 gel' }, premium: { type: 'fond', id: 'opale', lbl: '💠 Fond Opale' } },
+    { etoiles: 14, gratuit: { type: 'gel', ico: 'gel', lbl: '1 gel' }, premium: { type: 'fond', id: 'opale', ico: 'gemme', lbl: 'Fond Opale' } },
     { etoiles: 19, gratuit: { type: 'avatar', id: '🧶', lbl: 'Avatar 🧶' }, premium: { type: 'avatar', id: '👑', lbl: 'Avatar 👑' } },
-    { etoiles: 24, gratuit: { type: 'gel', lbl: '🧊 1 gel' }, premium: { type: 'avatar', id: '✨', lbl: 'Avatar ✨' } }
+    { etoiles: 24, gratuit: { type: 'gel', ico: 'gel', lbl: '1 gel' }, premium: { type: 'avatar', id: '✨', lbl: 'Avatar ✨' } }
 ];
 
 function seasonKey() {
@@ -230,12 +230,12 @@ function renderCosmetics() {
         if (!ok) {
             const lock = document.createElement('span');
             lock.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1rem;';
-            lock.textContent = t.premium ? '💎' : '🔒';
+            lock.innerHTML = t.premium ? imgIc('gemme') : imgIc('cadenas');
             sw.appendChild(lock);
         }
         const nm = document.createElement('span');
         nm.style.cssText = 'font-size:.6rem;font-weight:800;color:var(--gris);';
-        nm.textContent = ok ? t.nom : (t.premium ? t.nom + ' 💎' : 'niv. ' + t.niveau);
+        nm.innerHTML = ok ? t.nom : (t.premium ? t.nom + ' ' + imgIc('gemme') : 'niv. ' + t.niveau);
         b.append(sw, nm);
         b.addEventListener('click', () => selectTheme(t.id));
         rowT.appendChild(b);
@@ -256,11 +256,12 @@ function renderCosmetics() {
             'display:flex;align-items:center;justify-content:center;position:relative;' +
             (a.e === avatarActif ? 'outline:3px solid var(--bleu);outline-offset:-2px;background:var(--bleu-pale);' : '') +
             (ok ? '' : 'opacity:.4;');
-        b.textContent = ok ? a.e : '🔒';
+        if (ok) b.textContent = a.e; else b.innerHTML = imgIc('cadenas');
         if (!ok) {
             const lv = document.createElement('span');
             lv.style.cssText = 'position:absolute;bottom:2px;right:5px;font-size:.55rem;font-weight:900;color:var(--gris);';
-            lv.textContent = a.parrainage ? '💌' : (a.premium ? '💎' : a.niveau);
+            lv.innerHTML = a.parrainage ? imgIc('cadeau')
+                : (a.premium ? imgIc('gemme') : (a.pass ? imgIc('ticket') : a.niveau));
             b.title = a.parrainage ? 'Réservé aux invitées : arrivez via le lien d\'une amie !' : '';
             b.appendChild(lv);
         }
@@ -290,13 +291,13 @@ function renderCosmetics() {
         if (!ok) {
             const lock = document.createElement('span');
             lock.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1rem;';
-            lock.textContent = b.boutique ? '💎' : (b.pass ? '🎫' : '🔒');
+            lock.innerHTML = b.boutique ? imgIc('gemme') : (b.pass ? imgIc('ticket') : imgIc('cadenas'));
             sw.appendChild(lock);
         }
         const nm = document.createElement('span');
         nm.style.cssText = 'font-size:.58rem;font-weight:800;color:var(--gris);';
-        nm.textContent = b.nom + (!ok && b.niveau ? ' · niv. ' + b.niveau : '') +
-            (!ok && b.boutique ? ' 💎' : '') + (!ok && b.pass ? ' 🎫' : '');
+        nm.innerHTML = b.nom + (!ok && b.niveau ? ' · niv. ' + b.niveau : '') +
+            (!ok && b.boutique ? ' ' + imgIc('gemme') : '') + (!ok && b.pass ? ' ' + imgIc('ticket') : '');
         btn.append(sw, nm);
         btn.addEventListener('click', () => selectBackground(b.id));
         rowB.appendChild(btn);

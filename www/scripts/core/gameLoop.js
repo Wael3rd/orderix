@@ -487,7 +487,7 @@ function endGame(message, isWin, isAbandon = false) {
     // rappel quotidien (jamais au premier écran).
     if (isWin && computeStats().won === 1 && !getStorage('orderix_first_win_done')) {
         setStorage('orderix_first_win_done', '1');
-        resultPhrase.textContent = '🎉 Votre toute première victoire — bienvenue dans le club !';
+        resultPhrase.innerHTML = imgIc('fete') + ' Votre toute première victoire — bienvenue dans le club !';
         setTimeout(() => { if (!isPaused) return; celebrate(); }, 600);
         if (typeof proposeReminderAfterFirstWin === 'function') proposeReminderAfterFirstWin();
         if (typeof logEvent === 'function') logEvent('premiere_victoire', { jour: currentDayConfig.id });

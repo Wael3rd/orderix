@@ -137,20 +137,20 @@ function buildHome() {
     if (stats.streak > 0) {
         if (themeEl.textContent) themeEl.appendChild(document.createTextNode(' · '));
         const b = document.createElement('b');
-        b.textContent = `Série : ${stats.streak} 🔥`;
+        b.innerHTML = `Série : ${stats.streak} ${imgIc('flamme')}`;
         themeEl.appendChild(b);
     }
     if (stats.freezes > 0) {
         if (themeEl.textContent) themeEl.appendChild(document.createTextNode(' · '));
         const g = document.createElement('span');
         g.title = 'Gels de série : un jour manqué est pardonné par gel';
-        g.textContent = `🧊 ${stats.freezes}`;
+        g.innerHTML = `${imgIc('gel')} ${stats.freezes}`;
         themeEl.appendChild(g);
     }
     if (streakData.frozenUsed > 0) {
         const info = document.createElement('div');
         info.style.cssText = 'font-size:.78rem;font-weight:800;color:#4A6CFA;margin-top:4px;';
-        info.textContent = `🧊 ${streakData.frozenUsed > 1 ? streakData.frozenUsed + ' gels ont' : 'Un gel a'} protégé votre série !`;
+        info.innerHTML = `${imgIc('gel')} ${streakData.frozenUsed > 1 ? streakData.frozenUsed + ' gels ont' : 'Un gel a'} protégé votre série !`;
         themeEl.appendChild(info);
     }
     // Bannière d'événement calendaire (week-end double étoiles, défi du 1er)
@@ -247,8 +247,8 @@ function buildWeeklyLeague() {
                 return;
             }
             const div = rows[0] && rows[0].division;
-            const divLbl = ({ 1: '🥇 Ligue Or', 2: '🥈 Ligue Argent', 3: '🥉 Ligue Bronze' })[div] || '';
-            note.textContent = `${divLbl ? divLbl + ' · ' : ''}groupe de ${rows.length} joueuse${rows.length > 1 ? 's' : ''} ` +
+            const divLbl = ({ 1: `${imgIc('medal-or')} Ligue Or`, 2: `${imgIc('medal-argent')} Ligue Argent`, 3: `${imgIc('medal-bronze')} Ligue Bronze` })[div] || '';
+            note.innerHTML = `${divLbl ? divLbl + ' · ' : ''}groupe de ${rows.length} joueuse${rows.length > 1 ? 's' : ''} ` +
                 '· top 5 = promotion, 5 dernières = relégation · fin dimanche soir';
             rows.forEach((entry, index) => {
                 const li = document.createElement('li');
@@ -494,9 +494,9 @@ function buildProfile() {
     document.getElementById('pstat-streak').textContent = stats.streak;
     document.getElementById('pstat-best').textContent = stats.best !== null ? stats.best.toFixed(2) + 's' : '—';
     document.getElementById('pstat-level').textContent = 1 + Math.floor(stats.stars / 10);
-    document.getElementById('pstat-freezes').textContent = stats.freezes > 0
-        ? `🧊 ${stats.freezes} gel${stats.freezes > 1 ? 's' : ''} de série en réserve (1 offert chaque mois, 1 par semaine parfaite)`
-        : '🧊 Plus de gel en réserve — le prochain arrive au début du mois.';
+    document.getElementById('pstat-freezes').innerHTML = stats.freezes > 0
+        ? `${imgIc('gel')} ${stats.freezes} gel${stats.freezes > 1 ? 's' : ''} de série en réserve (1 offert chaque mois, 1 par semaine parfaite)`
+        : `${imgIc('gel')} Plus de gel en réserve — le prochain arrive au début du mois.`;
 
     // Vitrine des médailles mensuelles
     const row = document.getElementById('medals-row');
@@ -515,13 +515,13 @@ function buildProfile() {
             ico.style.opacity = '.3';
             cell.style.opacity = '.5';
         } else if (m.medal === 'or') {
-            ico.textContent = '🥇';
+            ico.innerHTML = imgIc('medal-or');
             cell.style.background = '#FFF6E3';
         } else if (m.medal === 'argent') {
-            ico.textContent = '🥈';
+            ico.innerHTML = imgIc('medal-argent');
             cell.style.background = '#EEF2FF';
         } else {
-            ico.textContent = '🏅';
+            ico.innerHTML = imgIc('medal-sport');
             ico.style.cssText += 'filter:grayscale(1);opacity:.35;';
         }
         const prog = document.createElement('div');
@@ -624,14 +624,14 @@ function buildYearFresque() {
 
     const troph = document.getElementById('year-trophies');
     troph.innerHTML = '';
-    [[50, '🌱', '50 jours'], [100, '🌿', '100 jours'], [200, '🌳', '200 jours'], [365, '🏆', 'Année parfaite']]
-        .forEach(([seuil, emo, lbl]) => {
+    [[50, 'pousse', '50 jours'], [100, 'herbe', '100 jours'], [200, 'arbre', '200 jours'], [365, 'trophy', 'Année parfaite']]
+        .forEach(([seuil, ico, lbl]) => {
             const t = document.createElement('div');
             const atteint = wonTotal >= seuil;
             t.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 12px;' +
                 `border-radius:12px;background:${atteint ? '#FFF6E3' : 'var(--fond)'};` +
                 (atteint ? '' : 'opacity:.45;filter:grayscale(.8);');
-            t.innerHTML = `<span style="font-size:1.2rem;line-height:1;">${emo}</span>` +
+            t.innerHTML = `<span style="font-size:1.2rem;line-height:1;">${imgIc(ico)}</span>` +
                 `<span style="font-size:.62rem;font-weight:800;color:var(--gris);">${lbl}</span>`;
             troph.appendChild(t);
         });
@@ -653,8 +653,8 @@ function buildShop() {
     const premium = hasPack('pass-premium');
     const now = new Date();
 
-    document.getElementById('pass-mois').textContent =
-        'Saison de ' + MOIS_LONGS[now.getMonth()] + ' · ⭐ ' + stars;
+    document.getElementById('pass-mois').innerHTML =
+        'Saison de ' + MOIS_LONGS[now.getMonth()] + ' · ' + imgIc('etoile') + ' ' + stars;
 
     // Barre de progression vers le dernier palier
     const maxEtoiles = PASS_TIERS[PASS_TIERS.length - 1].etoiles;
@@ -674,7 +674,7 @@ function buildShop() {
         '<div style="min-height:52px;display:flex;align-items:center;justify-content:center;text-align:center;' +
         'font-size:.62rem;font-weight:900;color:#1E7A4A;background:var(--vert-pale,#E3F7ED);border-radius:10px;">GRATUITE<br>pour toutes</div>' +
         '<div style="min-height:52px;display:flex;align-items:center;justify-content:center;text-align:center;' +
-        'font-size:.62rem;font-weight:900;color:var(--bleu-fonce);background:var(--bleu-pale);border-radius:10px;">🎫 PREMIUM<br>4,99 €</div>';
+        'font-size:.62rem;font-weight:900;color:var(--bleu-fonce);background:var(--bleu-pale);border-radius:10px;">' + imgIc('ticket') + ' PREMIUM<br>4,99 €</div>';
     tiers.appendChild(legend);
     PASS_TIERS.forEach((t, i) => {
         const reached = stars >= t.etoiles;
@@ -683,16 +683,16 @@ function buildShop() {
         const et = document.createElement('div');
         et.style.cssText = 'text-align:center;font-weight:900;font-size:.72rem;' +
             `color:${reached ? 'var(--or)' : 'var(--gris)'};`;
-        et.textContent = '⭐ ' + t.etoiles;
+        et.innerHTML = imgIc('etoile') + ' ' + t.etoiles;
         const mk = (r, locked, piste) => {
             const c = document.createElement('div');
             c.style.cssText = 'border-radius:10px;padding:8px 6px;text-align:center;font-size:.66rem;font-weight:800;' +
                 'min-height:52px;display:flex;flex-direction:column;justify-content:center;gap:2px;' +
                 (locked ? 'background:var(--fond);color:var(--gris);opacity:.75;'
                     : 'background:var(--vert-pale,#E3F7ED);color:#1E7A4A;');
-            c.innerHTML = `<span style="font-size:1rem;">${r.lbl.split(' ')[0]}</span>` +
-                `<span>${r.lbl.substring(r.lbl.indexOf(' ') + 1)}</span>` +
-                (locked && piste === 'premium' ? '<span style="font-size:.58rem;">🎫 Premium</span>' : '');
+            c.innerHTML = `<span style="font-size:1rem;">${r.ico ? imgIc(r.ico) : r.lbl.split(' ')[0]}</span>` +
+                `<span>${r.ico ? r.lbl : r.lbl.substring(r.lbl.indexOf(' ') + 1)}</span>` +
+                (locked && piste === 'premium' ? '<span style="font-size:.58rem;">' + imgIc('ticket') + ' Premium</span>' : '');
             return c;
         };
         col.append(et, mk(t.gratuit, !reached, 'gratuit'), mk(t.premium, !reached || !premium, 'premium'));

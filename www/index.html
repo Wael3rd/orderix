@@ -45,7 +45,7 @@
                     <div class="lvl" id="hud-level">NIVEAU 1</div>
                 </div>
                 <div class="pill">
-                    <div class="coin">★</div><span id="hud-stars">0</span>
+                    <div class="coin"><img class="ic3d" src="assets/img/etoile.png" alt=""></div><span id="hud-stars">0</span>
                     <button class="plus" id="hud-plus" aria-label="Profil">+</button>
                 </div>
             </div>
@@ -73,8 +73,8 @@
             <h2 class="screen-title">L'année</h2>
             <p class="screen-sub" id="calendar-sub">Chaque jour, un nouveau défi</p>
             <div class="cal-toggle" id="cal-toggle">
-                <button id="cal-view-grid" class="on" type="button">▦ Grille</button>
-                <button id="cal-view-list" type="button">☰ Liste</button>
+                <button id="cal-view-grid" class="on" type="button"><svg class="icl" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg> Grille</button>
+                <button id="cal-view-list" type="button"><svg class="icl" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h.01"/><path d="M3 12h.01"/><path d="M3 19h.01"/><path d="M8 5h13"/><path d="M8 12h13"/><path d="M8 19h13"/></svg> Liste</button>
             </div>
             <div id="calendar-months"></div>
         </section>
@@ -86,7 +86,7 @@
 
             <div class="card" id="pass-card" style="padding:18px;margin-bottom:14px;border-radius:18px;">
                 <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;">
-                    <h3 style="font-size:1.05rem;font-weight:900;flex:1;">🎫 Le Carnet de Saison</h3>
+                    <h3 style="font-size:1.05rem;font-weight:900;flex:1;"><img class="ic3d" src="assets/img/ticket.png" alt=""> Le Carnet de Saison</h3>
                     <span class="hint" id="pass-mois" style="font-size:.74rem;"></span>
                 </div>
                 <p class="hint" style="margin-top:2px;">Vos étoiles du mois débloquent les paliers — la piste
@@ -96,18 +96,18 @@
                 <div id="pass-tiers"
                     style="display:flex;gap:8px;overflow-x:auto;padding:6px 2px 10px;-webkit-overflow-scrolling:touch;">
                 </div>
-                <button id="pass-buy" class="btn btn-primary" style="width:100%;margin-top:6px;">🎫 Pass Premium ·
+                <button id="pass-buy" class="btn btn-primary" style="width:100%;margin-top:6px;"><img class="ic3d" src="assets/img/ticket.png" alt=""> Pass Premium ·
                     4,99 € / saison</button>
                 <div id="pass-status" class="hint" style="margin-top:6px;text-align:center;"></div>
             </div>
 
             <div class="card" style="padding:18px;margin-bottom:14px;border-radius:18px;">
-                <h3 style="font-size:1.05rem;font-weight:900;">🎨 Packs de thèmes</h3>
+                <h3 style="font-size:1.05rem;font-weight:900;"><img class="ic3d" src="assets/img/palette.png" alt=""> Packs de thèmes</h3>
                 <div id="shop-packs" style="margin-top:10px;"></div>
             </div>
 
             <div class="card" style="padding:18px;margin-bottom:14px;border-radius:18px;">
-                <h3 style="font-size:1.05rem;font-weight:900;">🖼 Arrière-plans exclusifs</h3>
+                <h3 style="font-size:1.05rem;font-weight:900;"><img class="ic3d" src="assets/img/fleurs.png" alt=""> Arrière-plans exclusifs</h3>
                 <p class="hint">Introuvables ailleurs — ni par niveau, ni au Carnet.</p>
                 <div id="shop-fonds" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
                 </div>
@@ -211,13 +211,13 @@
             </div>
 
             <details class="reglages">
-                <summary>⚙️ Réglages & compte</summary>
+                <summary><svg class="icl" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg> Réglages & compte</summary>
 
                 <div class="profile-card card">
                     <h3>Rappel quotidien</h3>
                     <p class="hint">Une petite notification à 19 h si le puzzle du jour vous attend encore. Jamais
                         plus d'une par jour.</p>
-                    <button id="notif-toggle" class="btn btn-quiet" style="margin-top:8px;">🔔 Activer le
+                    <button id="notif-toggle" class="btn btn-quiet" style="margin-top:8px;"><svg class="icl" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg> Activer le
                         rappel</button>
                     <div id="notif-status" class="hint" style="margin-top:6px;"></div>
                 </div>
@@ -246,7 +246,7 @@
                         style="flex:1;padding:10px 12px;border:1.5px solid var(--ligne);border-radius:10px;background:var(--fond);">
                     <button id="account-link-btn" class="btn btn-plum" style="flex-shrink:0;">Lier</button>
                 </div>
-                <button id="account-recover-btn" class="btn btn-quiet" style="width:100%;margin-top:8px;">🔑 J'ai
+                <button id="account-recover-btn" class="btn btn-quiet" style="width:100%;margin-top:8px;"><svg class="icl" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/></svg> J'ai
                     déjà un compte — le récupérer</button>
             </div>
 
@@ -256,10 +256,10 @@
                     <a href="https://wael3rd.github.io/orderix/privacy.html" target="_blank"
                         style="color:var(--bleu);font-weight:700;">Politique de confidentialité</a>
                 </p>
-                <button id="rgpd-export" class="btn btn-quiet" style="width:100%;margin-top:8px;">📦 Exporter mes
+                <button id="rgpd-export" class="btn btn-quiet" style="width:100%;margin-top:8px;"><svg class="icl" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/></svg> Exporter mes
                     données en ligne</button>
                 <button id="rgpd-delete" class="btn btn-ghost" style="width:100%;margin-top:8px;color:var(--rouge);">
-                    🗑 Supprimer mon compte en ligne</button>
+                    <svg class="icl" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Supprimer mon compte en ligne</button>
                 <div id="rgpd-status" class="hint" style="margin-top:6px;"></div>
             </div>
 
@@ -268,9 +268,9 @@
                 <p class="hint">Efface la progression locale : toutes les cases du calendrier redeviennent jouables.</p>
                 <button id="reset-progress-btn" class="btn btn-ghost" style="width:100%">Réinitialiser la
                     progression</button>
-                <button id="events-btn" class="btn btn-quiet" style="width:100%;margin-top:8px;">📊 Voir les
+                <button id="events-btn" class="btn btn-quiet" style="width:100%;margin-top:8px;"><svg class="icl" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg> Voir les
                     événements analytics</button>
-                <button id="packs-btn" class="btn btn-quiet" style="width:100%;margin-top:8px;">💎 Simuler l'achat
+                <button id="packs-btn" class="btn btn-quiet" style="width:100%;margin-top:8px;"><svg class="icl" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 3 8 9l4 13 4-13-2.5-6"/><path d="M17 3a2 2 0 0 1 1.6.8l3 4a2 2 0 0 1 .013 2.382l-7.99 10.986a2 2 0 0 1-3.247 0l-7.99-10.986A2 2 0 0 1 2.4 7.8l2.998-3.997A2 2 0 0 1 7 3z"/><path d="M2 9h20"/></svg> Simuler l'achat
                     des packs (test)</button>
                 <div id="events-list" class="hidden"
                     style="margin-top:10px;max-height:260px;overflow-y:auto;background:var(--fond);border-radius:10px;padding:10px;font-size:.68rem;font-family:monospace;line-height:1.5;">
@@ -320,7 +320,7 @@
                 </div>
 
                 <div class="result-actions hidden" id="result-actions">
-                    <button id="replay-btn" class="btn btn-primary hidden">🔄 Rejouer (test)</button>
+                    <button id="replay-btn" class="btn btn-primary hidden"><svg class="icl" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg> Rejouer (test)</button>
                     <button id="share-btn" class="btn btn-quiet">Partager</button>
                     <button id="home-btn" class="btn btn-ghost">Accueil</button>
                 </div>

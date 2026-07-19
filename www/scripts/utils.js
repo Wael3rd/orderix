@@ -98,3 +98,8 @@ function celebrate() {
         setTimeout(() => p.remove(), 4800);
     }
 }
+
+// Icône 3D (Fluent Emoji, MIT — assets/img/) pour le chrome UI
+function imgIc(nom, cls) {
+    return '<img class="ic3d' + (cls ? ' ' + cls : '') + '" src="assets/img/' + nom + '.png" alt="">';
+}
