@@ -38,7 +38,8 @@ const AVATARS = [
 ];
 
 function playerLevel() {
-    return 1 + Math.floor(computeStats().won / 10);
+    // Le niveau monte aux ÉTOILES (doublées le week-end) : 10 étoiles = 1 niveau
+    return 1 + Math.floor(computeStats().stars / 10);
 }
 
 function currentTheme() {

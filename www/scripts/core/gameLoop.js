@@ -444,6 +444,10 @@ function endGame(message, isWin, isAbandon = false) {
     resultTime.innerHTML = isAbandon ? '<small>Partie abandonnée</small>'
         : `${(timeElapsed / 1000).toFixed(3)}<small> s</small>`;
     resultPhrase.textContent = isWin ? pickPhrase(WIN_PHRASES) : pickPhrase(FAIL_PHRASES);
+    // Récompense d'événement (double étoiles, gel du 1er) gagnée à l'instant
+    if (isWin && typeof lastEventReward === 'string' && lastEventReward) {
+        resultPhrase.textContent = lastEventReward + ' ' + resultPhrase.textContent;
+    }
     resultDisplay.style.color = '';
     resultDisplay.textContent = message || '';
 

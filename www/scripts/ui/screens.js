@@ -88,8 +88,8 @@ function buildHome() {
     document.getElementById('hud-name').textContent = name || 'Invitée';
     const avatar = currentAvatar();
     document.getElementById('hud-avatar').textContent = avatar || (name ? name[0].toUpperCase() : '☺');
-    document.getElementById('hud-level').textContent = 'NIVEAU ' + (1 + Math.floor(stats.won / 10));
-    document.getElementById('hud-stars').textContent = stats.won;
+    document.getElementById('hud-level').textContent = 'NIVEAU ' + (1 + Math.floor(stats.stars / 10));
+    document.getElementById('hud-stars').textContent = stats.stars;
 
     const tid = todayDayId();
     const day = DAYS.find(d => d.id === tid) || DAYS[0];
@@ -150,6 +150,15 @@ function buildHome() {
         info.style.cssText = 'font-size:.78rem;font-weight:800;color:#4A6CFA;margin-top:4px;';
         info.textContent = `🧊 ${streakData.frozenUsed > 1 ? streakData.frozenUsed + ' gels ont' : 'Un gel a'} protégé votre série !`;
         themeEl.appendChild(info);
+    }
+    // Bannière d'événement calendaire (week-end double étoiles, défi du 1er)
+    const ev = activeEvent();
+    if (ev && !getPlayedInfo(day.id)) {
+        const evEl = document.createElement('div');
+        evEl.style.cssText = 'font-size:.8rem;font-weight:900;color:#B07E0A;background:#FFF6E3;' +
+            'border-radius:10px;padding:6px 12px;margin-top:8px;display:inline-block;';
+        evEl.textContent = ev.label;
+        themeEl.appendChild(evEl);
     }
 
     // Tuiles décoratives : les chiffres du jour + une étoile
@@ -482,7 +491,7 @@ function buildProfile() {
         stats.played > 0 ? Math.round(100 * stats.won / stats.played) + '%' : '—';
     document.getElementById('pstat-streak').textContent = stats.streak;
     document.getElementById('pstat-best').textContent = stats.best !== null ? stats.best.toFixed(2) + 's' : '—';
-    document.getElementById('pstat-level').textContent = 1 + Math.floor(stats.won / 10);
+    document.getElementById('pstat-level').textContent = 1 + Math.floor(stats.stars / 10);
     document.getElementById('pstat-freezes').textContent = stats.freezes > 0
         ? `🧊 ${stats.freezes} gel${stats.freezes > 1 ? 's' : ''} de série en réserve (1 offert chaque mois, 1 par semaine parfaite)`
         : '🧊 Plus de gel en réserve — le prochain arrive au début du mois.';

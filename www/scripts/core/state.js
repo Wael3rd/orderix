@@ -166,6 +166,18 @@ function loadLocalResults() {
     }
     if (migrated) setStorage('orderix_tested_revs', JSON.stringify(testedRevs));
 }
+// ─── Événements calendaires (décision produit du 19/07, docs/produit.md)
+// · weekend : sam-dim, les victoires du jour valent 2 étoiles
+// · premier : le 1er du mois, gagner le puzzle du jour offre 1 gel 🧊
+function activeEvent() {
+    const now = new Date();
+    if (now.getDate() === 1) return { id: 'premier', label: '🧊 Défi du 1er : un gel de série à gagner !' };
+    const d = now.getDay();
+    if (d === 0 || d === 6) return { id: 'weekend', label: '⭐⭐ Week-end Double Étoiles !' };
+    return null;
+}
+let lastEventReward = ''; // message affiché par endGame après une victoire
+
 function saveLocalResult(dayId, count, time, isWin) {
     // `rev` mémorise la révision du gameplay jouée : si le mode est ensuite
     // retouché (rev incrémentée dans GAME_MODES), le badge « ! » réapparaît.
@@ -174,7 +186,26 @@ function saveLocalResult(dayId, count, time, isWin) {
     const day = DAYS.find(d => d.id === dayId);
     const rev = (day && !day.empty) ? (GAME_MODES[day.modeId].rev || 0) : 0;
     const late = dayId !== todayDayId();
-    localResults[dayId] = { count: count, time: time, isWin: isWin, rev: rev, late: late };
+
+    // Événements : uniquement sur la victoire DU JOUR, jouée le jour même
+    lastEventReward = '';
+    let stars = 1;
+    const ev = (isWin && !late) ? activeEvent() : null;
+    if (ev && ev.id === 'weekend') {
+        stars = 2;
+        lastEventReward = '⭐⭐ Victoire double étoiles !';
+    } else if (ev && ev.id === 'premier') {
+        if (streakData.freezes < GELS_MAX) {
+            streakData.freezes++;
+            saveStreakData();
+            lastEventReward = '🧊 Défi du 1er réussi — un gel de série gagné !';
+        } else {
+            lastEventReward = '🧊 Défi du 1er réussi — gels déjà au maximum !';
+        }
+        if (typeof logEvent === 'function') logEvent('event_premier_gagne');
+    }
+
+    localResults[dayId] = { count: count, time: time, isWin: isWin, rev: rev, late: late, stars: isWin ? stars : 0 };
     setStorage('orderix_local_results', JSON.stringify(localResults));
     if (day && !day.empty && rev > (testedRevs[day.modeId] || 0)) {
         testedRevs[day.modeId] = rev;
@@ -306,18 +337,19 @@ function monthMedals() {
 }
 
 function computeStats() {
-    let played = 0, won = 0, best = null;
+    let played = 0, won = 0, best = null, stars = 0;
     DAYS.forEach(d => {
         const info = getPlayedInfo(d.id);
         if (!info) return;
         played++;
         if (info.isWin) {
             won++;
+            stars += info.stars || 1; // étoiles (double le week-end)
             const t = Math.abs(parseFloat(info.time));
             if (best === null || t < best) best = t;
         }
     });
-    return { played: played, won: won, best: best, streak: currentStreak(), freezes: streakData.freezes };
+    return { played: played, won: won, best: best, stars: stars, streak: currentStreak(), freezes: streakData.freezes };
 }
 
 // Nom sauvegardé
