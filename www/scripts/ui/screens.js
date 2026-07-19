@@ -358,6 +358,10 @@ function buildCalendar() {
         enabledIds[day.id] = !(cfg && cfg.enabled === false);
     });
 
+    // Héros du mois en cours : trophée (silhouette → doré) + compteur N/total
+    let curWon = 0, curTotal = 0;
+    const curMonth = new Date().getMonth();
+
     const calFrag = document.createDocumentFragment();
     let dayId = 1;
     for (let m = 0; m < 12 && dayId <= 365; m++) {
@@ -383,6 +387,10 @@ function buildCalendar() {
             const day = DAYS.find(x => x.id === id);
             const info = getPlayedInfo(id);
             if (info && info.isWin) monthWon++;
+            if (m === curMonth && !day.empty && enabledIds[id]) {
+                curTotal++;
+                if (info && info.isWin) curWon++;
+            }
             bodyFrag.appendChild(calendarView === 'list'
                 ? buildDayRow(day, d, id, tid, enabledIds[id], info)
                 : buildDayChip(day, d, id, tid, enabledIds[id], info));
@@ -399,6 +407,21 @@ function buildCalendar() {
         calFrag.appendChild(block);
     }
     container.appendChild(calFrag);
+
+    // Remplit le héros du mois (masqué si le mois est vide, ex. pause)
+    const hero = document.getElementById('cal-hero');
+    if (hero) {
+        if (curTotal === 0) { hero.style.display = 'none'; }
+        else {
+            const complet = curWon >= curTotal;
+            hero.style.display = '';
+            hero.innerHTML =
+                `<div class="hero-flare${complet ? ' gold' : ''}">${imgIc('trophy', 'hero-trophy')}</div>` +
+                `<div class="hero-count"><b>${curWon}</b> / ${curTotal}</div>` +
+                `<div class="hero-sub">${MONTH_NAMES_FULL[curMonth]} — chaque jour réussi devient une médaille.` +
+                (complet ? ' Trophée du mois gagné !' : ' Mois complet = trophée.') + `</div>`;
+        }
+    }
 }
 
 // Pastille de la vue grille (vue d'origine)
@@ -412,7 +435,8 @@ function buildDayChip(day, d, id, tid, enabled, info) {
     if (info && info.isWin) {
         chip.classList.add('win');
         if (info.late) chip.classList.add('late'); // rattrapage : teinte distincte
-        chip.textContent = '✓';
+        // Jour réussi = médaille qui remplace le numéro (pattern Sudoku.com)
+        chip.innerHTML = `<img class="chip-medal" src="assets/img/medal-or.png" alt="réussi">`;
     }
     else if (info) { chip.classList.add('fail'); }
     if (id === tid) chip.classList.add('today');

@@ -116,11 +116,28 @@
     flex-shrink: 0;
     margin-bottom: 28px;
     touch-action: manipulation;
+    /* Matériau : reflet haut + tranche basse + ombre portée (aucun impact layout) */
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, .20), rgba(255, 255, 255, 0) 48%);
+    box-shadow: inset 0 -4px 0 rgba(20, 28, 60, .22), inset 0 1px 0 rgba(255, 255, 255, .28), 0 3px 8px rgba(35, 38, 47, .16);
 }
+.item:active { transform: scale(.94); }
 
-.item.selected { box-shadow: 0 0 0 3px var(--carte), 0 0 0 6px var(--bleu-fonce); }
-.item.error { box-shadow: 0 0 0 3px var(--carte), 0 0 0 6px var(--rouge) !important; z-index: 50; }
+.item.selected { box-shadow: inset 0 -4px 0 rgba(20, 28, 60, .22), 0 0 0 3px var(--carte), 0 0 0 6px var(--bleu-fonce); }
+.item.error { box-shadow: inset 0 -4px 0 rgba(20, 28, 60, .22), 0 0 0 3px var(--carte), 0 0 0 6px var(--rouge) !important; z-index: 50; }
 .item.matched { pointer-events: none; opacity: .45; }
+
+/* Étoiles de victoire : tamponnées une à une (scale 2.4 → 1, overshoot) */
+#result-stars { display: flex; justify-content: center; gap: 12px; min-height: 52px; margin: 4px 0 2px; }
+#result-stars img { width: 46px; height: 46px; opacity: 0; transform: scale(2.4) rotate(-14deg); }
+#result-stars img.stamped { animation: starStamp .32s cubic-bezier(.34, 1.56, .64, 1) forwards; }
+@keyframes starStamp {
+    from { opacity: 0; transform: scale(2.4) rotate(-14deg); }
+    to { opacity: 1; transform: scale(1) rotate(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+    #result-stars img { opacity: 1; transform: none; }
+    #result-stars img.stamped { animation: none; }
+}
 
 .badge {
     position: absolute;

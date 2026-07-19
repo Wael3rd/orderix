@@ -469,17 +469,46 @@ function endGame(message, isWin, isAbandon = false) {
     resultDisplay.style.color = '';
     resultDisplay.textContent = message || '';
 
-    // L'avis sur le puzzle d'abord, puis classement et partage
-    feedbackQ.classList.remove('hidden');
-    feedbackContainer.classList.remove('hidden');
+    // L'avis sur le puzzle d'abord, puis classement et partage.
+    // Chorégraphie de victoire : les CTA n'apparaissent qu'APRÈS le
+    // moment de récompense (convention des tops : le regard suit les
+    // étoiles avant de pouvoir cliquer).
+    feedbackQ.classList.add('hidden');
+    feedbackContainer.classList.add('hidden');
     resultActions.classList.add('hidden');
     leaderboardSection.classList.add('hidden');
+    const revealCtas = () => {
+        feedbackQ.classList.remove('hidden');
+        feedbackContainer.classList.remove('hidden');
+    };
 
+    // Étoiles gagnées : tampon une à une, ding au pitch montant
+    const starsZone = document.getElementById('result-stars');
+    if (starsZone) { starsZone.innerHTML = ''; starsZone.classList.add('hidden'); }
     if (isWin) {
+        if (typeof sndWin === 'function') sndWin();
+        const gagnees = (localResults[currentDayConfig.id] && localResults[currentDayConfig.id].stars) || 1;
+        if (starsZone) {
+            starsZone.classList.remove('hidden');
+            for (let i = 0; i < Math.min(3, gagnees); i++) {
+                const st = document.createElement('img');
+                st.src = 'assets/img/etoile.png';
+                st.alt = '★';
+                starsZone.appendChild(st);
+                setTimeout(() => {
+                    st.classList.add('stamped');
+                    if (typeof sndStar === 'function') sndStar(i);
+                    haptic(14);
+                }, 350 + i * 330);
+            }
+        }
         celebrate();
         haptic([18, 40, 24]);
+        setTimeout(revealCtas, 1100);
     } else {
+        if (!isAbandon && typeof sndFail === 'function') sndFail();
         haptic(60);
+        setTimeout(revealCtas, 350); // l'échec reste rapide et discret
     }
 
     // FTUE : la TOUTE première victoire mérite une vraie fête — message

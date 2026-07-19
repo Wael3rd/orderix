@@ -72,6 +72,7 @@
         <section id="screen-calendar" class="screen hidden">
             <h2 class="screen-title">L'année</h2>
             <p class="screen-sub" id="calendar-sub">Chaque jour, un nouveau défi</p>
+            <div id="cal-hero" class="card"></div>
             <div class="cal-toggle" id="cal-toggle">
                 <button id="cal-view-grid" class="on" type="button"><svg class="icl" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg> Grille</button>
                 <button id="cal-view-list" type="button"><svg class="icl" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h.01"/><path d="M3 12h.01"/><path d="M3 19h.01"/><path d="M8 5h13"/><path d="M8 12h13"/><path d="M8 19h13"/></svg> Liste</button>
@@ -89,9 +90,7 @@
                     <h3 style="font-size:1.05rem;font-weight:900;flex:1;"><img class="ic3d" src="assets/img/ticket.png" alt=""> Le Carnet de Saison</h3>
                     <span class="hint" id="pass-mois" style="font-size:.74rem;"></span>
                 </div>
-                <p class="hint" style="margin-top:2px;">Vos étoiles du mois débloquent les paliers — la piste
-                    GRATUITE récompense toutes les joueuses, sans rien payer. La piste Premium ajoute les
-                    exclusifs.</p>
+                <p class="hint" style="margin-top:2px;">Vos étoiles du mois débloquent chaque palier.</p>
                 <div id="pass-progress" style="margin:12px 0 4px;"></div>
                 <div id="pass-tiers"
                     style="display:flex;gap:8px;overflow-x:auto;padding:6px 2px 10px;-webkit-overflow-scrolling:touch;">
@@ -167,15 +166,13 @@
 
             <div class="profile-card card">
                 <h3>Votre parcours</h3>
-                <div class="stats-row">
-                    <div class="stat"><b id="pstat-played">0</b><label>joués</label></div>
-                    <div class="stat"><b id="pstat-won">0</b><label>réussis</label></div>
-                    <div class="stat"><b id="pstat-rate">—</b><label>réussite</label></div>
-                </div>
-                <div class="stats-row">
-                    <div class="stat"><b id="pstat-streak">0</b><label>en série</label></div>
-                    <div class="stat"><b id="pstat-best">—</b><label>record</label></div>
-                    <div class="stat"><b id="pstat-level">1</b><label>niveau</label></div>
+                <div class="stat-list">
+                    <div class="srow"><svg class="sic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1 3.014 3.015 1 1 0 0 0-.474 1.68l1.683 1.682a2.414 2.414 0 0 1 0 3.414L19.61 15.39a1 1 0 0 1-1.68-.474 2.5 2.5 0 1 0-3.014 3.015 1 1 0 0 1 .474 1.68l-1.683 1.682a2.414 2.414 0 0 1-3.414 0L8.61 19.61a1 1 0 0 0-1.68.474 2.5 2.5 0 1 1-3.014-3.015 1 1 0 0 0 .474-1.68l-1.683-1.682a2.414 2.414 0 0 1 0-3.414L4.39 8.61a1 1 0 0 1 1.68.474 2.5 2.5 0 1 0 3.014-3.015 1 1 0 0 1-.474-1.68l1.683-1.682a2.414 2.414 0 0 1 3.414 0z"/></svg><span class="slbl">Puzzles joués</span><b id="pstat-played">0</b></div>
+                    <div class="srow"><svg class="sic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></svg><span class="slbl">Réussis</span><b id="pstat-won">0</b></div>
+                    <div class="srow"><svg class="sic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528"/></svg><span class="slbl">Taux de réussite</span><b id="pstat-rate">—</b></div>
+                    <div class="srow"><svg class="sic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/></svg><span class="slbl">Jours en série</span><b id="pstat-streak">0</b></div>
+                    <div class="srow"><svg class="sic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg><span class="slbl">Meilleur temps</span><b id="pstat-best">—</b></div>
+                    <div class="srow"><svg class="sic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg><span class="slbl">Niveau</span><b id="pstat-level">1</b></div>
                 </div>
                 <div id="pstat-freezes" class="hint" style="text-align:center;margin-top:10px;"></div>
             </div>
@@ -220,6 +217,7 @@
                     <button id="notif-toggle" class="btn btn-quiet" style="margin-top:8px;"><svg class="icl" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg> Activer le
                         rappel</button>
                     <div id="notif-status" class="hint" style="margin-top:6px;"></div>
+                    <button id="sound-toggle" class="btn btn-quiet" style="width:100%;margin-top:8px;"></button>
                 </div>
 
             <div class="profile-card card" id="account-card" hidden>
@@ -309,6 +307,7 @@
 
             <div id="result-panel" class="card hidden">
                 <p class="result-status" id="result-status"></p>
+                <div id="result-stars" class="hidden"></div>
                 <div class="result-time" id="result-time"></div>
                 <p class="result-phrase" id="result-phrase"></p>
 
@@ -452,6 +451,7 @@
     <script src="scripts/modes/guessNumber.js"></script>
     <script src="scripts/modes/dobble.js"></script>
     <script src="scripts/core/state.js"></script>
+    <script src="scripts/core/sound.js"></script>
     <script src="scripts/core/analytics.js"></script>
     <script src="scripts/api/supabase.js"></script>
     <script src="scripts/api/database.js"></script>

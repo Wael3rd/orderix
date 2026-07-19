@@ -144,14 +144,19 @@
 .tile {
     width: 38px; height: 52px;
     border-radius: 8px;
-    background: var(--bleu-pale);
+    background: linear-gradient(180deg, #F7F9FF, var(--bleu-pale));
     border: 1.5px solid var(--bleu-bord);
     color: var(--bleu);
     font-weight: 900;
     font-size: 1.3rem;
     display: flex; align-items: center; justify-content: center;
+    box-shadow: inset 0 -3px 0 rgba(74, 108, 250, .14), 0 2px 6px rgba(35, 38, 47, .08);
 }
-.tile.t { background: var(--or-pale); border-color: var(--or-bord); color: var(--or); }
+.tile.t {
+    background: linear-gradient(180deg, #FFFBF0, var(--or-pale));
+    border-color: var(--or-bord); color: var(--or);
+    box-shadow: inset 0 -3px 0 rgba(245, 178, 39, .22), 0 2px 6px rgba(35, 38, 47, .08);
+}
 
 .daily-table .btn { margin-top: 20px; min-width: 220px; }
 
@@ -289,9 +294,36 @@
     transition: transform .12s ease;
 }
 .day-chip:active { transform: scale(.9); }
-.day-chip.win { background: var(--vert); border-color: var(--vert); color: #fff; }
+.day-chip.win { background: var(--or-pale); border-color: var(--or-bord); }
+.chip-medal { width: 74%; height: 74%; object-fit: contain; }
 /* Rattrapage : réussi mais après sa date — vert contour, fond clair */
 .day-chip.win.late { background: #E3F7ED; color: var(--vert); border: 2px solid var(--vert); }
+
+/* ── Héros du calendrier : trophée du mois sur rayons lumineux ──── */
+#cal-hero { padding: 20px 16px 16px; margin-bottom: 14px; text-align: center; }
+#cal-hero .hero-flare {
+    position: relative;
+    width: 124px; height: 110px;
+    margin: 0 auto;
+    display: flex; align-items: center; justify-content: center;
+}
+#cal-hero .hero-flare::before {
+    content: '';
+    position: absolute; inset: -18px;
+    border-radius: 50%;
+    background: repeating-conic-gradient(rgba(245, 178, 39, .20) 0deg 10deg, rgba(245, 178, 39, 0) 10deg 24deg);
+    -webkit-mask-image: radial-gradient(circle, #000 26%, transparent 66%);
+    mask-image: radial-gradient(circle, #000 26%, transparent 66%);
+    animation: heroSpin 32s linear infinite;
+}
+#cal-hero .hero-flare:not(.gold)::before { opacity: .35; }
+#cal-hero .hero-trophy { width: 82px; height: 82px; position: relative; }
+#cal-hero .hero-flare:not(.gold) .hero-trophy { filter: grayscale(1) opacity(.45); }
+#cal-hero .hero-count { font-size: 1.35rem; font-weight: 900; margin-top: 4px; }
+#cal-hero .hero-count b { font-size: 1.7rem; color: var(--or); }
+#cal-hero .hero-sub { font-size: .78rem; font-weight: 600; color: var(--gris); margin-top: 2px; }
+@keyframes heroSpin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { #cal-hero .hero-flare::before { animation: none; } }
 .day-chip.fail { background: var(--rouge-pale); border-color: var(--rouge-pale); color: var(--rouge); }
 .day-chip.today {
     border: 2px solid var(--bleu);
@@ -475,6 +507,19 @@ details.reglages > .profile-card { animation: riseIn .25s ease both; }
 .profile-card { padding: 20px; margin-bottom: 12px; border-radius: var(--radius-sm); }
 .profile-card h3 { font-size: 1.1rem; margin-bottom: 4px; }
 .profile-card .hint { font-size: .88rem; color: var(--gris); margin-bottom: 14px; }
+
+/* Liste de stats façon Sudoku.com : icône trait + libellé + gros chiffre à droite */
+.stat-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.srow {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--fond); border-radius: 14px; padding: 13px 16px;
+}
+.srow .sic { width: 22px; height: 22px; color: var(--bleu); flex-shrink: 0; }
+.srow .slbl { flex: 1; font-size: .88rem; font-weight: 600; color: var(--encre); }
+.srow b {
+    font-size: 1.3rem; font-weight: 900; color: var(--encre);
+    font-variant-numeric: tabular-nums; letter-spacing: -.01em;
+}
 
 .stats-row {
     display: grid;

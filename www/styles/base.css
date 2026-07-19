@@ -151,28 +151,33 @@ input { font-family: inherit; font-size: 1rem; }
     .screen > *, .pop-num { animation: none !important; }
 }
 
-.btn-primary {
-    background: var(--bleu);
+/* CTA « matériau » : dégradé vertical + tranche foncée en bas (chin)
+   qui s'écrase à l'appui — la convention des tops casual */
+.btn-primary,
+.btn-plum {
+    background: linear-gradient(180deg, #5F80FF 0%, var(--bleu) 55%);
     color: #fff;
-    box-shadow: var(--shadow-cta);
+    box-shadow: 0 4px 0 var(--bleu-fonce), 0 10px 18px rgba(74, 108, 250, .30);
+    text-shadow: 0 1px 2px rgba(35, 53, 130, .25);
 }
-.btn-primary:active { background: var(--bleu-fonce); }
+.btn-primary:active,
+.btn-plum:active {
+    transform: translateY(3px);
+    filter: none;
+    box-shadow: 0 1px 0 var(--bleu-fonce), 0 4px 10px rgba(74, 108, 250, .25);
+}
 
 .btn-quiet {
     background: var(--bleu-pale);
     color: var(--bleu-fonce);
+    box-shadow: 0 2px 0 var(--bleu-bord);
 }
+.btn-quiet:active { transform: translateY(2px); filter: none; box-shadow: 0 0 0 var(--bleu-bord); }
 
 .btn-ghost {
     background: var(--carte);
     color: var(--gris);
     border: 1.5px solid var(--ligne);
-}
-
-.btn-plum {
-    background: var(--bleu);
-    color: #fff;
-    box-shadow: var(--shadow-cta);
 }
 
 /* Carte générique */

@@ -105,7 +105,7 @@ function recoverPendingGame() {
 
 // ─── Navigation ──────────────────────────────────────────────────
 document.querySelectorAll('#tabbar .tab').forEach(tab => {
-    tab.addEventListener('click', () => showScreen(tab.dataset.screen));
+    tab.addEventListener('click', () => { showScreen(tab.dataset.screen); if (typeof sndTap === 'function') sndTap(); });
 });
 // Le « + » à côté des étoiles ouvre la Boutique (avant : doublon du Profil)
 document.getElementById('hud-plus').addEventListener('click', () => showScreen('shop'));
@@ -113,7 +113,7 @@ document.getElementById('hud-plus').addEventListener('click', () => showScreen('
 document.getElementById('hud-avatar').addEventListener('click', () => showScreen('profile'));
 
 // ─── Boutons de jeu ──────────────────────────────────────────────
-startBtn.addEventListener('click', startGame);
+startBtn.addEventListener('click', () => { if (typeof sndTap === 'function') sndTap(); startGame(); });
 checkBtn.addEventListener('click', verifyOrder);
 homeBtn.addEventListener('click', goHome);
 
@@ -859,3 +859,17 @@ if (ENV_NAME === 'staging') {
 document.addEventListener('contextmenu', (e) => {
     if (gameInProgress) e.preventDefault();
 });
+
+// ── Bouton Sons (Réglages & compte) ──────────────────────────────
+const sndToggleBtn = document.getElementById('sound-toggle');
+function majSoundBtn() {
+    if (sndToggleBtn) sndToggleBtn.textContent = soundOn() ? 'Sons : activés' : 'Sons : coupés';
+}
+if (sndToggleBtn) {
+    majSoundBtn();
+    sndToggleBtn.addEventListener('click', () => {
+        toggleSound();
+        majSoundBtn();
+        if (soundOn() && typeof sndGood === 'function') sndGood();
+    });
+}
