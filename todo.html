@@ -89,6 +89,14 @@ const GROUPS = [
       "Pour CHAQUE projet : Settings → API → copier <b>Project URL</b> et <b>anon public key</b>",
       "Coller les 4 valeurs (2 URL + 2 clés) dans la conversation Claude — il branche tout ensuite"
     ]},
+  { id:'oauth', t:"Activer les connexions Google et Facebook", temps:"~30 min", debloque:"les boutons de connexion sociale (déjà dans l'app, en attente des identifiants)",
+    why:"Les boutons Google / Facebook / Apple sont prêts dans « Sauvegarde du compte ». Chaque fournisseur exige des identifiants créés par le propriétaire. Apple attendra la version iOS (99 $/an). L'e-mail par code, lui, marche déjà.",
+    steps:[
+      "Supabase (les 2 projets) → Authentication → URL Configuration → ajouter <code>orderix://auth-callback</code> aux Redirect URLs",
+      "<b>Google</b> : <a href='https://console.cloud.google.com'>console.cloud.google.com</a> → créer un projet « Orderix » → OAuth consent screen (External) → Credentials → OAuth Client ID type « Web application » avec l'URL de callback Supabase (affichée dans Supabase → Auth → Providers → Google) → copier Client ID + Secret dans Supabase (les 2 projets)",
+      "<b>Facebook</b> : <a href='https://developers.facebook.com'>developers.facebook.com</a> → créer une app « Orderix » (type Consumer) → produit « Facebook Login » → coller l'URL de callback Supabase → copier App ID + App Secret dans Supabase → passer l'app en mode Live",
+      "Tester : Profil → Sauvegarde du compte → bouton Google"
+    ]},
   { id:'play', t:"Créer le compte Google Play Developer", temps:"20 min + délai Google", debloque:"la publication sur le Play Store (et la fin définitive de Play Protect)",
     why:"Inscription unique à 25 $. Google vérifie l'identité (pièce d'identité), ce qui peut prendre de 2 jours à 2 semaines — d'où l'intérêt de lancer MAINTENANT, en parallèle du reste.",
     steps:[
