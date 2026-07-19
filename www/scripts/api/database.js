@@ -40,6 +40,13 @@ function verifyPlayerName() {
                 setStorage('orderix_player_name', name);
                 lockName(name);
                 fetchPlayedDays(name);
+                // Réserve aussi le pseudo côté Supabase (non bloquant)
+                if (SB_ENABLED) sbClaimPseudo(name).then(res => {
+                    if (res === 'pris') {
+                        nameStatus.textContent = 'Ce pseudo est déjà réservé sur le nouveau classement — un autre ?';
+                        nameStatus.style.color = 'var(--err)';
+                    }
+                });
             } else {
                 nameStatus.textContent = data.reason || "Ce pseudo n'est pas disponible.";
                 nameStatus.style.color = "var(--err)";
@@ -67,10 +74,20 @@ function getPlayerName() {
 }
 
 function submitScore(timeVal, feedback, isUpdate = false) {
-    // Version de test : aucun envoi au serveur (le classement réel n'est
+    // Supabase : double écriture silencieuse dès que les clés sont là.
+    // En staging elle vise le projet orderix-staging (bac à sable) —
+    // c'est même le SEUL envoi, GAS restant coupé en mode test.
+    if (SB_ENABLED && currentDayConfig) {
+        if (isUpdate) sbSetFeedback(currentDayConfig.id, feedback, hasSharedThisGame);
+        else sbSubmitScore(timeVal, activeItemCount, currentDayConfig.id);
+    }
+
+    // Version de test : aucun envoi à GAS (le classement réel n'est
     // pas pollué et « Rejouer (test) » reste sans trace).
     if (ENV_NAME === 'staging') {
-        dbMessage.textContent = 'Mode test — rien n\'est envoyé au serveur.';
+        dbMessage.textContent = SB_ENABLED
+            ? 'Mode test — score envoyé au bac à sable Supabase.'
+            : 'Mode test — rien n\'est envoyé au serveur.';
         dbMessage.style.color = 'var(--gris-clair)';
         if (!isUpdate) fetchLeaderboard();
         return;
@@ -146,6 +163,7 @@ function _skeletonRows(n) {
 }
 
 // Classement d'un jour rendu en lignes sociales (.lrow) — accueil et écran Classement
+// Supabase d'abord quand il est configuré, repli GAS sinon/en erreur.
 function fetchBoardInto(dayId, listEl, topN) {
     if (!listEl) return;
     listEl.innerHTML = '';
@@ -155,8 +173,12 @@ function fetchBoardInto(dayId, listEl, topN) {
     const count = (cfg && cfg.count) ? cfg.count : 10;
     const me = getPlayerName();
 
-    fetch(`${GAS_URL}?day=${dayId}&itemCount=${count}&nocache=${Date.now()}`)
-        .then(r => r.json())
+    const viaGas = () => fetch(`${GAS_URL}?day=${dayId}&itemCount=${count}&nocache=${Date.now()}`).then(r => r.json());
+    const source = SB_ENABLED
+        ? sbLeaderboard(dayId, count, topN).then(rows => rows === null ? viaGas() : rows)
+        : viaGas();
+
+    source
         .then(data => {
             listEl.innerHTML = '';
             if (!data || data.length === 0) {
@@ -198,10 +220,13 @@ function fetchLeaderboard() {
     leaderboardList.innerHTML = '';
     leaderboardList.appendChild(_skeletonRows(5));
 
-    const targetUrl = `${GAS_URL}?day=${currentDayConfig.id}&itemCount=${activeItemCount}&nocache=${Date.now()}`;
+    const viaGas = () => fetch(`${GAS_URL}?day=${currentDayConfig.id}&itemCount=${activeItemCount}&nocache=${Date.now()}`)
+        .then(response => response.json());
+    const source = SB_ENABLED
+        ? sbLeaderboard(currentDayConfig.id, activeItemCount, 10).then(rows => rows === null ? viaGas() : rows)
+        : viaGas();
 
-    fetch(targetUrl)
-        .then(response => response.json())
+    source
         .then(data => {
             leaderboardList.innerHTML = '';
             if (!data || data.length === 0) {

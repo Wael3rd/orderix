@@ -1,7 +1,7 @@
-﻿{
+{
     "envName":  "staging",
-    "supabaseUrl":  "",
-    "supabaseAnonKey":  "",
+    "supabaseUrl":  "https://gzrquivrysbmodlwhslb.supabase.co",
+    "supabaseAnonKey":  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6cnF1aXZyeXNibW9kbHdoc2xiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0NjIxMzYsImV4cCI6MjEwMDAzODEzNn0.Nz32d6CZh-iWt7bWH7q463yIY4iYQfL2MWsvvRYf2-o",
     "gasUrl":  "https://script.google.com/macros/s/AKfycbwdBn3nmfJzB-uNlGGQ2_u5-6hqRy4urDKOWRTQWmclVwnmjE5NCE8TYPu6Saelwu_y6g/exec",
     "githubToken":  ""
 }
