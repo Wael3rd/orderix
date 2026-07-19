@@ -83,11 +83,20 @@ function submitScore(timeVal, feedback, isUpdate = false) {
     }
 
     // Version de test : aucun envoi à GAS (le classement réel n'est
-    // pas pollué et « Rejouer (test) » reste sans trace).
+    // pas pollué). Le message explique POURQUOI on apparaît (ou pas)
+    // au classement : pseudo requis + seules les réussites s'affichent.
     if (ENV_NAME === 'staging') {
-        dbMessage.textContent = SB_ENABLED
-            ? 'Mode test — score envoyé au bac à sable Supabase.'
-            : 'Mode test — rien n\'est envoyé au serveur.';
+        const nom = getPlayerName();
+        const gagne = parseFloat(timeVal) >= 0;
+        if (!SB_ENABLED) {
+            dbMessage.textContent = 'Mode test — rien n\'est envoyé au serveur.';
+        } else if (!nom) {
+            dbMessage.textContent = 'Partie enregistrée (compte anonyme). Choisissez un pseudo dans Profil pour apparaître au classement — vos victoires passées s\'afficheront aussi !';
+        } else if (!gagne && !isUpdate) {
+            dbMessage.textContent = 'Partie enregistrée — seules les réussites apparaissent au classement.';
+        } else if (!isUpdate) {
+            dbMessage.textContent = '✓ Temps publié au classement !';
+        }
         dbMessage.style.color = 'var(--gris-clair)';
         if (!isUpdate) fetchLeaderboard();
         return;
