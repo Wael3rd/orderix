@@ -53,8 +53,16 @@ jobs:
       - name: Copie des assets web vers Android
         run: npx cap sync android
 
-      - name: Build APK (flavor dev, debug)
+      - name: Restaurer le keystore stable (signature cohérente entre builds)
+        run: echo "${{ secrets.ORDERIX_KEYSTORE_B64 }}" | base64 -d > /tmp/orderix-release.keystore
+
+      - name: Build APK (flavor dev, debug, signé avec le keystore stable)
         working-directory: android
+        env:
+          ORDERIX_KEYSTORE_FILE: /tmp/orderix-release.keystore
+          ORDERIX_KEYSTORE_PASSWORD: ${{ secrets.ORDERIX_KEYSTORE_PASSWORD }}
+          ORDERIX_KEY_ALIAS: ${{ secrets.ORDERIX_KEY_ALIAS }}
+          ORDERIX_KEY_PASSWORD: ${{ secrets.ORDERIX_KEY_PASSWORD }}
         run: |
           chmod +x gradlew
           ./gradlew assembleDevDebug --no-daemon

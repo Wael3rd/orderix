@@ -37,6 +37,15 @@ android {
                 signingConfig signingConfigs.release
             }
         }
+        debug {
+            // Les APK de test aussi sont signés avec le keystore STABLE
+            // quand il est disponible : sans cela, chaque runner CI signe
+            // avec une clé de debug jetable → Play Protect voit « un
+            // nouveau développeur » à chaque build et bloque l'install.
+            if (System.getenv("ORDERIX_KEYSTORE_FILE") != null) {
+                signingConfig signingConfigs.release
+            }
+        }
     }
     // Environnements : « Orderix Dev » (staging) installable à côté de la prod
     flavorDimensions += "env"
