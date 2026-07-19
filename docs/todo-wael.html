@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orderix — Votre TODO</title>
+<style>
+:root{--bleu:#4A6CFA;--bleu2:#3553D1;--pale:#EEF2FF;--encre:#23262F;--gris:#8B90A0;
+--fond:#F4F6FA;--carte:#fff;--ligne:#E8EAF1;--or:#F5B227;--vert:#34B871;--rouge:#E0533D}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Roboto,sans-serif;background:var(--fond);color:var(--encre);padding:18px 12px 80px;line-height:1.55}
+.wrap{max-width:760px;margin:0 auto}
+h1{font-size:1.5rem;font-weight:900;text-align:center}
+h1 b{color:var(--bleu)}
+.sub{text-align:center;color:var(--gris);font-size:.85rem;margin:4px 0 10px}
+.progress{max-width:380px;margin:0 auto 26px;text-align:center}
+.progress .txt{font-weight:900;font-size:.85rem;margin-bottom:6px}
+.bar{height:10px;border-radius:999px;background:var(--ligne);overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--vert),#6BD49A);transition:width .3s}
+.group{margin-top:30px}
+.group h2{font-size:.78rem;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--gris);margin-bottom:12px;
+display:flex;align-items:center;gap:10px}
+.group h2::after{content:'';flex:1;height:1px;background:var(--ligne)}
+.task{background:var(--carte);border-radius:18px;padding:18px;margin-bottom:12px;box-shadow:0 2px 10px rgba(35,38,47,.06);
+border-left:6px solid var(--bleu)}
+.task.urgent{border-color:var(--rouge)}
+.task.done{opacity:.55;border-color:var(--vert)}
+.thead{display:flex;align-items:flex-start;gap:12px;cursor:pointer}
+.cb{width:26px;height:26px;border-radius:9px;border:2.5px solid #C2C7D6;flex-shrink:0;display:flex;
+align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:.9rem;margin-top:1px;transition:all .15s}
+.task.done .cb{background:var(--vert);border-color:var(--vert)}
+.tt{flex:1}
+.tt h3{font-size:1.02rem;font-weight:900}
+.task.done .tt h3{text-decoration:line-through;text-decoration-color:rgba(35,38,47,.4)}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.pill{padding:3px 10px;border-radius:999px;font-size:.66rem;font-weight:900;letter-spacing:.04em}
+.p-temps{background:var(--pale);color:var(--bleu2)}
+.p-debloque{background:#E3F7ED;color:#1E7A4A}
+.p-urgent{background:#FCE9E5;color:#A93A29}
+.why{font-size:.84rem;color:#4A4E5A;margin:10px 0 0}
+.steps{margin-top:12px;display:flex;flex-direction:column;gap:6px}
+.step{display:flex;gap:10px;align-items:flex-start;background:var(--fond);border-radius:10px;padding:9px 12px;
+font-size:.84rem;cursor:pointer}
+.scb{width:19px;height:19px;border-radius:6px;border:2px solid #C2C7D6;flex-shrink:0;display:flex;
+align-items:center;justify-content:center;font-size:.65rem;font-weight:900;color:#fff;margin-top:1px}
+.step.done .scb{background:var(--vert);border-color:var(--vert)}
+.step.done .sl{text-decoration:line-through;color:var(--gris)}
+.sl b{font-weight:800}
+.sl code{background:#E8EAF1;padding:1px 6px;border-radius:5px;font-size:.78rem}
+.sl a{color:var(--bleu);font-weight:800;text-decoration:none}
+.foot{margin-top:40px;text-align:center;color:var(--gris);font-size:.72rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Order<b>ix</b> — Votre TODO</h1>
+<p class="sub">Les seules choses que Claude ne peut pas faire à votre place · cochez, c'est mémorisé sur cet appareil</p>
+<div class="progress"><div class="txt" id="ptxt">—</div><div class="bar"><i id="pbar" style="width:0%"></i></div></div>
+<div id="groups"></div>
+<div class="foot">Quand une tâche est faite, dites-le aussi à Claude — il enchaîne immédiatement sur ce qu'elle débloque.</div>
+</div>
+
+<script>
+const GROUPS = [
+{ titre: "🔴 Aujourd'hui (30 minutes en tout)", tasks: [
+  { id:'keystore', urgent:true, t:"Sauvegarder le keystore de signature", temps:"10 min", debloque:"votre capacité à mettre à jour l'app, POUR TOUJOURS",
+    why:"Le dossier Documents\\Orderix-keys contient la clé qui signe l'application et le fichier LISEZMOI avec les mots de passe. Si ce fichier est perdu (disque mort, PC volé), il sera IMPOSSIBLE de publier la moindre mise à jour sur le Play Store — il faudrait republier une nouvelle app à zéro.",
+    steps:[
+      "Ouvrir le dossier <code>Documents\\Orderix-keys</code> sur le PC",
+      "Copier le dossier complet dans un cloud PRIVÉ (Google Drive perso, par exemple)",
+      "Le copier aussi sur une clé USB ou un second appareil",
+      "Vérifier que <code>LISEZMOI-IMPORTANT.txt</code> (les mots de passe) est bien dans les deux copies"
+    ]},
+  { id:'reinstall', t:"Réinstaller Orderix Dev (une seule fois)", temps:"3 min", debloque:"la fin des blocages Play Protect à chaque build",
+    why:"La signature des builds de test a changé pour la clé stable : Android exige une désinstallation/réinstallation unique. Ensuite, toutes les mises à jour s'installeront par-dessus sans avertissement.",
+    steps:[
+      "Désinstaller « Orderix Dev » du téléphone",
+      "Retélécharger depuis le <a href='https://wael3rd.github.io/orderix/suivi.html'>tableau de suivi</a> (bouton bleu)",
+      "Si Play Protect râle une dernière fois : « Installer quand même »"
+    ]}
+]},
+{ titre: "🟠 Cette semaine (débloque le gros du board)", tasks: [
+  { id:'supabase', t:"Créer les 2 projets Supabase", temps:"15 min", debloque:"4 epics d'un coup : comptes, ligue hebdo, classements fiables, analytics",
+    why:"C'est LE plus gros déblocage du projet. Le schéma SQL est déjà écrit et attend dans le repo (supabase/migrations/) — il ne manque que les projets et leurs clés.",
+    steps:[
+      "Créer un compte sur <a href='https://supabase.com'>supabase.com</a> (gratuit, connexion GitHub possible)",
+      "Créer un projet <b>orderix-staging</b> — région <b>West EU (Paris ou Frankfurt)</b>, plan Free",
+      "Créer un second projet <b>orderix-prod</b> — même région, plan Free pour commencer",
+      "Pour CHAQUE projet : Settings → API → copier <b>Project URL</b> et <b>anon public key</b>",
+      "Coller les 4 valeurs (2 URL + 2 clés) dans la conversation Claude — il branche tout ensuite"
+    ]},
+  { id:'play', t:"Créer le compte Google Play Developer", temps:"20 min + délai Google", debloque:"la publication sur le Play Store (et la fin définitive de Play Protect)",
+    why:"Inscription unique à 25 $. Google vérifie l'identité (pièce d'identité), ce qui peut prendre de 2 jours à 2 semaines — d'où l'intérêt de lancer MAINTENANT, en parallèle du reste.",
+    steps:[
+      "Aller sur <a href='https://play.google.com/console/signup'>play.google.com/console/signup</a>",
+      "Choisir un compte personnel (ou créer une organisation si vous préférez)",
+      "Payer les 25 $ (une seule fois, à vie)",
+      "Compléter la vérification d'identité demandée par Google",
+      "Prévenir Claude dès que le compte est actif — le kit fiche store (description + captures + privacy) est prêt à uploader"
+    ]}
+]},
+{ titre: "🟣 Deux décisions à prendre (5 min chacune, un message suffit)", tasks: [
+  { id:'money', t:"Trancher le modèle de monétisation", temps:"réflexion", debloque:"E6 complet : boutique, facturation",
+    why:"Reco de Claude : cosmétiques premium (thèmes/avatars exclusifs) + pub récompensée FACULTATIVE (regarder une pub = 1 gel de série bonus). Zéro pub imposée, zéro pay-to-win — le modèle le plus sain pour la cible.",
+    steps:[
+      "Répondre à Claude : d'accord avec la reco ? Ou 100 % gratuit ? Ou autre idée ?",
+      "Si cosmétiques premium : valider une fourchette de prix (reco : 1,99–3,99 € le pack de thèmes)"
+    ]},
+  { id:'events', t:"Choisir les premiers événements calendaires", temps:"réflexion", debloque:"E5 : le live-ops local",
+    why:"Propositions prêtes à implémenter : « Week-end double étoiles » (les victoires comptent double au niveau), « Semaine déduction » (7 jours de puzzles logique à médaille spéciale), « Défi du 1er du mois » (un puzzle corsé qui rapporte un gel).",
+    steps:[
+      "Dire à Claude lesquels vous plaisent (ou proposer les vôtres)",
+      "Valider le principe des récompenses (étoiles/gels/médailles spéciales uniquement)"
+    ]}
+]},
+{ titre: "🟢 En continu (votre rôle de testeuse en chef)", tasks: [
+  { id:'grille', t:"Re-tester La Grille en mode match-3", temps:"3 min", debloque:"le dernier gameplay de janvier non validé",
+    why:"Le swap par glissement (8 directions, animation croisée) vient d'être livré suite à votre retour #121 — badge « ! » sur le jour 16.",
+    steps:[ "Jour 16 → glisser les tuiles → verdict via les 3 cases" ]},
+  { id:'fevrier', t:"Continuer la campagne février → 10 mars", temps:"au fil des jours", debloque:"le roster définitif de l'app",
+    why:"36 anciens gameplays restants à passer en revue (les jours 32 et 35 ont déjà été retirés sur vos verdicts). Chaque verdict Validé/À modifier/Remplacer façonne le jeu final.",
+    steps:[
+      "Avancer dans les jours à badge « ! » du calendrier",
+      "Un verdict par gameplay — Claude traite chaque retour en continu"
+    ]},
+  { id:'devices', t:"Tester sur un 2e appareil si possible", temps:"10 min", debloque:"la confiance petits écrans",
+    why:"L'audit automatique 360 px est passé, mais rien ne remplace un vrai téléphone différent du vôtre (idéalement un petit écran ou un Android ancien).",
+    steps:[ "Installer l'APK sur un autre téléphone du foyer et jouer 2-3 jours du calendrier" ]}
+]}
+];
+
+const KEY = 'orderix_todo_wael';
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) {}
+function save() { localStorage.setItem(KEY, JSON.stringify(state)); }
+
+function render() {
+  const root = document.getElementById('groups');
+  root.innerHTML = '';
+  let total = 0, done = 0;
+  GROUPS.forEach(g => {
+    const gd = document.createElement('div');
+    gd.className = 'group';
+    gd.innerHTML = '<h2>' + g.titre + '</h2>';
+    g.tasks.forEach(t => {
+      total++;
+      const stepsDone = (state[t.id] && state[t.id].steps) || {};
+      const allSteps = t.steps.length;
+      const nDone = t.steps.filter((_, i) => stepsDone[i]).length;
+      const taskDone = !!(state[t.id] && state[t.id].done) || (allSteps > 0 && nDone === allSteps);
+      if (taskDone) done++;
+      const el = document.createElement('div');
+      el.className = 'task' + (taskDone ? ' done' : '') + (t.urgent && !taskDone ? ' urgent' : '');
+      el.innerHTML = `
+        <div class="thead" data-task="${t.id}">
+          <div class="cb">${taskDone ? '✓' : ''}</div>
+          <div class="tt">
+            <h3>${t.t}</h3>
+            <div class="meta">
+              ${t.urgent && !taskDone ? '<span class="pill p-urgent">⚠ CRITIQUE</span>' : ''}
+              <span class="pill p-temps">⏱ ${t.temps}</span>
+              <span class="pill p-debloque">🔓 ${t.debloque}</span>
+            </div>
+            <p class="why">${t.why}</p>
+          </div>
+        </div>
+        <div class="steps">${t.steps.map((s, i) => `
+          <div class="step ${stepsDone[i] ? 'done' : ''}" data-task="${t.id}" data-step="${i}">
+            <div class="scb">${stepsDone[i] ? '✓' : ''}</div><div class="sl">${s}</div>
+          </div>`).join('')}
+        </div>`;
+      gd.appendChild(el);
+    });
+    root.appendChild(gd);
+  });
+  document.getElementById('ptxt').textContent = done + ' / ' + total + ' tâches terminées';
+  document.getElementById('pbar').style.width = (total ? Math.round(100 * done / total) : 0) + '%';
+}
+
+document.addEventListener('click', (e) => {
+  const step = e.target.closest('.step');
+  if (step) {
+    if (e.target.closest('a')) return; // laisser les liens s'ouvrir
+    const id = step.dataset.task, i = step.dataset.step;
+    state[id] = state[id] || { steps: {} };
+    state[id].steps = state[id].steps || {};
+    state[id].steps[i] = !state[id].steps[i];
+    save(); render();
+    return;
+  }
+  const head = e.target.closest('.thead');
+  if (head) {
+    const id = head.dataset.task;
+    state[id] = state[id] || { steps: {} };
+    state[id].done = !state[id].done;
+    save(); render();
+  }
+});
+
+render();
+</script>
+</body>
+</html>
