@@ -109,6 +109,8 @@ document.querySelectorAll('#tabbar .tab').forEach(tab => {
 });
 // Le « + » à côté des étoiles ouvre la Boutique (avant : doublon du Profil)
 document.getElementById('hud-plus').addEventListener('click', () => showScreen('shop'));
+// L'avatar du HUD ouvre le Profil (convention Easybrain/SNG)
+document.getElementById('hud-avatar').addEventListener('click', () => showScreen('profile'));
 
 // ─── Boutons de jeu ──────────────────────────────────────────────
 startBtn.addEventListener('click', startGame);
