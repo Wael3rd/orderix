@@ -130,12 +130,12 @@ const EPICS = [
   ]
 },
 {
-  id:'money', title:'E6 · Monétisation douce', status:'bloque',
-  goal:"Payer pour se faire plaisir, jamais pour gagner.",
+  id:'money', title:'E6 · Monétisation douce', status:'encours',
+  goal:"Payer pour se faire plaisir, jamais pour gagner. Décision actée le 19/07 (docs/monetisation.md).",
   tasks:[
-    {s:'bloque', t:"Choix du modèle", n:"BLOQUÉ : décision produit à valider ENSEMBLE — ma reco : cosmétiques premium + pub récompensée facultative, zéro interstitielle"},
-    {s:'bloque', t:"Boutique de thèmes", n:"BLOQUÉ par le choix du modèle"},
-    {s:'bloque', t:"Intégration facturation Play", n:"BLOQUÉ par le choix du modèle + compte Play"}
+    {s:'fait', t:"Choix du modèle (délégué et tranché)", n:"✓ cosmétiques premium à achat unique, ZÉRO publicité (même récompensée), zéro avantage payant, zéro consommable — argument « sans pub » conservé sur la fiche store"},
+    {s:'fait', t:"Packs & vitrine dans l'app", n:"✓ packs Aurore et Forêt (2,99 € · thème + 2 avatars exclusifs) visibles avec 💎, message boutique, droits locaux + bouton de simulation en zone de test"},
+    {s:'bloque', t:"Intégration facturation Play Billing", n:"BLOQUÉ par le compte Play — productIds prêts (pack_aurore, pack_foret), branchement à la mise en ligne"}
   ]
 },
 {
