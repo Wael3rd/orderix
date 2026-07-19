@@ -90,12 +90,12 @@ const EPICS = [
   ]
 },
 {
-  id:'backend', title:'E2 · Comptes & Backend (Supabase, RGPD)', status:'bloque',
+  id:'backend', title:'E2 · Comptes & Backend (Supabase, RGPD)', status:'encours',
   goal:"La fondation connectée : identité, scores fiables, conformité UE.",
   tasks:[
-    {s:'bloque', t:"Créer les projets Supabase staging + prod (région EU)", n:"ACTION PROPRIÉTAIRE : créer les 2 projets et fournir les clés anon — le schéma SQL est déjà prêt dans supabase/migrations/"},
-    {s:'bloque', t:"Auth anonyme + réservation de pseudo", n:"BLOQUÉ par les clés — device-first, aucun mot de passe requis pour jouer"},
-    {s:'bloque', t:"Migration des scores et classements GAS → Supabase", n:"BLOQUÉ par les clés — avec période de double-écriture"},
+    {s:'fait', t:"Créer les projets Supabase staging + prod (région EU)", n:"✓ orderix-staging + orderix-prod créés à Paris (eu-west-3), clés anon branchées dans les configs"},
+    {s:'encours', t:"Auth anonyme + réservation de pseudo", n:"client livré (api/supabase.js : session anonyme, refresh, pseudo unique) — reste : activer « Allow anonymous sign-ins » dans les 2 dashboards"},
+    {s:'encours', t:"Migration des scores et classements GAS → Supabase", n:"double-écriture + classement Supabase avec repli GAS livrés — reste : coller le SQL du schéma dans les 2 SQL Editors"},
     {s:'bloque', t:"RGPD : consentement, export des données, suppression de compte", n:"BLOQUÉ par les clés (la privacy policy locale est déjà publiée)"},
     {s:'bloque', t:"Config à distance des jours (remplace le Sheet)", n:"BLOQUÉ par les clés"},
     {s:'bloque', t:"Scores côté serveur avec garde-fous anti-triche", n:"BLOQUÉ par les clés"}
