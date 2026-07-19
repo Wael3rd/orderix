@@ -83,6 +83,14 @@
         <section id="screen-league" class="screen hidden">
             <h2 class="screen-title">Classement</h2>
             <p class="screen-sub" id="league-sub"></p>
+
+            <div class="lead" id="weekly-league" style="animation:none;margin-bottom:14px;" hidden>
+                <div class="lt">— Ma ligue de la semaine —</div>
+                <p class="hint" id="weekly-league-note"
+                    style="text-align:center;font-size:.75rem;color:var(--gris);margin:2px 0 8px;"></p>
+                <ul id="weekly-league-list"></ul>
+            </div>
+
             <div class="lead" style="animation:none">
                 <div class="lt" id="league-title">— Top 10 du jour —</div>
                 <ul id="league-list"></ul>
@@ -158,6 +166,19 @@
                 <div id="year-fresque" style="margin-top:10px;"></div>
                 <div id="year-trophies"
                     style="display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap;"></div>
+            </div>
+
+            <div class="profile-card card" id="rgpd-card" hidden>
+                <h3>Mes données</h3>
+                <p class="hint">Vos scores en ligne sont pseudonymes (pseudo + temps, rien d'autre).
+                    <a href="https://wael3rd.github.io/orderix/privacy.html" target="_blank"
+                        style="color:var(--bleu);font-weight:700;">Politique de confidentialité</a>
+                </p>
+                <button id="rgpd-export" class="btn btn-quiet" style="width:100%;margin-top:8px;">📦 Exporter mes
+                    données en ligne</button>
+                <button id="rgpd-delete" class="btn btn-ghost" style="width:100%;margin-top:8px;color:var(--rouge);">
+                    🗑 Supprimer mon compte en ligne</button>
+                <div id="rgpd-status" class="hint" style="margin-top:6px;"></div>
             </div>
 
             <div class="profile-card card hidden" id="dev-zone">

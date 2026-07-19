@@ -198,6 +198,7 @@ function buildHome() {
 
 // ── CLASSEMENT (écran Ligue) ─────────────────────────────────────
 function buildLeague() {
+    buildWeeklyLeague();
     const tid = todayDayId();
     const day = DAYS.find(d => d.id === tid) || DAYS[0];
     if (day.empty) {
@@ -212,6 +213,51 @@ function buildLeague() {
         ? 'Revenez demain pour le prochain défi.'
         : 'Jouez le puzzle du jour pour y figurer.';
     fetchBoardInto(day.id, document.getElementById('league-list'), 10);
+}
+
+// ── Ligue hebdomadaire (Supabase) : mon groupe de la semaine ─────
+function buildWeeklyLeague() {
+    const box = document.getElementById('weekly-league');
+    if (typeof SB_ENABLED === 'undefined' || !SB_ENABLED) { box.hidden = true; return; }
+    box.hidden = false;
+    const list = document.getElementById('weekly-league-list');
+    const note = document.getElementById('weekly-league-note');
+    note.textContent = 'Victoires de la semaine · départage au temps total · fin dimanche soir';
+    list.innerHTML = '';
+    list.appendChild(_skeletonRows(5));
+
+    sbJoinLeague()
+        .then(g => g ? sbGetLeague() : null)
+        .then(rows => {
+            list.innerHTML = '';
+            if (!rows || !rows.length) {
+                list.innerHTML = '<li class="empty">La ligue s\'ouvre avec votre première victoire de la semaine !</li>';
+                return;
+            }
+            note.textContent = `Groupe de ${rows.length} joueuse${rows.length > 1 ? 's' : ''} · victoires de la semaine · fin dimanche soir`;
+            rows.forEach((entry, index) => {
+                const li = document.createElement('li');
+                li.className = 'lrow' + (entry.is_me ? ' me' : '');
+                const rk = document.createElement('span');
+                rk.className = 'rk' + (index < 3 ? ' r' + (index + 1) : '');
+                rk.textContent = index + 1;
+                const av = document.createElement('span');
+                av.className = 'av';
+                av.textContent = (entry.pseudo || '?')[0].toUpperCase();
+                const nm = document.createElement('span');
+                nm.className = 'nm';
+                nm.textContent = entry.pseudo + (entry.is_me ? ' (vous)' : '');
+                const sc = document.createElement('span');
+                sc.className = 'sc';
+                sc.textContent = entry.wins + ' ✓' +
+                    (entry.wins > 0 ? ` · ${(entry.total_time_ms / 1000).toFixed(0)} s` : '');
+                li.append(rk, av, nm, sc);
+                list.appendChild(li);
+            });
+        })
+        .catch(() => {
+            list.innerHTML = '<li class="empty">Ligue indisponible pour le moment.</li>';
+        });
 }
 
 // ── CALENDRIER ───────────────────────────────────────────────────

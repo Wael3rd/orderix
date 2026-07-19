@@ -142,3 +142,26 @@ function sbExportMyData() {
     if (!SB_ENABLED) return Promise.resolve(null);
     return sbRpc('export_my_data', {}, true).catch(() => null);
 }
+
+// ── RGPD : suppression de compte (art. 17) — irréversible ────────
+function sbDeleteMyAccount() {
+    if (!SB_ENABLED) return Promise.resolve(false);
+    return sbRpc('delete_my_account', {}, true).then(() => {
+        sbSession = null;
+        sbSaveSession();
+        if (typeof logEvent === 'function') logEvent('sb_compte_supprime');
+        return true;
+    }).catch(() => false);
+}
+
+// ── Ligue hebdomadaire ───────────────────────────────────────────
+function sbJoinLeague() {
+    if (!SB_ENABLED) return Promise.resolve(null);
+    return sbRpc('join_league', {}, true).catch(() => null);
+}
+
+// Renvoie [{pseudo, wins, total_time_ms, is_me}] ou null
+function sbGetLeague() {
+    if (!SB_ENABLED) return Promise.resolve(null);
+    return sbRpc('get_league', {}, true).catch(() => null);
+}

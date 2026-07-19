@@ -202,6 +202,38 @@ document.getElementById('week-share').addEventListener('click', () => {
     }
 });
 
+// ─── RGPD : export et suppression du compte en ligne ─────────────
+if (typeof SB_ENABLED !== 'undefined' && SB_ENABLED) {
+    const rgpdCard = document.getElementById('rgpd-card');
+    const rgpdStatus = document.getElementById('rgpd-status');
+    rgpdCard.hidden = false;
+
+    document.getElementById('rgpd-export').addEventListener('click', async () => {
+        rgpdStatus.textContent = 'Export en cours…';
+        const data = await sbExportMyData();
+        if (!data) { rgpdStatus.textContent = 'Aucune donnée en ligne (ou hors-ligne).'; return; }
+        const txt = JSON.stringify(data, null, 2);
+        logEvent('rgpd_export');
+        if (navigator.share) {
+            navigator.share({ title: 'Mes données Orderix', text: txt }).catch(() => { });
+            rgpdStatus.textContent = '✓ Export prêt à partager.';
+        } else if (navigator.clipboard) {
+            navigator.clipboard.writeText(txt);
+            rgpdStatus.textContent = '✓ Données copiées dans le presse-papiers.';
+        }
+    });
+
+    document.getElementById('rgpd-delete').addEventListener('click', async () => {
+        if (!confirm('Supprimer définitivement votre compte en ligne ?\n\nVos scores publiés et votre pseudo seront effacés des classements. Votre progression LOCALE (calendrier, médailles, série) reste sur ce téléphone.')) return;
+        if (!confirm('Vraiment sûr(e) ? Cette action est irréversible.')) return;
+        rgpdStatus.textContent = 'Suppression…';
+        const ok = await sbDeleteMyAccount();
+        rgpdStatus.textContent = ok
+            ? '✓ Compte en ligne supprimé. Un nouveau compte anonyme sera créé si vous rejouez en ligne.'
+            : 'Échec — vérifiez la connexion et réessayez.';
+    });
+}
+
 // ─── Rappel quotidien (notification locale, opt-in) ──────────────
 // Plugin Capacitor LocalNotifications : absent dans le navigateur, on
 // se protège. Une seule notification par jour, à 19 h, jamais plus.
