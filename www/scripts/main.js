@@ -107,7 +107,8 @@ function recoverPendingGame() {
 document.querySelectorAll('#tabbar .tab').forEach(tab => {
     tab.addEventListener('click', () => showScreen(tab.dataset.screen));
 });
-document.getElementById('hud-plus').addEventListener('click', () => showScreen('profile'));
+// Le « + » à côté des étoiles ouvre la Boutique (avant : doublon du Profil)
+document.getElementById('hud-plus').addEventListener('click', () => showScreen('shop'));
 
 // ─── Boutons de jeu ──────────────────────────────────────────────
 startBtn.addEventListener('click', startGame);

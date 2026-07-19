@@ -320,6 +320,53 @@
     z-index: 5;
 }
 
+/* ── Juiciness : rebonds, respiration, réglages repliés ────── */
+
+/* Le panneau de résultat surgit avec un rebond élastique */
+#result-panel:not(.hidden) { animation: springIn .5s cubic-bezier(.34, 1.56, .64, 1) both; }
+
+/* L'icône de l'onglet actif rebondit à la sélection */
+.tab.active svg { animation: tabPop .35s cubic-bezier(.34, 1.56, .64, 1); }
+
+/* Le bouton « Jouer » du jour respire doucement (appel à l'action) */
+@keyframes breathe {
+    0%, 100% { box-shadow: 0 6px 16px rgba(74, 108, 250, .35); transform: scale(1); }
+    50% { box-shadow: 0 10px 26px rgba(74, 108, 250, .55); transform: scale(1.025); }
+}
+#daily-action .btn-primary { animation: breathe 2.6s ease-in-out infinite; }
+
+/* Groupe « Réglages » du profil : replié par défaut */
+details.reglages { margin-bottom: 12px; }
+details.reglages > summary {
+    list-style: none;
+    cursor: pointer;
+    background: var(--carte);
+    border-radius: var(--radius-sm);
+    padding: 16px 20px;
+    font-weight: 800;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 1px 4px rgba(35, 38, 47, .06);
+    user-select: none;
+}
+details.reglages > summary::-webkit-details-marker { display: none; }
+details.reglages > summary::after {
+    content: '›';
+    margin-left: auto;
+    font-size: 1.3rem;
+    color: var(--gris);
+    transition: transform .2s;
+}
+details.reglages[open] > summary::after { transform: rotate(90deg); }
+details.reglages[open] > summary { border-radius: var(--radius-sm) var(--radius-sm) 0 0; }
+details.reglages > .profile-card { animation: riseIn .25s ease both; }
+
+@media (prefers-reduced-motion: reduce) {
+    #result-panel:not(.hidden), .tab.active svg, #daily-action .btn-primary { animation: none !important; }
+}
+
 /* ── Calendrier : toggle grille / liste ───────────────────── */
 
 .cal-toggle {

@@ -102,7 +102,49 @@ input { font-family: inherit; font-size: 1rem; }
     font-size: 1.05rem;
     transition: transform .12s ease, box-shadow .2s ease, background .2s ease;
 }
-.btn:active { transform: scale(.97); }
+.btn:active { transform: scale(.94); filter: brightness(.96); }
+
+/* ── Système de motion global (« juiciness ») ─────────────────────
+   Entrées d'écran en cascade, rebond élastique du panneau de résultat,
+   pop des compteurs. Respecte prefers-reduced-motion. */
+@keyframes riseIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes springIn {
+    0% { opacity: 0; transform: translateY(34px) scale(.96); }
+    60% { opacity: 1; transform: translateY(-6px) scale(1.015); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes popNum {
+    0% { transform: scale(1); }
+    45% { transform: scale(1.35); }
+    100% { transform: scale(1); }
+}
+@keyframes tabPop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.28) translateY(-2px); }
+    100% { transform: scale(1); }
+}
+
+/* Chaque écran entre en cascade : ses blocs directs montent l'un
+   après l'autre (l'animation rejoue à chaque affichage) */
+.screen > * { animation: riseIn .34s cubic-bezier(.22, .9, .36, 1) both; }
+.screen > *:nth-child(2) { animation-delay: .045s; }
+.screen > *:nth-child(3) { animation-delay: .09s; }
+.screen > *:nth-child(4) { animation-delay: .135s; }
+.screen > *:nth-child(5) { animation-delay: .18s; }
+.screen > *:nth-child(6) { animation-delay: .225s; }
+.screen > *:nth-child(n+7) { animation-delay: .27s; }
+.screen.hidden > * { animation: none; }
+/* L'écran de jeu reste immédiat : le plateau ne doit jamais “flotter” */
+#screen-game > * { animation: none; }
+
+.pop-num { animation: popNum .4s cubic-bezier(.34, 1.56, .64, 1); }
+
+@media (prefers-reduced-motion: reduce) {
+    .screen > *, .pop-num { animation: none !important; }
+}
 
 .btn-primary {
     background: var(--bleu);

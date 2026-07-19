@@ -196,14 +196,6 @@
             </div>
 
             <div class="profile-card card">
-                <h3>Rappel quotidien</h3>
-                <p class="hint">Une petite notification à 19 h si le puzzle du jour vous attend encore. Jamais
-                    plus d'une par jour.</p>
-                <button id="notif-toggle" class="btn btn-quiet" style="margin-top:8px;">🔔 Activer le rappel</button>
-                <div id="notif-status" class="hint" style="margin-top:6px;"></div>
-            </div>
-
-            <div class="profile-card card">
                 <h3>Ma semaine</h3>
                 <div id="week-recap" style="margin-top:8px;"></div>
                 <button id="week-share" class="btn btn-quiet" style="width:100%;margin-top:12px;">Partager ma
@@ -217,6 +209,18 @@
                 <div id="year-trophies"
                     style="display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap;"></div>
             </div>
+
+            <details class="reglages">
+                <summary>⚙️ Réglages & compte</summary>
+
+                <div class="profile-card card">
+                    <h3>Rappel quotidien</h3>
+                    <p class="hint">Une petite notification à 19 h si le puzzle du jour vous attend encore. Jamais
+                        plus d'une par jour.</p>
+                    <button id="notif-toggle" class="btn btn-quiet" style="margin-top:8px;">🔔 Activer le
+                        rappel</button>
+                    <div id="notif-status" class="hint" style="margin-top:6px;"></div>
+                </div>
 
             <div class="profile-card card" id="account-card" hidden>
                 <h3>Sauvegarde du compte</h3>
@@ -272,6 +276,7 @@
                     style="margin-top:10px;max-height:260px;overflow-y:auto;background:var(--fond);border-radius:10px;padding:10px;font-size:.68rem;font-family:monospace;line-height:1.5;">
                 </div>
             </div>
+            </details>
 
             <p class="about-note">Orderix — 365 jours d'agilité mentale.</p>
         </section>

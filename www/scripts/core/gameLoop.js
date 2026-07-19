@@ -441,8 +441,26 @@ function endGame(message, isWin, isAbandon = false) {
     resultPanel.classList.remove('hidden');
     resultStatus.textContent = isWin ? 'Réussi' : (isAbandon ? 'Abandonné' : 'Raté');
     resultStatus.className = 'result-status ' + (isWin ? 'win' : 'fail');
-    resultTime.innerHTML = isAbandon ? '<small>Partie abandonnée</small>'
-        : `${(timeElapsed / 1000).toFixed(3)}<small> s</small>`;
+    // Compteur animé : le temps « monte » jusqu'à sa valeur puis pop
+    if (isAbandon) {
+        resultTime.innerHTML = '<small>Partie abandonnée</small>';
+    } else {
+        const tempsFinal = timeElapsed / 1000;
+        resultTime.innerHTML = `0.000<small> s</small>`;
+        const t0 = (typeof performance !== 'undefined' ? performance.now() : Date.now());
+        const tick = () => {
+            const now = (typeof performance !== 'undefined' ? performance.now() : Date.now());
+            const p = Math.min(1, (now - t0) / 650);
+            const ease = 1 - Math.pow(1 - p, 3);
+            resultTime.innerHTML = `${(tempsFinal * ease).toFixed(3)}<small> s</small>`;
+            if (p < 1) requestAnimationFrame(tick);
+            else {
+                resultTime.classList.add('pop-num');
+                setTimeout(() => resultTime.classList.remove('pop-num'), 450);
+            }
+        };
+        requestAnimationFrame(tick);
+    }
     resultPhrase.textContent = isWin ? pickPhrase(WIN_PHRASES) : pickPhrase(FAIL_PHRASES);
     // Récompense d'événement (double étoiles, gel du 1er) gagnée à l'instant
     if (isWin && typeof lastEventReward === 'string' && lastEventReward) {
