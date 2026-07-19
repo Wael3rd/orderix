@@ -286,6 +286,13 @@ if (typeof SB_ENABLED !== 'undefined' && SB_ENABLED) {
         } else if (u.email && u.enAttente) {
             accStatus.textContent = '⏳ Confirmation en attente pour ' + u.email + ' — cliquez le lien reçu par e-mail.';
             accStatus.style.color = 'var(--or)';
+        } else if (!u.email && !u.enAttente) {
+            // Le serveur dit « aucun e-mail » (compte recréé, base remise à
+            // zéro…) : on ne prétend pas être protégée
+            setStorage('orderix_email_lie', '');
+            accStatus.textContent = '⚠ Compte non protégé : une désinstallation le perdrait.';
+            accStatus.style.color = 'var(--rouge)';
+            document.getElementById('account-link-row').style.display = 'flex';
         }
     };
     majStatutCompte();
