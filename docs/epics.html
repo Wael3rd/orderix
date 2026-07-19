@@ -105,7 +105,7 @@ const EPICS = [
   id:'social', title:'E3 · Ligue & Social doux', status:'fait',
   goal:"Une raison de revenir chaque jour de la semaine — sans jamais affronter personne.",
   tasks:[
-    {s:'fait', t:"Ligue hebdomadaire (v1)", n:"✓ groupes de 30 remplis à l'arrivée, classement victoires de la semaine + départage au temps, reset chaque lundi, « Invitée » pour les sans-pseudo — testé multi-comptes 8/8 · v2 : promotion/relégation"},
+    {s:'fait', t:"Ligue hebdomadaire (v2 complète)", n:"✓ 3 divisions 🥇🥈🥉 avec promotion/relégation hebdomadaire (top 5 monte, 5 dernières descendent, règle adoucie petits groupes), groupes de 30, testée en conditions réelles"},
     {s:'fait', t:"Récap de la semaine", n:"carte « Ma semaine » sur le profil (7 pastilles L→D, réussites, meilleure perf) + partage emoji 🟩🟥⬜ vers WhatsApp"},
     {s:'fait', t:"Classement entre amies", n:"✓ groupes à code 6 caractères (création, invitation WhatsApp, jonction, départ), classement hebdo par groupe — testé multi-comptes 8/8"}
   ]
@@ -151,13 +151,13 @@ const EPICS = [
   ]
 },
 {
-  id:'analytics', title:'E8 · Analytics & Mesure', status:'encours',
+  id:'analytics', title:'E8 · Analytics & Mesure', status:'fait',
   goal:"Savoir si les boucles marchent — les KPIs du doc méta (D1/D7/D30, retour après série brisée).",
   tasks:[
     {s:'fait', t:"Événements locaux d'abord", n:"journal local (600 derniers) : session_start, game_result (jour/mode/win/late/temps), partage, gels, notifications — prêt à synchroniser vers Supabase"},
     {s:'fait', t:"Synchronisation des événements vers Supabase", n:"✓ lots de 100, pseudonymes, table insert-only (illisible du client, vérifié), flush au démarrage + toutes les 5 min"},
-    {s:'afaire', t:"Cohortes & funnels D1/D7/D30", n:"les données arrivent — reste l'agrégation et son affichage"},
-    {s:'afaire', t:"Tableau de bord rétention", n:"DÉBLOQUÉ par E2 ✓ — page web comme le suivi des gameplays"}
+    {s:'fait', t:"Cohortes & funnels D1/D7", n:"✓ calculés côté base par cohortes réelles (fonction get_public_stats, agrégats uniquement)"},
+    {s:'fait', t:"Tableau de bord rétention", n:"✓ stats.html : DAU, D1/D7, parties, réussite, partages, erreurs — auto-actualisé, publié sur gh-pages"}
   ]
 },
 {
