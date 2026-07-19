@@ -79,7 +79,7 @@ letter-spacing:.05em;white-space:nowrap}
 // ─── Base curée (état au 18/07/2026 après la vague de correctifs) ───
 // baseStatus : valide | corrige | nouveau | aucun
 const DAYS = [
- {d:1, n:"La Chaîne", g:"Schulte / enchaînement", s:"valide", note:"#59 : « Validé » ✓"},
+ {d:1, n:"La Chaîne", g:"Schulte / enchaînement", s:"valide", note:"#59 puis #122 : ✅ Validé, doublement confirmé."},
  {d:2, n:"Tri Cascade", g:"tri de flux façon Speed Match", s:"valide", note:"#68 : « Validé » ✓"},
  {d:3, n:"L'Insertion", g:"timeline", s:"valide", note:"#80 : « Validé » ✓ (après la barre de temps du #69)."},
  {d:4, n:"La Fontaine", g:"balles rebondissantes à éclater dans l'ordre", s:"valide", note:"#49 : « Jeu validé » ✓"},
@@ -93,8 +93,8 @@ const DAYS = [
  {d:12, n:"Les Tubes", g:"water-sort ordonné", s:"valide", note:"#99 : « Passe-le en validé ! » ✓ (fioles figées + fond 5→1 confirmés)."},
  {d:13, n:"Le Tri Minimal", g:"tri par insertions comptées (ex-Échange Minimal)", s:"valide", note:"#108 : ✅ Validé ✓ (mécanique glisser + budget minimum)."},
  {d:14, n:"Les Boulons", g:"screw-sort (Screwdom)", s:"valide", note:"#11 puis #25 « Ok comme gameplay là ! » — doublement confirmé."},
- {d:15, n:"La File", g:"file d'attente + sièges", s:"valide", note:"#12 réussi ; l'idée multi-guichets est notée au backlog (issue refermée)."},
- {d:16, n:"La Grille", g:"3×3 échanges adjacents+diagonales", s:"valide", note:"#74 : « Validé » ✓ (née de VOTRE idée #13)."},
+ {d:15, n:"La File", g:"file d'attente + sièges", s:"retire", note:"#120 « pas au niveau des autres » : retirée du calendrier, journée laissée VIDE sur demande."},
+ {d:16, n:"La Grille", g:"swap match-3, diagonales comprises", s:"corrige", note:"#121 : les tuiles s'échangent désormais en GLISSANT vers la voisine, avec animation croisée — exactement comme un match-3 (le tap-tap reste possible). À re-tester."},
  {d:17, n:"La Tour", g:"Hanoï", s:"valide", note:"#14 « C'EST GÉNIAL ! »"},
  {d:18, n:"Le Mahjong", g:"mahjong solitaire à étages (Vita Mahjong)", s:"valide", note:"#101 : « Passe-le en validé ! » ✓ (48 tuiles confirmées)."},
  {d:19, n:"Plus Petit, Plus Grand", g:"futoshiki", s:"valide", note:"#75 : « Validé » ✓"},
@@ -104,16 +104,16 @@ const DAYS = [
  {d:23, n:"Chronologie", g:"culture générale ordonnée", s:"valide", note:"#109 : ✅ Validé ✓ (drag corrigé, 8 cartes)."},
  {d:24, n:"Les Suites", g:"Spider Solitaire mini (evergreen n°1 des cartes)", s:"valide", note:"#111 : ✅ Validé ✓ — réussi en 24 min 45, un vrai morceau ! Donnes toujours vérifiées résolubles."},
  {d:25, n:"2048", g:"LE classique merge", s:"valide", note:"#55 : « Très bien, c'est validé ! » ✓"},
- {d:26, n:"L'Embouteillage", g:"Rush Hour / Unblock Me", s:"corrige", note:"#113 : config vrai Rush Hour — chaque voiture dorée sort par SA flèche (droite, gauche, haut ou bas), camions de 3, nouvelles grilles vérifiées par solveur (min 24/25/28 manœuvres). À re-tester."},
+ {d:26, n:"L'Embouteillage", g:"Rush Hour multi-sorties", s:"valide", note:"#114 : ✅ Validé ✓ (sorties dans les 4 sens, grilles vérifiées par solveur)."},
  {d:27, n:"Triple Suite", g:"tile-match (Vita Mahjong, Triple Tile)", s:"valide", note:"#36 : « Ça marche super super bien » ✓"},
  {d:28, n:"Photo de Classe", g:"mémoire spatiale", s:"valide", note:"#30 « très bien » — temps de mémorisation doublé comme demandé."},
  {d:29, n:"Le Taquin", g:"15-puzzle classique (indémodable du casual)", s:"valide", note:"#112 : ✅ Validé ✓"},
  {d:30, n:"Fusion", g:"chaînes à fusionner", s:"valide", note:"#32 « vraiment très bien » — consigne réécrite comme demandé."},
- {d:31, n:"Le Nonogramme", g:"picross 6×6 (Nonogram.com, top charts mondial)", s:"corrige", note:"#110 : grille passée en 6×6 (max 2 blocs par ligne/colonne conservé). À re-tester."},
- {d:32, n:"Le Rangement", g:"ancien mode · 1 févr.", s:'retest', note:"Campagne de re-test (1 févr.) — verdict à donner via les cases de l'app."},
- {d:33, n:"Tri Croissant", g:"ancien mode · 2 févr.", s:'retest', note:"Campagne de re-test (2 févr.) — verdict à donner via les cases de l'app."},
+ {d:31, n:"Le Nonogramme", g:"picross 6×6 (Nonogram.com, top charts mondial)", s:"valide", note:"#115 : ✅ Validé ✓ (format 6×6)."},
+ {d:32, n:"Le Rangement", g:"ancien mode · 1 févr.", s:'retire', note:"#116 validé puis #118 : doublon du jour 33 — retiré du calendrier, journée vide sur demande."},
+ {d:33, n:"Tri Croissant", g:"ancien mode · 2 févr.", s:'valide', note:"#117 : ✅ Validé ✓"},
  {d:34, n:"Tri Décroissant", g:"ancien mode · 3 févr.", s:'retest', note:"Campagne de re-test (3 févr.) — verdict à donner via les cases de l'app."},
- {d:35, n:"Pairs Uniquement", g:"ancien mode · 4 févr.", s:'retest', note:"Campagne de re-test (4 févr.) — verdict à donner via les cases de l'app."},
+ {d:35, n:"Pairs Uniquement", g:"ancien mode · 4 févr.", s:'retire', note:"#119 « c'est nul » : retiré du calendrier, journée vide sur demande."},
  {d:36, n:"Impairs Uniquement", g:"ancien mode · 5 févr.", s:'retest', note:"Campagne de re-test (5 févr.) — verdict à donner via les cases de l'app."},
  {d:37, n:"Tri Flash", g:"ancien mode · 6 févr.", s:'retest', note:"Campagne de re-test (6 févr.) — verdict à donner via les cases de l'app."},
  {d:38, n:"Tri à l'Aveugle", g:"ancien mode · 7 févr.", s:'retest', note:"Campagne de re-test (7 févr.) — verdict à donner via les cases de l'app."},
@@ -150,7 +150,7 @@ const DAYS = [
  {d:69, n:"Symbole Commun", g:"ancien mode · 10 mars", s:'retest', note:"Campagne de re-test (10 mars) — verdict à donner via les cases de l'app."}
 ];
 
-const LAST_CURATED_ISSUE = 113; // dernier retour intégré à la base curée ci-dessus
+const LAST_CURATED_ISSUE = 122; // dernier retour intégré à la base curée ci-dessus
 const BADGES = {
   valide:    ['b-valide', '✅ Validé'],
   corrige:   ['b-corrige', '🔧 Corrigé — à re-tester'],
@@ -160,11 +160,12 @@ const BADGES = {
   recent:    ['b-recent', '💬 Retour récent traité'],
   chantier:  ['b-chantier', '🚧 En chantier'],
   remplacer: ['b-remplacer', '❌ À remplacer'],
-  retest:    ['b-corrige', '🧪 Ancien — à re-tester']
+  retest:    ['b-corrige', '🧪 Ancien — à re-tester'],
+  retire:    ['b-aucun', '🚫 Retiré (jour vide)']
 };
 
 // Version de la base curée — sert à détecter une page en cache périmée
-const SUIVI_VERSION = '2026-07-18-7';
+const SUIVI_VERSION = '2026-07-19-1';
 
 let filter = 'tous';
 let issuesByDay = {};
@@ -230,7 +231,7 @@ function render() {
   DAYS.forEach(x => { const s = statusOf(x); counts[s] = (counts[s] || 0) + 1; });
 
   const chips = [['tous', 'Tous'], ['valide', '✅ Validés'], ['corrige', '🔧 À re-tester'],
-    ['retest', '🧪 Anciens'], ['nouveau', '🆕 Nouveaux'], ['chantier', '🚧 En chantier'],
+    ['retest', '🧪 Anciens'], ['retire', '🚫 Retirés'], ['nouveau', '🆕 Nouveaux'], ['chantier', '🚧 En chantier'],
     ['remplacer', '❌ À remplacer'], ['aucun', '❓ Sans retour'], ['ouvert', '🗣 Ouverts'],
     ['recent', '💬 Récents']];
   document.getElementById('chips').innerHTML = chips
