@@ -90,24 +90,24 @@ const EPICS = [
   ]
 },
 {
-  id:'backend', title:'E2 · Comptes & Backend (Supabase, RGPD)', status:'encours',
+  id:'backend', title:'E2 · Comptes & Backend (Supabase, RGPD)', status:'fait',
   goal:"La fondation connectée : identité, scores fiables, conformité UE.",
   tasks:[
     {s:'fait', t:"Créer les projets Supabase staging + prod (région EU)", n:"✓ orderix-staging + orderix-prod créés à Paris (eu-west-3), clés anon branchées dans les configs"},
     {s:'fait', t:"Auth anonyme + réservation de pseudo", n:"✓ vérifié en conditions réelles : session anonyme, refresh, pseudo unique (casse ignorée, 409 sur doublon)"},
     {s:'fait', t:"Migration des scores et classements GAS → Supabase", n:"✓ double-écriture active, classement lu depuis Supabase avec repli GAS — test bout en bout 12/12 le 19/07"},
     {s:'fait', t:"RGPD : consentement, export des données, suppression de compte", n:"✓ carte « Mes données » sur le profil : export JSON partageable, suppression double-confirmée avec cascade vérifiée (ligue + classements), consentement explicite + lien privacy"},
-    {s:'afaire', t:"Config à distance des jours (remplace le Sheet)", n:"la table day_config existe côté base — reste à brancher la lecture dans l'app"},
+    {s:'fait', t:"Config à distance des jours (remplace le Sheet)", n:"✓ l'app lit day_config (Supabase) au démarrage — count + désactivation d'urgence — avec repli GAS et cache hors-ligne"},
     {s:'fait', t:"Scores côté serveur avec garde-fous anti-triche", n:"✓ vérifié : rejeu refusé (clé primaire), temps < 300 ms refusé, jour futur refusé"}
   ]
 },
 {
-  id:'social', title:'E3 · Ligue & Social doux', status:'encours',
+  id:'social', title:'E3 · Ligue & Social doux', status:'fait',
   goal:"Une raison de revenir chaque jour de la semaine — sans jamais affronter personne.",
   tasks:[
     {s:'fait', t:"Ligue hebdomadaire (v1)", n:"✓ groupes de 30 remplis à l'arrivée, classement victoires de la semaine + départage au temps, reset chaque lundi, « Invitée » pour les sans-pseudo — testé multi-comptes 8/8 · v2 : promotion/relégation"},
     {s:'fait', t:"Récap de la semaine", n:"carte « Ma semaine » sur le profil (7 pastilles L→D, réussites, meilleure perf) + partage emoji 🟩🟥⬜ vers WhatsApp"},
-    {s:'afaire', t:"Classement entre amies", n:"DÉBLOQUÉ par E2 ✓ — code à partager pour rejoindre le groupe"}
+    {s:'fait', t:"Classement entre amies", n:"✓ groupes à code 6 caractères (création, invitation WhatsApp, jonction, départ), classement hebdo par groupe — testé multi-comptes 8/8"}
   ]
 },
 {
@@ -155,7 +155,8 @@ const EPICS = [
   goal:"Savoir si les boucles marchent — les KPIs du doc méta (D1/D7/D30, retour après série brisée).",
   tasks:[
     {s:'fait', t:"Événements locaux d'abord", n:"journal local (600 derniers) : session_start, game_result (jour/mode/win/late/temps), partage, gels, notifications — prêt à synchroniser vers Supabase"},
-    {s:'afaire', t:"Cohortes & funnels (via Supabase)", n:"DÉBLOQUÉ par E2 ✓ — synchronisation du journal local puis cohortes D1/D7/D30"},
+    {s:'fait', t:"Synchronisation des événements vers Supabase", n:"✓ lots de 100, pseudonymes, table insert-only (illisible du client, vérifié), flush au démarrage + toutes les 5 min"},
+    {s:'afaire', t:"Cohortes & funnels D1/D7/D30", n:"les données arrivent — reste l'agrégation et son affichage"},
     {s:'afaire', t:"Tableau de bord rétention", n:"DÉBLOQUÉ par E2 ✓ — page web comme le suivi des gameplays"}
   ]
 },
