@@ -113,3 +113,6 @@ Vérif rapide qu'une session écrit en local :
 - Backlog gameplay : multi-guichets pour La File (#12, seule issue feedback ouverte).
 - Epics restants : voir docs/epics.html (7/9 verts au 19/07).
 - Campagne de re-test février : verdicts à donner en jouant (cases dans l'app).
+
+### 20/07 aprem (suite) - Bug report envoye a Anthropic
+Issue deposee : https://github.com/anthropics/claude-code/issues/79420 (sessions bridge = transcript jamais ecrit en JSONL local, pas de rapatriement possible). Dump complet de la session : docs/dump-bridge-2026-07-20-aprem.md (commit 20c3909).
