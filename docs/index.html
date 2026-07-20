@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orderix — Dashboard projet</title>
+<style>
+:root {
+  --bleu: #4A6CFA;
+  --bleu2: #3553D1;
+  --pale: #EEF2FF;
+  --encre: #1E2130;
+  --gris: #7B8094;
+  --fond: #F3F5FA;
+  --carte: #FFFFFF;
+  --ligne: #E2E5EF;
+  --or: #F5B227;
+  --vert: #34B871;
+  --rouge: #E0533D;
+  --ombre: 0 1px 3px rgba(30,33,48,.06), 0 6px 20px rgba(30,33,48,.05);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #E4E6ED;
+    --gris: #8E92A6;
+    --fond: #13151E;
+    --carte: #1C1F2C;
+    --ligne: #2A2D3C;
+    --pale: #1E2240;
+    --ombre: 0 1px 3px rgba(0,0,0,.2), 0 6px 20px rgba(0,0,0,.18);
+  }
+}
+:root[data-theme="dark"] {
+  --encre: #E4E6ED;
+  --gris: #8E92A6;
+  --fond: #13151E;
+  --carte: #1C1F2C;
+  --ligne: #2A2D3C;
+  --pale: #1E2240;
+  --ombre: 0 1px 3px rgba(0,0,0,.2), 0 6px 20px rgba(0,0,0,.18);
+}
+:root[data-theme="light"] {
+  --encre: #1E2130;
+  --gris: #7B8094;
+  --fond: #F3F5FA;
+  --carte: #FFFFFF;
+  --ligne: #E2E5EF;
+  --pale: #EEF2FF;
+  --ombre: 0 1px 3px rgba(30,33,48,.06), 0 6px 20px rgba(30,33,48,.05);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+  background: var(--fond);
+  color: var(--encre);
+  line-height: 1.5;
+  padding: 0 16px 80px;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 780px; margin: 0 auto; }
+
+/* ── Header ─────────────────────────────────────── */
+header {
+  padding: 36px 0 28px;
+  text-align: center;
+}
+header h1 {
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: -.02em;
+}
+header h1 b { color: var(--bleu); }
+header .tagline {
+  color: var(--gris);
+  font-size: .88rem;
+  font-weight: 500;
+  margin-top: 3px;
+}
+
+/* ── Sections ────────────────────────────────────── */
+.group { margin-bottom: 28px; }
+.group-label {
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--gris);
+  padding: 0 4px 8px;
+  border-bottom: 1.5px solid var(--ligne);
+  margin-bottom: 10px;
+}
+.cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+@media (max-width: 520px) { .cards { grid-template-columns: 1fr; } }
+
+/* ── Card ────────────────────────────────────────── */
+a.card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px;
+  background: var(--carte);
+  border-radius: 14px;
+  box-shadow: var(--ombre);
+  text-decoration: none;
+  color: var(--encre);
+  border: 1.5px solid transparent;
+  transition: border-color .15s ease, transform .12s ease;
+}
+a.card:hover, a.card:focus-visible {
+  border-color: var(--bleu);
+  transform: translateY(-2px);
+  outline: none;
+}
+.card .ic {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .95rem;
+  flex-shrink: 0;
+}
+.card .top { display: flex; align-items: center; gap: 10px; }
+.card .nm {
+  font-weight: 800;
+  font-size: .92rem;
+  line-height: 1.25;
+}
+.card .desc {
+  font-size: .78rem;
+  color: var(--gris);
+  font-weight: 500;
+  line-height: 1.4;
+}
+.card .tag {
+  display: inline-block;
+  font-size: .62rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+  padding: 2px 8px;
+  border-radius: 99px;
+  margin-top: 2px;
+  width: fit-content;
+}
+
+/* Icon backgrounds */
+.ic-bleu { background: var(--pale); color: var(--bleu); }
+.ic-or   { background: #FFF6E3; color: #C98A10; }
+.ic-vert { background: #E3F7ED; color: #1D7A48; }
+.ic-gris { background: var(--fond); color: var(--gris); }
+.ic-rouge { background: #FCE9E5; color: #B83D2B; }
+
+/* Tags */
+.t-live  { background: #E3F7ED; color: #1D7A48; }
+.t-owner { background: #FFF6E3; color: #A87413; }
+.t-ref   { background: var(--pale); color: var(--bleu2); }
+.t-pub   { background: var(--fond); color: var(--gris); }
+
+/* ── Footer ──────────────────────────────────────── */
+footer {
+  text-align: center;
+  color: var(--gris);
+  font-size: .72rem;
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid var(--ligne);
+}
+footer a { color: var(--bleu); text-decoration: none; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Order<b>ix</b> — Dashboard</h1>
+  <div class="tagline">Toutes les pages du projet au même endroit</div>
+</header>
+
+<div class="group">
+  <div class="group-label">Pilotage</div>
+  <div class="cards">
+    <a class="card" href="epics.html">
+      <div class="top"><div class="ic ic-bleu">📋</div><div class="nm">Production Board</div></div>
+      <div class="desc">Les 9 epics et leur statut — vue d'ensemble du projet.</div>
+      <div class="tag t-live">Actif</div>
+    </a>
+    <a class="card" href="todo-wael.html">
+      <div class="top"><div class="ic ic-or">✅</div><div class="nm">TODO Wael</div></div>
+      <div class="desc">Checklist interactive des tâches owner — cochable avec sauvegarde locale.</div>
+      <div class="tag t-owner">À faire par Wael</div>
+    </a>
+    <a class="card" href="suivi-gameplays.html">
+      <div class="top"><div class="ic ic-vert">🎮</div><div class="nm">Suivi gameplays</div></div>
+      <div class="desc">67 modes, verdicts in-app, issues GitHub — le tableau de bord des feedbacks.</div>
+      <div class="tag t-live">Actif</div>
+    </a>
+    <a class="card" href="etude-ui.html">
+      <div class="top"><div class="ic ic-bleu">🔍</div><div class="nm">Étude UI</div></div>
+      <div class="desc">Analyse des top 50 casual 2025-26 + plan d'uplift en 6 phases.</div>
+      <div class="tag t-ref">Référence</div>
+    </a>
+  </div>
+</div>
+
+<div class="group">
+  <div class="group-label">Stratégie & design</div>
+  <div class="cards">
+    <a class="card" href="meta-retention.html">
+      <div class="top"><div class="ic ic-or">🔄</div><div class="nm">Méta & rétention</div></div>
+      <div class="desc">Boucle de jeu D365 : série, gels, événements, pass, ligue — la présentation complète.</div>
+      <div class="tag t-ref">Référence</div>
+    </a>
+    <a class="card" href="stats.html">
+      <div class="top"><div class="ic ic-vert">📊</div><div class="nm">Stats publiques</div></div>
+      <div class="desc">Agrégats Supabase temps réel : joueuses, parties, temps moyen.</div>
+      <div class="tag t-live">Live</div>
+    </a>
+    <a class="card" href="produit.md">
+      <div class="top"><div class="ic ic-gris">📐</div><div class="nm">Décisions produit</div></div>
+      <div class="desc">Règles gravées : une seule tentative, zéro ads, zéro pay-to-win.</div>
+      <div class="tag t-ref">Référence</div>
+    </a>
+    <a class="card" href="monetisation.md">
+      <div class="top"><div class="ic ic-or">💰</div><div class="nm">Monétisation</div></div>
+      <div class="desc">Pass Premium, packs thèmes, arrière-plans boutique — que de la beauté.</div>
+      <div class="tag t-ref">Référence</div>
+    </a>
+  </div>
+</div>
+
+<div class="group">
+  <div class="group-label">Technique</div>
+  <div class="cards">
+    <a class="card" href="architecture.md">
+      <div class="top"><div class="ic ic-gris">🏗</div><div class="nm">Architecture</div></div>
+      <div class="desc">Plan en 4 phases GAS → Supabase, schéma DB, migrations.</div>
+      <div class="tag t-ref">Référence</div>
+    </a>
+    <a class="card" href="privacy.html">
+      <div class="top"><div class="ic ic-gris">🔒</div><div class="nm">Confidentialité</div></div>
+      <div class="desc">Politique RGPD — la page publique liée depuis l'app.</div>
+      <div class="tag t-pub">Public</div>
+    </a>
+  </div>
+</div>
+
+<div class="group">
+  <div class="group-label">Pages publiques (dans l'app)</div>
+  <div class="cards">
+    <a class="card" href="defi.html">
+      <div class="top"><div class="ic ic-rouge">🧩</div><div class="nm">Page de défi</div></div>
+      <div class="desc">Carte de partage façon Wordle — lien de défi + téléchargement.</div>
+      <div class="tag t-pub">Public</div>
+    </a>
+    <a class="card" href="confirme.html">
+      <div class="top"><div class="ic ic-vert">✉️</div><div class="nm">Confirmation email</div></div>
+      <div class="desc">Landing de validation — redirige vers l'app via deep link.</div>
+      <div class="tag t-pub">Public</div>
+    </a>
+  </div>
+</div>
+
+<footer>
+  <a href="https://github.com/Wael3rd/orderix" target="_blank">Wael3rd/orderix</a> · Dashboard projet
+</footer>
+</div>
+</body>
+</html>
