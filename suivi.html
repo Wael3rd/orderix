@@ -63,7 +63,8 @@ letter-spacing:.05em;white-space:nowrap}
      style="display:inline-block;background:var(--bleu,#4A6CFA);color:#fff;font-weight:900;
             padding:12px 22px;border-radius:999px;text-decoration:none;box-shadow:0 3px 10px rgba(74,108,250,.35);">
     ⬇ Télécharger l'APK de test (staging)</a><br>
-  <span style="font-size:.72rem;color:#8B90A0;font-weight:bold;">Toujours la dernière build — le lien ne change jamais.</span>
+  <span style="font-size:.72rem;color:#8B90A0;font-weight:bold;">Toujours la dernière build — le lien ne change jamais.</span><br>
+  <span id="build-date" style="font-size:.72rem;color:#34B871;font-weight:bold;">build : vérification…</span>
 </p>
 
 <div id="chips"></div>
@@ -165,7 +166,28 @@ const BADGES = {
 };
 
 // Version de la base curée — sert à détecter une page en cache périmée
-const SUIVI_VERSION = '2026-07-19-2';
+const SUIVI_VERSION = '2026-07-20-1';
+
+// Date de la dernière build APK : lue sur la release roulante staging-latest
+// (l'APK derrière le bouton). Permet de voir d'un coup d'œil s'il est frais.
+(async function showBuildDate() {
+  const el = document.getElementById('build-date');
+  try {
+    const r = await fetch('https://api.github.com/repos/Wael3rd/orderix/releases/tags/staging-latest');
+    if (!r.ok) throw new Error('API ' + r.status);
+    const rel = await r.json();
+    const asset = (rel.assets || []).find(a => a.name === 'Orderix-dev.apk');
+    if (!asset) throw new Error('asset introuvable');
+    const d = new Date(asset.updated_at);
+    const mo = Math.round((Date.now() - d.getTime()) / 60000);
+    const frais = mo < 180 ? ' · tout frais ✓' : '';
+    el.textContent = 'Dernière build : ' + d.toLocaleString('fr-FR',
+      { weekday: 'short', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) + frais;
+    el.style.color = '#34B871';
+  } catch (e) {
+    if (el) { el.textContent = 'build : date indisponible hors-ligne'; el.style.color = '#8B90A0'; }
+  }
+})();
 
 let filter = 'tous';
 let issuesByDay = {};
