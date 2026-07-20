@@ -107,7 +107,7 @@ Vérif rapide qu'une session écrit en local :
 
 ## Reste à faire (vu du 20/07)
 
-- **Uplift UI** : phase E (FTUE éclair : onboarding 3 écrans → 1 ou 0) et F (pastilles tabbar
+- **Uplift UI** : ~~phase E (FTUE éclair)~~ FAITE 20/07 → reste **phase F** (pastilles tabbar
   + thème sombre gratuit).
 - **OAuth** : créer les apps dans Google Cloud Console / Meta (côté Wael — docs/todo-wael.html).
 - Backlog gameplay : multi-guichets pour La File (#12, seule issue feedback ouverte).
@@ -124,6 +124,17 @@ cet emulateur x86 → telephone reel ARM obligatoire** (comme prevu). adb du SDK
 `C:\Android\sdk\platform-tools\adb.exe` (pas dans le PATH). Rappel : claude-in-mobile pas
 charge cette session (redemarrage requis) ; pilotage possible aussi en ADB brut
 (input tap/swipe, screencap) sans le MCP.
+
+### 20/07 aprem (suite 5, terminal) - Uplift phase E : FTUE eclair (fait)
+Onboarding reduit de **3 slides -> 1 ecran d'accueil**. Le CTA « Jouer le puzzle du jour »
+enchaine direct sur `selectDay(jour du jour)` = l'intro du mode, qui enseigne sa propre regle
+(fini les slides meta abstraites avant d'avoir joue). Les 2 slides « album » et « serie »
+retirees : la serie est deja proposee APRES la 1re victoire, l'album se decouvre via le
+calendrier. Bouton secondaire « Plus tard » = atterrir sur l'accueil sans forcer le jeu.
+Fichiers : `www/scripts/main.js` (OB_SLIDES a 1 element, `startTodayFromOnboarding()`,
+`closeOnboarding(launch)`, dots masques si <2 slides), `www/index.html` (libelles boutons).
+smoke-test OK, `node --check` OK. Phase E marquee done dans docs/etude-ui.html.
+**Reste uplift : phase F** (pastilles tabbar + theme sombre gratuit). APK a rebuilder en local.
 
 ### 20/07 aprem (suite 4, terminal) - Royal Match : installe mais injouable sous traduction ARM
 Contournement du NO_MATCHING_ABIS trouve : AVD `royalmatch_arm` sur image

@@ -499,11 +499,14 @@ if (notifToggle) {
     if (getStorage('orderix_notif') === '1') scheduleDailyReminder();
 }
 
-// ─── Onboarding (premier lancement, 3 écrans max) ────────────────
+// ─── Onboarding éclair (premier lancement, 1 écran → droit au jeu) ──
+// FTUE phase E : un seul accueil chaleureux, puis on tombe directement
+// dans le puzzle du jour (qui enseigne sa propre règle via l'intro du
+// mode). Les concepts méta (album, série) ne sont plus expliqués avant
+// d'avoir joué — la série est proposée APRÈS la 1re victoire, l'album se
+// découvre par le calendrier. Moins de friction = meilleure rétention D1.
 const OB_SLIDES = [
-    { e: '🧩', t: 'Un puzzle par jour', x: 'Chaque jour, un nouveau défi de trois petites minutes. Pas plus — c\'est votre rendez-vous cerveau.' },
-    { e: '🏅', t: 'Remplissez votre album', x: 'Chaque victoire colorie une case du calendrier. Un mois complet = une médaille. Et les jours manqués se rattrapent !' },
-    { e: '🔥', t: 'Gardez la série au chaud', x: 'Jouer chaque jour fait grandir votre série. Un oubli ? Vos gels 🧊 vous pardonnent — vous n\'avez rien à perdre, que des étoiles à gagner.' }
+    { e: '👋', t: 'Bienvenue dans Orderix', x: 'Un petit puzzle par jour, trois minutes de plaisir pour le cerveau. On avance en douceur, et rien ne se perd : les jours manqués se rattrapent toujours.' }
 ];
 let _obIdx = 0;
 
@@ -512,9 +515,12 @@ function renderOnboarding() {
     document.getElementById('ob-emoji').textContent = s.e;
     document.getElementById('ob-title').textContent = s.t;
     document.getElementById('ob-text').textContent = s.x;
-    document.getElementById('ob-next').textContent = _obIdx === OB_SLIDES.length - 1 ? 'C\'est parti !' : 'Suivant';
+    const last = _obIdx === OB_SLIDES.length - 1;
+    document.getElementById('ob-next').textContent = last ? 'Jouer le puzzle du jour' : 'Suivant';
     const dots = document.getElementById('ob-dots');
     dots.innerHTML = '';
+    if (OB_SLIDES.length < 2) { dots.style.display = 'none'; return; }
+    dots.style.display = 'flex';
     OB_SLIDES.forEach((_, i) => {
         const d = document.createElement('span');
         d.style.cssText = 'width:9px;height:9px;border-radius:50%;transition:background .2s;' +
@@ -523,10 +529,18 @@ function renderOnboarding() {
     });
 }
 
-function closeOnboarding() {
+// Enchaîne direct sur le puzzle du jour (intro du mode). Si le jour est
+// vide (hors campagne de test), on se contente de fermer vers l'accueil.
+function startTodayFromOnboarding() {
+    const day = DAYS.find(d => d.id === todayDayId());
+    if (day && !day.empty && typeof selectDay === 'function') selectDay(day);
+}
+
+function closeOnboarding(launch) {
     document.getElementById('onboarding').classList.add('hidden');
     setStorage('orderix_onboarded', '1');
-    logEvent('onboarding_termine', { slide: _obIdx + 1 });
+    logEvent('onboarding_termine', { slide: _obIdx + 1, joue: !!launch });
+    if (launch) startTodayFromOnboarding();
 }
 
 if (!getStorage('orderix_onboarded')) {
@@ -543,9 +557,9 @@ if (sessionReferredBy && getStorage('orderix_referred') !== '1') {
 }
 document.getElementById('ob-next').addEventListener('click', () => {
     if (_obIdx < OB_SLIDES.length - 1) { _obIdx++; haptic(8); renderOnboarding(); }
-    else closeOnboarding();
+    else closeOnboarding(true);
 });
-document.getElementById('ob-skip').addEventListener('click', closeOnboarding);
+document.getElementById('ob-skip').addEventListener('click', () => closeOnboarding(false));
 
 // ─── FTUE : proposer le rappel APRÈS la première victoire ────────
 function proposeReminderAfterFirstWin() {
