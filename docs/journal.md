@@ -107,8 +107,8 @@ Vérif rapide qu'une session écrit en local :
 
 ## Reste à faire (vu du 20/07)
 
-- **Uplift UI** : ~~phase E (FTUE éclair)~~ FAITE 20/07 → reste **phase F** (pastilles tabbar
-  + thème sombre gratuit).
+- **Uplift UI** : ~~phases E (FTUE éclair) + F (pastilles tabbar + thème sombre)~~ **FAITES 20/07
+  → uplift A→F terminé.** Reste à rebuilder l'APK en local pour tester sur appareil.
 - **OAuth** : créer les apps dans Google Cloud Console / Meta (côté Wael — docs/todo-wael.html).
 - Backlog gameplay : multi-guichets pour La File (#12, seule issue feedback ouverte).
 - Epics restants : voir docs/epics.html (7/9 verts au 19/07).
@@ -124,6 +124,24 @@ cet emulateur x86 → telephone reel ARM obligatoire** (comme prevu). adb du SDK
 `C:\Android\sdk\platform-tools\adb.exe` (pas dans le PATH). Rappel : claude-in-mobile pas
 charge cette session (redemarrage requis) ; pilotage possible aussi en ADB brut
 (input tap/swipe, screencap) sans le MCP.
+
+### 20/07 aprem (suite 6, terminal) - Uplift phase F : pastilles tabbar + theme sombre (fait)
+**Uplift TERMINE (A->F).** Deux livrables :
+1. **Pastilles tabbar** (2 sources max, point dore + pop elastique) : onglet « Jour » si le
+   puzzle du jour est jouable et pas encore joue (s'efface en jouant) ; onglet « Boutique »
+   si un palier de Carnet est atteint mais pas encore vu (s'efface a la visite de la Boutique).
+   Helpers `passReachedCount/SeenCount/passClaimable/markPassSeen` (cosmetics.js, cle
+   `orderix_pass_seen`), `refreshTabBadges()`/`setTabDot()` (screens.js, appeles dans showScreen
+   + au boot), spans `.tab-dot` dans index.html, style `.tab-dot` (app.css).
+2. **Theme sombre gratuit** : bascule via `data-theme="dark"` sur <html>. Bloc de tokens
+   sombres dans base.css (surfaces neutres + pales semantiques + ombres) ; l'accent (--bleu*)
+   et le fond du body sont geres en JS (`applyTheme`/`applyBackground` deviennent dark-aware)
+   pour rester lisibles ; `isDark()` suit la pref `orderix_dark` (on/off) sinon le systeme
+   (prefers-color-scheme) ; `applyDarkMode()`/`toggleDark()` (cosmetics.js), bouton dans les
+   Reglages du Profil (main.js), appel au boot. Verifie par capture headless (Edge/puppeteer) :
+   clair intact, sombre propre, pastille « Jour » visible dans les deux.
+smoke-test OK, `node --check` OK. Phase F marquee done dans docs/etude-ui.html.
+**APK a rebuilder en local** (`npm run android:dev`) pour tester sur appareil.
 
 ### 20/07 aprem (suite 5, terminal) - Uplift phase E : FTUE eclair (fait)
 Onboarding reduit de **3 slides -> 1 ecran d'accueil**. Le CTA « Jouer le puzzle du jour »

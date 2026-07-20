@@ -45,8 +45,10 @@ function showScreen(name) {
         if (name === 'home') buildHome();
         if (name === 'calendar') buildCalendar();
         if (name === 'league') buildLeague();
-        if (name === 'shop') buildShop();
+        // Visiter la Boutique = « j'ai vu » les paliers atteints → efface sa pastille
+        if (name === 'shop') { if (typeof markPassSeen === 'function') markPassSeen(); buildShop(); }
         if (name === 'profile') buildProfile();
+        refreshTabBadges();
 
         // Restaurer la position APRÈS reconstruction (le contenu doit
         // exister pour que la hauteur permette d'y défiler). L'écran de
@@ -76,6 +78,22 @@ function showScreen(name) {
     } else {
         showIncoming();
     }
+}
+
+// ── Pastilles tabbar (max 2 sources, phase F) ────────────────────
+// « Jour » : puzzle du jour jouable et pas encore joué (s'efface en jouant).
+// « Boutique » : récompense de Carnet à réclamer (s'efface à la visite).
+function setTabDot(screen, on) {
+    const tab = document.querySelector(`#tabbar .tab[data-screen="${screen}"]`);
+    if (!tab) return;
+    const dot = tab.querySelector('.tab-dot');
+    if (dot) dot.classList.toggle('hidden', !on);
+}
+function refreshTabBadges() {
+    const tid = todayDayId();
+    const day = DAYS.find(d => d.id === tid);
+    setTabDot('home', !!(day && !day.empty && !getPlayedInfo(tid)));
+    setTabDot('shop', typeof passClaimable === 'function' && passClaimable());
 }
 
 // ── ACCUEIL ──────────────────────────────────────────────────────

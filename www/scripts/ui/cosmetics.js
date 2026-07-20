@@ -34,9 +34,39 @@ function currentBackground() {
 }
 
 function applyBackground() {
+    // En sombre, les fonds d'écran clairs sont neutralisés : le body suit
+    // --fond (sombre). L'habillage cosmétique reprend en clair.
+    if (typeof isDark === 'function' && isDark()) {
+        document.body.style.background = 'var(--fond)';
+        document.body.style.backgroundAttachment = 'fixed';
+        return;
+    }
     const b = currentBackground();
     document.body.style.background = b.css;
     document.body.style.backgroundAttachment = 'fixed';
+}
+
+// ─── Thème sombre (gratuit, phase F) ─────────────────────────────
+// Préférence : 'on' | 'off' | absente (= suit le réglage système).
+function isDark() {
+    const p = getStorage('orderix_dark');
+    if (p === 'on') return true;
+    if (p === 'off') return false;
+    return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+}
+
+function applyDarkMode() {
+    const dark = isDark();
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    applyTheme();       // ré-accorde l'accent (pale/bord) au mode
+    applyBackground();  // repeint le body (fond clair ou --fond sombre)
+}
+
+// Bascule explicite depuis les Réglages (fige le choix, coupe le suivi système)
+function toggleDark() {
+    setStorage('orderix_dark', isDark() ? 'off' : 'on');
+    applyDarkMode();
+    if (typeof haptic === 'function') haptic(8);
 }
 
 function backgroundUnlocked(b) {
@@ -112,6 +142,25 @@ function claimPassRewards() {
     return nouveaux;
 }
 
+// ─── Pastille Boutique : palier de Carnet atteint mais pas encore vu ──
+// « Atteint » = étoiles de la saison ≥ seuil. « Vu » = mémorisé lors de
+// la dernière visite de la Boutique. La pastille s'efface donc à la visite.
+function passReachedCount() {
+    const stars = seasonStars();
+    return PASS_TIERS.filter(t => stars >= t.etoiles).length;
+}
+function passSeenCount() {
+    try {
+        const s = JSON.parse(getStorage('orderix_pass_seen') || 'null');
+        if (s && s.saison === seasonKey()) return s.n || 0;
+    } catch (e) { }
+    return 0;
+}
+function passClaimable() { return passReachedCount() > passSeenCount(); }
+function markPassSeen() {
+    setStorage('orderix_pass_seen', JSON.stringify({ saison: seasonKey(), n: passReachedCount() }));
+}
+
 // Droits premium (au lancement : Google Play Billing ; en attendant,
 // la zone de test permet de les simuler)
 function hasPack(id) {
@@ -159,8 +208,15 @@ function applyTheme() {
     const r = document.documentElement.style;
     r.setProperty('--bleu', t.bleu);
     r.setProperty('--bleu-fonce', t.fonce);
-    r.setProperty('--bleu-pale', t.pale);
-    r.setProperty('--bleu-bord', t.bord);
+    // Le pale/bord clair de l'accent devient un slate sombre en mode nuit
+    // (les fines teintes claires de l'accent sont illisibles sur --fond sombre).
+    if (document.documentElement.getAttribute('data-theme') === 'dark') {
+        r.setProperty('--bleu-pale', '#242A3A');
+        r.setProperty('--bleu-bord', '#333B52');
+    } else {
+        r.setProperty('--bleu-pale', t.pale);
+        r.setProperty('--bleu-bord', t.bord);
+    }
 }
 
 function _boutiqueMessage() {
@@ -310,5 +366,4 @@ function renderCosmetics() {
     zone.appendChild(st);
 }
 
-applyTheme();
-applyBackground();
+applyDarkMode();  // pose data-theme + applyTheme() + applyBackground()

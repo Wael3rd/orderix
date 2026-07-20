@@ -16,6 +16,7 @@
 
     const bootStart = Date.now();
     showScreen('home');
+    if (typeof refreshTabBadges === 'function') refreshTabBadges();
     const remaining = Math.max(0, 1200 - (Date.now() - bootStart));
     setTimeout(() => document.getElementById('boot-loader').classList.add('fade'), remaining);
 
@@ -885,5 +886,18 @@ if (sndToggleBtn) {
         toggleSound();
         majSoundBtn();
         if (soundOn() && typeof sndGood === 'function') sndGood();
+    });
+}
+
+// ── Bouton Thème sombre (Réglages & compte) ──────────────────────
+const darkToggleBtn = document.getElementById('dark-toggle');
+function majDarkBtn() {
+    if (darkToggleBtn) darkToggleBtn.textContent = isDark() ? 'Thème sombre : activé' : 'Thème sombre : désactivé';
+}
+if (darkToggleBtn) {
+    majDarkBtn();
+    darkToggleBtn.addEventListener('click', () => {
+        toggleDark();
+        majDarkBtn();
     });
 }

@@ -668,6 +668,7 @@ details.reglages > .profile-card { animation: riseIn .25s ease both; }
 }
 
 .tab {
+    position: relative;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -681,6 +682,26 @@ details.reglages > .profile-card { animation: riseIn .25s ease both; }
 .tab svg { width: 22px; height: 22px; }
 .tab:active { opacity: .55; }
 .tab.active { color: var(--bleu); font-weight: 700; }
+
+/* Pastille de notification (2 sources max : jour non joué, récompense pass).
+   Point doré discret en haut à droite de l'icône, cerné de la couleur de la
+   barre pour se détacher. Pop élastique à l'apparition. */
+.tab-dot {
+    position: absolute;
+    top: 3px;
+    right: calc(50% - 17px);
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--or);
+    box-shadow: 0 0 0 2px var(--carte);
+    animation: dotPop var(--dur-move) var(--ease-spring);
+}
+@keyframes dotPop {
+    0% { transform: scale(0); }
+    60% { transform: scale(1.25); }
+    100% { transform: scale(1); }
+}
 
 /* Loader plein écran initial */
 #boot-loader {
