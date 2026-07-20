@@ -77,12 +77,33 @@ référence : **analyse du flow de l'APK Blockudoku** + **prototype cliquable «
 compare-{home,boutique,calendrier,profil,resultat}.html). Corrections après test émulateur :
 **fond réchauffé #F5F3F0 (beige, palette Meowdoku)**, panneau de résultat (plateau flouté
 opacity .15 + blur 4px), boutons de feedback égalisés (vert clair / rose clair).
+**Outils d'automatisation mobile** : recherche → 2 pépites identifiées :
+- **claude-in-mobile** installé (MCP, `.mcp.json` projet) — 50+ actions ADB (tap, swipe,
+  screenshot, UI tree, App Autopilot BFS/DFS). Redémarrage Claude Code nécessaire pour charger.
+- **ghost-in-the-droid** testé → KO sur Windows (dépendance `fcntl` Unix-only).
+- **DroidBot** identifié comme meilleur outil pour explorer un jeu automatiquement en BFS et
+  générer un graphe de transition avec captures — à installer session suivante.
+- Émulateur `orderix_test` tournait (ADB connecté), APK installé et fonctionnel.
+- Plan : installer Royal Match sur téléphone réel (ARM, pas émulable x86), piloter via ADB.
+- MCP connectés côté bridge : Slack, Figma, Linear, Asana, Atlassian, Notion, Intercom,
+  Google Calendar, Gmail.
 
 ### 20/07 midi — Session terminal (celle-ci)
  6 icônes Lucide oubliées commitées (+ .mcp.json claude-in-mobile). **Phase A de l'uplift** :
 tokens motion (3 easings + 4 durées en variables CSS, easing orphelin unifié), phases A-D
 marquées faites dans l'étude. APK dev rebuildé et envoyé. Découverte du trou de mémoire des
 sessions bridgées → création de ce journal comme mémoire partagée.
+
+### 20/07 après-midi — Session bridge (claude.ai) : diagnostic transcripts, AUCUN changement produit
+Constat vérifié dans le JSONL local (`80a3948b….jsonl`) : une session **bridge** (reprise
+depuis le téléphone/claude.ai alors que le terminal était fermé) n'écrit PAS ses messages
+dans le JSONL local — seulement des marqueurs `bridge-session`. Reprendre une session bridge
+la laisse en bridge. **Règle : terminal OUVERT + message du téléphone → tout est local ;
+terminal FERMÉ → l'échange vit côté claude.ai** (rouvrable là-bas, pas via `--continue`).
+Incident réglage : `remoteControlAtStartup` brièvement passé à `false` par erreur de
+diagnostic, **remis à `true` aussitôt** (c'est lui qui permet le flux téléphone→PC).
+Vérif rapide qu'une session écrit en local :
+`Select-String -Path "$env:USERPROFILE\.claude\projects\C--Users-w-hadjmouldi-Documents-GitHub-orderix\*.jsonl" -Pattern "<mot distinctif tapé dans la session>" -SimpleMatch -List`
 
 ## Reste à faire (vu du 20/07)
 
