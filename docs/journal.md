@@ -114,5 +114,15 @@ Vérif rapide qu'une session écrit en local :
 - Epics restants : voir docs/epics.html (7/9 verts au 19/07).
 - Campagne de re-test février : verdicts à donner en jouant (cases dans l'app).
 
+### 20/07 aprem (suite 2, session bridge) - MCP game design installe
+Wael avait evoque un « MCP game design » dans une session bridge non consignee (trou de
+memoire confirme : aucune trace dans journal/dumps/JSONL — d'ou l'importance de consigner
+immediatement). Reconstruit et installe : **gamethinking-mcp-server** (github.com/mahecode/
+gamethinking-mcp-server, fork du serveur sequential-thinking oriente conception/equilibrage
+de gameplay). Pas sur npm → clone + build local dans
+`C:\Users\w.hadjmouldi\Documents\GitHub\gamethinking-mcp-server`, entree `gamethinking`
+ajoutee au `.mcp.json` du projet (handshake stdio verifie). Redemarrage de Claude Code
+necessaire pour le charger. Rappel : le MCP de controle mobile deja en place = claude-in-mobile.
+
 ### 20/07 aprem (suite) - Bug report envoye a Anthropic
 Issue deposee : https://github.com/anthropics/claude-code/issues/79420 (sessions bridge = transcript jamais ecrit en JSONL local, pas de rapatriement possible). Dump complet de la session : docs/dump-bridge-2026-07-20-aprem.md (commit 20c3909).

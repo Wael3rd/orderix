@@ -6,6 +6,12 @@
         "-y",
         "claude-in-mobile"
       ]
+    },
+    "gamethinking": {
+      "command": "node",
+      "args": [
+        "C:\\Users\\w.hadjmouldi\\Documents\\GitHub\\gamethinking-mcp-server\\dist\\index.js"
+      ]
     }
   }
 }
