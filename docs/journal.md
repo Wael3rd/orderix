@@ -14,6 +14,12 @@
 - **Badges « ! » retirés définitivement** (19/07) — le suivi des révisions vit sur docs/suivi-gameplays.html.
 - Ne jamais dépendre des labels GitHub (le `?labels=` des URLs ne s'applique pas sur mobile) → filtrer par titre `[feedback]`.
 - La routine cloud ne peut PAS builder l'APK (pas de SDK Android) → rebuild local + renvoi à chaque session.
+- **PIÈGE build APK (résolu 20/07)** : `npm run android:dev` fait `cd android && gradlew ...` ;
+  sous **Git Bash** `gradlew` (sans `./`) n'est pas trouvé → le build semblait « planter depuis
+  des jours ». En réalité Gradle marche (BUILD SUCCESSFUL en ~14 s). **Builder depuis PowerShell**
+  (`cd android; .\gradlew.bat assembleDevDebug`) après l'étape env/sync (`node set-env.js staging
+  && npx cap sync android`), ou lancer `npm run android:dev` depuis PowerShell/cmd (pas Git Bash).
+  APK dev → `android/app/build/outputs/apk/dev/debug/app-dev-debug.apk` (~6 Mo).
 - Cible : femmes ~40 ans, jeux cérébraux ; design Easybrain × SNG ; ton bienveillant, jamais punitif.
 
 ## Infrastructure (état)
