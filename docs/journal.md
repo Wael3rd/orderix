@@ -114,6 +114,29 @@ Vérif rapide qu'une session écrit en local :
 - Epics restants : voir docs/epics.html (7/9 verts au 19/07).
 - Campagne de re-test février : verdicts à donner en jouant (cases dans l'app).
 
+### 20/07 aprem (suite 3, terminal) - Royal Match KO sur emulateur (confirme)
+XAPK Royal Match (v37281, `~/Downloads/Royal+Match_37281_APKPure.xapk`) : le seul split natif
+est `config.armeabi_v7a` (ARM 32-bit). L'emulateur `orderix_test` expose
+`ro.product.cpu.abilist = x86_64,arm64-v8a` (traduction libndk_translation, mais **arm64
+uniquement, pas armeabi-v7a 32-bit**). `adb install-multiple` echoue :
+`INSTALL_FAILED_NO_MATCHING_ABIS (res=-113)`. **Conclusion : Royal Match ne tourne pas sur
+cet emulateur x86 → telephone reel ARM obligatoire** (comme prevu). adb du SDK :
+`C:\Android\sdk\platform-tools\adb.exe` (pas dans le PATH). Rappel : claude-in-mobile pas
+charge cette session (redemarrage requis) ; pilotage possible aussi en ADB brut
+(input tap/swipe, screencap) sans le MCP.
+
+### 20/07 aprem (suite 4, terminal) - Royal Match : installe mais injouable sous traduction ARM
+Contournement du NO_MATCHING_ABIS trouve : AVD `royalmatch_arm` sur image
+**android-28 google_apis x86** (abilist `x86,armeabi-v7a,armeabi`, libhoudini/ndk_translation
+gere l'ARM 32-bit). Le XAPK armeabi-v7a **s'installe (`Success`) et se lance**. MAIS a
+l'execution le device est sature (CPU 100 %, meme `adb shell echo ok` time out a 20 s) :
+gros jeu Unity + traduction ARM temps reel + rendu logiciel swiftshader = injouable/
+inautomatisable. Bilan : l'archi est resolue, la **perf ne l'est pas** sur emulateur.
+Leviers restants : relancer avec `-gpu host -cores 4 -memory 4096` (peut passer de « fige »
+a « lent »), sinon **telephone reel ARM = seule voie vraiment jouable** (plan initial du
+journal). Alternative outil : ghost-in-the-droid v1.3.0 (meme repo qu'android-agent, KO
+Windows/fcntl) a un backend Docker+KVM qui contournerait le blocage Windows.
+
 ### 20/07 aprem (suite 2, session bridge) - MCP game design installe
 Wael avait evoque un « MCP game design » dans une session bridge non consignee (trou de
 memoire confirme : aucune trace dans journal/dumps/JSONL — d'ou l'importance de consigner
