@@ -680,47 +680,45 @@ function buildShop() {
     document.getElementById('pass-mois').innerHTML =
         'Saison de ' + MOIS_LONGS[now.getMonth()] + ' · ' + imgIc('etoile') + ' ' + stars;
 
-    // Barre de progression vers le dernier palier
     const maxEtoiles = PASS_TIERS[PASS_TIERS.length - 1].etoiles;
     const prog = document.getElementById('pass-progress');
-    prog.innerHTML = `<div style="height:10px;border-radius:999px;background:var(--ligne);overflow:hidden;">
+    prog.innerHTML = `<div style="height:8px;border-radius:999px;background:var(--ligne);overflow:hidden;">
         <div style="height:100%;width:${Math.min(100, Math.round(100 * stars / maxEtoiles))}%;
-        background:linear-gradient(90deg,var(--or),#FFD778);border-radius:999px;"></div></div>`;
+        background:linear-gradient(90deg,var(--or),#FFD778);border-radius:999px;transition:width .6s ease;"></div></div>
+        <div style="display:flex;justify-content:space-between;margin-top:4px;">
+        <span style="font-size:.62rem;font-weight:700;color:var(--gris);">Palier ${PASS_TIERS.filter(t => stars >= t.etoiles).length} / ${PASS_TIERS.length}</span>
+        <span style="font-size:.62rem;font-weight:700;color:var(--or);">${imgIc('etoile')} ${stars} / ${maxEtoiles}</span></div>`;
 
-    // Paliers : colonne par palier, piste GRATUITE en haut (pour toutes),
-    // piste Premium en bas — avec une colonne de libellés pour que la
-    // gratuité saute aux yeux
+    // Battle pass vertical 2 colonnes (gratuit | palier | premium)
     const tiers = document.getElementById('pass-tiers');
     tiers.innerHTML = '';
-    const legend = document.createElement('div');
-    legend.style.cssText = 'flex-shrink:0;width:64px;display:flex;flex-direction:column;gap:6px;position:sticky;left:0;background:var(--carte);z-index:2;';
-    legend.innerHTML = '<div style="height:15px;"></div>' +
-        '<div style="min-height:52px;display:flex;align-items:center;justify-content:center;text-align:center;' +
-        'font-size:.62rem;font-weight:900;color:#1E7A4A;background:var(--vert-pale,#E3F7ED);border-radius:10px;">GRATUITE<br>pour toutes</div>' +
-        '<div style="min-height:52px;display:flex;align-items:center;justify-content:center;text-align:center;' +
-        'font-size:.62rem;font-weight:900;color:var(--bleu-fonce);background:var(--bleu-pale);border-radius:10px;">' + imgIc('ticket') + ' PREMIUM<br>4,99 €</div>';
-    tiers.appendChild(legend);
+    // En-tête des colonnes
+    const header = document.createElement('div');
+    header.className = 'pass-tier';
+    header.innerHTML = '<div style="text-align:center;font-size:.58rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#1E7A4A;">Gratuit</div>' +
+        '<div></div>' +
+        '<div style="text-align:center;font-size:.58rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--bleu-fonce);">' + imgIc('ticket') + ' Premium</div>';
+    header.style.borderBottom = '2px solid var(--ligne)';
+    tiers.appendChild(header);
+
     PASS_TIERS.forEach((t, i) => {
         const reached = stars >= t.etoiles;
-        const col = document.createElement('div');
-        col.style.cssText = 'flex-shrink:0;width:96px;display:flex;flex-direction:column;gap:6px;';
-        const et = document.createElement('div');
-        et.style.cssText = 'text-align:center;font-weight:900;font-size:.72rem;' +
-            `color:${reached ? 'var(--or)' : 'var(--gris)'};`;
-        et.innerHTML = imgIc('etoile') + ' ' + t.etoiles;
-        const mk = (r, locked, piste) => {
-            const c = document.createElement('div');
-            c.style.cssText = 'border-radius:10px;padding:8px 6px;text-align:center;font-size:.66rem;font-weight:800;' +
-                'min-height:52px;display:flex;flex-direction:column;justify-content:center;gap:2px;' +
-                (locked ? 'background:var(--fond);color:var(--gris);opacity:.75;'
-                    : 'background:var(--vert-pale,#E3F7ED);color:#1E7A4A;');
-            c.innerHTML = `<span style="font-size:1rem;">${r.ico ? imgIc(r.ico) : r.lbl.split(' ')[0]}</span>` +
-                `<span>${r.ico ? r.lbl : r.lbl.substring(r.lbl.indexOf(' ') + 1)}</span>` +
-                (locked && piste === 'premium' ? '<span style="font-size:.58rem;">' + imgIc('ticket') + ' Premium</span>' : '');
-            return c;
+        const row = document.createElement('div');
+        row.className = 'pass-tier' + (reached ? ' reached' : '');
+        const mkReward = (r, locked, cls) => {
+            const d = document.createElement('div');
+            d.className = 'pt-reward ' + cls + (locked ? ' pt-locked' : '');
+            d.innerHTML = `<span class="pt-ico">${r.ico ? imgIc(r.ico) : r.lbl.split(' ')[0]}</span>` +
+                `<span class="pt-lbl">${r.ico ? r.lbl : r.lbl.substring(r.lbl.indexOf(' ') + 1)}</span>`;
+            return d;
         };
-        col.append(et, mk(t.gratuit, !reached, 'gratuit'), mk(t.premium, !reached || !premium, 'premium'));
-        tiers.appendChild(col);
+        const node = document.createElement('div');
+        node.className = 'pt-node';
+        node.innerHTML = reached ? '✓' : imgIc('etoile') + '<br>' + t.etoiles;
+        row.appendChild(mkReward(t.gratuit, !reached, 'pt-free'));
+        row.appendChild(node);
+        row.appendChild(mkReward(t.premium, !reached || !premium, 'pt-prem'));
+        tiers.appendChild(row);
     });
 
     const buy = document.getElementById('pass-buy');

@@ -85,18 +85,17 @@
             <h2 class="screen-title">Boutique</h2>
             <p class="screen-sub">Que de la beauté — jamais d'avantage en jeu</p>
 
-            <div class="card" id="pass-card" style="padding:18px;margin-bottom:14px;border-radius:18px;">
-                <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;">
-                    <h3 style="font-size:1.05rem;font-weight:900;flex:1;"><img class="ic3d" src="assets/img/ticket.png" alt=""> Le Carnet de Saison</h3>
-                    <span class="hint" id="pass-mois" style="font-size:.74rem;"></span>
+            <div id="pass-card" class="pass-card" style="margin-bottom:14px;">
+                <div class="pass-header">
+                    <img class="pass-trophy" src="assets/img/trophy.png" alt="">
+                    <div class="pass-info">
+                        <div class="pass-title">Carnet de Saison</div>
+                        <div class="pass-mois" id="pass-mois"></div>
+                    </div>
                 </div>
-                <p class="hint" style="margin-top:2px;">Vos étoiles du mois débloquent chaque palier.</p>
-                <div id="pass-progress" style="margin:12px 0 4px;"></div>
-                <div id="pass-tiers"
-                    style="display:flex;gap:8px;overflow-x:auto;padding:6px 2px 10px;-webkit-overflow-scrolling:touch;">
-                </div>
-                <button id="pass-buy" class="btn btn-primary" style="width:100%;margin-top:6px;"><img class="ic3d" src="assets/img/ticket.png" alt=""> Pass Premium ·
-                    4,99 € / saison</button>
+                <div id="pass-progress" class="pass-progress-bar"></div>
+                <div id="pass-tiers" class="pass-tiers"></div>
+                <button id="pass-buy" class="btn btn-primary" style="width:100%;margin-top:10px;"><img class="ic3d" src="assets/img/ticket.png" alt=""> Pass Premium · 4,99 € / saison</button>
                 <div id="pass-status" class="hint" style="margin-top:6px;text-align:center;"></div>
             </div>
 

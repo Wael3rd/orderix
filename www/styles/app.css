@@ -110,8 +110,10 @@
 
 .daily-table {
     margin-top: 30px;
-    padding: 22px 18px;
+    padding: 24px 20px;
     text-align: center;
+    border-radius: 22px;
+    box-shadow: 0 2px 6px rgba(35, 38, 47, .06), 0 14px 36px rgba(35, 38, 47, .09);
     animation: riseIn .5s .22s cubic-bezier(.22, .8, .3, 1) both;
 }
 .banner {
@@ -134,10 +136,12 @@
     line-height: 1;
     letter-spacing: -.02em;
     font-variant-numeric: tabular-nums;
+    background: linear-gradient(180deg, var(--encre) 30%, var(--bleu));
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
 }
-.daily-num small { font-size: 1.1rem; color: var(--gris); font-weight: 500; }
-.daily-mode { font-weight: 900; font-size: 1.5rem; color: var(--bleu); margin-top: 6px; }
-.daily-theme { font-weight: 500; font-size: .9rem; color: var(--gris); }
+.daily-num small { font-size: 1.1rem; font-weight: 500; -webkit-text-fill-color: var(--gris); }
+.daily-mode { font-weight: 900; font-size: 1.4rem; color: var(--bleu); margin-top: 6px; }
+.daily-theme { font-weight: 500; font-size: .85rem; color: var(--gris); }
 .daily-theme b { color: var(--or); font-weight: 700; }
 
 .tiles { display: flex; gap: 6px; justify-content: center; margin-top: 14px; }
@@ -324,6 +328,63 @@
 #cal-hero .hero-sub { font-size: .78rem; font-weight: 600; color: var(--gris); margin-top: 2px; }
 @keyframes heroSpin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { #cal-hero .hero-flare::before { animation: none; } }
+
+/* ── Battle Pass refait : layout vertical 2 pistes ─────────────── */
+.pass-card { border-radius: 20px; overflow: hidden; box-shadow: var(--shadow-card); }
+.pass-header {
+    background: linear-gradient(135deg, #4A6CFA 0%, #6B8BFF 100%);
+    padding: 20px 18px 16px;
+    display: flex; align-items: center; gap: 14px; color: #fff;
+}
+.pass-trophy { width: 56px; height: 56px; filter: drop-shadow(0 4px 10px rgba(0,0,0,.2)); }
+.pass-info { flex: 1; }
+.pass-title { font-weight: 900; font-size: 1.1rem; text-shadow: 0 1px 3px rgba(0,0,0,.2); }
+.pass-mois { font-size: .78rem; font-weight: 600; opacity: .85; margin-top: 2px; }
+.pass-progress-bar { padding: 14px 18px 6px; background: var(--carte); }
+.pass-tiers { background: var(--carte); padding: 0 14px 14px; }
+
+.pass-tier {
+    display: grid; grid-template-columns: 1fr 40px 1fr; gap: 0; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid var(--ligne);
+    position: relative;
+}
+.pass-tier:last-child { border-bottom: none; }
+.pass-tier .pt-node {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: .72rem; margin: 0 auto;
+    border: 2.5px solid var(--ligne); color: var(--gris); background: var(--carte);
+}
+.pass-tier.reached .pt-node { border-color: var(--or); background: var(--or); color: #fff; }
+.pass-tier .pt-reward {
+    border-radius: 12px; padding: 10px 8px; text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+}
+.pass-tier .pt-reward .pt-ico { font-size: 1.3rem; line-height: 1; }
+.pass-tier .pt-reward .pt-lbl { font-size: .65rem; font-weight: 700; line-height: 1.2; }
+.pass-tier .pt-free { background: #F0FAF4; color: #1E7A4A; }
+.pass-tier .pt-prem { background: #EEF2FF; color: var(--bleu-fonce); }
+.pass-tier .pt-locked { opacity: .45; filter: grayscale(.5); }
+.pass-tier .pt-prem.pt-locked::after {
+    content: ''; display: block; margin-top: 2px;
+    font-size: .5rem; color: var(--bleu-fonce); font-weight: 800;
+}
+
+/* ── Sweep lumineux sur le CTA principal (« Jouer ») ───────────── */
+@keyframes sheen {
+    0% { transform: translateX(-100%) skewX(-18deg); }
+    100% { transform: translateX(200%) skewX(-18deg); }
+}
+#daily-action .btn-primary {
+    position: relative; overflow: hidden;
+}
+#daily-action .btn-primary::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
+    transform: translateX(-100%) skewX(-18deg);
+    animation: sheen 3.5s ease-in-out infinite 1.5s;
+}
+@media (prefers-reduced-motion: reduce) { #daily-action .btn-primary::after { animation: none; } }
 .day-chip.fail { background: var(--rouge-pale); border-color: var(--rouge-pale); color: var(--rouge); }
 .day-chip.today {
     border: 2px solid var(--bleu);
@@ -593,6 +654,7 @@ details.reglages > .profile-card { animation: riseIn .25s ease both; }
     display: flex;
     background: var(--carte);
     border-top: 1px solid var(--ligne);
+    box-shadow: 0 -2px 12px rgba(35, 38, 47, .06);
     padding: 6px 0 calc(var(--safe-bottom) + 10px);
     z-index: 50;
     transition: transform .3s cubic-bezier(.22, .8, .3, 1), opacity .25s ease;
