@@ -13,7 +13,7 @@
 .screen {
     min-height: 100vh;
     padding: calc(var(--safe-top) + 16px) 16px calc(var(--safe-bottom) + 96px);
-    animation: screenIn .35s cubic-bezier(.22, .8, .3, 1) both;
+    animation: screenIn var(--dur-move) var(--ease-out) both;
 }
 
 @keyframes screenIn {
@@ -31,7 +31,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    animation: riseIn .5s .05s cubic-bezier(.22, .8, .3, 1) both;
+    animation: riseIn var(--dur-reveal) .05s var(--ease-out) both;
 }
 .hud .avatar {
     width: 46px; height: 46px;
@@ -92,7 +92,7 @@
     text-align: center;
     line-height: 1.1;
     margin-top: 14px;
-    animation: riseIn .5s .1s cubic-bezier(.22, .8, .3, 1) both;
+    animation: riseIn var(--dur-reveal) .1s var(--ease-out) both;
 }
 .brand b { color: var(--bleu); }
 
@@ -103,7 +103,7 @@
     letter-spacing: .18em;
     text-transform: uppercase;
     color: var(--gris);
-    animation: riseIn .5s .15s cubic-bezier(.22, .8, .3, 1) both;
+    animation: riseIn var(--dur-reveal) .15s var(--ease-out) both;
 }
 
 /* ── Table « Puzzle du jour » (layout SNG) ────────────────── */
@@ -114,7 +114,7 @@
     text-align: center;
     border-radius: 22px;
     box-shadow: 0 2px 6px rgba(35, 38, 47, .06), 0 14px 36px rgba(35, 38, 47, .09);
-    animation: riseIn .5s .22s cubic-bezier(.22, .8, .3, 1) both;
+    animation: riseIn var(--dur-reveal) .22s var(--ease-out) both;
 }
 .banner {
     margin: -44px auto 8px;
@@ -185,7 +185,7 @@
     background: var(--carte);
     padding: 14px 16px;
     box-shadow: var(--shadow-tiny);
-    animation: riseIn .5s .3s cubic-bezier(.22, .8, .3, 1) both;
+    animation: riseIn var(--dur-reveal) .3s var(--ease-out) both;
 }
 .lead .lt {
     font-weight: 700;
@@ -382,7 +382,7 @@
     content: ''; position: absolute; inset: 0;
     background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
     transform: translateX(-100%) skewX(-18deg);
-    animation: sheen 3.5s ease-in-out infinite 1.5s;
+    animation: sheen 3.5s var(--ease-ambient) infinite 1.5s;
 }
 @media (prefers-reduced-motion: reduce) { #daily-action .btn-primary::after { animation: none; } }
 .day-chip.fail { background: var(--rouge-pale); border-color: var(--rouge-pale); color: var(--rouge); }
@@ -416,17 +416,17 @@
 /* ── Juiciness : rebonds, respiration, réglages repliés ────── */
 
 /* Le panneau de résultat surgit avec un rebond élastique */
-#result-panel:not(.hidden) { animation: springIn .5s cubic-bezier(.34, 1.56, .64, 1) both; }
+#result-panel:not(.hidden) { animation: springIn var(--dur-reveal) var(--ease-spring) both; }
 
 /* L'icône de l'onglet actif rebondit à la sélection */
-.tab.active svg { animation: tabPop .35s cubic-bezier(.34, 1.56, .64, 1); }
+.tab.active svg { animation: tabPop var(--dur-move) var(--ease-spring); }
 
 /* Le bouton « Jouer » du jour respire doucement (appel à l'action) */
 @keyframes breathe {
     0%, 100% { box-shadow: 0 6px 16px rgba(74, 108, 250, .35); transform: scale(1); }
     50% { box-shadow: 0 10px 26px rgba(74, 108, 250, .55); transform: scale(1.025); }
 }
-#daily-action .btn-primary { animation: breathe 2.6s ease-in-out infinite; }
+#daily-action .btn-primary { animation: breathe 2.6s var(--ease-ambient) infinite; }
 
 /* Groupe « Réglages » du profil : replié par défaut */
 details.reglages { margin-bottom: 12px; }
@@ -450,7 +450,7 @@ details.reglages > summary::after {
     margin-left: auto;
     font-size: 1.3rem;
     color: var(--gris);
-    transition: transform .2s;
+    transition: transform var(--dur-out) var(--ease-out);
 }
 details.reglages[open] > summary::after { transform: rotate(90deg); }
 details.reglages[open] > summary { border-radius: var(--radius-sm) var(--radius-sm) 0 0; }
@@ -657,7 +657,7 @@ details.reglages > .profile-card { animation: riseIn .25s ease both; }
     box-shadow: 0 -2px 12px rgba(35, 38, 47, .06);
     padding: 6px 0 calc(var(--safe-bottom) + 10px);
     z-index: 50;
-    transition: transform .3s cubic-bezier(.22, .8, .3, 1), opacity .25s ease;
+    transition: transform var(--dur-move) var(--ease-out), opacity var(--dur-out) ease;
 }
 
 /* Pendant une partie : la barre glisse hors écran */
@@ -693,7 +693,7 @@ details.reglages > .profile-card { animation: riseIn .25s ease both; }
     justify-content: center;
     gap: 16px;
     z-index: 200;
-    transition: opacity .4s ease;
+    transition: opacity var(--dur-move) ease;
 }
 #boot-loader.fade { opacity: 0; pointer-events: none; }
 #boot-loader .brand { margin-top: 0; }

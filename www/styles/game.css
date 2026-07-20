@@ -23,7 +23,7 @@
     color: var(--bleu-fonce);
     font-size: 1.15rem;
     display: flex; align-items: center; justify-content: center;
-    transition: transform .1s;
+    transition: transform var(--dur-press) var(--ease-out);
 }
 #back-btn:active { transform: scale(.88); background: var(--fond); }
 .btn-quiet:active { background: var(--bleu-bord) !important; }
@@ -129,7 +129,7 @@
 /* Étoiles de victoire : tamponnées une à une (scale 2.4 → 1, overshoot) */
 #result-stars { display: flex; justify-content: center; gap: 12px; min-height: 52px; margin: 4px 0 2px; }
 #result-stars img { width: 46px; height: 46px; opacity: 0; transform: scale(2.4) rotate(-14deg); }
-#result-stars img.stamped { animation: starStamp .32s cubic-bezier(.34, 1.56, .64, 1) forwards; }
+#result-stars img.stamped { animation: starStamp var(--dur-move) var(--ease-spring) forwards; }
 @keyframes starStamp {
     from { opacity: 0; transform: scale(2.4) rotate(-14deg); }
     to { opacity: 1; transform: scale(1) rotate(0); }
@@ -182,7 +182,7 @@
     border-radius: 22px;
     box-shadow: 0 -4px 30px rgba(35, 38, 47, .12), 0 2px 8px rgba(35, 38, 47, .06);
 }
-#result-panel:not(.hidden) { animation: springIn .5s cubic-bezier(.34, 1.56, .64, 1) both; }
+#result-panel:not(.hidden) { animation: springIn var(--dur-reveal) var(--ease-spring) both; }
 .result-status {
     font-size: .82rem;
     font-weight: 900;
@@ -324,7 +324,7 @@
     box-shadow: 0 0 0 3px var(--carte), 0 0 0 7px var(--or) !important;
     transform: scale(1.15);
     z-index: 100;
-    transition: all .1s;
+    transition: all var(--dur-press);
 }
 
 /* Clavier tactile (modes lettres) */
@@ -419,7 +419,7 @@
     font-size: 1rem;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
-    transition: transform .1s;
+    transition: transform var(--dur-press) var(--ease-out);
 }
 .slot-btn:active { transform: scale(.85); }
 .slot-btn.slot-error {
@@ -448,7 +448,7 @@
     text-align: center;
     line-height: 1.5;
     border: 2px solid transparent;
-    transition: transform .1s;
+    transition: transform var(--dur-press) var(--ease-out);
 }
 .cascade-zone:active { transform: scale(.95); }
 .cascade-zone.small-side { background: var(--bleu-pale); color: var(--bleu-fonce); border-color: var(--bleu-bord); }

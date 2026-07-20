@@ -54,6 +54,17 @@
 
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+    /* Tokens motion (uplift phase A) : 3 easings + 4 durées, source de
+       vérité du chrome UI. Le plateau de jeu garde ses timings propres
+       (les animations y sont des mécaniques, pas de l'habillage). */
+    --ease-out: cubic-bezier(.22, .8, .3, 1);       /* décélération : écrans, reveals */
+    --ease-spring: cubic-bezier(.34, 1.56, .64, 1); /* rebond : popups, tampons, pops */
+    --ease-ambient: ease-in-out;                    /* boucles lentes : respiration, sheen */
+    --dur-press: .1s;   /* état pressé */
+    --dur-out: .2s;     /* micro-feedback, sorties, opacités */
+    --dur-move: .35s;   /* transitions d'écran, pops, tampons */
+    --dur-reveal: .5s;  /* grands reveals : panneau de résultat, cascades */
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -105,7 +116,7 @@ input { font-family: inherit; font-size: 1rem; }
     border-radius: var(--radius-sm);
     font-weight: 700;
     font-size: 1.05rem;
-    transition: transform .12s ease, box-shadow .2s ease, background .2s ease;
+    transition: transform var(--dur-press) var(--ease-out), box-shadow var(--dur-out) var(--ease-out), background var(--dur-out) var(--ease-out);
 }
 .btn:active { transform: scale(.94); filter: brightness(.96); }
 
@@ -134,7 +145,7 @@ input { font-family: inherit; font-size: 1rem; }
 
 /* Chaque écran entre en cascade : ses blocs directs montent l'un
    après l'autre (l'animation rejoue à chaque affichage) */
-.screen > * { animation: riseIn .34s cubic-bezier(.22, .9, .36, 1) both; }
+.screen > * { animation: riseIn var(--dur-move) var(--ease-out) both; }
 .screen > *:nth-child(2) { animation-delay: .045s; }
 .screen > *:nth-child(3) { animation-delay: .09s; }
 .screen > *:nth-child(4) { animation-delay: .135s; }
@@ -145,7 +156,7 @@ input { font-family: inherit; font-size: 1rem; }
 /* L'écran de jeu reste immédiat : le plateau ne doit jamais “flotter” */
 #screen-game > * { animation: none; }
 
-.pop-num { animation: popNum .4s cubic-bezier(.34, 1.56, .64, 1); }
+.pop-num { animation: popNum var(--dur-move) var(--ease-spring); }
 
 @media (prefers-reduced-motion: reduce) {
     .screen > *, .pop-num { animation: none !important; }
