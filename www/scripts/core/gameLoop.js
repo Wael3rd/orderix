@@ -44,6 +44,7 @@ function startGame() {
     board.style.opacity = '';
     board.style.transform = '';
     board.style.transition = '';
+    board.style.filter = '';
     board.classList.remove('hidden');
     board.style.animation = 'screenIn .3s cubic-bezier(.22,.8,.3,1) both';
     board.addEventListener('animationend', function h() { board.removeEventListener('animationend', h); board.style.animation = ''; }, { once: true });
@@ -413,9 +414,10 @@ function endGame(message, isWin, isAbandon = false) {
     board.classList.remove('blackout-mode');
 
     // Tamisage du plateau pendant que le panneau de résultat monte
-    board.style.transition = 'opacity .3s ease, transform .3s ease';
-    board.style.opacity = '0.3';
-    board.style.transform = 'scale(.97)';
+    board.style.transition = 'opacity .35s ease, transform .35s ease, filter .35s ease';
+    board.style.opacity = '0.15';
+    board.style.transform = 'scale(.95)';
+    board.style.filter = 'blur(4px)';
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -545,6 +547,7 @@ function leaveGame(target) {
     board.style.opacity = '';
     board.style.transform = '';
     board.style.transition = '';
+    board.style.filter = '';
     board.classList.add('hidden');
     timerDisplay.textContent = '0.000';
     resultDisplay.textContent = '';

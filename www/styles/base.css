@@ -33,7 +33,7 @@
     --encre: #23262F;
     --gris: #8B90A0;
     --gris-clair: #B9BDC9;
-    --fond: #F4F6FA;
+    --fond: #F5F3F0;
     --carte: #FFFFFF;
     --ligne: #E8EAF1;
     --or: #F5B227;
@@ -67,7 +67,7 @@ body {
     font-size: 16px;
     line-height: 1.5;
     color: var(--encre);
-    background-color: var(--fond);
+    background: var(--fond);
     -webkit-font-smoothing: antialiased;
     overscroll-behavior-y: none;
     -webkit-tap-highlight-color: transparent;
