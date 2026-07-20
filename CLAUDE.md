@@ -2,6 +2,13 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## MANDATORY: shared session journal
+
+**`docs/journal.md` is the shared memory across ALL surfaces** (terminal, claude.ai bridge,
+cloud routines) — conversation transcripts do NOT travel between surfaces, git does.
+At session start: read it. During the session: append every product decision or notable
+event IMMEDIATELY (not at session end), then commit it with the related change.
+
 ## Project Overview
 
 Orderix is a French-language daily brain-puzzle game with 365 unique daily levels, packaged as a
