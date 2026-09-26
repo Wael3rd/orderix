@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>KitKat Fighters</title>
+<meta name="description" content="13 KitKat japonais, 4 joueurs : ○ si on aime, × si on n'aime pas. Le tier list de la famille.">
+<meta property="og:title" content="KitKat Fighters">
+<meta property="og:description" content="13 KitKat japonais, 4 joueurs, un seul tier list.">
+<meta property="og:image" content="https://wael3rd.github.io/orderix/kitkat/og.jpg">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0E0B1A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Dela+Gothic+One&family=DotGothic16&display=swap">
+<style>
+:root{
+  color-scheme:dark;
+  --night:#0E0B1A; --floor:#1A1430; --floor2:#241C42; --wire:#3A2F63; --ink:#F7F3FF; --dim:#A99FCB;
+  --p1:#FF3B4E; --p2:#2F8BFF; --p3:#FFD23F; --p4:#2EE59D;
+  --maru:#FF5468; --batsu:#6FA8FF;
+  --tS:#FF4760; --tA:#FF9A3C; --tB:#FFD23F; --tC:#7BE06A; --tD:#58A6FF;
+  --display:"Dela Gothic One","Arial Black",Impact,sans-serif;
+  --ui:"Chakra Petch","Trebuchet MS",system-ui,sans-serif;
+  --dot:"DotGothic16","Courier New",monospace;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{background:var(--night)}
+body{margin:0;color:var(--ink);font:500 15px/1.45 var(--ui);min-height:100vh;
+  background:
+    radial-gradient(circle at 1px 1px,rgba(255,255,255,.07) 1px,transparent 1.6px) 0 0/14px 14px,
+    radial-gradient(ellipse 80% 60% at 70% 0%,#2A1850 0%,transparent 60%),
+    radial-gradient(ellipse 60% 50% at 0% 100%,#3A0F2A 0%,transparent 60%),
+    var(--night);
+  padding:env(safe-area-inset-top,0px) max(16px,env(safe-area-inset-right,0px)) calc(40px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--p3);outline-offset:3px}
+.wrap{max-width:1240px;margin:0 auto}
+
+/* ── marquee ── */
+.marquee{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-block:22px 18px;border-bottom:2px solid var(--wire)}
+.logo{margin:0;font:400 clamp(38px,7.4vw,86px)/.86 var(--display);letter-spacing:-.01em;text-transform:uppercase;transform:skewX(-8deg);transform-origin:left bottom}
+.logo .l1{display:block;color:var(--ink);text-shadow:4px 4px 0 var(--p1)}
+.logo .l2{display:block;color:var(--p3);-webkit-text-stroke:0;text-shadow:4px 4px 0 #6B1B7A}
+.sub{font:400 13px/1.3 var(--dot);color:var(--dim);letter-spacing:.08em;margin-top:10px}
+.sub b{color:var(--p3);font-weight:400}
+.hud{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{font:700 13px/1 var(--ui);letter-spacing:.12em;text-transform:uppercase;background:var(--floor2);border:2px solid var(--wire);padding:10px 14px;clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%)}
+.btn:hover{border-color:var(--ink);background:var(--wire)}
+.btn.hot{background:var(--p3);color:#1A0F00;border-color:var(--p3)}
+.btn.hot:hover{background:#FFE27A}
+
+/* ── roster ── */
+.roster{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:18px}
+@media (max-width:640px){.roster{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.pl{--c:var(--p1);position:relative;background:linear-gradient(100deg,color-mix(in srgb,var(--c) 30%,var(--floor)) 0%,var(--floor) 70%);border-left:6px solid var(--c);padding:8px 10px 8px 12px;clip-path:polygon(0 0,100% 0,calc(100% - 12px) 100%,0 100%)}
+.pl .tag{font:400 12px/1 var(--dot);color:var(--c);letter-spacing:.1em}
+.pl input{display:block;width:100%;background:transparent;border:0;border-bottom:2px dashed transparent;padding:2px 0;font:400 20px/1.15 var(--display);text-transform:uppercase;letter-spacing:.01em}
+.pl input:hover{border-bottom-color:var(--wire)}
+.pl input:focus{outline:0;border-bottom-color:var(--c)}
+.pl .rec{font:600 12px/1 var(--ui);color:var(--dim);margin-top:3px;font-variant-numeric:tabular-nums;letter-spacing:.04em}
+.pl:nth-child(2){--c:var(--p2)}.pl:nth-child(3){--c:var(--p3)}.pl:nth-child(4){--c:var(--p4)}
+
+/* ── select screen ── */
+.select{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:22px;margin-top:22px;align-items:start}
+@media (max-width:900px){.select{grid-template-columns:1fr}}
+
+.stage{position:relative;background:var(--floor);border:2px solid var(--wire);overflow:hidden;scroll-margin-top:12px}
+.stage-art{position:relative;aspect-ratio:4/3;max-width:100%;display:grid;place-items:center;overflow:hidden;
+  background:repeating-conic-gradient(from 0deg at 50% 55%,rgba(255,255,255,.055) 0 3deg,transparent 3deg 9deg),
+             radial-gradient(circle at 50% 55%,#3B2A6E 0%,var(--floor) 70%)}
+.stage-art img{max-width:86%;max-height:82%;object-fit:contain;filter:drop-shadow(0 18px 24px rgba(0,0,0,.55));transform:rotate(-3deg)}
+.stage-art .num{position:absolute;left:14px;top:10px;font:400 58px/1 var(--display);color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.22)}
+.stage-art .origin{position:absolute;right:12px;top:14px;font:400 12px/1 var(--dot);letter-spacing:.1em;background:var(--p1);color:#fff;padding:6px 8px;transform:rotate(4deg)}
+.stage.enter .stage-art img{animation:slam .42s cubic-bezier(.2,1.4,.4,1)}
+.stage.enter .nameplate{animation:slide .38s ease-out}
+@keyframes slam{from{transform:translateX(40%) rotate(8deg) scale(.8);opacity:0}to{transform:rotate(-3deg)}}
+@keyframes slide{from{transform:translateX(-30px);opacity:.2}}
+.nameplate{position:relative;margin:-26px 0 0 -6px;padding:12px 18px 12px 22px;background:var(--p3);color:#140A00;clip-path:polygon(0 0,100% 0,calc(100% - 18px) 100%,0 100%);width:fit-content;max-width:calc(100% - 12px)}
+.nameplate h2{margin:0;font:400 clamp(22px,3.2vw,32px)/1.05 var(--display);text-transform:uppercase;text-wrap:balance}
+.nameplate .jp{font:400 14px/1.3 var(--dot);opacity:.8;margin-top:2px}
+.judge{padding:14px 14px 16px;display:grid;gap:8px}
+.jrow{--c:var(--p1);display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;background:rgba(0,0,0,.22);border-left:5px solid var(--c);padding:6px 6px 6px 12px}
+.jrow:nth-child(2){--c:var(--p2)}.jrow:nth-child(3){--c:var(--p3)}.jrow:nth-child(4){--c:var(--p4)}
+.jrow .who{display:flex;align-items:baseline;gap:8px;min-width:0}
+.jrow .who small{font:400 11px/1 var(--dot);color:var(--c);letter-spacing:.08em}
+.jrow .who span{font:700 17px/1.1 var(--ui);text-transform:uppercase;letter-spacing:.04em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mark{width:64px;height:52px;display:grid;place-items:center;background:var(--floor2);border:2px solid var(--wire);font:400 30px/1 var(--display);color:var(--dim);transition:transform .1s}
+.mark:active{transform:scale(.92)}
+.mark small{display:block;font:600 9px/1 var(--ui);letter-spacing:.1em;margin-top:-2px}
+.mark.o[aria-pressed="true"]{background:var(--maru);border-color:#fff;color:#fff;box-shadow:0 0 0 3px rgba(255,84,104,.35),0 0 22px rgba(255,84,104,.55)}
+.mark.x[aria-pressed="true"]{background:var(--batsu);border-color:#fff;color:#0A1430;box-shadow:0 0 0 3px rgba(111,168,255,.3),0 0 22px rgba(111,168,255,.5)}
+.mark:hover{border-color:var(--ink);color:var(--ink)}
+.stage-nav{display:flex;gap:8px;padding:0 14px 16px;flex-wrap:wrap}
+.stage-nav .btn{flex:1 1 auto;text-align:center}
+.legend{font:400 12px/1.4 var(--dot);color:var(--dim);padding:0 14px 14px;letter-spacing:.04em}
+
+.pick h3,.tiers h3,.share h3{font:400 14px/1 var(--dot);letter-spacing:.2em;color:var(--dim);margin:0 0 12px;display:flex;align-items:center;gap:10px}
+.pick h3::after,.tiers h3::after,.share h3::after{content:"";flex:1;height:2px;background:repeating-linear-gradient(90deg,var(--wire) 0 8px,transparent 8px 12px)}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 8px}
+@media (max-width:1100px) and (min-width:901px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:520px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 6px}}
+.tile{position:relative;padding:0;border:0;background:none;text-align:left;display:block;width:100%}
+.tile .frame{display:block;clip-path:polygon(9% 0,100% 0,91% 100%,0 100%);background:var(--wire);padding:3px;transition:background .12s,transform .12s}
+.tile .pic{display:block;aspect-ratio:4/3;clip-path:polygon(9% 0,100% 0,91% 100%,0 100%);overflow:hidden;background:var(--floor2)}
+.tile img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.85) brightness(.82);transition:filter .12s,transform .2s}
+.tile .lbl{display:block;font:700 12px/1.15 var(--ui);text-transform:uppercase;letter-spacing:.05em;margin:6px 6px 0 8px;min-height:2.3em;color:var(--dim)}
+.tile .pips{position:absolute;right:10%;top:6px;display:flex;gap:2px}
+.pip{width:15px;height:15px;display:grid;place-items:center;font:400 10px/1 var(--display);background:rgba(8,6,16,.78);color:rgba(255,255,255,.28)}
+.pip.o{color:var(--maru)}.pip.x{color:var(--batsu)}
+.tile:hover .frame{background:var(--dim)}
+.tile:hover img{filter:none}
+.tile[aria-current="true"] .frame{background:var(--p3);transform:translateY(-3px)}
+.tile[aria-current="true"] img{filter:none;transform:scale(1.06)}
+.tile[aria-current="true"] .lbl{color:var(--p3)}
+.tile[aria-current="true"]::before{content:"▼";position:absolute;left:50%;top:-14px;transform:translateX(-50%);color:var(--p3);font-size:12px;animation:bob .7s ease-in-out infinite alternate}
+@keyframes bob{to{transform:translate(-50%,-4px)}}
+.tile.done .lbl::after{content:" ✓";color:var(--p4)}
+
+/* ── tiers ── */
+.tiers{margin-top:34px}
+.tier{display:grid;grid-template-columns:86px 1fr;min-height:84px;border:2px solid var(--wire);border-top-width:0;background:rgba(10,8,22,.55)}
+.tier:first-of-type{border-top-width:2px}
+.tier .t{display:grid;place-items:center;align-content:center;gap:4px;background:var(--c);color:#150A10;text-align:center;padding:6px}
+.tier .t b{font:400 38px/1 var(--display)}
+.tier .t small{font:700 10px/1.1 var(--ui);letter-spacing:.06em;text-transform:uppercase}
+.tier .row{display:flex;flex-wrap:wrap;gap:8px;padding:8px;align-items:center}
+.tier .row:empty::before{content:"· · ·";color:var(--wire);font:400 18px var(--display);padding-left:6px}
+.chip{display:flex;align-items:center;gap:8px;background:var(--floor2);border:0;padding:0 10px 0 0;height:58px;clip-path:polygon(0 0,100% 0,calc(100% - 8px) 100%,0 100%)}
+.chip img{height:58px;width:76px;object-fit:cover}
+.chip span{font:700 12px/1.15 var(--ui);text-transform:uppercase;letter-spacing:.04em;max-width:11ch}
+.chip:hover{background:var(--wire)}
+.t-S{--c:var(--tS)}.t-A{--c:var(--tA)}.t-B{--c:var(--tB)}.t-C{--c:var(--tC)}.t-D{--c:var(--tD)}.t-N{--c:#4A416E}
+.t-N .t{color:var(--ink)}
+@media (max-width:520px){.tier{grid-template-columns:64px 1fr}.tier .t b{font-size:30px}.chip span{display:none}.chip{padding:0}}
+
+/* ── share ── */
+.share{margin-top:34px;display:grid;gap:12px}
+.share p{margin:0;color:var(--dim);max-width:70ch}
+.linkbox{display:flex;gap:8px;flex-wrap:wrap}
+.linkbox input{flex:1 1 280px;min-width:0;background:var(--floor);border:2px solid var(--wire);padding:10px 12px;font:400 13px var(--dot);color:var(--ink)}
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translate(-50%,140%);background:var(--p3);color:#1A0F00;font:700 14px/1 var(--ui);letter-spacing:.08em;text-transform:uppercase;padding:14px 20px;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);transition:transform .25s;z-index:10}
+.toast.on{transform:translate(-50%,0)}
+.incoming{border:2px solid var(--p3);background:rgba(255,210,63,.08);padding:14px 16px;margin-top:18px;display:grid;gap:10px}
+.incoming strong{font:400 18px/1.2 var(--display);text-transform:uppercase;color:var(--p3)}
+.incoming .acts{display:flex;gap:8px;flex-wrap:wrap}
+footer{margin-top:36px;padding-top:14px;border-top:2px solid var(--wire);font:400 12px/1.5 var(--dot);color:var(--dim);letter-spacing:.04em}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="marquee">
+    <div>
+      <h1 class="logo"><span class="l1">KitKat</span><span class="l2">Fighters</span></h1>
+      <div class="sub">キットカット・ファイターズ ／ <b>13</b> COMBATTANTS · <b>4</b> JOUEURS</div>
+    </div>
+    <div class="hud">
+      <button class="btn" id="snd" aria-pressed="true">Son : ON</button>
+      <button class="btn hot" id="shareBtn">Partager les scores</button>
+    </div>
+  </header>
+
+  <div id="incoming" class="incoming" hidden>
+    <strong>Nouveaux scores reçus</strong>
+    <span id="incomingTxt"></span>
+    <div class="acts">
+      <button class="btn hot" id="inMerge">Ajouter à mes scores</button>
+      <button class="btn" id="inReplace">Remplacer mes scores</button>
+      <button class="btn" id="inIgnore">Ignorer</button>
+    </div>
+  </div>
+
+  <section class="roster" id="roster" aria-label="Les joueurs"></section>
+
+  <section class="select">
+    <div class="stage" id="stage" aria-live="polite">
+      <div class="stage-art"><span class="num" id="stNum">01</span><span class="origin" id="stOrigin" hidden></span><img id="stImg" alt=""></div>
+      <div class="nameplate"><h2 id="stName"></h2><div class="jp" id="stJp"></div></div>
+      <div class="judge" id="judge"></div>
+      <div class="stage-nav">
+        <button class="btn" id="prev">◀ Précédent</button>
+        <button class="btn" id="rand">Au hasard (pas goûté)</button>
+        <button class="btn" id="next">Suivant ▶</button>
+      </div>
+      <div class="legend">○ MARU = J'AIME · × BATSU = J'AIME PAS · REJOUER LE MÊME COUP EFFACE LE VOTE</div>
+    </div>
+
+    <div class="pick">
+      <h3>CHOISIS TON COMBATTANT</h3>
+      <div class="grid" id="grid" role="listbox" aria-label="Les 13 KitKat"></div>
+    </div>
+  </section>
+
+  <section class="tiers" id="tiers">
+    <h3>TIER LIST DE LA FAMILLE</h3>
+    <div id="tierRows"></div>
+  </section>
+
+  <section class="share">
+    <h3>SAUVEGARDE &amp; PARTAGE</h3>
+    <p>Les votes restent enregistrés sur cet appareil. Pour les envoyer sur un autre téléphone (ou les garder en lieu sûr), copie ce lien : il contient tous les scores et les noms des joueurs.</p>
+    <div class="linkbox">
+      <input id="shareLink" readonly aria-label="Lien de partage des scores">
+      <button class="btn" id="copyBtn">Copier</button>
+      <button class="btn" id="resetBtn">Tout effacer</button>
+    </div>
+  </section>
+
+  <footer>Rapportés du Japon, photographiés à la maison, jugés sans pitié. Flèches ← → ↑ ↓ pour naviguer, touches 1 à 4 puis O ou X pour voter au clavier.</footer>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const K=[
+  {id:"sakura-kinako",fr:"Sakura kinako",jp:"桜きなこ ・ cerisier & soja grillé"},
+  {id:"otona-berry",fr:"Otona framboise",jp:"オトナの甘さ ・ noir, fruits rouges & amande"},
+  {id:"ny-cheesecake",fr:"Cheesecake NY",jp:"NYチーズケーキ味"},
+  {id:"choco-orange",fr:"Chocolat orange",jp:"ショコラオレンジ"},
+  {id:"matcha",fr:"Matcha intense",jp:"濃い抹茶"},
+  {id:"peche",fr:"Pêche",jp:"桃"},
+  {id:"fraise-choco",fr:"Fraise chocolat",jp:"苺ショコラ味"},
+  {id:"melon",fr:"Melon Hokkaido",jp:"北海道メロン",origin:"ÉDITION AÉROPORT"},
+  {id:"fraise-cheesecake",fr:"Cheesecake fraise",jp:"ストロベリーチーズケーキ味"},
+  {id:"pine-ame",fr:"Bonbon ananas",jp:"パインアメ味",origin:"SOUVENIR D'OSAKA"},
+  {id:"shima-lemon",fr:"Citron Shima",jp:"東京島レモン ・ îles de Tokyo"},
+  {id:"wasabi",fr:"Wasabi",jp:"わさび味"},
+  {id:"beni-imo",fr:"Patate violette",jp:"紅いも ・ Okinawa"}
+];
+const DEF=["Wael","Épouse","Enfant 1","Enfant 2"];
+const KEY="kitkat-fighters-v1";
+let state={names:[...DEF],v:{}}; // v[id]=[0|1|2 x4] 1=○ 2=×
+let cur=0, sound=true, activeP=0;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const votes=id=>state.v[id]||[0,0,0,0];
+const count=(id,val)=>votes(id).filter(x=>x===val).length;
+
+/* ── storage ── */
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(d&&d.v){state={names:(d.names||DEF).slice(0,4),v:d.v};}}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}updateLink();}
+
+/* ── share encoding: 13x4 digits base-3 + names ── */
+function encode(s){const digits=K.map(k=>(s.v[k.id]||[0,0,0,0]).join("")).join("");
+  const n=s.names.map(x=>encodeURIComponent(x)).join("~");return "s="+digits+"&n="+n;}
+function decode(h){const p=new URLSearchParams(h.replace(/^#/,""));const d=p.get("s");if(!d||!/^[012]{52}$/.test(d))return null;
+  const v={};K.forEach((k,i)=>{const a=d.slice(i*4,i*4+4).split("").map(Number);if(a.some(x=>x))v[k.id]=a;});
+  let names=[...DEF];const n=p.get("n");if(n){const parts=n.split("~").map(x=>{try{return decodeURIComponent(x)}catch(e){return x}});names=DEF.map((x,i)=>(parts[i]||x).slice(0,16));}
+  return{names,v};}
+function linkURL(){return location.origin+location.pathname+"#"+encode(state);}
+function updateLink(){$("#shareLink").value=linkURL();}
+
+/* ── sound ── */
+let ac=null;
+function blip(f=660,d=.06,type="square",vol=.05){if(!sound)return;try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.value=f;g.gain.value=vol;g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+d);o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+d);}catch(e){}}
+function jingle(ok){if(ok){blip(784,.08);setTimeout(()=>blip(1175,.12),70);}else{blip(220,.14,"sawtooth",.05);}}
+
+/* ── render ── */
+function renderRoster(){
+  const r=$("#roster");
+  if(!r.children.length){
+    r.innerHTML=[0,1,2,3].map(i=>`<div class="pl"><div class="tag">${i+1}P</div><input id="pn${i}" maxlength="16" aria-label="Nom du joueur ${i+1}"><div class="rec" id="pr${i}"></div></div>`).join("");
+    [0,1,2,3].forEach(i=>{const inp=$("#pn"+i);
+      inp.addEventListener("input",()=>{state.names[i]=inp.value;renderJudge();});
+      inp.addEventListener("change",()=>{state.names[i]=inp.value.trim()||DEF[i];inp.value=state.names[i];save();renderJudge();});
+    });
+  }
+  [0,1,2,3].forEach(i=>{const inp=$("#pn"+i);if(document.activeElement!==inp)inp.value=state.names[i];
+    let o=0,x=0;K.forEach(k=>{const a=votes(k.id)[i];if(a===1)o++;if(a===2)x++;});
+    $("#pr"+i).textContent=`${o} ○ · ${x} × · ${13-o-x} à goûter`;});
+}
+function renderGrid(){
+  const g=$("#grid");
+  if(!g.children.length){
+    g.innerHTML=K.map((k,i)=>`<button class="tile" role="option" data-i="${i}" id="tile${i}"><span class="frame"><span class="pic"><img src="thumb/${k.id}.jpg" alt="" loading="lazy" width="400" height="300"></span></span><span class="pips" aria-hidden="true"></span><span class="lbl">${esc(k.fr)}</span></button>`).join("");
+    g.addEventListener("click",e=>{const t=e.target.closest(".tile");if(!t)return;select(+t.dataset.i,true);});
+  }
+  K.forEach((k,i)=>{const t=$("#tile"+i),a=votes(k.id);
+    t.setAttribute("aria-current",i===cur);t.setAttribute("aria-selected",i===cur);
+    t.classList.toggle("done",a.every(x=>x));
+    t.setAttribute("aria-label",`${k.fr} : ${count(k.id,1)} aiment, ${count(k.id,2)} n'aiment pas`);
+    t.querySelector(".pips").innerHTML=a.map(x=>`<span class="pip ${x===1?"o":x===2?"x":""}">${x===1?"○":x===2?"×":"·"}</span>`).join("");});
+}
+function renderStage(anim){
+  const k=K[cur],st=$("#stage");
+  $("#stImg").src="img/"+k.id+".jpg";$("#stImg").alt="Paquet KitKat "+k.fr;
+  $("#stNum").textContent=String(cur+1).padStart(2,"0");
+  $("#stName").textContent=k.fr;$("#stJp").textContent=k.jp;
+  const o=$("#stOrigin");o.hidden=!k.origin;o.textContent=k.origin||"";
+  if(anim){st.classList.remove("enter");void st.offsetWidth;st.classList.add("enter");}
+  renderJudge();
+}
+function renderJudge(){
+  const k=K[cur],a=votes(k.id);
+  $("#judge").innerHTML=[0,1,2,3].map(i=>`<div class="jrow"><div class="who"><small>${i+1}P</small><span>${esc(state.names[i]||DEF[i])}</span></div>
+    <button class="mark o" data-p="${i}" data-val="1" aria-pressed="${a[i]===1}" aria-label="${esc(state.names[i]||DEF[i])} aime">○<small>AIME</small></button>
+    <button class="mark x" data-p="${i}" data-val="2" aria-pressed="${a[i]===2}" aria-label="${esc(state.names[i]||DEF[i])} n'aime pas">×<small>BEURK</small></button></div>`).join("");
+}
+const TIERS=[["S",4,"Tout le monde aime"],["A",3,"3 sur 4"],["B",2,"Divisés"],["C",1,"1 seul fan"],["D",0,"Personne"]];
+function renderTiers(){
+  const rows=TIERS.map(([t,n,lab])=>{const items=K.map((k,i)=>({k,i})).filter(({k})=>{const a=votes(k.id);return a.some(x=>x)&&count(k.id,1)===n;});
+    return `<div class="tier t-${t}"><div class="t"><b>${t}</b><small>${lab}</small></div><div class="row">${items.map(chip).join("")}</div></div>`;});
+  const none=K.map((k,i)=>({k,i})).filter(({k})=>!votes(k.id).some(x=>x));
+  rows.push(`<div class="tier t-N"><div class="t"><b>?</b><small>À goûter</small></div><div class="row">${none.map(chip).join("")}</div></div>`);
+  $("#tierRows").innerHTML=rows.join("");
+}
+function chip({k,i}){return `<button class="chip" data-i="${i}" title="${esc(k.fr)}"><img src="thumb/${k.id}.jpg" alt="" loading="lazy"><span>${esc(k.fr)}</span></button>`;}
+function renderAll(anim){renderRoster();renderGrid();renderStage(anim);renderTiers();}
+
+function select(i,fromClick){
+  cur=(i+K.length)%K.length;blip(520,.05);renderGrid();renderStage(true);
+  if(fromClick&&window.matchMedia("(max-width:900px)").matches){$("#stage").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth",block:"start"});}
+}
+function vote(p,val){
+  const k=K[cur],a=[...votes(k.id)];
+  a[p]=a[p]===val?0:val;
+  if(a.some(x=>x))state.v[k.id]=a;else delete state.v[k.id];
+  if(a[p])jingle(val===1);else blip(330,.05);
+  save();renderRoster();renderGrid();renderJudge();renderTiers();
+  const b=document.querySelector(`.mark[data-p="${p}"][data-val="${val}"]`);if(b)b.focus({preventScroll:true});
+}
+
+/* ── events ── */
+$("#judge").addEventListener("click",e=>{const b=e.target.closest(".mark");if(b)vote(+b.dataset.p,+b.dataset.val);});
+$("#prev").onclick=()=>select(cur-1);
+$("#next").onclick=()=>select(cur+1);
+$("#rand").onclick=()=>{const todo=K.map((k,i)=>i).filter(i=>!votes(K[i].id).every(x=>x)&&i!==cur);
+  if(!todo.length){toast("Tout a été goûté par tout le monde !");return;}
+  select(todo[Math.floor(Math.random()*todo.length)],true);};
+$("#tierRows").addEventListener("click",e=>{const c=e.target.closest(".chip");if(c){select(+c.dataset.i);$("#stage").scrollIntoView({behavior:"smooth",block:"start"});}});
+$("#snd").onclick=()=>{sound=!sound;$("#snd").textContent="Son : "+(sound?"ON":"OFF");$("#snd").setAttribute("aria-pressed",sound);try{localStorage.setItem(KEY+"-snd",sound?"1":"0")}catch(e){}if(sound)blip(880,.06);};
+
+function toast(t){const el=$("#toast");el.textContent=t;el.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("on"),2200);}
+async function copyLink(){const url=linkURL();
+  try{await navigator.clipboard.writeText(url);toast("Lien copié");}catch(e){const i=$("#shareLink");i.focus();i.select();toast("Sélectionné : copie-le");}}
+$("#copyBtn").onclick=copyLink;
+$("#shareBtn").onclick=async()=>{const url=linkURL();
+  if(navigator.share){try{await navigator.share({title:"KitKat Fighters",text:"Nos scores KitKat",url});return;}catch(e){if(e&&e.name==="AbortError")return;}}
+  copyLink();};
+let resetArm=0;
+$("#resetBtn").onclick=()=>{const b=$("#resetBtn");
+  if(Date.now()-resetArm<3000){state.v={};save();renderAll(false);b.textContent="Tout effacer";toast("Scores effacés");resetArm=0;return;}
+  resetArm=Date.now();b.textContent="Sûr ? Re-clique";setTimeout(()=>{if(Date.now()-resetArm>=2900)b.textContent="Tout effacer";},3000);};
+
+document.addEventListener("keydown",e=>{
+  if(e.target.matches("input"))return;
+  const cols=getComputedStyle($("#grid")).gridTemplateColumns.split(" ").length;
+  const map={ArrowLeft:-1,ArrowRight:1,ArrowUp:-cols,ArrowDown:cols};
+  if(map[e.key]!==undefined){e.preventDefault();select(cur+map[e.key]);$("#tile"+cur).focus({preventScroll:false});return;}
+  if(/^[1-4]$/.test(e.key)){activeP=+e.key-1;blip(440+activeP*110,.04);toast((state.names[activeP]||DEF[activeP])+" au clavier");return;}
+  if(e.key==="o"||e.key==="O"){vote(activeP,1);}
+  if(e.key==="x"||e.key==="X"){vote(activeP,2);}
+});
+
+/* ── incoming shared link ── */
+function handleHash(){
+  const inc=decode(location.hash);if(!inc)return;
+  const n=Object.keys(inc.v).length;
+  $("#incomingTxt").textContent=`Le lien contient des votes pour ${n} KitKat (joueurs : ${inc.names.join(", ")}).`;
+  $("#incoming").hidden=false;
+  const done=()=>{$("#incoming").hidden=true;history.replaceState(null,"",location.pathname);save();renderAll(false);};
+  $("#inMerge").onclick=()=>{K.forEach(k=>{const a=inc.v[k.id];if(!a)return;const m=[...votes(k.id)];a.forEach((x,i)=>{if(x)m[i]=x;});state.v[k.id]=m;});state.names=inc.names;done();toast("Scores ajoutés");};
+  $("#inReplace").onclick=()=>{state={names:inc.names,v:inc.v};done();toast("Scores remplacés");};
+  $("#inIgnore").onclick=()=>{$("#incoming").hidden=true;history.replaceState(null,"",location.pathname);};
+}
+
+load();
+try{sound=localStorage.getItem(KEY+"-snd")!=="0";}catch(e){}
+$("#snd").textContent="Son : "+(sound?"ON":"OFF");$("#snd").setAttribute("aria-pressed",sound);
+const firstTodo=K.findIndex(k=>!votes(k.id).every(x=>x));cur=firstTodo<0?0:firstTodo;
+renderAll(false);updateLink();handleHash();
+window.addEventListener("hashchange",handleHash);
+</script>
+</body>
+</html>
