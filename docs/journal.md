@@ -186,4 +186,4 @@ necessaire pour le charger. Rappel : le MCP de controle mobile deja en place = c
 Issue deposee : https://github.com/anthropics/claude-code/issues/79420 (sessions bridge = transcript jamais ecrit en JSONL local, pas de rapatriement possible). Dump complet de la session : docs/dump-bridge-2026-07-20-aprem.md (commit 20c3909).
 
 ### 26/09 - Hors projet : site KitKat Fighters
-Page perso familiale (vote ○/× sur 13 KitKat japonais) hebergee dans `docs/kitkat/` pour profiter de GitHub Pages : https://wael3rd.github.io/orderix/kitkat/ . Aucun lien avec le jeu, aucun impact sur www/ ni sur le build Android.
+Page perso familiale (vote ○/× sur 13 KitKat japonais) source dans `docs/kitkat/`, publiee en copiant ce dossier sur la branche gh-pages (`kitkat/`) : https://wael3rd.github.io/orderix/kitkat/ . Aucun lien avec le jeu, aucun impact sur www/ ni sur le build Android.
