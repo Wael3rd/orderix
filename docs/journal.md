@@ -187,3 +187,6 @@ Issue deposee : https://github.com/anthropics/claude-code/issues/79420 (sessions
 
 ### 26/09 - Hors projet : site KitKat Fighters
 Page perso familiale (vote ○/× sur 13 KitKat japonais) source dans `docs/kitkat/`, publiee en copiant ce dossier sur la branche gh-pages (`kitkat/`) : https://wael3rd.github.io/orderix/kitkat/ . Aucun lien avec le jeu, aucun impact sur www/ ni sur le build Android.
+
+### 26/09 - KitKat Fighters v2
+Vote ○/× remplace par une note de goût sur 5 (mauvais, moyen, bon, très bon, trop bon) + bizarre-o-mètre sur 3 (normal, un peu bizarre, trop bizarre). Tier list sur la moyenne du goût, section bizarre-o-mètre. Anciens votes migrés (○ = très bon, × = mauvais).
