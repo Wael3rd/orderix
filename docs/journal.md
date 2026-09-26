@@ -190,3 +190,9 @@ Page perso familiale (vote ○/× sur 13 KitKat japonais) source dans `docs/kitk
 
 ### 26/09 - KitKat Fighters v2
 Vote ○/× remplace par une note de goût sur 5 (mauvais, moyen, bon, très bon, trop bon) + bizarre-o-mètre sur 3 (normal, un peu bizarre, trop bizarre). Tier list sur la moyenne du goût, section bizarre-o-mètre. Anciens votes migrés (○ = très bon, × = mauvais).
+
+### 26/09 - KitKat Fighters v3 (PWA + cloud)
+- Goût sur 3 (mauvais, moyen, bon), bizarre sur 3 (non, un peu, trop). Joueurs : Wael, Aline, Ismael, Adel (prénoms modifiables en touchant le nom).
+- Écran principal sur une seule hauteur (tablette plein écran) : titre, carrousel des 13 KitKat, photo à gauche, 4 joueurs à droite. Tier list, bizarre-o-mètre et sauvegarde sous l écran.
+- PWA installable (manifest display fullscreen, service worker hors ligne, écran maintenu allumé).
+- Avis stockés dans Supabase orderix-staging, tables isolées kitkat_votes / kitkat_players (script supabase/extras/kitkat_family.sql, à exécuter une fois dans le SQL Editor). Sans ces tables, l appli garde tout en local et envoie dès que les tables existent. Tables hors périmètre de wipe.sql.
