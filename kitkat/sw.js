@@ -1,5 +1,5 @@
 // KitKat Fighters : service worker (hors ligne)
-const VERSION = "kkf-v3";
+const VERSION = "kkf-v4";
 const SHELL = [
   "./",
   "index.html",

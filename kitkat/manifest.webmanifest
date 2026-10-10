@@ -3,7 +3,7 @@
   "short_name": "KitKat",
   "description": "La dégustation des KitKat japonais de la famille : goût et bizarre-o-mètre.",
   "lang": "fr",
-  "id": "./",
+  "id": "/orderix/kitkat/",
   "start_url": "./?app=1",
   "scope": "./",
   "display": "fullscreen",
