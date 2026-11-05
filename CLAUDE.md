@@ -54,9 +54,9 @@ files will cause bugs.
   `_virtualDay()` in state.js), all other days EMPTY (`day.empty`). Feedback from mirror days
   maps back to virtual rows on the dashboard.
 - **Feedback loop**: end-of-game comment box opens a prefilled GitHub issue (label `feedback`);
-  a cloud routine ("Orderix — correctifs depuis les feedbacks", every 2h) reads them, implements
-  fixes, runs `node smoke-test.js`, commits to main and answers/closes the issue. APK rebuilds
-  still happen locally (`npm run android:dev`).
+  a cloud routine ("Orderix — correctifs depuis les feedbacks", every 2h, **disabled since 18/07**)
+  used to read them, implement fixes, run `node smoke-test.js`, commit to main and answer/close the
+  issue. CI rebuilds the staging APK on each push touching code (release `staging-latest`).
 - **Test badges: RETIRED (owner request, 19/07)**. `needsTest()` always returns false and no
   "!" badge is ever shown. `rev:` fields may remain on modes but are inert — do NOT reintroduce
   badge UI. Gameplay-change tracking happens on the web dashboard (docs/suivi-gameplays.html)

@@ -13,7 +13,9 @@
 - **Aucune suppression d'anciens modes** (rotation après janvier) sans validation via la campagne de re-test.
 - **Badges « ! » retirés définitivement** (19/07) — le suivi des révisions vit sur docs/suivi-gameplays.html.
 - Ne jamais dépendre des labels GitHub (le `?labels=` des URLs ne s'applique pas sur mobile) → filtrer par titre `[feedback]`.
-- La routine cloud ne peut PAS builder l'APK (pas de SDK Android) → rebuild local + renvoi à chaque session.
+- La routine cloud ne peut PAS builder l'APK (pas de SDK Android). La CI le fait : chaque push sur main touchant
+  `www/`, `android/`, `config/`, `set-env.js` ou `package.json` republie l'APK sur la release `staging-latest` (URL fixe).
+  Rebuild local seulement pour tester avant de pousser.
 - **PIÈGE build APK (résolu 20/07)** : `npm run android:dev` fait `cd android && gradlew ...` ;
   sous **Git Bash** `gradlew` (sans `./`) n'est pas trouvé → le build semblait « planter depuis
   des jours ». En réalité Gradle marche (BUILD SUCCESSFUL en ~14 s). **Builder depuis PowerShell**
@@ -27,11 +29,16 @@
 - **Supabase branché** (19/07) : staging `gzrquivrysbmodlwhslb` / prod `bivjyemdewgtvcwoptbo` (Paris),
   migrations 0001→0005 appliquées, client vanilla (auth anonyme, scores, classements, pseudo,
   export/suppression RGPD), **double écriture Supabase + repli GAS**. Mots de passe DB :
-  `C:\Users\w.hadjmouldi\Documents\Orderix-keys\LISEZMOI-IMPORTANT.txt`.
+  `C:\Users\w.hadjmouldi\Documents\Orderix-keys\LISEZMOI-IMPORTANT.txt` (ancien PC ; copie dans Drive, `ORDERIX/Orderix-keys`).
+  **État au 05/11 : les domaines des deux projets ne résolvent plus**, voir la chronologie du 05/11.
 - **CI GitHub Actions** : build APK auto, keystore stable (fin des alertes Play Protect).
-- **Routine cloud** « Orderix — correctifs depuis les feedbacks » : cron toutes les 2 h, lit les
+- **Routine cloud** « Orderix — correctifs depuis les feedbacks » : **désactivée** (dernière exécution le 18/07 à 20:10 UTC).
+  Quand elle tournait : cron toutes les 2 h, lit les
   issues `[feedback]` sans réponse [claude-bot], corrige, teste, commite sur main, répond, ferme.
-- Catalogue chiffré (mdp WaelOrderix) : https://wael3rd.github.io/orderix/ · Dashboard : docs/index.html
+- Dashboard projet : https://wael3rd.github.io/orderix/ (source docs/index.html). Le catalogue chiffré qui occupait cette
+  adresse a été remplacé le 20/07 ; il ne reste que dans l'historique de `gh-pages`. Ne pas écrire son mot de passe ici : le dépôt est public.
+- KitKat et store perso : aussi sur Cloudflare Pages (https://kitkat.wael3rd.pages.dev/, https://wael3rd.pages.dev/),
+  déploiement manuel `npm run deploy:cf` depuis le dépôt Cours_Enfants.
 - Environnements : flavors Android dev/prod + `set-env.js` ; SDK dans `C:\Android\sdk`.
 
 ## Chronologie
@@ -114,9 +121,9 @@ Vérif rapide qu'une session écrit en local :
 ## Reste à faire (vu du 20/07)
 
 - **Uplift UI** : ~~phases E (FTUE éclair) + F (pastilles tabbar + thème sombre)~~ **FAITES 20/07
-  → uplift A→F terminé.** Reste à rebuilder l'APK en local pour tester sur appareil.
+  → uplift A→F terminé.** L'APK correspondant est publié par la CI (`staging-latest`).
 - **OAuth** : créer les apps dans Google Cloud Console / Meta (côté Wael — docs/todo-wael.html).
-- Backlog gameplay : multi-guichets pour La File (#12, seule issue feedback ouverte).
+- Backlog gameplay : multi-guichets pour La File (#12 refermée le 18/07, idée gardée dans docs/gameplay-audit.md §5).
 - Epics restants : voir docs/epics.html (7/9 verts au 19/07).
 - Campagne de re-test février : verdicts à donner en jouant (cases dans l'app).
 
@@ -196,3 +203,13 @@ Vote ○/× remplace par une note de goût sur 5 (mauvais, moyen, bon, très bon
 - Écran principal sur une seule hauteur (tablette plein écran) : titre, carrousel des 13 KitKat, photo à gauche, 4 joueurs à droite. Tier list, bizarre-o-mètre et sauvegarde sous l écran.
 - PWA installable (manifest display fullscreen, service worker hors ligne, écran maintenu allumé).
 - Avis stockés dans Supabase orderix-staging, tables isolées kitkat_votes / kitkat_players (script supabase/extras/kitkat_family.sql, à exécuter une fois dans le SQL Editor). Sans ces tables, l appli garde tout en local et envoie dès que les tables existent. Tables hors périmètre de wipe.sql.
+
+### 10/10 - KitKat et store perso sur Cloudflare Pages (reconstitué le 05/11 depuis le log de la session cloud)
+Une tablette n'installe qu'une seule PWA par origine : chaque app a donc sa propre origine Cloudflare Pages (projet `wael3rd`). KitKat : https://kitkat.wael3rd.pages.dev/ · store : https://wael3rd.pages.dev/. Déploiement manuel par `npm run deploy:cf` depuis le dépôt Cours_Enfants, pas depuis ce dépôt. L'id PWA de KitKat a été corrigé (be2a6e2). Ce jour-là, `kitkat_votes` et `kitkat_players` étaient introuvables sur Supabase : `supabase/extras/kitkat_family.sql` n'avait apparemment pas été exécuté.
+
+### 05/11 - Reprise sur un nouveau PC
+- Dépôt recloné dans `C:\Github\MobileGames\Orderix`. Node, Java, adb et le SDK Android n'y sont pas installés : ni build ni smoke-test en local pour l'instant. Les chemins `C:\Users\w.hadjmouldi\...` et `C:\Android\sdk` de ce journal désignent l'ancien PC.
+- Archive hors dépôt : `C:\Github\MobileGames\Orderix-archive\` (issues, releases, synthèse des sessions cloud).
+- **Supabase : les deux domaines ne résolvent plus.** `gzrquivrysbmodlwhslb.supabase.co` et `bivjyemdewgtvcwoptbo.supabase.co` répondent NXDOMAIN chez Cloudflare et Google. Les projets sont probablement en pause ou supprimés : à vérifier sur le dashboard Supabase. Le script GAS répond toujours (HTTP 200).
+- Mot de passe du catalogue retiré du journal et de `showcase-test.js`. Il reste dans l'historique git, mais le catalogue n'est plus en ligne depuis le 20/07.
+- Restés hors git, sur l'ancien PC : `docs/dump-bridge-recovery.txt`, prototypes `blockudoku-flow.html`, `meowdoku-proto.html`, `compare-*.html`, transcripts locaux, `config/orderix.<env>.local.json`. Le MCP Trello (`@delorenj/mcp-server-trello`) y était aussi configuré.

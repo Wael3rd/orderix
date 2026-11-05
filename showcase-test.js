@@ -4,6 +4,9 @@ const fs = require('fs');
 const path = require('path');
 const puppeteer = require('puppeteer-core');
 
+const PASSWORD = process.argv[2];
+if (!PASSWORD) { console.error('Usage : node showcase-test.js <motdepasse>'); process.exit(1); }
+
 const server = http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     res.end(fs.readFileSync(path.join(__dirname, 'pages', 'index.html')));
@@ -28,7 +31,7 @@ const server = http.createServer((req, res) => {
 
     // Bon mot de passe
     await page.evaluate(`document.getElementById('pw').value = ''`);
-    await page.type('#pw', 'WaelOrderix');
+    await page.type('#pw', PASSWORD);
     await page.click('#go');
     await new Promise(r => setTimeout(r, 2500));
     const cards = await page.evaluate(`document.querySelectorAll('.card').length`);
