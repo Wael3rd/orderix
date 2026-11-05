@@ -22,6 +22,11 @@
   (`cd android; .\gradlew.bat assembleDevDebug`) après l'étape env/sync (`node set-env.js staging
   && npx cap sync android`), ou lancer `npm run android:dev` depuis PowerShell/cmd (pas Git Bash).
   APK dev → `android/app/build/outputs/apk/dev/debug/app-dev-debug.apk` (~6 Mo).
+- **Une seule tentative par puzzle** : ni re-essai payant, ni mode entraînement (décidé par Wael le 19/07, retrouvé le 05/11 dans la session cloud).
+- **Genre « distribution de file » écarté** après 4 rejets : Ascenseur, Guichet, Aiguillage, À Bord (18/07).
+- **Pas d'assets dessinés maison** : banques d'images libres uniquement, Fluent Emoji 3D et Lucide (demande de Wael, 19/07).
+- Quand Wael dit « pas intéressant » : changer de gameplay pour un vrai succès du casual, pas retoucher (18/07).
+- Board de production : une tâche avance, ou elle est marquée « bloqué » avec sa raison (19/07).
 - Cible : femmes ~40 ans, jeux cérébraux ; design Easybrain × SNG ; ton bienveillant, jamais punitif.
 
 ## Infrastructure (état)
@@ -213,3 +218,9 @@ Une tablette n'installe qu'une seule PWA par origine : chaque app a donc sa prop
 - **Supabase : les deux domaines ne résolvent plus.** `gzrquivrysbmodlwhslb.supabase.co` et `bivjyemdewgtvcwoptbo.supabase.co` répondent NXDOMAIN chez Cloudflare et Google. Les projets sont probablement en pause ou supprimés : à vérifier sur le dashboard Supabase. Le script GAS répond toujours (HTTP 200).
 - Mot de passe du catalogue retiré du journal et de `showcase-test.js`. Il reste dans l'historique git, mais le catalogue n'est plus en ligne depuis le 20/07.
 - Restés hors git, sur l'ancien PC : `docs/dump-bridge-recovery.txt`, prototypes `blockudoku-flow.html`, `meowdoku-proto.html`, `compare-*.html`, transcripts locaux, `config/orderix.<env>.local.json`. Le MCP Trello (`@delorenj/mcp-server-trello`) y était aussi configuré.
+- Routine arrêtée volontairement par Wael le 18/07 à 20:20 UTC, après une collision avec une session terminal sur la même file d'issues. Réactivable.
+- Compte Google Play : compte Organisation prévu car Wael est auto-entrepreneur (D-U-N-S à vérifier sur dnb.com, 25 $, e-mail Google dédié). Un compte personnel imposerait 12 testeurs pendant 14 jours et l'affichage de son adresse si l'app monétise.
+- Calendrier : d'après `state.js`, le miroir se termine au jour 268 (25/09). Depuis le 26/09, le puzzle du jour devrait être vide, à prolonger si les tests reprennent.
+- Jeton `ORDERIX_FEEDBACK_TOKEN` créé le 18/07 pour 90 jours : expiration probable vers le 16/10, à renouveler si les tests reprennent.
+- Écarts visuels listés le 20/07, non traités : pas de mascotte ni d'illustration (le plus gros manque, demande un illustrateur ou des assets achetés), classement sans podium, sons peu variés.
+- Synthèse complète : `Orderix-archive\historique-cloud.md`.
