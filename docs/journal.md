@@ -27,6 +27,9 @@
 - **Pas d'assets dessinés maison** : banques d'images libres uniquement, Fluent Emoji 3D et Lucide (demande de Wael, 19/07).
 - Quand Wael dit « pas intéressant » : changer de gameplay pour un vrai succès du casual, pas retoucher (18/07).
 - Board de production : une tâche avance, ou elle est marquée « bloqué » avec sa raison (19/07).
+- **WebView conservée** plutôt qu'une migration Kotlin (Wael, 23/06, retrouvé le 05/11 dans la session cloud). L'argument « les jeux Easybrain sont des WebViews » n'avait pas de source : à vérifier si ce choix est rouvert.
+- **Le gameplay passe avant les thèmes** : le croisement modes × 50 thèmes enfermait le design dans des carrés à comparer ; les thèmes ne servent plus que d'habillage sur quelques modes de perception (Wael, 17/07).
+- **Anciens gameplays conservés** : « je veux pas qu'on supprime pour le moment » (Wael, 17/07).
 - Cible : femmes ~40 ans, jeux cérébraux ; design Easybrain × SNG ; ton bienveillant, jamais punitif.
 
 ## Infrastructure (état)
@@ -224,3 +227,4 @@ Une tablette n'installe qu'une seule PWA par origine : chaque app a donc sa prop
 - Jeton `ORDERIX_FEEDBACK_TOKEN` créé le 18/07 pour 90 jours : expiration probable vers le 16/10, à renouveler si les tests reprennent.
 - Écarts visuels listés le 20/07, non traités : pas de mascotte ni d'illustration (le plus gros manque, demande un illustrateur ou des assets achetés), classement sans podium, sons peu variés.
 - Synthèse complète : `Orderix-archive\historique-cloud.md`.
+- Wael annonce un gros retravail du projet (05/11), périmètre à préciser. Les décisions de juin et juillet ci-dessus seront à réexaminer à cette occasion.
