@@ -38,7 +38,7 @@
   migrations 0001→0005 appliquées, client vanilla (auth anonyme, scores, classements, pseudo,
   export/suppression RGPD), **double écriture Supabase + repli GAS**. Mots de passe DB :
   `C:\Users\w.hadjmouldi\Documents\Orderix-keys\LISEZMOI-IMPORTANT.txt` (ancien PC ; copie dans Drive, `ORDERIX/Orderix-keys`).
-  **État au 05/11 : les domaines des deux projets ne résolvent plus**, voir la chronologie du 05/11.
+  **État au 05/11 : les deux projets sont en pause**, voir la chronologie du 05/11.
 - **CI GitHub Actions** : build APK auto, keystore stable (fin des alertes Play Protect).
 - **Routine cloud** « Orderix — correctifs depuis les feedbacks » : **désactivée** (dernière exécution le 18/07 à 20:10 UTC).
   Quand elle tournait : cron toutes les 2 h, lit les
@@ -218,7 +218,7 @@ Une tablette n'installe qu'une seule PWA par origine : chaque app a donc sa prop
 ### 05/11 - Reprise sur un nouveau PC
 - Dépôt recloné dans `C:\Github\MobileGames\Orderix`. Node, Java, adb et le SDK Android n'y sont pas installés : ni build ni smoke-test en local pour l'instant. Les chemins `C:\Users\w.hadjmouldi\...` et `C:\Android\sdk` de ce journal désignent l'ancien PC.
 - Archive hors dépôt : `C:\Github\MobileGames\Orderix-archive\` (issues, releases, synthèse des sessions cloud).
-- **Supabase : les deux domaines ne résolvent plus.** `gzrquivrysbmodlwhslb.supabase.co` et `bivjyemdewgtvcwoptbo.supabase.co` répondent NXDOMAIN chez Cloudflare et Google. Les projets sont probablement en pause ou supprimés : à vérifier sur le dashboard Supabase. Le script GAS répond toujours (HTTP 200).
+- **Supabase : les deux domaines ne résolvent plus.** `gzrquivrysbmodlwhslb.supabase.co` et `bivjyemdewgtvcwoptbo.supabase.co` répondent NXDOMAIN chez Cloudflare et Google. Vérifié sur le dashboard par Wael : les deux projets sont en pause (plan gratuit), données intactes. Reprise possible depuis le dashboard jusqu'au 20/11/2027 pour staging et au 30/08/2027 pour prod ; après ces dates, données téléchargeables seulement. Le script GAS répond toujours (HTTP 200).
 - Mot de passe du catalogue retiré du journal et de `showcase-test.js`. Il reste dans l'historique git, mais le catalogue n'est plus en ligne depuis le 20/07.
 - Restés hors git, sur l'ancien PC : `docs/dump-bridge-recovery.txt`, prototypes `blockudoku-flow.html`, `meowdoku-proto.html`, `compare-*.html`, transcripts locaux, `config/orderix.<env>.local.json`. Le MCP Trello (`@delorenj/mcp-server-trello`) y était aussi configuré.
 - Routine arrêtée volontairement par Wael le 18/07 à 20:20 UTC, après une collision avec une session terminal sur la même file d'issues. Réactivable.
