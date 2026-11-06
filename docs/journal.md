@@ -234,6 +234,6 @@ Wael a relancé `orderix-staging` depuis le dashboard ; `orderix-prod` reste en 
 `kitkat_votes` et `kitkat_players` n'existent toujours pas (404, PGRST205) : `supabase/extras/kitkat_family.sql` reste à exécuter une fois dans le SQL Editor. D'ici là, KitKat garde les avis en local sur chaque appareil.
 
 ### 06/11 - Playbook de refonte
-Wael veut une app de niveau pro autour du jeu. Étude de deux apps de référence, sans le gameplay : enrobage de Blockudoku, outils de feedback et de debug de brawler. Résultat dans `docs/playbook-pro.md`, non versionné tant que Wael n'a pas tranché, car le dépôt est public.
+Wael veut une app de niveau pro autour du jeu. Étude de deux apps de référence, sans le gameplay : enrobage de Blockudoku, outils de feedback et de debug de brawler. Résultat dans `docs/playbook-pro.md`, versionné à la demande de Wael.
 - Priorité de Wael : une finition professionnelle, qui compte énormément. La recommandation de rester en WebView est retirée : la pile se choisira sur un prototype comparé, jugé sur téléphone, avant le reste de la refonte.
 - Exigence pour la boucle de test, sur le modèle de brawler : un retour à voix haute, transcrit, qui emporte les dernières secondes de jeu.
