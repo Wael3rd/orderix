@@ -235,3 +235,5 @@ Wael a relancé `orderix-staging` depuis le dashboard ; `orderix-prod` reste en 
 
 ### 06/11 - Playbook de refonte
 Wael veut une app de niveau pro autour du jeu. Étude de deux apps de référence, sans le gameplay : enrobage de Blockudoku, outils de feedback et de debug de brawler. Résultat dans `docs/playbook-pro.md`, non versionné tant que Wael n'a pas tranché, car le dépôt est public.
+- Priorité de Wael : une finition professionnelle, qui compte énormément. La recommandation de rester en WebView est retirée : la pile se choisira sur un prototype comparé, jugé sur téléphone, avant le reste de la refonte.
+- Exigence pour la boucle de test, sur le modèle de brawler : un retour à voix haute, transcrit, qui emporte les dernières secondes de jeu.
