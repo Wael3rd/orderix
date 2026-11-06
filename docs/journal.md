@@ -38,7 +38,7 @@
   migrations 0001→0005 appliquées, client vanilla (auth anonyme, scores, classements, pseudo,
   export/suppression RGPD), **double écriture Supabase + repli GAS**. Mots de passe DB :
   `C:\Users\w.hadjmouldi\Documents\Orderix-keys\LISEZMOI-IMPORTANT.txt` (ancien PC ; copie dans Drive, `ORDERIX/Orderix-keys`).
-  **État au 05/11 : les deux projets sont en pause**, voir la chronologie du 05/11.
+  **État au 06/11 : staging actif, prod en pause**, voir la chronologie du 05/11 et du 06/11.
 - **CI GitHub Actions** : build APK auto, keystore stable (fin des alertes Play Protect).
 - **Routine cloud** « Orderix — correctifs depuis les feedbacks » : **désactivée** (dernière exécution le 18/07 à 20:10 UTC).
   Quand elle tournait : cron toutes les 2 h, lit les
@@ -228,3 +228,7 @@ Une tablette n'installe qu'une seule PWA par origine : chaque app a donc sa prop
 - Écarts visuels listés le 20/07, non traités : pas de mascotte ni d'illustration (le plus gros manque, demande un illustrateur ou des assets achetés), classement sans podium, sons peu variés.
 - Synthèse complète : `Orderix-archive\historique-cloud.md`.
 - Wael annonce un gros retravail du projet (05/11), périmètre à préciser. Les décisions de juin et juillet ci-dessus seront à réexaminer à cette occasion.
+
+### 06/11 - Staging relancé
+Wael a relancé `orderix-staging` depuis le dashboard ; `orderix-prod` reste en pause. Vérifié : le domaine résout, l'auth répond (200), `profiles`, `results` et `day_config` répondent (200). Le plan gratuit peut remettre le projet en pause s'il reste inactif.
+`kitkat_votes` et `kitkat_players` n'existent toujours pas (404, PGRST205) : `supabase/extras/kitkat_family.sql` reste à exécuter une fois dans le SQL Editor. D'ici là, KitKat garde les avis en local sur chaque appareil.
