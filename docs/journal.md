@@ -27,7 +27,7 @@
 - **Pas d'assets dessinés maison** : banques d'images libres uniquement, Fluent Emoji 3D et Lucide (demande de Wael, 19/07).
 - Quand Wael dit « pas intéressant » : changer de gameplay pour un vrai succès du casual, pas retoucher (18/07).
 - Board de production : une tâche avance, ou elle est marquée « bloqué » avec sa raison (19/07).
-- **WebView conservée** plutôt qu'une migration Kotlin (Wael, 23/06, retrouvé le 05/11 dans la session cloud). L'argument « les jeux Easybrain sont des WebViews » n'avait pas de source : à vérifier si ce choix est rouvert.
+- **WebView conservée** plutôt qu'une migration Kotlin (Wael, 23/06, retrouvé le 05/11 dans la session cloud). L'argument « les jeux Easybrain sont des WebViews » était sans source et s'est révélé faux pour Blockudoku (Unity, vérifié le 06/11) : choix à réexaminer lors du retravail.
 - **Le gameplay passe avant les thèmes** : le croisement modes × 50 thèmes enfermait le design dans des carrés à comparer ; les thèmes ne servent plus que d'habillage sur quelques modes de perception (Wael, 17/07).
 - **Anciens gameplays conservés** : « je veux pas qu'on supprime pour le moment » (Wael, 17/07).
 - Cible : femmes ~40 ans, jeux cérébraux ; design Easybrain × SNG ; ton bienveillant, jamais punitif.
@@ -232,3 +232,6 @@ Une tablette n'installe qu'une seule PWA par origine : chaque app a donc sa prop
 ### 06/11 - Staging relancé
 Wael a relancé `orderix-staging` depuis le dashboard ; `orderix-prod` reste en pause. Vérifié : le domaine résout, l'auth répond (200), `profiles`, `results` et `day_config` répondent (200). Le plan gratuit peut remettre le projet en pause s'il reste inactif.
 `kitkat_votes` et `kitkat_players` n'existent toujours pas (404, PGRST205) : `supabase/extras/kitkat_family.sql` reste à exécuter une fois dans le SQL Editor. D'ici là, KitKat garde les avis en local sur chaque appareil.
+
+### 06/11 - Playbook de refonte
+Wael veut une app de niveau pro autour du jeu. Étude de deux apps de référence, sans le gameplay : enrobage de Blockudoku, outils de feedback et de debug de brawler. Résultat dans `docs/playbook-pro.md`, non versionné tant que Wael n'a pas tranché, car le dépôt est public.
