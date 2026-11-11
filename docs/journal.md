@@ -237,3 +237,9 @@ Wael a relancé `orderix-staging` depuis le dashboard ; `orderix-prod` reste en 
 Wael veut une app de niveau pro autour du jeu. Étude de deux apps de référence, sans le gameplay : enrobage de Blockudoku, outils de feedback et de debug de brawler. Résultat dans `docs/playbook-pro.md`, versionné à la demande de Wael.
 - Priorité de Wael : une finition professionnelle, qui compte énormément. La recommandation de rester en WebView est retirée : la pile se choisira sur un prototype comparé, jugé sur téléphone, avant le reste de la refonte.
 - Exigence pour la boucle de test, sur le modèle de brawler : un retour à voix haute, transcrit, qui emporte les dernières secondes de jeu.
+
+### 11/11 - Outils installés sur le nouveau PC
+- Node LTS (`C:\Dev\node`), JDK 17 Temurin (`C:\Dev\jdk-17`), SDK Android (`C:\Android\sdk` : plateforme et build-tools 34, émulateur, pilote AEHD, AVD `orderix_test` en API 34), Unity 6000.3.28f1 avec le module Android complet (`C:\Dev\Unity\Editor`), ffmpeg (winget). Variables `JAVA_HOME`, `ANDROID_HOME` et PATH utilisateur.
+- Vérifié : `node smoke-test.js` passe, l'APK staging se construit (5,9 Mo). Dans le shell Bash de Claude Code, `npm run android:dev` échoue sur `gradlew` : lancer `.\gradlew.bat assembleDevDebug` depuis `android/` en PowerShell.
+- Licence Unity : connexion de Wael à Unity Hub nécessaire.
+- Étude de Blockudoku : l'émulateur ne le fait pas tourner (code ARM traduit, bloqué sur le consentement puis « ne répond pas »). Le film se fera sur téléphone.
