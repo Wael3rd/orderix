@@ -249,3 +249,6 @@ Wael veut une app de niveau pro autour du jeu. Étude de deux apps de référenc
 - Wael veut que Unity soit piloté sans fenêtre : éditeur en mode batch, commandé par le Unity CLI.
 - Comptes joueurs anonymes pour l'instant ; Wael voudra ensuite la connexion Google.
 - Première tranche verticale construite et vérifiée par captures : accueil, La Chaîne sur 3 manches, victoire, cadeau avec vol de pièces. Interface entièrement construite par le code (formes procédurales, animations, sons synthétisés). Identifiant Android provisoire `com.orderix.game`.
+- Wael a validé la première tranche Unity sur son téléphone (REDMAGIC 10 Pro, Android 15) : « visuellement c'est super super bien ». Elle sert de barre de finition.
+- **Ordre de portage décidé par Wael : les 31 gameplays de janvier d'abord.** Les 38 anciens modes ne sont pas portés pour l'instant ; ils seront triés ensuite, gardés ou abandonnés un par un.
+- Installation sur le téléphone de Wael par USB (`adb install -r`) : l'installateur du téléphone refuse l'APK téléchargé (« problème lors de l'analyse du package »), cause inconnue, APK sain.
