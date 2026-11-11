@@ -25,13 +25,13 @@ Lus le 06/11/2026 par analyse statique, sans rien exécuter. « (déduit) » mar
 - CI : smoke-test puis APK. La QA sur émulateur n'y est pas.
 
 ## Le choix de la pile
-- Priorité de Wael (06/11) : une finition professionnelle, qui compte énormément. C'est justement ce que le moteur influence : la pile n'est plus acquise.
-- L'argument de juin (« les jeux Easybrain sont des WebViews ») est faux pour Blockudoku.
-- La décision passe en premier : le code client de la plateforme, du feedback et du replay dépend de la pile. Seul le serveur survit à un changement.
-- Elle se prend sur prototype : les mêmes écrans (accueil, une partie, écran de victoire) avec les mêmes assets, jugés par Wael sur un téléphone de milieu de gamme. Fluidité, réponse au toucher et temps de démarrage sont mesurés.
-- Candidats : une WebView renforcée (couche WebGL pour les effets, Rive ou Lottie pour l'animé) et Unity, le moteur de la référence.
-- Coûts de Unity à mettre en face : réécriture des 41 modes, APK plus lourd, outil centré sur un éditeur visuel donc vérifications automatiques à construire. Licence à vérifier.
-- Aucun moteur ne remplace la direction artistique : illustration et mascotte restent le plus gros manque relevé le 20/07, quelle que soit la pile.
+- **Décision de Wael (11/11) : Unity en natif.** Tous les gameplays actuels sont réécrits, avec une finition professionnelle partout, menus et récompenses compris. Le prototype comparatif est abandonné.
+- L'argument de juin (« les jeux Easybrain sont des WebViews ») était faux : Blockudoku est en Unity, comme la plupart des références du genre.
+- Ce qui rend Unity tenable pour un développeur seul assisté par Claude : le Unity CLI et le paquet Pipeline (`com.unity.pipeline`). Ils permettent de compiler, lancer les tests, passer en Play Mode, faire des captures et construire depuis le terminal.
+- Installé le 11/11 : Unity 6.3 LTS (6000.3.28f1) avec le module Android complet, le Unity CLI et les skills Unity pour Claude.
+- Coûts acceptés : réécriture de tous les modes, APK plus lourd, licences d'outils et d'assets à prévoir.
+- Ce qui reste de la version web : le backend (Supabase, GAS), le calendrier et le contenu, les données des joueurs, la connaissance des modes. L'app web reste en ligne en l'état pendant la refonte.
+- Aucun moteur ne remplace la direction artistique : illustration et mascotte restent le plus gros manque relevé le 20/07.
 
 ## L'étude sur appareil
 - L'analyse statique ne montre ni les enchaînements, ni le rythme, ni le ressenti : les scènes de Blockudoku ne sont pas lisibles sans outil Unity.
@@ -44,7 +44,7 @@ Blockudoku a trois couches : modules natifs avec un pont vers le jeu, une quaran
 - `meta/` : accueil, calendrier, événements, pass, trophées.
 - `game/modes/` : un fichier par mode, un seul contrat : `start(ctx)` renvoie un résultat. `ctx` fournit `rng`, `clock`, `haptics`, `sound`, `log`.
 - Un mode ne touche jamais au stockage, au réseau, à `Math.random` ni à `Date`. La règle est vérifiée par le lint.
-- Si la WebView reste : modules ES et Vite à la place de l'ordre de chargement global, TypeScript en vérification sur le JS, ESLint avec `no-undef`. Cela remplace la règle actuelle « pas de bundler ».
+- En Unity : une assembly (`.asmdef`) par couche. Un mode ne référence que l'assembly du contexte, ce qui rend la règle vérifiable à la compilation.
 - Modèles de données décrits par un schéma unique : sauvegarde, sync et validation en découlent.
 
 ## Démarrage et coque native
@@ -91,7 +91,7 @@ C'est la priorité du projet, pas un bonus de fin. Elle se valide à chaque éta
 - Grille écrite à partir de l'étude sur appareil, appliquée à chaque écran : entrée et sortie animées, réponse à chaque toucher (image, son, haptique), états vide, chargement et erreur soignés, récompense mise en scène, aucun saut de mise en page, fluidité tenue sur un téléphone de milieu de gamme.
 - Comparaison côte à côte avec les vidéos de l'étude pour le niveau d'exigence, jamais pour le look. Wael valide sur son téléphone, écran par écran.
 - Un vocabulaire unique : durées et courbes en jetons, haptique nommée (`succes`, `erreur`, `tap`) au lieu de motifs bruts, son par catégorie avec volumes.
-- Des outils d'animation adaptés à la pile retenue. Blockudoku s'appuie sur DOTween, Spine et une haptique à 7 types.
+- DOTween pour les animations d'interface, un outil de « juice » (Feel ou équivalent) et les particules Unity. Blockudoku s'appuie sur DOTween, Spine et une haptique à 7 types.
 - Illustration, mascotte, sons : un budget d'assets à décider tôt, c'est le plus gros manque relevé le 20/07. La règle du 19/07 reste : pas d'assets dessinés maison.
 - Textes extraits dès maintenant. Blockudoku a 18 langues ; Orderix peut rester en français au départ.
 - Mise en page de référence téléphone et tablette, zones sûres gérées partout, listes longues virtualisées.
@@ -103,7 +103,7 @@ Repris de brawler :
 - Pour Orderix : un tampon circulaire, toujours actif en build de test, garde les actions et l'état des 30 dernières secondes (à régler). Le développeur revoit ce moment par rejeu : aucune vidéo à encoder, quelle que soit la pile.
 - Contexte joint automatiquement : build, env, jour, mode, seed, état, appareil, identifiant d'installation.
 - Capture d'écran annotable au doigt, en rouge.
-- Voix transcrite côté serveur, texte corrigé par le testeur avant envoi. Service de transcription à choisir. À valider si la WebView reste : le micro via Capacitor.
+- Voix transcrite côté serveur, texte corrigé par le testeur avant envoi. Service de transcription à choisir. Micro via la classe `Microphone` de Unity et la permission `RECORD_AUDIO`.
 - File sur disque, vidée au lancement et à intervalles réguliers. Un refus du serveur classe la note à part au lieu de la perdre.
 - Écran « Mes retours » : statuts, réponses, « Corrigé / Toujours cassé » à confirmer, cartes de décision avec images avant et après.
 - Bannière de test « À faire / Attendu » avec un bouton Suivant : le développeur envoie un test précis au testeur.
@@ -112,7 +112,7 @@ Repris de brawler :
 ## Déterminisme et replay
 - Toute source d'aléa et de temps passe par `ctx`. `rng` est initialisé depuis la seed du jour et de la partie.
 - Une session : seed, build, actions horodatées, hash de l'état à chaque étape, résultat. Elle part avec la note, sur disque d'abord.
-- Rejeu dans Node avec le harnais de `smoke-test.js`, dont l'horloge factice existe déjà. Une divergence de hash est signalée.
+- Rejeu en tests EditMode (Unity Test Framework), lancés par le CLI en local et en CI. Une divergence de hash est signalée.
 - Un bug confirmé devient un test du corpus de replays, qui tourne en CI.
 - Le replay ne voit pas l'image : vérifier aussi l'écran sur appareil.
 - La fenêtre d'une note se rejoue depuis son état de départ, sans repartir du début de la partie.
@@ -121,18 +121,18 @@ Repris de brawler :
 ## Debug et télémétrie
 - En build dev seulement, avec un test qui prouve leur absence en prod : surcouche build, jour, mode, seed, fps et tâches longues ; menu caché pour aller à un jour, charger un état, réinitialiser. « Rejouer (test) » existe déjà.
 - Scénario par note : chaque retour peut recharger l'état où il a été émis.
-- Compteurs en mémoire uniquement pendant le jeu, envoi en fin de session : écart entre frames, tâches longues (`PerformanceObserver`), délai entre toucher et réaction, temps de démarrage, version de la WebView.
+- Compteurs en mémoire uniquement pendant le jeu, envoi en fin de session : écart entre frames, tâches longues (`PerformanceObserver`), délai entre toucher et réaction, temps de démarrage, modèle de GPU.
 - Envoyer ces compteurs au serveur, contrairement à brawler : les téléphones des testeurs sont hors de portée.
 
 ## Distribution aux testeurs
-- Build, version et numéro viennent de la CI (`run_number`) et vont dans `versionCode`, `versionName`, `env.js`, l'en-tête de chaque requête et l'écran.
+- Build, version et numéro viennent de la CI (`run_number`) et vont dans `versionCode`, `versionName`, la config de build, l'en-tête de chaque requête et l'écran.
 - Canaux `live` et `test`. Code d'invitation et tag par appareil, revérifiés au lancement : tag retiré, build coupé. Pas de compte obligatoire pour le public.
 - Version minimale côté serveur : brawler n'en a pas.
 - Mise à jour automatique de l'APK en build dev seulement : vérification, reprise, SHA-256, `PackageInstaller` via un plugin natif à écrire. À revérifier : Google Play interdit à une app distribuée sur le store de se mettre à jour en dehors de lui.
 - Publier avant de tester sur appareil : une app qui se met à jour réinstalle le build publié.
 
 ## Tests et CI
-- Tests unitaires sur la logique pure et les générateurs, smoke-test, corpus de replays, lint et types sur chaque push.
+- Tests EditMode sur la logique pure et les générateurs, tests PlayMode sur les écrans, corpus de replays, sur chaque push via le Unity CLI.
 - QA sur émulateur en CI, avec les images de référence jamais recapturées dans le même passage que la vérification.
 - Ajouter à un test chaque bug corrigé.
 
@@ -149,16 +149,16 @@ Repris de brawler :
 - Un replay qui saute la même chose que l'enregistrement « valide » une partie cassée.
 
 ## Ordre de travail
-La pile d'abord, parce que le reste en dépend. Le feedback ensuite, parce qu'il accélère tout le reste. La finition se valide à chaque étape.
+Le socle d'abord, puis une tranche verticale qui fixe la barre de finition, puis la boucle de feedback qui accélère tout le reste. La finition se valide à chaque étape.
 
 | # | Étape | Fini quand |
 |---|---|---|
-| 1 | Choix de la pile : outils sur ce PC, étude filmée, grille de finition, prototype comparé | Wael a choisi sur son téléphone, et les chiffres sont connus |
-| 2 | Socle : build visible, calendrier regarni, jeton hors de l'APK | Le numéro de build s'affiche partout, une note passe par la fonction serveur |
+| 1 | Socle Unity : licence, CLI connecté, projet, dépôt, paquets (Pipeline, DOTween, TextMeshPro), build Android en CI | Un APK Unity se construit en CI et le CLI pilote l'éditeur |
+| 2 | Tranche verticale : accueil, un mode, victoire et récompense, au niveau visé | Wael la valide sur son téléphone ; elle devient la grille de finition |
 | 3 | Boucle de feedback : geste partout, gel, voix transcrite, X dernières secondes, contexte, capture, file disque, « Mes retours » | Une note vocale envoyée d'un téléphone arrive avec son contexte et sa fenêtre, et la réponse revient dans l'app |
-| 4 | Déterminisme et replay | Chaque mode se rejoue avec le même hash, et le corpus tourne en CI |
-| 5 | Découpage plateforme, méta, jeu | Le lint refuse qu'un mode touche au stockage, au réseau ou à l'aléa |
-| 6 | Finition et méta : animation, son, haptique, assets, écran par écran | Wael valide chaque écran sur téléphone selon la grille |
-| 7 | Pilotage et contenu distant | Le calendrier change sans nouvel APK, et l'alerte de contenu fonctionne |
-| 8 | Consentement et mesure | Le tunnel de première session et le D1 se lisent sur un tableau de bord |
-| 9 | Sauvegardes versionnées et sync | Une sauvegarde de chaque ancienne version migre en test, et un conflit se résout sans perte |
+| 4 | Déterminisme et replay | Chaque mode porté se rejoue avec le même hash en test EditMode |
+| 5 | Plateforme, méta, puis portage de tous les modes par lots | Chaque mode porté passe ses tests et la grille de finition |
+| 6 | Pilotage et contenu distant | Le calendrier change sans nouvel APK, et l'alerte de contenu fonctionne |
+| 7 | Consentement et mesure | Le tunnel de première session et le D1 se lisent sur un tableau de bord |
+| 8 | Sauvegardes versionnées, sync, reprise de la progression des joueurs web | Une sauvegarde de chaque ancienne version migre en test, et un conflit se résout sans perte |
+| 9 | Publication sur le Play Store | Build signé accepté en test interne |

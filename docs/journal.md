@@ -243,3 +243,5 @@ Wael veut une app de niveau pro autour du jeu. Étude de deux apps de référenc
 - Vérifié : `node smoke-test.js` passe, l'APK staging se construit (5,9 Mo). Dans le shell Bash de Claude Code, `npm run android:dev` échoue sur `gradlew` : lancer `.\gradlew.bat assembleDevDebug` depuis `android/` en PowerShell.
 - Licence Unity : connexion de Wael à Unity Hub nécessaire.
 - Étude de Blockudoku : l'émulateur ne le fait pas tourner (code ARM traduit, bloqué sur le consentement puis « ne répond pas »). Le film se fera sur téléphone.
+- **Décision de Wael : Orderix passe en Unity natif.** Tous les gameplays actuels réécrits, finition professionnelle partout (menus, jeu, et surtout cadeaux et récompenses, jugés « faits avec les pieds »). Le prototype comparatif WebView/Unity est abandonné. Playbook mis à jour.
+- Unity CLI 1.0.0-beta.17 installé (`%LOCALAPPDATA%\Unity\bin`), avec les skills Unity pour Claude (`~\.claude\skills`). Le paquet `com.unity.pipeline` permet de piloter l'éditeur depuis le terminal.
