@@ -252,3 +252,5 @@ Wael veut une app de niveau pro autour du jeu. Étude de deux apps de référenc
 - Wael a validé la première tranche Unity sur son téléphone (REDMAGIC 10 Pro, Android 15) : « visuellement c'est super super bien ». Elle sert de barre de finition.
 - **Ordre de portage décidé par Wael : les 31 gameplays de janvier d'abord.** Les 38 anciens modes ne sont pas portés pour l'instant ; ils seront triés ensuite, gardés ou abandonnés un par un.
 - Installation sur le téléphone de Wael par USB (`adb install -r`) : l'installateur du téléphone refuse l'APK téléchargé (« problème lors de l'analyse du package »), cause inconnue, APK sain.
+- **Cible : 50 gameplays** (demande de Wael, 11/11), en comptant les existants. Critère : des mécaniques « evergreen » liées de près ou de loin au classement. Les anciens modes sont gardés seulement s'ils répondent à ce critère. S'y ajoutent des genres éprouvés trouvés par recherche et des gameplays originaux. La qualité passe avant le nombre : « il faut que j'écrase la concurrence grâce à ça ».
+- Les modes inspirés d'un jeu précis gardent la mécanique (un genre libre) mais prennent un nom et un habillage propres à Orderix.
