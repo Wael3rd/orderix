@@ -245,3 +245,7 @@ Wael veut une app de niveau pro autour du jeu. Étude de deux apps de référenc
 - Étude de Blockudoku : l'émulateur ne le fait pas tourner (code ARM traduit, bloqué sur le consentement puis « ne répond pas »). Le film se fera sur téléphone.
 - **Décision de Wael : Orderix passe en Unity natif.** Tous les gameplays actuels réécrits, finition professionnelle partout (menus, jeu, et surtout cadeaux et récompenses, jugés « faits avec les pieds »). Le prototype comparatif WebView/Unity est abandonné. Playbook mis à jour.
 - Unity CLI 1.0.0-beta.17 installé (`%LOCALAPPDATA%\Unity\bin`), avec les skills Unity pour Claude (`~\.claude\skills`). Le paquet `com.unity.pipeline` permet de piloter l'éditeur depuis le terminal.
+- Projet Unity créé : `C:\Github\MobileGames\OrderixUnity`, dépôt privé `Wael3rd/orderix-unity` (les assets achetés ne peuvent pas aller dans ce dépôt public). Unity 6000.3.28f1, URP 2D, licence Personal, relié à Unity Cloud (organisation HadjMouldi-Wael). Son `CLAUDE.md` décrit l'architecture et les commandes.
+- Wael veut que Unity soit piloté sans fenêtre : éditeur en mode batch, commandé par le Unity CLI.
+- Comptes joueurs anonymes pour l'instant ; Wael voudra ensuite la connexion Google.
+- Première tranche verticale construite et vérifiée par captures : accueil, La Chaîne sur 3 manches, victoire, cadeau avec vol de pièces. Interface entièrement construite par le code (formes procédurales, animations, sons synthétisés). Identifiant Android provisoire `com.orderix.game`.
