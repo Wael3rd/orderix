@@ -287,3 +287,14 @@ Wael a installé la 0.1.6, dicté six notes, puis demandé : « j'aimerais que t
 - **Serveur** : ces boutons demandent la version 3 du réglage Supabase (`Tools/retours/supabase.sql`, testée sur un Postgres local avant envoi). Wael l'a collée lui-même dans la nuit depuis la page de réglage (vérifié : les fonctions répondent). Le branchement qui me permettrait de l'appliquer seul (`Orderix - Brancher Supabase` sur le bureau) n'est toujours pas fait.
 - Corrigé au passage : le titre de chaque carte de « Mes notes » était invisible (cadre de texte trop bas).
 - Non vérifié sur téléphone : le clavier Android dans la relecture et les feuilles de saisie (vérifié seulement dans l'éditeur), et toute la chaîne « Corriger maintenant » de bout en bout (chaque maillon est testé séparément).
+
+### 12/11/2026 (fin de nuit) : neuf notes de plus, version 0.1.8
+
+Wael a dicté neuf autres notes avant de dormir et collé lui-même la version 3 du réglage Supabase.
+
+- **Les Tubes** (note 10, « un tout petit peu trop dur ») : mélange de départ ramené de 70-90 à 52-68 coups inverses.
+- **Le Tri Minimal** (notes 12, 14, 15, 16) : deux déplacements de marge au lieu du minimum exact (le minimum reste la performance à trois étoiles) ; bouton « Annuler » sans limite ; mise en page aérée et centrée dans la hauteur de l'écran ; après une défaite, la correction se joue lentement (« Voici le bon ordre », tuiles fautives en rouge, puis une à une vers leur place).
+- **Bouton de test « Solution : 1 étape »** (note 13) : dans les versions de test, chaque appui joue un coup juste, dans les 29 gameplays (c'est le pilote automatique `DebugStep`). Wael le veut « uniquement pour nous ». C'est aussi la mécanique toute prête d'un indice payant.
+- **Calendrier** (note 11) : pastilles par gameplay dans les versions de test, orange pour les notes à traiter, verte pour les corrections à tester.
+- **Écran de victoire** (note 17) : le nom du gameplay réussi est rappelé sous le titre.
+- **Méta** (note 18 : « les pièces ne servent à rien, les niveaux non plus, le profil je ne peux pas y accéder, je veux une méta bien solide, de la rétention ») : l'onglet Profil s'ouvre maintenant (`ProfileScreen` : niveau, séries, totaux, parcours de chaque gameplay). Le reste est une proposition qui attend ses décisions, publiée en page privée : https://claude.ai/artifact/7nc7Ax4zeVZMYTN8ct5pBQ (indice, seconde chance et joker de série payés en pièces ; cadeau de la semaine ; quêtes et défi hebdomadaire ; gameplays débloqués par le niveau ; publicité entre deux niveaux et publicité choisie ; album). Rien de cela n'est codé. La note reste au statut « compris ».
