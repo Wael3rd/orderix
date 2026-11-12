@@ -358,3 +358,12 @@ Note 22, dictée sur l'écran Parcours, « commentaire général » : il y a tro
 - **Aux sources** : `UIButton` et `Tappable` ne vibrent plus à l'appui mais au clic, une seule fois (la vibration de l'action si elle en joue une, sinon celle du bouton), donc plus rien quand on fait défiler ; `ReorderList` ne vibre plus aux crans ni à la pose ; le micro ne vibre plus au relâchement. Les sons n'ont pas changé, ni la forme des vibrations (réussite et refus restent des doubles impulsions voulues).
 - **Vérifié** : 1251 tests au vert (11 nouveaux sur le filtre) ; en Play Mode, en comptant les vibrations avec des doigts simulés : tuile du Parcours 1 (au clic), défilement 0, Tri Minimal 1 à la prise puis 0 au glissement et à la pose, « Annuler » 1. **Pas ressenti sur un téléphone** : c'est un réglage de sensation, la note est « corrigé », à confirmer par Wael. Les gameplays qui gèrent eux-mêmes le doigt (Blocs, Fusion, Les Anneaux, Le Solitaire...) ne sont couverts que par le filtre, pas relus un par un.
 - **0.1.16 publiée** (61 350 927 octets, annonce `latest.json` vérifiée en ligne). Les notes 23 à 28 (hors 25), reçues dans le même relevé, restent « nouveau » : elles n'ont pas été demandées. Si les vibrations restent trop présentes, les leviers sont les trois durées en tête de `HapticGate.cs`.
+
+### 12/11/2026, 8 h 47 à 8 h 52 : note 26 par « Corriger maintenant », version 0.1.17
+
+Note 26, dictée depuis la fenêtre « Mes notes » : en maintenant le micro alors que « Mes notes » est ouverte, « je ne vois rien du tout, je ne vois pas le truc d'enregistrement ».
+
+- **Cause** : l'écran de dictée (« Je vous écoute », chrono, zone « Glissez jusqu'ici pour annuler ») se rangeait tout au fond de la couche des retours, donc derrière la fenêtre « Mes notes ». La dictée fonctionnait, mais à l'aveugle.
+- **Correction** (`ReportTool.cs`, `BuildOverlay`, une ligne) : l'écran de dictée se place juste sous le bouton micro, donc par-dessus « Mes notes ». Hors de cette fenêtre, rien ne change.
+- **Vérifié** : 1251 tests au vert ; en Play Mode, « Mes notes » ouverte puis écran de dictée affiché par-dessus, bouton micro toujours au-dessus (capture `Screenshots/note26_2dictee`). Ce PC n'a pas de micro : l'écran de dictée a été ouvert à la main, pas par un vrai appui maintenu. La note est « corrigé », à confirmer par Wael sur son téléphone.
+- **0.1.17 publiée** (61 351 807 octets, annonce `latest.json` vérifiée en ligne). La note 29 (sous-catégories en haut de « Mes notes »), reçue dans le même relevé, reste « nouveau » : elle n'a pas été demandée.
