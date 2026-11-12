@@ -424,7 +424,7 @@ Note 28 (curseur de saisie, corrigée en 0.1.20), rouverte avec un commentaire :
 - **0.1.22 publiée** (61 367 415 octets, annonce `latest.json` vérifiée en ligne). À savoir : après « Plus tard », la même version n'est plus proposée avant le prochain lancement ; le pied de « Mes notes » continue de l'annoncer. La carte peut maintenant apparaître au retour dans l'application après 2 minutes, y compris pendant une partie. La veille n'a pas été relancée : rien n'a changé dans `Tools/retours`.
 - **Demandes en attente** : les notes 26, 24, 23 et 20 ont été demandées par « Corriger maintenant » entre 9 h 45 min 28 et 9 h 45 min 46 ; elles attendent leur tour (une session à la fois) et n'ont pas été touchées ici. La 26 a été redemandée une minute après la sortie de la 0.1.21 (9 h 44 min 26), sans nouveau commentaire : même cause probable, un essai sur la version d'avant. À vérifier avant de la recorriger.
 
-### 12/11/2026, 10 h 00 à 10 h 25 : note 26 redemandée par « Corriger maintenant », aucune nouvelle version
+### 12/11/2026, 10 h 00 à 10 h 05 : note 26 redemandée par « Corriger maintenant », aucune nouvelle version
 
 Note 26 (écran de dictée derrière « Mes notes », puis « Annuler » qui ramenait à l'écran principal : corrigée en 0.1.17 puis 0.1.21), redemandée à 9 h 45 min 28 sans nouveau commentaire.
 
