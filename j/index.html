@@ -81,7 +81,7 @@ background:var(--pale);color:var(--bleu2);font-weight:800;display:flex;align-ite
   <!-- B : le jeu n'est pas sur ce téléphone -->
   <section id="absent" hidden>
     <h1>Orderix n'est pas encore sur ce téléphone</h1>
-    <p class="suite" id="etat">Son téléchargement démarre. Sinon, touchez le bouton.</p>
+    <p class="suite" id="etat">Son téléchargement démarre : confirmez-le si le navigateur vous le demande. Sinon, touchez le bouton.</p>
     <div class="actions">
       <a class="bouton vert" id="telecharger" href="https://github.com/Wael3rd/orderix-builds/releases/download/dev-latest/Orderix-dev.apk">Télécharger Orderix</a>
     </div>
@@ -170,7 +170,7 @@ background:var(--pale);color:var(--bleu2);font-weight:800;display:flex;align-ite
     montrer('defi', false);
     montrer('absent', true);
     if (une_fois('orderix_tel')) setTimeout(function () { location.href = APK; }, 500);
-    else el('etat').textContent = 'Touchez le bouton pour télécharger le jeu.';
+    else el('etat').textContent = 'Touchez le bouton pour télécharger le jeu, et confirmez si le navigateur vous le demande.';
     return;
   }
 
