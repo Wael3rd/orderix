@@ -112,7 +112,7 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.77 (2026-11-23). Nothing verified on a phone.
+- Dev version online: 0.1.78 (2026-11-23). Nothing verified on a phone.
 - Since 0.1.77, test builds have a "Test" pill under a game's intro card: pick rank and level, play, nothing is counted
   (`GameScreen.Test.cs`, `TestLevels.cs` in the Unity repo). Only 17 games read the level; the others say so on their test card.
 - Since 0.1.76 the game's "share my time" text ends with a relay link served by this repo's `gh-pages` branch
@@ -123,7 +123,8 @@ client-trusted (known limitation).
   that builds places (6 places, each with its own painter style, `Resources/Places/<id>/<n>.jpg`), wheel, tournament
   tickets, race on Tuesdays and Thursdays, calendar button on the daily card.
 - Open: place paintings to be replaced later by better art (owner chose to ship the generated ones first); more places
-  needed (a regular player finishes 19 a year); owner to decide whether the wheel keeps giving stars.
+  needed (a regular player finishes 20 a year since the star chest gives 3 stars per opening, 0.1.78); owner to
+  decide whether the wheel keeps giving stars.
 - Several sessions edit the Unity repo at once (tester notes): do big work in a git worktree with its own editor
   (`AgentScripts/u.sh` targets the project it lives in) and merge into `main` when it is quiet.
 
