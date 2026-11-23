@@ -112,7 +112,9 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.79 (2026-11-23). Nothing verified on a phone.
+- Dev version online: 0.1.80 (2026-11-23). Nothing verified on a phone.
+- Since 0.1.80, Triple Suite tiles are thrown in a heap (no rows, always upright); a tile is covered as soon as another one bites on it;
+  levels 1 to 3 are built around a winning order like the others (`TripleRunGame.BuildPositions`).
 - Since 0.1.79 the shop has a loyalty card (`Core/Meta/Loyalty.cs`, spec: `docs/economie-design.md` 5 bis in the Unity repo): a shop purchase of
   100 coins or more, or paid in Gems, stamps one of 5 cases (first one offered); a full card gives in turn a wheel spin (kept in reserve,
   `MetaState.wheelBonus`), a tournament ticket, a sticker. Gem packs, paid wheel spins and bought tickets do not stamp.
