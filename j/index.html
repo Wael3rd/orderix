@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Orderix — On vous lance un défi !</title>
+<meta property="og:title" content="Orderix — On vous lance un défi !">
+<meta property="og:description" content="Un puzzle par jour. Et vous, vous faites combien ?">
+<meta property="og:image" content="https://wael3rd.github.io/orderix/og-defi.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="icone.png">
+<!--
+  Page relais du partage d'Orderix (jeu Unity, note du testeur 073317-88 du 23/11/2026).
+  Le jeu partage https://wael3rd.github.io/orderix/j/?n=<puzzle>&t=<secondes>&g=<code du groupe> (InviteLink.Relay).
+  Sur Android, la page demande au téléphone d'ouvrir orderix://amies/<code> :
+    - le jeu est installé : il s'ouvre (et fait entrer dans le groupe si le lien porte un code) ;
+    - il ne l'est pas : le navigateur revient ici avec x=1 et le téléchargement démarre.
+  x=a : l'essai automatique à l'arrivée n'a rien ouvert ; on ne sait pas si le jeu manque ou si le navigateur a refusé un
+  essai sans toucher, donc on attend un toucher sur le bouton, qui, lui, fait foi.
+  L'adresse de téléchargement est celle de InviteLink.DownloadUrl et de AgentScripts/publier.sh : les changer ensemble.
+-->
+<style>
+:root{--bleu:#4F6EF7;--bleu2:#3550D8;--levre:#2B3FB0;--encre:#1F2440;--gris:#6E7390;--carte:#fff;--pale:#EEF1FF;--vert:#2FB573}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{font-family:Poppins,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--encre);
+background:linear-gradient(175deg,#FFF4E6 0%,#FFE6DC 45%,#FFD2DD 100%) fixed;min-height:100vh;min-height:100dvh;
+display:flex;align-items:center;justify-content:center;padding:24px 18px}
+.carte{background:var(--carte);border-radius:30px;max-width:420px;width:100%;padding:30px 24px 26px;text-align:center;
+box-shadow:0 18px 44px rgba(120,60,90,.16),0 2px 6px rgba(120,60,90,.08)}
+.marque{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:22px}
+.marque img{width:52px;height:52px;border-radius:13px;box-shadow:0 4px 10px rgba(53,80,216,.3)}
+.marque span{font-size:1.7rem;font-weight:800;letter-spacing:-.01em}
+h1{font-size:1.35rem;font-weight:800;line-height:1.3}
+.puzzle{color:var(--gris);font-weight:600;font-size:1rem;margin-top:10px}
+.temps{display:inline-block;background:var(--pale);color:var(--bleu2);font-weight:800;font-size:2rem;line-height:1;
+padding:16px 30px;border-radius:20px;margin-top:12px}
+.suite{color:var(--gris);font-size:.98rem;line-height:1.5;margin-top:12px}
+.actions{margin-top:24px}
+.bouton{display:block;background:linear-gradient(180deg,#6583FF,var(--bleu) 55%,var(--bleu2));color:#fff;font-weight:800;
+font-size:1.12rem;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;padding:19px 16px;border-radius:22px;
+box-shadow:0 6px 0 var(--levre),0 14px 22px rgba(53,80,216,.3);-webkit-tap-highlight-color:transparent;
+transition:transform .08s,box-shadow .08s}
+.bouton:active{transform:translateY(4px);box-shadow:0 2px 0 var(--levre),0 6px 12px rgba(53,80,216,.3)}
+.bouton.vert{background:linear-gradient(180deg,#48CF8C,var(--vert) 55%,#259E62);box-shadow:0 6px 0 #1C7E4D,0 14px 22px rgba(47,181,115,.3)}
+.bouton.vert:active{box-shadow:0 2px 0 #1C7E4D,0 6px 12px rgba(47,181,115,.3)}
+.dessous{color:var(--gris);font-size:.84rem;line-height:1.45;margin-top:18px}
+.autre{display:inline-block;margin-top:16px;color:var(--bleu2);font-weight:700;font-size:.95rem;text-decoration:none;
+padding:12px 18px;border-radius:999px;background:var(--pale);-webkit-tap-highlight-color:transparent}
+.autre:active{background:#DDE3FF}
+ol{list-style:none;counter-reset:e;text-align:left;margin-top:22px}
+ol li{counter-increment:e;position:relative;padding:0 0 0 42px;margin-top:14px;font-size:.95rem;line-height:1.45;min-height:30px}
+ol li::before{content:counter(e);position:absolute;left:0;top:-2px;width:30px;height:30px;border-radius:50%;
+background:var(--pale);color:var(--bleu2);font-weight:800;display:flex;align-items:center;justify-content:center}
+.groupe{margin-top:18px;padding-top:16px;border-top:1px solid #ECEEF6;color:var(--gris);font-size:.86rem;line-height:1.45}
+.groupe b{color:var(--encre);letter-spacing:.08em}
+.pied{color:var(--gris);font-size:.74rem;margin-top:16px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main class="carte">
+  <div class="marque"><img src="icone.png" alt="" width="52" height="52"><span>Orderix</span></div>
+
+  <!-- A : le défi, et le bouton qui ouvre le jeu (ou lance le téléchargement s'il manque) -->
+  <section id="defi">
+    <h1 id="titre">On vous lance un défi !</h1>
+    <p class="puzzle" id="puzzle" hidden></p>
+    <div class="temps" id="temps" hidden></div>
+    <p class="suite" id="suite">Un puzzle par jour, le même pour tout le monde. Et vous, vous faites combien ?</p>
+    <div class="actions" id="actions-android" hidden>
+      <a class="bouton" id="ouvrir" href="#">Ouvrir Orderix</a>
+      <p class="dessous">Le jeu s'ouvre s'il est sur ce téléphone. Sinon, son téléchargement démarre.</p>
+      <a class="autre" id="telecharger-direct" href="#">Je n'ai pas encore le jeu</a>
+    </div>
+    <p class="suite" id="ailleurs" hidden></p>
+  </section>
+
+  <!-- B : le jeu n'est pas sur ce téléphone -->
+  <section id="absent" hidden>
+    <h1>Orderix n'est pas encore sur ce téléphone</h1>
+    <p class="suite" id="etat">Son téléchargement démarre. Sinon, touchez le bouton.</p>
+    <div class="actions">
+      <a class="bouton vert" id="telecharger" href="https://github.com/Wael3rd/orderix-builds/releases/download/dev-latest/Orderix-dev.apk">Télécharger Orderix</a>
+    </div>
+    <ol>
+      <li>Ouvrez le fichier téléchargé pour installer le jeu. Android peut vous demander d'autoriser l'installation.</li>
+      <li id="retour">Revenez ensuite toucher le lien que vous avez reçu : le jeu s'ouvrira.</li>
+    </ol>
+    <a class="autre" id="ouvrir-quand-meme" href="#">J'ai déjà le jeu : l'ouvrir</a>
+  </section>
+
+  <p class="groupe" id="groupe" hidden></p>
+  <p class="pied">Android · gratuit · version de test</p>
+
+  <noscript>
+    <div class="actions">
+      <a class="bouton vert" href="https://github.com/Wael3rd/orderix-builds/releases/download/dev-latest/Orderix-dev.apk">Télécharger Orderix</a>
+    </div>
+  </noscript>
+</main>
+<script>
+(function () {
+  var APK = 'https://github.com/Wael3rd/orderix-builds/releases/download/dev-latest/Orderix-dev.apk';
+  var q = new URLSearchParams(location.search);
+  function entier(cle, max) { var v = parseInt(q.get(cle), 10); return v > 0 && v <= max ? v : 0; }
+  var n = entier('n', 366), t = entier('t', 35999);
+  var g = (q.get('g') || '').toUpperCase();
+  if (!/^[A-Z0-9]{6}$/.test(g)) g = '';
+  var etat = q.get('x') || '';                 // '' : arrivée par le lien ; 'a' : essai automatique sans suite ; '1' : jeu absent
+  var ua = navigator.userAgent || '';
+  var android = /Android/i.test(ua), iphone = /iPhone|iPad|iPod/i.test(ua);
+  function el(id) { return document.getElementById(id); }
+  function montrer(id, oui) { el(id).hidden = !oui; }
+
+  // La même écriture que le jeu : « 42 s » sous une minute, sinon « 1 min 05 ».
+  function duree(s) { return s < 60 ? s + ' s' : Math.floor(s / 60) + ' min ' + ('0' + (s % 60)).slice(-2); }
+
+  // Cette page, avec un état : c'est là que le navigateur revient quand aucun jeu ne répond.
+  function ici(x) {
+    var p = [];
+    if (n) p.push('n=' + n);
+    if (t) p.push('t=' + t);
+    if (g) p.push('g=' + g);
+    if (x) p.push('x=' + x);
+    return location.origin + location.pathname + (p.length ? '?' + p.join('&') : '');
+  }
+  // La demande d'ouverture du jeu : orderix://amies/CODE (activité relais InviteActivity), avec la page de repli.
+  function ouverture(x) {
+    return 'intent://amies/' + g + '#Intent;scheme=orderix;S.browser_fallback_url=' + encodeURIComponent(ici(x)) + ';end';
+  }
+  function une_fois(cle) {
+    try { if (sessionStorage.getItem(cle)) return false; sessionStorage.setItem(cle, '1'); } catch (e) { }
+    return true;
+  }
+
+  // Le défi : numéro du puzzle et temps à battre, quand le lien les porte.
+  if (n) { el('puzzle').textContent = 'Puzzle n° ' + n + (t ? ' résolu en' : ''); montrer('puzzle', true); }
+  if (t) {
+    el('temps').textContent = duree(t);
+    montrer('temps', true);
+    el('suite').textContent = 'À vous de faire mieux !';
+  }
+  if (g) {
+    el('groupe').textContent = '';
+    el('groupe').appendChild(document.createTextNode('En ouvrant le jeu par ce lien, vous rejoignez le groupe d\'amies '));
+    var b = document.createElement('b'); b.textContent = g; el('groupe').appendChild(b);
+    el('groupe').appendChild(document.createTextNode(' : vos temps du jour s\'y comparent.'));
+    montrer('groupe', true);
+    el('retour').textContent = 'Revenez ensuite toucher le lien que vous avez reçu : le jeu s\'ouvrira et vous rejoindrez le groupe d\'amies.';
+  }
+
+  if (!android) {
+    el('ailleurs').textContent = iphone
+      ? 'Orderix n\'existe pas encore sur iPhone : il se joue sur un téléphone Android.'
+      : 'Orderix se joue sur un téléphone Android : ouvrez ce lien depuis votre téléphone.';
+    montrer('ailleurs', true);
+    montrer('groupe', false);   // le groupe ne se rejoint que depuis le jeu
+    return;
+  }
+
+  el('ouvrir').href = ouverture('1');
+  el('ouvrir-quand-meme').href = ouverture('1');
+  el('telecharger-direct').href = ici('1');
+
+  if (etat === '1') {
+    // Un toucher sur « Ouvrir » n'a trouvé aucun jeu (ou la personne a dit ne pas l'avoir) : téléchargement.
+    montrer('defi', false);
+    montrer('absent', true);
+    if (une_fois('orderix_tel')) setTimeout(function () { location.href = APK; }, 500);
+    else el('etat').textContent = 'Touchez le bouton pour télécharger le jeu.';
+    return;
+  }
+
+  montrer('actions-android', true);
+  // À l'arrivée par le lien, un seul essai sans toucher : si le jeu est là, il s'ouvre tout de suite.
+  if (etat === '' && une_fois('orderix_essai_' + n + '_' + t + '_' + g)) setTimeout(function () { location.href = ouverture('a'); }, 300);
+})();
+</script>
+</body>
+</html>
