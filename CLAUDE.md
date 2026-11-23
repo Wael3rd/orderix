@@ -148,6 +148,10 @@ client-trusted (known limitation).
 - Open: place paintings to be replaced later by better art (owner chose to ship the generated ones first); more places
   needed (a regular player finishes 20 a year since the star chest gives 3 stars per opening, 0.1.78); owner to
   decide whether the wheel keeps giving stars.
+- Tester notes ("Corriger maintenant") are handled in batches since 2026-11-23: the PC watcher takes up to 5 pending
+  requests at once, one headless session runs one worker per note in parallel, then one test pass and one published
+  version for the batch (`Tools/retours/travail.py` and `installer.md` in the Unity repo). Tests: `AgentScripts/tests.sh`
+  (45 s; sixteen long generator tests are `[Explicit]` and run only when their game changed, or with `--tout`).
 - Several sessions edit the Unity repo at once (tester notes): do big work in a git worktree with its own editor
   (`AgentScripts/u.sh` targets the project it lives in) and merge into `main` when it is quiet.
 
