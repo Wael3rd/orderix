@@ -112,7 +112,11 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.75 (2026-11-23). Nothing verified on a phone.
+- Dev version online: 0.1.76 (2026-11-23). Nothing verified on a phone.
+- Since 0.1.76 the game's "share my time" text ends with a relay link served by this repo's `gh-pages` branch
+  (`j/index.html`, https://wael3rd.github.io/orderix/j/): it opens the installed game through `orderix://amies/CODE`,
+  otherwise starts the APK download. It carries the same download URL as `InviteLink.DownloadUrl` and `publier.sh` in the
+  Unity repo: change them together.
 - New economy loop shipped in 0.1.74/0.1.75 (spec: `docs/economie-design.md` in the Unity repo): stars are a balance
   that builds places (6 places, each with its own painter style, `Resources/Places/<id>/<n>.jpg`), wheel, tournament
   tickets, race on Tuesdays and Thursdays, calendar button on the daily card.
