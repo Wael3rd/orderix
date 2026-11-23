@@ -112,7 +112,9 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.83 (2026-11-23). Nothing verified on a phone.
+- Dev version online: 0.1.84 (2026-11-23). Nothing verified on a phone.
+- Since 0.1.84 every chest card (`RewardOverlay`) shares one layout: picture panel, a bold line (amount or sticker name), a softer line (unit, series,
+  or a duplicate's dust), never wrapping; cards grow up to 1.3x when few (`ChestShow.CardScale`). Awaits the owner's verdict (his note: "ça ne fait pas pro").
 - Since 0.1.83 album 1 is « Le tour du monde » (monuments, landscapes, world food, cruise, festivals, souvenirs, suitcase, cities, snow) and a sticker
   is drawn as a postage stamp (`App/Meta/Stamp.cs`, `Shape.Perforate`). Rule kept by `AlbumContentTests`: an album sticker is never an avatar
   (shop or other players). Awaits the owner's verdict on the travel theme; the perforated edge (shared UI shader) has not been seen on a phone.
