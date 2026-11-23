@@ -107,3 +107,15 @@ ink #23262F, gray #8B90A0). Mockup explorations live in `mockups/` (self-contain
 Google Apps Script (Google Sheets as DB) at `GAS_URL` — leaderboards, score submission, name
 checks, feedback, per-day config overrides. The GAS code is not in this repo. Scores are fully
 client-trusted (known limitation).
+
+## State
+
+- 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
+  this repo keeps the shared journal `docs/journal.md`.
+- Dev version online: 0.1.58 (20 tester notes of 22/11 set to "corrigé"). Nothing verified on a phone.
+- Economy overhaul proposed, not coded: stars build places, coins go to shop / tournament tickets / wheel /
+  painter styles. Waiting for the owner's four choices.
+- Painter-style workshop (`Tools/aquarelle`, 7 styles, 3 places) exists; nothing is in the game.
+- Next, once the owner answers: simulate the new prices, update the stale design docs, revise the Village deck.
+
+Wiki: C:\Users\w.hadjmouldi\Documents\GitHub\ClaudeWiki\Orderix\index.md (detailed history and topics — read when needed)
