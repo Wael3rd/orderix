@@ -20,6 +20,10 @@
   x=a : l'essai automatique à l'arrivée n'a rien ouvert ; on ne sait pas si le jeu manque ou si le navigateur a refusé un
   essai sans toucher, donc on attend un toucher sur le bouton, qui, lui, fait foi.
   L'adresse de téléchargement est celle de InviteLink.DownloadUrl et de AgentScripts/publier.sh : les changer ensemble.
+  Invitation à un groupe (note 130524-01 du 23/11/2026) : le jeu partage ?g=<code> seul (InviteLink.Invite) ; la page parle
+  alors d'invitation et non de défi. À chaque toucher d'un bouton, elle copie orderix://amies/<code> : un jeu tout juste
+  installé le lit une fois à son premier lancement (InviteService.TakeClipboard) et « Rejoindre avec un code » s'en sert
+  pour remplir le code. Si le navigateur refuse la copie, rien ne casse : le lien reçu et le code écrit restent.
 -->
 <style>
 :root{--bleu:#4F6EF7;--bleu2:#3550D8;--levre:#2B3FB0;--encre:#1F2440;--gris:#6E7390;--carte:#fff;--pale:#EEF1FF;--vert:#2FB573}
@@ -143,13 +147,38 @@ background:var(--pale);color:var(--bleu2);font-weight:800;display:flex;align-ite
     montrer('temps', true);
     el('suite').textContent = 'À vous de faire mieux !';
   }
+  // Invitation à un groupe d'amies : le lien ne porte que le code.
+  var invitation = g && !n && !t;
+  if (invitation) {
+    el('titre').textContent = 'Votre amie vous invite dans son groupe';
+    el('suite').textContent = 'Un puzzle par jour, le même pour toutes : chaque jour, vous comparez vos temps.';
+    el('ouvrir').textContent = 'Rejoindre le groupe';
+    document.title = 'Orderix — Votre amie vous invite';
+  }
+  // Le lien du groupe dans le presse-papiers, à chaque toucher (un navigateur ne l'accorde que sur un geste).
+  function copier() {
+    if (!g) return;
+    var lien = 'orderix://amies/' + g;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(lien).catch(function () { }); return; }
+    } catch (e) { }
+    try {
+      var z = document.createElement('textarea');
+      z.value = lien; z.setAttribute('readonly', ''); z.style.position = 'fixed'; z.style.opacity = '0';
+      document.body.appendChild(z); z.select(); document.execCommand('copy'); document.body.removeChild(z);
+    } catch (e) { }
+  }
+  ['ouvrir', 'ouvrir-quand-meme', 'telecharger-direct', 'telecharger'].forEach(function (id) {
+    el(id).addEventListener('click', copier);
+  });
+
   if (g) {
     el('groupe').textContent = '';
     el('groupe').appendChild(document.createTextNode('En ouvrant le jeu par ce lien, vous rejoignez le groupe d\'amies '));
     var b = document.createElement('b'); b.textContent = g; el('groupe').appendChild(b);
     el('groupe').appendChild(document.createTextNode(' : vos temps du jour s\'y comparent.'));
     montrer('groupe', true);
-    el('retour').textContent = 'Revenez ensuite toucher le lien que vous avez reçu : le jeu s\'ouvrira et vous rejoindrez le groupe d\'amies.';
+    el('retour').textContent = 'Ouvrez le jeu et jouez vos premières parties : il vous fera entrer dans le groupe d\'amies. Sinon, revenez toucher le lien que vous avez reçu, ou saisissez le code ' + g + ' dans « Rejoindre avec un code ».';
   }
 
   if (!android) {
