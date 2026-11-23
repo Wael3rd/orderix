@@ -112,7 +112,10 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.78 (2026-11-23). Nothing verified on a phone.
+- Dev version online: 0.1.79 (2026-11-23). Nothing verified on a phone.
+- Since 0.1.79 the shop has a loyalty card (`Core/Meta/Loyalty.cs`, spec: `docs/economie-design.md` 5 bis in the Unity repo): a shop purchase of
+  100 coins or more, or paid in Gems, stamps one of 5 cases (first one offered); a full card gives in turn a wheel spin (kept in reserve,
+  `MetaState.wheelBonus`), a tournament ticket, a sticker. Gem packs, paid wheel spins and bought tickets do not stamp.
 - Since 0.1.77, test builds have a "Test" pill under a game's intro card: pick rank and level, play, nothing is counted
   (`GameScreen.Test.cs`, `TestLevels.cs` in the Unity repo). Only 17 games read the level; the others say so on their test card.
 - Since 0.1.76 the game's "share my time" text ends with a relay link served by this repo's `gh-pages` branch
@@ -122,6 +125,8 @@ client-trusted (known limitation).
 - New economy loop shipped in 0.1.74/0.1.75 (spec: `docs/economie-design.md` in the Unity repo): stars are a balance
   that builds places (6 places, each with its own painter style, `Resources/Places/<id>/<n>.jpg`), wheel, tournament
   tickets, race on Tuesdays and Thursdays, calendar button on the daily card.
+- Open (loyalty card): it dries up once the 53 avatars are bought (more things to sell needed); owner to decide whether a card stamped by a
+  Gems purchase may still give a wheel spin or a sticker once Google Play is wired ("no chance paid with money" rule).
 - Open: place paintings to be replaced later by better art (owner chose to ship the generated ones first); more places
   needed (a regular player finishes 20 a year since the star chest gives 3 stars per opening, 0.1.78); owner to
   decide whether the wheel keeps giving stars.
