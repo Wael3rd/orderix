@@ -112,7 +112,10 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.82 (2026-11-23). Nothing verified on a phone.
+- Dev version online: 0.1.83 (2026-11-23). Nothing verified on a phone.
+- Since 0.1.83 album 1 is « Le tour du monde » (monuments, landscapes, world food, cruise, festivals, souvenirs, suitcase, cities, snow) and a sticker
+  is drawn as a postage stamp (`App/Meta/Stamp.cs`, `Shape.Perforate`). Rule kept by `AlbumContentTests`: an album sticker is never an avatar
+  (shop or other players). Awaits the owner's verdict on the travel theme; the perforated edge (shared UI shader) has not been seen on a phone.
 - 0.1.82 rebuilt L'Aiguillage (side-view train, three tracks, the engine moves a cut of wagons from one track to another; `ShuntGame`/`ShuntView`)
   and brought Le Métronome back as a rhythm game (tap the next number on the beat; `MetronomeGame`/`MetronomeView`, id `metronome`, in the daily
   rotation from 2026-11-26). Both await the owner's verdict; the tick-to-pendulum audio delay on Android has not been heard on a phone.
