@@ -112,10 +112,13 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.58 (20 tester notes of 22/11 set to "corrigé"). Nothing verified on a phone.
-- Economy overhaul proposed, not coded: stars build places, coins go to shop / tournament tickets / wheel /
-  painter styles. Waiting for the owner's four choices.
-- Painter-style workshop (`Tools/aquarelle`, 7 styles, 3 places) exists; nothing is in the game.
-- Next, once the owner answers: simulate the new prices, update the stale design docs, revise the Village deck.
+- Dev version online: 0.1.75 (2026-11-23). Nothing verified on a phone.
+- New economy loop shipped in 0.1.74/0.1.75 (spec: `docs/economie-design.md` in the Unity repo): stars are a balance
+  that builds places (6 places, each with its own painter style, `Resources/Places/<id>/<n>.jpg`), wheel, tournament
+  tickets, race on Tuesdays and Thursdays, calendar button on the daily card.
+- Open: place paintings to be replaced later by better art (owner chose to ship the generated ones first); more places
+  needed (a regular player finishes 19 a year); owner to decide whether the wheel keeps giving stars.
+- Several sessions edit the Unity repo at once (tester notes): do big work in a git worktree with its own editor
+  (`AgentScripts/u.sh` targets the project it lives in) and merge into `main` when it is quiet.
 
 Wiki: C:\Users\w.hadjmouldi\Documents\GitHub\ClaudeWiki\Orderix\index.md (detailed history and topics — read when needed)
