@@ -112,7 +112,10 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.81 (2026-11-23). Nothing verified on a phone.
+- Dev version online: 0.1.82 (2026-11-23). Nothing verified on a phone.
+- 0.1.82 rebuilt L'Aiguillage (side-view train, three tracks, the engine moves a cut of wagons from one track to another; `ShuntGame`/`ShuntView`)
+  and brought Le Métronome back as a rhythm game (tap the next number on the beat; `MetronomeGame`/`MetronomeView`, id `metronome`, in the daily
+  rotation from 2026-11-26). Both await the owner's verdict; the tick-to-pendulum audio delay on Android has not been heard on a phone.
 - 0.1.81 carries a paid retry of the daily puzzle (50 then 100 coins, two a day, best time of the day counts; button in the friends
   panel), switched OFF (`CompeteConfig.DailyRetryOpen = 0`): the server still refuses a second time for the same day. To switch it on:
   the owner runs the desktop file "Orderix - Brancher Supabase" on this PC, then apply `supabase/migrations/0006_meilleur_temps.sql`
