@@ -112,7 +112,10 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.84 (2026-11-23). Nothing verified on a phone.
+- Dev version online: 0.1.85 (2026-11-23). Nothing verified on a phone.
+- Since 0.1.85 each big mode has its own chest picture (`App/Meta/Chests.cs`: stars = the original wood-and-gold chest, small free chest,
+  tour, quests, league, race, weekend tournament), all rendered from the same CC0 3D model by `Tools/icone/coffre/rendre.py` (table `COFFRES`:
+  tints and a medallion carrying the mode's icon). Awaits the owner's verdict: same base shape recoloured, he may want truly different shapes.
 - Since 0.1.84 every chest card (`RewardOverlay`) shares one layout: picture panel, a bold line (amount or sticker name), a softer line (unit, series,
   or a duplicate's dust), never wrapping; cards grow up to 1.3x when few (`ChestShow.CardScale`). Awaits the owner's verdict (his note: "ça ne fait pas pro").
 - Since 0.1.83 album 1 is « Le tour du monde » (monuments, landscapes, world food, cruise, festivals, souvenirs, suitcase, cities, snow) and a sticker
