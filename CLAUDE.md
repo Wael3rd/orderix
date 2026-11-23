@@ -112,7 +112,12 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.87 (2026-11-23). Nothing verified on a phone.
+- Dev version online: 0.1.88 (2026-11-23). Nothing verified on a phone.
+- 0.1.88 (third batch, two notes), awaiting the owner's verdict: the wheel can be spun again for Gems (20, 30, 40, three a day, beside the
+  coin spins; `MetaConfig.WheelGemPrices`, a 0 price closes them; `Wheel.NextGems`/`SpinGems`, two pay buttons side by side in `WheelScreen`).
+  This lifts the former "never Gems to spin" guard at the owner's request: he must decide before Google Play is wired (Gems will then be
+  bought with money). On the result screen the announcements (league, place, quests...) are illustrated tiles (`App/ResultScreen.Notes.cs`,
+  `ResultLayout.TilesFit`); they fall back to compact lines when they do not all fit.
 - 0.1.87 (second batch of four notes), awaiting the owner's verdict: the season has two reward lines on the same 30 tiers, « Gratuit »
   (unchanged) and « Passe Or » (`Core/Meta/SeasonPass.cs`, `App/Meta/SeasonPassSheet.cs`, spec: `docs/economie-design.md` section 7 in the
   Unity repo): certain rewards only, never a draw; its stars go to the places balance only; 4,99 € (`MetaConfig.SeasonPassCents`) through the
