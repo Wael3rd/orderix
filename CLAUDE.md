@@ -112,8 +112,11 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.89 (2026-11-24). Nothing verified on a phone.
-- 0.1.89 (one note), awaiting the owner's verdict: Les Alvéoles explain themselves. A three-page animated lesson opens on the first game
+- Dev version online: 0.1.90 (2026-11-24). Nothing verified on a phone.
+- 0.1.90 (one note), awaiting the owner's verdict: the Alvéoles token counter and the top bar now add up the whole game. They used to
+  restart from zero at each placement (`HiveGame.Step.RemovedAfter` held the last placement's count, so a win showed « 11 / 40 »); the
+  pill stops at the target (« 40 / 40 »). The 0.1.89 lesson was marked verified by the owner.
+- 0.1.89 (one note, verified by the owner): Les Alvéoles explain themselves. A three-page animated lesson opens on the first game
   (`App/Modes/HiveLesson.cs`, same card as the Gratte-Ciel lesson, « Règles » button beside the back button), every pile shows the count of
   its top colour, and the neighbours that will pour twitch while a pile is dragged over a cell (`HiveView.NudgePourers`). The rules themselves
   did not change (they are the genre's). Open: the daily Alvéoles puzzle is won in 36 s by placing at random (par time 120 s).
