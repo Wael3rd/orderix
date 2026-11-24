@@ -112,7 +112,12 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.92 (2026-11-24). Nothing verified on a phone.
+- Dev version online: 0.1.93 (2026-11-24). Nothing verified on a phone.
+- 0.1.93 (one note), awaiting the owner's verdict: the race's simulated runners no longer stand still after the start. Each one plays an
+  opening session in the first minutes (`Race.Open`, `CompeteConfig.RaceBotOpeningPercent` 30, 0 closes it, frozen at the start): her first
+  games are moved earlier, nothing is added, so her 24-hour total, her arrival time and the measured ranks are unchanged, and it is still a
+  pure function of the seed (no rubber band). On screen a green dot and « joue » follow the name of a runner who is mid-game
+  (`Race.PlayingAt`), her pawn beats, and a rival advancing while the tab is open makes her count jump with a soft sound.
 - 0.1.92 (batch of five notes), all awaiting the owner's verdict: every game of the catalogue (57) now has levels (`XGame.ConfigFor(level)`,
   the view reads `Host.Level`; levels 3 to 5 keep the former difficulty so the daily puzzle, `DailyLevel` 3, does not change; one step per
   rank; `AgentScripts/niveaux.sh <level>` plays every game at a level in test mode and builds contact sheets). The curves were never played
