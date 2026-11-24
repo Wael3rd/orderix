@@ -112,7 +112,11 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.88 (2026-11-23). Nothing verified on a phone.
+- Dev version online: 0.1.89 (2026-11-24). Nothing verified on a phone.
+- 0.1.89 (one note), awaiting the owner's verdict: Les Alvéoles explain themselves. A three-page animated lesson opens on the first game
+  (`App/Modes/HiveLesson.cs`, same card as the Gratte-Ciel lesson, « Règles » button beside the back button), every pile shows the count of
+  its top colour, and the neighbours that will pour twitch while a pile is dragged over a cell (`HiveView.NudgePourers`). The rules themselves
+  did not change (they are the genre's). Open: the daily Alvéoles puzzle is won in 36 s by placing at random (par time 120 s).
 - 0.1.88 (third batch, two notes), awaiting the owner's verdict: the wheel can be spun again for Gems (20, 30, 40, three a day, beside the
   coin spins; `MetaConfig.WheelGemPrices`, a 0 price closes them; `Wheel.NextGems`/`SpinGems`, two pay buttons side by side in `WheelScreen`).
   This lifts the former "never Gems to spin" guard at the owner's request: he must decide before Google Play is wired (Gems will then be
