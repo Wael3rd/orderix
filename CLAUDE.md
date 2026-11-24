@@ -112,7 +112,14 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.91 (2026-11-24). Nothing verified on a phone.
+- Dev version online: 0.1.92 (2026-11-24). Nothing verified on a phone.
+- 0.1.92 (batch of five notes), all awaiting the owner's verdict: every game of the catalogue (57) now has levels (`XGame.ConfigFor(level)`,
+  the view reads `Host.Level`; levels 3 to 5 keep the former difficulty so the daily puzzle, `DailyLevel` 3, does not change; one step per
+  rank; `AgentScripts/niveaux.sh <level>` plays every game at a level in test mode and builds contact sheets). The curves were never played
+  by a human: the owner judges them through the Test pill. The won-game result screen shows three items at most (`Core/ResultCard.Pick`) and
+  its main button is « JEU SUIVANT » (another game, the home's choice), with « Rejouer · niveau N » beside « Tous les jeux »: a loop change
+  the owner must confirm. The running race fits on one page, each runner's pawn is her avatar (`RaceLayout`). The friends ranking reads
+  « Temps total : … » with a stake line (`FriendsWeek`). Le Tournoi keeps the contestants' colours at the solution (tick + green pad).
 - 0.1.91 (one note), awaiting the owner's verdict: the intro card of the daily puzzle replayed for fun (« Rejouer le puzzle » on home)
   also offers the paid retry, under « C'EST PARTI »: a line says this game leaves the day's time unchanged, then the button « Rejouer pour
   mieux faire · 50 pièces » (`GameScreen.BuildRetryOffer`) opens the existing retry card; Back returns to the card she came from. A card too
@@ -166,7 +173,7 @@ client-trusted (known limitation).
   100 coins or more, or paid in Gems, stamps one of 5 cases (first one offered); a full card gives in turn a wheel spin (kept in reserve,
   `MetaState.wheelBonus`), a tournament ticket, a sticker. Gem packs, paid wheel spins and bought tickets do not stamp.
 - Since 0.1.77, test builds have a "Test" pill under a game's intro card: pick rank and level, play, nothing is counted
-  (`GameScreen.Test.cs`, `TestLevels.cs` in the Unity repo). Only 17 games read the level; the others say so on their test card.
+  (`GameScreen.Test.cs`, `TestLevels.cs` in the Unity repo). Since 0.1.92 every game reads the level.
 - Since 0.1.76 the game's "share my time" text ends with a relay link served by this repo's `gh-pages` branch
   (`j/index.html`, https://wael3rd.github.io/orderix/j/): it opens the installed game through `orderix://amies/CODE`,
   otherwise starts the APK download. It carries the same download URL as `InviteLink.DownloadUrl` and `publier.sh` in the
