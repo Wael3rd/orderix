@@ -112,7 +112,11 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.90 (2026-11-24). Nothing verified on a phone.
+- Dev version online: 0.1.91 (2026-11-24). Nothing verified on a phone.
+- 0.1.91 (one note), awaiting the owner's verdict: the intro card of the daily puzzle replayed for fun (« Rejouer le puzzle » on home)
+  also offers the paid retry, under « C'EST PARTI »: a line says this game leaves the day's time unchanged, then the button « Rejouer pour
+  mieux faire · 50 pièces » (`GameScreen.BuildRetryOffer`) opens the existing retry card; Back returns to the card she came from. A card too
+  tall for a short screen slides down under the progress bar (`GameHeaderLayout.IntroCenterY`). To contest: two taps before paying.
 - 0.1.90 (one note), awaiting the owner's verdict: the Alvéoles token counter and the top bar now add up the whole game. They used to
   restart from zero at each placement (`HiveGame.Step.RemovedAfter` held the last placement's count, so a win showed « 11 / 40 »); the
   pill stops at the target (« 40 / 40 »). The 0.1.89 lesson was marked verified by the owner.
@@ -151,10 +155,11 @@ client-trusted (known limitation).
   and brought Le Métronome back as a rhythm game (tap the next number on the beat; `MetronomeGame`/`MetronomeView`, id `metronome`, in the daily
   rotation from 2026-11-26). Both await the owner's verdict; the tick-to-pendulum audio delay on Android has not been heard on a phone.
 - 0.1.81 carries a paid retry of the daily puzzle (50 then 100 coins, two a day, best time of the day counts; button in the friends
-  panel), switched OFF (`CompeteConfig.DailyRetryOpen = 0`): the server still refuses a second time for the same day. To switch it on:
-  the owner runs the desktop file "Orderix - Brancher Supabase" on this PC, then apply `supabase/migrations/0006_meilleur_temps.sql`
-  (this repo, not applied yet), check it against the real server, set `DailyRetryOpen` to 1. Steps: `docs/competition-design.md` in the
-  Unity repo, section « Le nouvel essai du puzzle du jour ». Trial script: `AgentScripts/nouvel_essai.sh`.
+  panel), ON since 2026-11-24: `supabase/migrations/0006_meilleur_temps.sql` is applied on `orderix-staging` and
+  `CompeteConfig.DailyRetryOpen` is 1 in the code since 0.1.91. `orderix-prod` (paused) has NOT received 0006: apply it before a
+  production build, or close the feature with the online setting `"Compete.DailyRetryOpen": 0`. Spec: `docs/competition-design.md` in the
+  Unity repo, section « Le nouvel essai du puzzle du jour ». Trial script: `AgentScripts/nouvel_essai.sh` (it plays at a date the server
+  refuses, at least two days ahead: a date the server accepts writes a fake time on the real daily board).
 - Since 0.1.80, Triple Suite tiles are thrown in a heap (no rows, always upright); a tile is covered as soon as another one bites on it;
   levels 1 to 3 are built around a winning order like the others (`TripleRunGame.BuildPositions`).
 - Since 0.1.79 the shop has a loyalty card (`Core/Meta/Loyalty.cs`, spec: `docs/economie-design.md` 5 bis in the Unity repo): a shop purchase of
