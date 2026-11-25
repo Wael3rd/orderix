@@ -112,7 +112,12 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.95 (2026-11-25). Nothing verified on a phone.
+- Dev version online: 0.1.96 (2026-11-25). Nothing verified on a phone.
+- 0.1.96 (owner's feedback on 0.1.95: the won daily card's LA TOURNÉE button and the next-game gateway "don't match what we show"
+  and overload the screen): once the daily puzzle is won, the card's main button is about friends (DÉFIER MES AMIES if a friend
+  has not played, INVITER UNE AMIE without a group, VOIR LE CLASSEMENT if all played; `HomeMain`), with « Rejouer » beside it on
+  the same row; the tour and the next game only go through the bottom gateway (one door to play on); the friends box's
+  « Défier » chips and the « 25 » calendar button (a duplicate of the Journée tab; Easybrain has none) are gone.
 - 0.1.95 (lot 2 of the navigation redesign), awaiting the owner's verdict: five fixed tabs from day one (Accueil, Journée, Parcours,
   Ligue, Collection; `Core/NavTabs.cs`, `App/TabBar.cs`), shown on the five root screens, never inserted or moved; a closed tab is
   greyed with a padlock and says when it opens ("La collection s'ouvre après 5 victoires"), its "NOUVEAU" moment unlocks it in
