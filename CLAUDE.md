@@ -112,7 +112,13 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.97 (2026-11-25). Nothing verified on a phone.
+- Dev version online: 0.1.98 (2026-11-25). Nothing verified on a phone.
+- 0.1.98 (owner's feedback on 0.1.97 Journée and on the 0.1.96 home gateway): Journée = an « AUJOURD'HUI » card on top (ribbon like
+  « PUZZLE DU JOUR », tiles drawn as the game's buttons: gold with a dot and a verb when something can be taken, white with its
+  state while waiting), then one card holding the month, the trophy progress (chevron → « Mes trophées » sheet), the grid and the
+  main button naming the chosen day (« JOUER · 13 NOVEMBRE », « REJOUER · 25 NOVEMBRE »); cards 1040 wide; weekday letters and the
+  trophy sentence at 44 px. Home gateway = one whole button (gold for a reward, blue-bordered to play, green-bordered to build) with
+  the verb and a chevron, same width as the daily card, free height shared evenly above, between and below.
 - 0.1.97 (owner: "no scroll for the Journée part"): the Journée tab fits one screen at 1216×2688 and 1080×1920. « Aujourd'hui » is
   a 3×2 grid of tiles (icon, short name, short state, gold border and dot when something waits; a closed system has no tile), the
   calendar's day bubbles are sized on the remaining height (116 at 2688, 88 at 1920 with six tiles), « Mes trophées » opens in a
