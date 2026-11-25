@@ -112,7 +112,11 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.96 (2026-11-25). Nothing verified on a phone.
+- Dev version online: 0.1.97 (2026-11-25). Nothing verified on a phone.
+- 0.1.97 (owner: "no scroll for the Journée part"): the Journée tab fits one screen at 1216×2688 and 1080×1920. « Aujourd'hui » is
+  a 3×2 grid of tiles (icon, short name, short state, gold border and dot when something waits; a closed system has no tile), the
+  calendar's day bubbles are sized on the remaining height (116 at 2688, 88 at 1920 with six tiles), « Mes trophées » opens in a
+  sheet from the monthly trophy card (chevron). Small existing calendar texts (28 px weekday letters) were left as they were.
 - 0.1.96 (owner's feedback on 0.1.95: the won daily card's LA TOURNÉE button and the next-game gateway "don't match what we show"
   and overload the screen): once the daily puzzle is won, the card's main button is about friends (DÉFIER MES AMIES if a friend
   has not played, INVITER UNE AMIE without a group, VOIR LE CLASSEMENT if all played; `HomeMain`), with « Rejouer » beside it on
