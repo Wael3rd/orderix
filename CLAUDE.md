@@ -112,7 +112,15 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.93 (2026-11-24). Nothing verified on a phone.
+- Dev version online: 0.1.94 (2026-11-25). Nothing verified on a phone.
+- 0.1.94 (lot 1 of the navigation redesign the owner approved on 2026-11-25), awaiting his verdict: "gateways" (passerelles). The
+  element that announces something to do elsewhere takes the player there in one tap: the home "à faire" line is now an illustrated
+  card with its own button (same place, same height), the result card's items are tappable (quests claimed on the spot, season tier,
+  league, closed tournament ceremony), one priority order for home and result in `Core/Gateways.cs` (streak at risk, what expires
+  today, rewards to take, friends/competition, progress in reach, Passe Or last and never on the result), and a game launched from
+  the calendar, league, race or places returns there. Lot 2 (five fixed tabs visible everywhere: Accueil, Journée, Parcours,
+  Ligue, Collection; « Journée » as a real screen; places and album under Collection) waits for his feedback on 0.1.94.
+- Commercial launch plan (2026-11-25): https://claude.ai/artifact/MzLgccGz96FypQ9QGZdVuq (what is missing, budget, financing).
 - 0.1.93 (one note), awaiting the owner's verdict: the race's simulated runners no longer stand still after the start. Each one plays an
   opening session in the first minutes (`Race.Open`, `CompeteConfig.RaceBotOpeningPercent` 30, 0 closes it, frozen at the start): her first
   games are moved earlier, nothing is added, so her 24-hour total, her arrival time and the measured ranks are unchanged, and it is still a
