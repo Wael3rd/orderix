@@ -112,14 +112,22 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.94 (2026-11-25). Nothing verified on a phone.
+- Dev version online: 0.1.95 (2026-11-25). Nothing verified on a phone.
+- 0.1.95 (lot 2 of the navigation redesign), awaiting the owner's verdict: five fixed tabs from day one (Accueil, Journée, Parcours,
+  Ligue, Collection; `Core/NavTabs.cs`, `App/TabBar.cs`), shown on the five root screens, never inserted or moved; a closed tab is
+  greyed with a padlock and says when it opens ("La collection s'ouvre après 5 victoires"), its "NOUVEAU" moment unlocks it in
+  place; tab dots are dots, never sums. No back arrow on root tabs; Android back on a root tab goes home; Saison, Roue, Boutique,
+  Profil are pushed screens (back arrow, no bar) returning to the tab they came from. « Journée » is a screen (month calendar and
+  trophy, « Aujourd'hui » rows from the former DaySheet, which was removed, JOUER for the chosen day; `App/Meta/DayRows.cs`).
+  Collection = Lieux and Album panes (`App/Meta/CollectionPanes.cs`, swipe between them). Bar 1040 wide, labels 44 px. On a
+  1080×1920 screen nothing overlaps, but the places painting shrinks (724 high) and Journée's first « Aujourd'hui » row is cut
+  above JOUER (scroll).
 - 0.1.94 (lot 1 of the navigation redesign the owner approved on 2026-11-25), awaiting his verdict: "gateways" (passerelles). The
   element that announces something to do elsewhere takes the player there in one tap: the home "à faire" line is now an illustrated
   card with its own button (same place, same height), the result card's items are tappable (quests claimed on the spot, season tier,
   league, closed tournament ceremony), one priority order for home and result in `Core/Gateways.cs` (streak at risk, what expires
   today, rewards to take, friends/competition, progress in reach, Passe Or last and never on the result), and a game launched from
-  the calendar, league, race or places returns there. Lot 2 (five fixed tabs visible everywhere: Accueil, Journée, Parcours,
-  Ligue, Collection; « Journée » as a real screen; places and album under Collection) waits for his feedback on 0.1.94.
+  the calendar, league, race or places returns there. Lot 2 shipped in 0.1.95.
 - Commercial launch plan (2026-11-25): https://claude.ai/artifact/MzLgccGz96FypQ9QGZdVuq (what is missing, budget, financing).
 - 0.1.93 (one note), awaiting the owner's verdict: the race's simulated runners no longer stand still after the start. Each one plays an
   opening session in the first minutes (`Race.Open`, `CompeteConfig.RaceBotOpeningPercent` 30, 0 closes it, frozen at the start): her first
