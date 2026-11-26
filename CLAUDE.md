@@ -112,7 +112,13 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.122 (2026-11-26). Nothing verified on a phone.
+- Dev version online: 0.1.123 (2026-11-26). Nothing verified on a phone.
+- 0.1.123 (two notes), awaiting the owner's verdict: L'Embouteillage asks for work before each of the three exits from level 6 up
+  (`TrafficGame.Config.SecondSlides` / `ThirdSlides`, counted on every shortest solution; Légende = at least 14 / 10 / 8 slides, 40 to 50
+  in all; replaces the « at least 20 before car 1 » of 0.1.116). Such grids are found by retouching (`TrafficGame.ClimbEntries`), bank
+  rebuilt by `Tools/embouteillage/banque.py 60 2-9` (27 minutes). Automatic hints share one pace in every game: `Core/HintPace.Seconds`,
+  25 s at every level (Gratte-Ciel, Plus Petit, Plus Grand; replaces the 15 to 26 s of 0.1.108); a new game with automatic hints reads
+  it. To contest: grids of one family look alike; futoshiki's daily puzzle helps 10 s later; par times not remeasured.
 - 0.1.122 (three notes), awaiting the owner's verdict: Le Dégradé is rebuilt on his description (`GradientGame`: each column is the gradient of
   one hue from light to deep, top and bottom rows are the fixed bounds, free tiles are shuffled inside their column and only swap inside it,
   `SameColumn`; 3×4, 3×5, 4×6 at the daily puzzle, 5×6, 5×7, 6×7; no orange or yellow). This replaces the 0.1.119 Dégradé line below. To contest:
