@@ -112,7 +112,12 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.112 (2026-11-26). Nothing verified on a phone.
+- Dev version online: 0.1.113 (2026-11-26). Nothing verified on a phone.
+- 0.1.113 (one note), awaiting the owner's verdict: every success row of the Profile opens an explanation sheet on tap (`App/SuccessSheet.cs`:
+  current goal, counter and « Avant le palier » or current run and record, the rule in one or two sentences from `SuccessGuide.Notes`, then every
+  tier with its coins and Gems; `ChainSheet` is gone). A new success needs its `SuccessGuide.Unit` and `Notes` (a test checks). « Série de jours »
+  follows the current streak like « Sur sa lancée » (`SuccessGuide.Run`); « Touche-à-tout » has a fifth tier at 57 games (keep its last tier within
+  the catalogue); « Tournées » uses the tour's scooter. The rule texts were never read by the owner; no success was added.
 - 0.1.112 (four notes), awaiting the owner's verdict: a free wheel spin every 10 wins, put in the existing reserve (`Wheel.OnWin`,
   `MetaState.wheelWins`, online `MetaConfig.WheelBonusEveryWins`, 0 closes; tournament practice and the paid daily retry do not count; the wheel
   screen says « Encore N victoires pour un tour offert »; the economy simulation does not model it). The « Sur sa lancée » success reads « Gagner
