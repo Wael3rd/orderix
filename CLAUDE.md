@@ -112,7 +112,18 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.116 (2026-11-26). Nothing verified on a phone.
+- Dev version online: 0.1.119 (2026-11-26). Nothing verified on a phone.
+- 0.1.119 (one note), awaiting the owner's verdict: Le Dégradé is simplified (`GradientGame.LayoutFor`, `AnchorsFor`: 3×4 at levels 1-2, 4×5 at
+  levels 3-30 with 10 free tiles at the daily puzzle, 5×6 beyond, never 6×7) and its colours turn around grey instead of crossing it (any two
+  tiles at least 0.07 apart in OKLab, no brown or olive). To contest: daily puzzle much easier, par time 80 → 55 s estimated, past days' grids change.
+- 0.1.118 (four notes), awaiting the owner's verdict: Tri Cascade's board is redrawn in the style of its preview (violet item tile, blue reference
+  tile, well-judged items stack as small green tiles on each side, emptied at each new reference; `CascadeView`, shared `App/TileLook.cs`; rules
+  unchanged). Saute-Mouton cells have exactly the card's size. Plus ou Moins never greys the 0 key. « Mes notes » > Essais has a « Compétition »
+  tab with a « Fin de course » trial (`MetaTrial.RaceEndKey`, `RaceCeremony.ShowTrial`).
+- 0.1.117 (three notes), awaiting the owner's verdict: the free wheel spin comes every 10 finished games, won or lost (`Wheel.OnGame`; the save
+  field `wheelWins` and the online setting `MetaConfig.WheelBonusEveryWins` keep their names; replaces the « every 10 wins » of 0.1.112). La
+  Fontaine's scale ends on red (blue, violet, pink, red; `Palette.ThermalSteps`; replaces the orange end of 0.1.115). Le Carillon shows the height
+  column at every ring at level 1 only (`ChimeView.Ring`).
 - 0.1.116 (five notes), awaiting the owner's verdict: Le Sentier plays three grids per game (`TrailGame.RoundFor`, 9, 16 then 25 cells at
   levels 1 to 3; par time 95 → 110 s, estimated). L'Embouteillage's curve is rebuilt from level 6 (`TrafficGame.Steps`, `Config.FirstSlides`:
   Légende = 40 to 50 slides with at least 20 before car 1 exits; levels 1 to 5 unchanged; bank rebuilt by `Tools/embouteillage/banque.py`,
