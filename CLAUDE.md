@@ -112,7 +112,11 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.124 (2026-11-26). Nothing verified on a phone.
+- Dev version online: 0.1.125 (2026-11-26). Nothing verified on a phone.
+- 0.1.125 (one note), awaiting the owner's verdict: the race ceremony's replay is softened (he found 0.1.122 « beaucoup trop brusque »):
+  replay time goes to the hours where the track moves and each curve is smoothed by a sliding average (`RaceRecap.Chart.Calm`, `Blur`),
+  an overtaken row slides in about a second (`RaceCeremony.RowSmooth`), the bar's end is worth at least half the winner's stars
+  (`ScaleFloor`), 9 s instead of 7 (outside note 68's 5 to 7 s). Smoothness judged on stills and per-frame tests only, never in motion.
 - 0.1.124 (one note), awaiting the owner's verdict: on the Journée tab the toast « Le rattrapage complète le calendrier, sans compter pour la série »
   shows once per profile, at the first missed day tapped, then never again (`ProfileKeys.CatchUpSaid`; it used to come back at each opening of the screen).
   Lanes: `git rebase main` fails in a lane when main changed `ProjectSettings.asset` (the lane's skip-worktree copy blocks it); cherry-pick the
