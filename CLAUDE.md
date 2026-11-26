@@ -327,10 +327,14 @@ client-trusted (known limitation).
 - Open: place paintings to be replaced later by better art (owner chose to ship the generated ones first); more places
   needed (a regular player finishes 20 a year since the star chest gives 3 stars per opening, 0.1.78); owner to
   decide whether the wheel keeps giving stars.
-- Tester notes ("Corriger maintenant") are handled in batches since 2026-11-23: the PC watcher takes up to 5 pending
-  requests at once, one headless session runs one worker per note in parallel, then one test pass and one published
-  version for the batch (`Tools/retours/travail.py` and `installer.md` in the Unity repo). Tests: `AgentScripts/tests.sh`
-  (45 s; sixteen long generator tests are `[Explicit]` and run only when their game changed, or with `--tout`).
+- Tester notes ("Corriger maintenant") run in parallel lanes since 2026-11-26 (owner: "each note as soon as it
+  arrives"): two permanent copies `OrderixUnity-wt\voie-1|2`, each with its own headless editor and product name; the
+  watcher gives each request to a free lane, one session per lane that codes, checks on screen and tests there, then
+  publishes through two queues (`Tools/retours/guichet.py`: « notes » for retours.json and the journal, « publication »
+  for merging into main, the main editor and publier.sh). Anyone else touching docs/journal.md, retours.json or the
+  main editor takes the matching queue too. Without lanes the watcher falls back to batches (`travail.CONSIGNE`). See
+  `Tools/retours/installer.md` in the Unity repo. Tests: `AgentScripts/tests.sh` (45 s; sixteen long generator tests
+  are `[Explicit]` and run only when their game changed, or with `--tout`).
 - Several sessions edit the Unity repo at once (tester notes): do big work in a git worktree with its own editor
   (`AgentScripts/u.sh` targets the project it lives in) and merge into `main` when it is quiet.
 
