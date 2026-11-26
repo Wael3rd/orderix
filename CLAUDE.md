@@ -112,7 +112,15 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.121 (2026-11-26). Nothing verified on a phone.
+- Dev version online: 0.1.122 (2026-11-26). Nothing verified on a phone.
+- 0.1.122 (three notes), awaiting the owner's verdict: Le Dégradé is rebuilt on his description (`GradientGame`: each column is the gradient of
+  one hue from light to deep, top and bottom rows are the fixed bounds, free tiles are shuffled inside their column and only swap inside it,
+  `SameColumn`; 3×4, 3×5, 4×6 at the daily puzzle, 5×6, 5×7, 6×7; no orange or yellow). This replaces the 0.1.119 Dégradé line below. To contest:
+  much easier (a per-column shade sort), par time 55 s not remeasured, share card `j/og/degrade.jpg` still shows the old board. The race ceremony's
+  replay is a « bar chart race » (`RaceRecap.Chart`: hourly keyframes, values climb continuously, thick bars scaled on the current leader, star
+  count written at the bar's end, 7 s; replaces the 0.1.110 replay's look); its smoothness was judged on stills only. « Mes notes » > Essais has
+  a « La roue » trial (`MetaTrial.WheelKey`) in the third tab, renamed « Événements » (was « Compétition »). Lanes: after merging into main, make
+  the main editor reload (`AssetDatabase.Refresh` + `CompilationPipeline.RequestScriptCompilation`) before `publier.sh`, or the build fails.
 - 0.1.121 (two notes), awaiting the owner's verdict: stars won in a loot card (wheel, chests) fly from the card to the top bar's star counter, which
   climbs at each arrival (`Hud.FlyStars`, called by `RewardOverlay` on « Continuer »; replaces the « only roll the counter » of 0.1.114). The race
   no longer says « case » anywhere: it counts in stars (« 32 étoiles », « Chaque étoile gagnée compte », `RaceText.StarsRule`; the code keeps the
