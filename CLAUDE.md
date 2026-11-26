@@ -112,7 +112,10 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.125 (2026-11-26). Nothing verified on a phone.
+- Dev version online: 0.1.126 (2026-11-26). Nothing verified on a phone.
+- 0.1.126 (one note), awaiting the owner's verdict: the Gratte-Ciel intro card names the grid of the game about to be played (« Grille 3 x 3 » up to
+  level 5, « Grille 4 x 4 » from level 6) instead of the whole journey (« 3 x 3, puis 4 x 4 », read as two grids in one game). An intro chip can
+  depend on the level: `ModeInfo.LevelChips`, read through `ModeInfo.ChipsAt(level)`. Other games still show a journey range (« 4 x 4 à 6 x 6 »).
 - 0.1.125 (one note), awaiting the owner's verdict: the race ceremony's replay is softened (he found 0.1.122 « beaucoup trop brusque »):
   replay time goes to the hours where the track moves and each curve is smoothed by a sliding average (`RaceRecap.Chart.Calm`, `Blur`),
   an overtaken row slides in about a second (`RaceCeremony.RowSmooth`), the bar's end is worth at least half the winner's stars
