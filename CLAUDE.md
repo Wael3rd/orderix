@@ -112,7 +112,12 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.103 (2026-11-26). Nothing verified on a phone.
+- Dev version online: 0.1.104 (2026-11-26). Nothing verified on a phone.
+- 0.1.104 (five notes), awaiting the owner's verdict: « Mes notes » has an « En cours » tab left of « À faire » (`ReportBoard.Doing`: status
+  « en cours », or a fix asked and not yet taken by the PC). The success gateway claims every reached tier on the spot (`Passerelles.ClaimSuccess`,
+  the Profile keeps its per-tier buttons). A button that charges coins is gold with its price: « Rejouer pour mieux faire » on the replayed
+  daily card, « Garder mon élan » on the defeat screen. After a rival's arrival the race line names the place still open (`RaceText.Chase`).
+  Open, asked in note 40's reply: keep the 30-case finish line, or switch to « furthest after 24 hours » without a finish line.
 - 0.1.103 (one note, the owner's comment on 0.1.102), awaiting his verdict: in « Mes notes » a note's capture opens full screen, one image at
   a time; with an after image, a swipe either way goes from « Avant » to « Après » and back (the image follows the finger, two dots, close
   cross top right; `ReportSync.Viewer.cs`). The side-by-side view of 0.1.102 is gone.
