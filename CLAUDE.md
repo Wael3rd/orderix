@@ -112,7 +112,17 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.109 (2026-11-26). Nothing verified on a phone.
+- Dev version online: 0.1.110 (2026-11-26). Nothing verified on a phone.
+- 0.1.110 (five notes), awaiting the owner's verdict: the race ceremony opens on a 6-second replay of the race (five runners from zero, overtakes,
+  an hour pill; a tap skips it), then the verdict; the prize is no longer written before « MA RÉCOMPENSE » (`RaceCeremony`, `Race.Replay.cs`,
+  `RaceRecap.cs`; the player's own games are logged in `raceLog` from this version on; `RaceCeremony.DebugShow(place)`). Daily quests can be swapped
+  or renewed for Gems (`Core/Meta/QuestOffers.cs`: « Changer les quêtes » 10 Gems twice a day, « Nouvelles quêtes » 20/30/40, online
+  `MetaConfig.QuestSwapGemPrices` / `QuestExtraGemPrices`, 0 closes; a paid series gives its coins only, no prime chest, no season points: never a
+  draw sold for Gems; blue Gem button like the wheel's). « Mes notes »: each note's line reads « [Parcours] · n° 62 · 2026-11-26 10:06:19 · 35 s »
+  (`ReportBoard.Number`, `Stamp`; the number wraps after 99). Tooling: a note is checked and shown at the screen size of the phone that sent it
+  (the owner's: 1216×2688; `AgentScripts/ecran.sh <w> <h>` before opening the screen, `shot.sh` follows, `apres.py` refuses another shape).
+  Open, asked in note 55's reply: time drawn in the challenge preview image and a short link both need a server of ours (short domain, about
+  10–15 € a year, on a free Cloudflare worker) or a fallback (real image, not clickable; or a public shortener): the owner must choose.
 - 0.1.109 (four notes), awaiting the owner's verdict: the race has no finish line any more (24 hours, most cases at the end wins, ties to the first
   to reach the total; nothing frozen before the 24th hour; `RaceLength` removed, bar scaled on the leader, `RaceTrack.MinScale`; fast simulated
   runner's band 40 to 52 stars a day instead of 30 to 110). To contest: an assiduous player now wins 96 % of races (71 % before), the price of a
