@@ -112,7 +112,10 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.98 (2026-11-25). Nothing verified on a phone.
+- Dev version online: 0.1.99 (2026-11-26). Nothing verified on a phone.
+- 0.1.99 (one note), awaiting the owner's verdict: a « Mode testeur » switch at the very bottom of the Profile (test builds only;
+  `TesterMode`, PlayerPrefs `tester.on`, kept on the device). Off, the mic, the magnifier, the notes button, the « Test » pill, the
+  solution button and the calendar's note badges are hidden, to play as a player would; gate any tester-only UI on `App.Tester`.
 - 0.1.98 (owner's feedback on 0.1.97 Journée and on the 0.1.96 home gateway): Journée = an « AUJOURD'HUI » card on top (ribbon like
   « PUZZLE DU JOUR », tiles drawn as the game's buttons: gold with a dot and a verb when something can be taken, white with its
   state while waiting), then one card holding the month, the trophy progress (chevron → « Mes trophées » sheet), the grid and the
