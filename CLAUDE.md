@@ -112,7 +112,10 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.107 (2026-11-26). Nothing verified on a phone.
+- Dev version online: 0.1.108 (2026-11-26). Nothing verified on a phone.
+- 0.1.108 (one note), awaiting the owner's verdict: Plus Petit, Plus Grand (futoshiki) no longer shows the « Indice dans N s » gauge (no countdown at all,
+  the gold sign just arrives) and its automatic hints are slower (15 s instead of 8 up to level 5, then 18, 22, 26; `InequalityGame.ConfigFor`). Gratte-Ciel
+  unchanged (10 s, gold-filling bubble; asked in the note's reply). First update shipped with patch 2: 3.3 MB instead of 30, checked on the PC only.
 - 0.1.107 (five notes), awaiting the owner's verdict: updates get a second patch format (« patch 2 »: a bsdiff of each changed APK entry,
   recompressed on the phone byte for byte by `Core/ZlibFast.cs`, a C# copy of zlib level 1 as Gradle uses it; `ApkPatch` format 2,
   `latest.json` fields `patch2_*`, `Tools/publication/delta.py make2`, checked before each announcement by `verifie_patch.py` with the phone's
