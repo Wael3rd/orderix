@@ -112,7 +112,12 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.100 (2026-11-26). Nothing verified on a phone.
+- Dev version online: 0.1.101 (2026-11-26). Nothing verified on a phone.
+- 0.1.101 (three notes), awaiting the owner's verdict: the Places screen says each thing once, Royal Match style (one card: the next
+  step's name, the star balance as a counter pill, the eight steps; the price only on « CONSTRUIRE »; the two sentences, the repeated
+  step name, the numbered badge and the progress bar are gone). « GAGNER DES ÉTOILES » opens the tour sheet on the Places screen
+  (`TourSheet.from`), the game returns there. Result screen: bottom gaps depend on screen height (`ResultLayout.ForFoot`: 44 under
+  the secondary row and 40 above it at 16:9, 56 and 44 on a tall screen). To contest: with too few stars the price is no longer shown.
 - 0.1.100 (two notes), awaiting the owner's verdict: a chest won and left on the result screen has a home gateway, ahead of everything
   that waits except the streak at risk (`Gate.StarChest` opens the full star chest on the spot, it used to open from the result screen
   only; `Gate.TourChest` opens the finished tour's sheet); home only. Journée: 32 between the « AUJOURD'HUI » ribbon and the tiles, 44
