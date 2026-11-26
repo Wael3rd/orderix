@@ -112,7 +112,11 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.123 (2026-11-26). Nothing verified on a phone.
+- Dev version online: 0.1.124 (2026-11-26). Nothing verified on a phone.
+- 0.1.124 (one note), awaiting the owner's verdict: on the Journée tab the toast « Le rattrapage complète le calendrier, sans compter pour la série »
+  shows once per profile, at the first missed day tapped, then never again (`ProfileKeys.CatchUpSaid`; it used to come back at each opening of the screen).
+  Lanes: `git rebase main` fails in a lane when main changed `ProjectSettings.asset` (the lane's skip-worktree copy blocks it); cherry-pick the
+  lane's commit onto main in the main repo instead.
 - 0.1.123 (two notes), awaiting the owner's verdict: L'Embouteillage asks for work before each of the three exits from level 6 up
   (`TrafficGame.Config.SecondSlides` / `ThirdSlides`, counted on every shortest solution; Légende = at least 14 / 10 / 8 slides, 40 to 50
   in all; replaces the « at least 20 before car 1 » of 0.1.116). Such grids are found by retouching (`TrafficGame.ClimbEntries`), bank
