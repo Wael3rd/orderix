@@ -112,7 +112,10 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.119 (2026-11-26). Nothing verified on a phone.
+- Dev version online: 0.1.120 (2026-11-26). Nothing verified on a phone.
+- 0.1.120 (one note), awaiting the owner's verdict: Le Carillon shows the height columns in the first round of three only (`ChimeView.FirstRound`:
+  intro of round 1 at every level, every ring of round 1 at level 1; rounds 2 and 3 ring once at the start without columns). This narrows the 0.1.116
+  and 0.1.117 Carillon lines below. To contest: harder at every level, daily puzzle included, par time not remeasured.
 - 0.1.119 (one note), awaiting the owner's verdict: Le Dégradé is simplified (`GradientGame.LayoutFor`, `AnchorsFor`: 3×4 at levels 1-2, 4×5 at
   levels 3-30 with 10 free tiles at the daily puzzle, 5×6 beyond, never 6×7) and its colours turn around grey instead of crossing it (any two
   tiles at least 0.07 apart in OKLab, no brown or olive). To contest: daily puzzle much easier, par time 80 → 55 s estimated, past days' grids change.
