@@ -112,7 +112,11 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.120 (2026-11-26). Nothing verified on a phone.
+- Dev version online: 0.1.121 (2026-11-26). Nothing verified on a phone.
+- 0.1.121 (two notes), awaiting the owner's verdict: stars won in a loot card (wheel, chests) fly from the card to the top bar's star counter, which
+  climbs at each arrival (`Hud.FlyStars`, called by `RewardOverlay` on « Continuer »; replaces the « only roll the counter » of 0.1.114). The race
+  no longer says « case » anywhere: it counts in stars (« 32 étoiles », « Chaque étoile gagnée compte », `RaceText.StarsRule`; the code keeps the
+  name `cases`; value column 300 wide). To contest: « étoiles » now names both the star balance and the race count.
 - 0.1.120 (one note), awaiting the owner's verdict: Le Carillon shows the height columns in the first round of three only (`ChimeView.FirstRound`:
   intro of round 1 at every level, every ring of round 1 at level 1; rounds 2 and 3 ring once at the start without columns). This narrows the 0.1.116
   and 0.1.117 Carillon lines below. To contest: harder at every level, daily puzzle included, par time not remeasured.
