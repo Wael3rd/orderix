@@ -112,7 +112,13 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.104 (2026-11-26). Nothing verified on a phone.
+- Dev version online: 0.1.105 (2026-11-26). Nothing verified on a phone.
+- 0.1.105 (five notes), awaiting the owner's verdict: the five League sub-tabs share the Journée skeleton (hero card with a ribbon, one list card with
+  one-line rows, one main button at the bottom; `Core/Compete/CompeteLayout.cs`, `App/Compete/CompeteCards.cs`). Removed from the page, to contest:
+  the podium and the weekly medals of « Aujourd'hui », the three illustrated steps of the Race tab (kept in « La règle »), the spread-out tournament
+  reward table (behind « Récompenses »). A won game fills the top bar in green before the result (`GameScreen.FillBarOnWin`, `WinDelay`). The Profile's
+  « Succès · N à récupérer » title follows each claim. Journée's main button takes the card width (`DayLayout.PlayW`). Open, asked in note 54's reply:
+  an update still downloads about 30 MB (the whole `libil2cpp.so` changes at each build); a binary patch inside it is a big job, or wait for Google Play.
 - 0.1.104 (five notes), awaiting the owner's verdict: « Mes notes » has an « En cours » tab left of « À faire » (`ReportBoard.Doing`: status
   « en cours », or a fix asked and not yet taken by the PC). The success gateway claims every reached tier on the spot (`Passerelles.ClaimSuccess`,
   the Profile keeps its per-tier buttons). A button that charges coins is gold with its price: « Rejouer pour mieux faire » on the replayed
