@@ -112,7 +112,15 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.108 (2026-11-26). Nothing verified on a phone.
+- Dev version online: 0.1.109 (2026-11-26). Nothing verified on a phone.
+- 0.1.109 (four notes), awaiting the owner's verdict: the race has no finish line any more (24 hours, most cases at the end wins, ties to the first
+  to reach the total; nothing frozen before the 24th hour; `RaceLength` removed, bar scaled on the leader, `RaceTrack.MinScale`; fast simulated
+  runner's band 40 to 52 stars a day instead of 30 to 110). To contest: an assiduous player now wins 96 % of races (71 % before), the price of a
+  tight race for a regular one; way back: `Compete.RaceBotStarsMin/Max` online. The top bar has a third counter, the star balance, between level
+  and Gems once Places are open (`Hud.SyncStars`; tap goes to Places; the step card's « 26 / 13 » pill is still there). The League's « Aujourd'hui »
+  hero card no longer says « N° 330 »: game name, date in words, animated preview, three captioned figures (`CompeteText.DailyStats`); the home
+  daily card still says « N° 330 » (asked in the note's reply). In « Mes notes », Commenter / Modifier / Corriger maintenant open the native
+  Android window directly (`ReportSync.OpenSheet`; the in-game sheet is the fallback), so the game's mic no longer dictates there; not seen on a phone.
 - 0.1.108 (one note), awaiting the owner's verdict: Plus Petit, Plus Grand (futoshiki) no longer shows the « Indice dans N s » gauge (no countdown at all,
   the gold sign just arrives) and its automatic hints are slower (15 s instead of 8 up to level 5, then 18, 22, 26; `InequalityGame.ConfigFor`). Gratte-Ciel
   unchanged (10 s, gold-filling bubble; asked in the note's reply). First update shipped with patch 2: 3.3 MB instead of 30, checked on the PC only.
@@ -143,7 +151,7 @@ client-trusted (known limitation).
   « en cours », or a fix asked and not yet taken by the PC). The success gateway claims every reached tier on the spot (`Passerelles.ClaimSuccess`,
   the Profile keeps its per-tier buttons). A button that charges coins is gold with its price: « Rejouer pour mieux faire » on the replayed
   daily card, « Garder mon élan » on the defeat screen. After a rival's arrival the race line names the place still open (`RaceText.Chase`).
-  Open, asked in note 40's reply: keep the 30-case finish line, or switch to « furthest after 24 hours » without a finish line.
+  Note 40's question was answered: no finish line since 0.1.109.
 - 0.1.103 (one note, the owner's comment on 0.1.102), awaiting his verdict: in « Mes notes » a note's capture opens full screen, one image at
   a time; with an after image, a swipe either way goes from « Avant » to « Après » and back (the image follows the finger, two dots, close
   cross top right; `ReportSync.Viewer.cs`). The side-by-side view of 0.1.102 is gone.
