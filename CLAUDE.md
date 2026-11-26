@@ -112,7 +112,13 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.115 (2026-11-26). Nothing verified on a phone.
+- Dev version online: 0.1.116 (2026-11-26). Nothing verified on a phone.
+- 0.1.116 (five notes), awaiting the owner's verdict: Le Sentier plays three grids per game (`TrailGame.RoundFor`, 9, 16 then 25 cells at
+  levels 1 to 3; par time 95 → 110 s, estimated). L'Embouteillage's curve is rebuilt from level 6 (`TrafficGame.Steps`, `Config.FirstSlides`:
+  Légende = 40 to 50 slides with at least 20 before car 1 exits; levels 1 to 5 unchanged; bank rebuilt by `Tools/embouteillage/banque.py`,
+  14 minutes); still three gold cars. Le Carillon shows the height columns once at the start of each round, then plays by ear
+  (`ChimeView.PlayIntro`; columns stay when sound effects are switched off); to contest: much harder, par time not remeasured.
+  Plus ou Moins has a 3×4 numeric keypad. Gratte-Ciel hints come every 25 s instead of 10 (`SkylineView.HintEvery`).
 - 0.1.115 (two notes), awaiting the owner's verdict: La Fontaine balls carry the colour of their value, cold to warm on the 1-99 scale
   (blue, violet, pink, coral, orange; `Palette.Thermal`, no green and no yellow on purpose; wrong tap = coral with a white ring). To contest:
   the game gets a little easier, par times not remeasured; the share card `j/og/fontaine.jpg` still shows blue balls. Saute-Mouton: each
