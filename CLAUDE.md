@@ -112,7 +112,10 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.113 (2026-11-26). Nothing verified on a phone.
+- Dev version online: 0.1.114 (2026-11-26). Nothing verified on a phone.
+- 0.1.114 (one note), awaiting the owner's verdict: on a won result screen the earned stars fly from the three score stars to the top bar's star counter, which
+  climbs one star per arrival (`ResultScreen.StarsToCounter`, `Hud.AddShownStars`; only once Places are open, i.e. the counter exists). To contest:
+  they no longer fly to the star chest bar, which fills by itself; stars from a chest or the wheel still only roll the counter.
 - 0.1.113 (one note), awaiting the owner's verdict: every success row of the Profile opens an explanation sheet on tap (`App/SuccessSheet.cs`:
   current goal, counter and « Avant le palier » or current run and record, the rule in one or two sentences from `SuccessGuide.Notes`, then every
   tier with its coins and Gems; `ChainSheet` is gone). A new success needs its `SuccessGuide.Unit` and `Notes` (a test checks). « Série de jours »
