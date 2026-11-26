@@ -112,7 +112,11 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.101 (2026-11-26). Nothing verified on a phone.
+- Dev version online: 0.1.102 (2026-11-26). Nothing verified on a phone.
+- 0.1.102 (two notes), awaiting the owner's verdict: the phone no longer sleeps during a game (`Core/ScreenAwake.cs`: game screen shown and a
+  touch within the last 5 minutes; elsewhere the phone's own setting decides). In « Mes notes » a note's thumbnail opens its capture full size,
+  beside the fixed screen when the PC uploaded one (`ReportSync.Viewer.cs`; `python Tools/retours/apres.py <id end> <image>` after each visible
+  fix, asked by the batch prompt in `travail.py`; server: `retours_image`, `retours_admin_apres`, applied on `orderix-staging` only).
 - 0.1.101 (three notes), awaiting the owner's verdict: the Places screen says each thing once, Royal Match style (one card: the next
   step's name, the star balance as a counter pill, the eight steps; the price only on « CONSTRUIRE »; the two sentences, the repeated
   step name, the numbered badge and the progress bar are gone). « GAGNER DES ÉTOILES » opens the tour sheet on the Places screen
