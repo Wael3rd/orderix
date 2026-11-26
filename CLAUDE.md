@@ -112,7 +112,12 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.114 (2026-11-26). Nothing verified on a phone.
+- Dev version online: 0.1.115 (2026-11-26). Nothing verified on a phone.
+- 0.1.115 (two notes), awaiting the owner's verdict: La Fontaine balls carry the colour of their value, cold to warm on the 1-99 scale
+  (blue, violet, pink, coral, orange; `Palette.Thermal`, no green and no yellow on purpose; wrong tap = coral with a white ring). To contest:
+  the game gets a little easier, par times not remeasured; the share card `j/og/fontaine.jpg` still shows blue balls. Saute-Mouton: each
+  arrival cell shows a faded picture of the expected animal and a border in its colour; once the camps have crossed without being swapped
+  (`LeapfrogGame.Crossed`) the status pill says what is left (« Les renards tout à gauche ! ») and the free arrival cells bounce. Rules unchanged.
 - 0.1.114 (one note), awaiting the owner's verdict: on a won result screen the earned stars fly from the three score stars to the top bar's star counter, which
   climbs one star per arrival (`ResultScreen.StarsToCounter`, `Hud.AddShownStars`; only once Places are open, i.e. the counter exists). To contest:
   they no longer fly to the star chest bar, which fills by itself; stars from a chest or the wheel still only roll the counter.
