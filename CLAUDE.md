@@ -112,10 +112,13 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.102 (2026-11-26). Nothing verified on a phone.
+- Dev version online: 0.1.103 (2026-11-26). Nothing verified on a phone.
+- 0.1.103 (one note, the owner's comment on 0.1.102), awaiting his verdict: in « Mes notes » a note's capture opens full screen, one image at
+  a time; with an after image, a swipe either way goes from « Avant » to « Après » and back (the image follows the finger, two dots, close
+  cross top right; `ReportSync.Viewer.cs`). The side-by-side view of 0.1.102 is gone.
 - 0.1.102 (two notes), awaiting the owner's verdict: the phone no longer sleeps during a game (`Core/ScreenAwake.cs`: game screen shown and a
   touch within the last 5 minutes; elsewhere the phone's own setting decides). In « Mes notes » a note's thumbnail opens its capture full size,
-  beside the fixed screen when the PC uploaded one (`ReportSync.Viewer.cs`; `python Tools/retours/apres.py <id end> <image>` after each visible
+  with the fixed screen when the PC uploaded one (`ReportSync.Viewer.cs`; `python Tools/retours/apres.py <id end> <image>` after each visible
   fix, asked by the batch prompt in `travail.py`; server: `retours_image`, `retours_admin_apres`, applied on `orderix-staging` only).
 - 0.1.101 (three notes), awaiting the owner's verdict: the Places screen says each thing once, Royal Match style (one card: the next
   step's name, the star balance as a counter pill, the eight steps; the price only on « CONSTRUIRE »; the two sentences, the repeated
