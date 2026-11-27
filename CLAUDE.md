@@ -112,7 +112,7 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.141 (2026-11-27). Nothing verified on a phone.
+- Dev version online: 0.1.142 (2026-11-27). Nothing verified on a phone.
 - 0.1.139 (one note), awaiting the owner's verdict: the game reopens after an update it installed itself, from the update that follows
   0.1.139 (`RelaunchReceiver.java` on `MY_PACKAGE_REPLACED`, mark set by `Updater.install`): by itself when Android's « display over other
   apps » permission is granted (Profil > Réglages > Mises à jour > « Rouvrir le jeu », test builds only, `AppUpdater.CanRelaunch`), otherwise
@@ -167,8 +167,8 @@ client-trusted (known limitation).
   opening (one capture per game), never a series of captures per game; never run `tests.sh` without `--courants` from Play Mode (it hung
   20 minutes). Proposed to him, not decided: each game declaring itself in its own file (no more shared wiring files), a game template
   plus a test that builds every game screen, a short path for text-only notes, 64 GB of RAM.
-- Open: the phone says « Correction demandée. Elle démarre dès que le PC la voit » even on a device missing from
-  `Orderix-archive/retours/appareils-autorises.txt` (the tablet waited 22 h 48): owner agreed to fix the message, not done.
+- 0.1.142: « Mes notes » says when a device is not authorised (`veille.faut_prevenir` writes the note's `suite` once,
+  `ReportBoard.AskedLine` shows it, and a fallback line after 10 minutes without pickup). Not seen on screen.
 - 0.1.128 (wave 2 of "cent jeux"), awaiting the owner's verdict: six new games, 67 in the catalogue (number 65 is kept for Les Flèches, being
   redone). Le Bonneteau (`BonneteauGame`, follow the cup hiding the ball, five rounds, + 3 s per mistake, cups drawn by `CupShape`), Les Fils
   (`FilsGame`, link same-colour dots without crossing and cover the grid, unique solution, 5×5 to 8×8, the 8×8 is generated off the main
