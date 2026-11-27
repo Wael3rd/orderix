@@ -112,7 +112,10 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.129 (2026-11-27). Nothing verified on a phone.
+- Dev version online: 0.1.130 (2026-11-27). Nothing verified on a phone.
+- 0.1.130 (one note), awaiting the owner's verdict: Le Démineur has a three-page animated lesson (`App/Modes/DemineurLesson.cs`, same card as
+  `HiveLesson`: a number counts the mines of its eight neighbours, plant a flag, tap a number whose flags are complete), opened on the first
+  game and by a « Règles » button beside the back button. Rules unchanged; the lesson texts were never read by the owner.
 - 0.1.128 (wave 2 of "cent jeux"), awaiting the owner's verdict: six new games, 67 in the catalogue (number 65 is kept for Les Flèches, being
   redone). Le Bonneteau (`BonneteauGame`, follow the cup hiding the ball, five rounds, + 3 s per mistake, cups drawn by `CupShape`), Les Fils
   (`FilsGame`, link same-colour dots without crossing and cover the grid, unique solution, 5×5 to 8×8, the 8×8 is generated off the main
