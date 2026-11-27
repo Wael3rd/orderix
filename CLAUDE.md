@@ -112,7 +112,12 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.132 (2026-11-27). Nothing verified on a phone.
+- Dev version online: 0.1.133 (2026-11-27). Nothing verified on a phone.
+- 0.1.133 (three notes), awaiting the owner's verdict: Les Dix answers touches (its cells were `Ui.Box` without `raycastTarget`, the game was
+  unplayable since 0.1.128; a new game's cells must be checked with a real pointer raycast, the autopilot does not touch). L'Égalité has no
+  spare tile at any level (`EquationGame.Table`; levels 11, 14, 17, 20 raise the largest number instead, up to 16); to contest: easier from
+  level 5. Les Étagères climb one step everywhere (`EtageresGame.ConfigFor`: levels 1-2 = 8 shelves, 7 kinds, 2 rows; daily = 10 shelves,
+  9 kinds, 18 trios; third row from level 9; par time 70 → 90 s estimated); never played by a human.
 - 0.1.132 (one note), awaiting the owner's verdict: Les Flèches start at the former Légende difficulty and climb one step per rank
   (`FlechesGame.Steps`, `ConfigFor`: 12×15 at levels 1-15, daily puzzle included, then 13×16, 14×17, 15×18, 16×20, 17×21, 18×22 from level 251;
   arrows up to 16 cells and 6 bends, deeper blocking chains). This replaces the « 5×6 to 12×15 » of the 0.1.129 line below. To contest: a
