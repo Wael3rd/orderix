@@ -112,7 +112,10 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.142 (2026-11-27). Nothing verified on a phone.
+- Dev version online: 0.1.143 (2026-11-27). Nothing verified on a phone.
+- 0.1.143 (note 201): version announcements go only to the devices of `appareils-autorises.txt` (on their `notes-<device>`
+  topic, `pousser.annoncer_version`); phones leave the shared `orderix-versions-dev` topic. Testers keep game reminders and
+  their own notes' notifications. Not seen on a phone.
 - 0.1.139 (one note), awaiting the owner's verdict: the game reopens after an update it installed itself, from the update that follows
   0.1.139 (`RelaunchReceiver.java` on `MY_PACKAGE_REPLACED`, mark set by `Updater.install`): by itself when Android's « display over other
   apps » permission is granted (Profil > Réglages > Mises à jour > « Rouvrir le jeu », test builds only, `AppUpdater.CanRelaunch`), otherwise
