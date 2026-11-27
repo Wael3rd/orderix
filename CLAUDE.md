@@ -112,7 +112,12 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.130 (2026-11-27). Nothing verified on a phone.
+- Dev version online: 0.1.131 (2026-11-27). Nothing verified on a phone.
+- 0.1.131 (one note), awaiting the owner's verdict: Le Bonneteau is hardened on his words (« beaucoup trop facile », two cups above, two
+  below, swaps four times faster): 7 cups on three rows (2 / 3 / 2) up to level 5, 8 (3 / 2 / 3) at levels 6-30, 9 (3 / 3 / 3) beyond
+  (`BonneteauLayout.Rows`, `Fit`, `Slot`); a swap lasts 0.11 s at the daily puzzle (0.45 before), floored at 0.08 s at high levels
+  (`BonneteauGame.ConfigFor`); swap counts unchanged; par time 45 → 35 s, estimated. To contest: never played by a human at that speed;
+  the intro preview and the share card `j/og/bonneteau.jpg` still show three cups.
 - 0.1.130 (one note), awaiting the owner's verdict: Le Démineur has a three-page animated lesson (`App/Modes/DemineurLesson.cs`, same card as
   `HiveLesson`: a number counts the mines of its eight neighbours, plant a flag, tap a number whose flags are complete), opened on the first
   game and by a « Règles » button beside the back button. Rules unchanged; the lesson texts were never read by the owner.
