@@ -112,7 +112,7 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.128 (2026-11-27). Nothing verified on a phone.
+- Dev version online: 0.1.129 (2026-11-27). Nothing verified on a phone.
 - 0.1.128 (wave 2 of "cent jeux"), awaiting the owner's verdict: six new games, 67 in the catalogue (number 65 is kept for Les Flèches, being
   redone). Le Bonneteau (`BonneteauGame`, follow the cup hiding the ball, five rounds, + 3 s per mistake, cups drawn by `CupShape`), Les Fils
   (`FilsGame`, link same-colour dots without crossing and cover the grid, unique solution, 5×5 to 8×8, the 8×8 is generated off the main
