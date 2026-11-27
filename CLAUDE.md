@@ -373,7 +373,7 @@ client-trusted (known limitation).
 - "Cent jeux" (2026-11-27, owner's ask): going from 57 to 100 mini-games; the 43 new ones need not be ordering games (the 11/11
   "linked to ranking" rule no longer applies to them). List, scores against four constructed personas and build order in
   `docs/cent-jeux.md` of the Unity repo (edit `Tools/cent/cent.py`, not the file). Wave 1 in progress: Les Reines, Le Mot Mystère,
-  Les Tuyaux, Le Symbole Commun (branches `jeu-*`, nothing merged yet); `OrderixUnity-wtoie-3` is the lane reserved for checking
+  Les Tuyaux, Le Symbole Commun (branches `jeu-*`, nothing merged yet); `OrderixUnity-wt\voie-3` is the lane reserved for checking
   these games on screen. Companion pet prototype (3D cute recommended over voxel; gaussian splat ruled out):
   https://claude.ai/artifact/LBBdFK3eu9dnJ65jXkfUx6 — the owner has not decided anything about it.
 - Tester notes ("Corriger maintenant") run in parallel lanes since 2026-11-26 (owner: "each note as soon as it
