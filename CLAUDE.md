@@ -112,7 +112,15 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.137 (2026-11-27). Nothing verified on a phone.
+- Dev version online: 0.1.138 (2026-11-27). Nothing verified on a phone.
+- 0.1.138 (one note), awaiting the owner's verdict: the wheel is never paid any more, neither coins nor Gems (owner: « sinon ça devient du jeu
+  d'argent »). One free spin a day, then « jetons de roue » (one token = one spin, the former reserve `MetaState.wheelBonus`): one every 10
+  finished games, one per claimed success tier (`MetaConfig.WheelTokensPerAchievementTier`, shown on each tier of the success sheet), and the
+  loyalty card's gift. Screens only read `Wheel.Offer` and `Wheel.SpinFree`; never add a price to the wheel. This replaces the Gem spins of
+  0.1.88 and the coin spins. The old paid rule (`Wheel.SpinPaid`, `SpinGems`, `NextGems`, `WheelPrices`, `WheelGemPrices`) and its tests are
+  still in the code, called by no screen: delete them once the owner confirms. To contest (asked in the note's reply): the daily free spin is
+  kept; the loyalty card, stamped by shop purchases, still gives a token; the wheel is no longer a coin sink, balance not remeasured. Lanes:
+  after merging into main, reload the main editor BEFORE its `tests.sh` too (the first run tested the old code).
 - 0.1.136 (one note), awaiting the owner's verdict: in Les Étagères the back row is drawn as real objects in shadow (opaque, darkened,
   smaller, `EtageresView.BackTint`) standing on a thin back ledge, no longer as pale silhouettes that read as slots to fill. Rules unchanged.
 - 0.1.135 (two notes), awaiting the owner's verdict: Mémo Croissant's « Cherchez la paire » is bare text with the number in a flat blue disc
