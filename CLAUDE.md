@@ -112,7 +112,7 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.136 (2026-11-27). Nothing verified on a phone.
+- Dev version online: 0.1.137 (2026-11-27). Nothing verified on a phone.
 - 0.1.136 (one note), awaiting the owner's verdict: in Les Étagères the back row is drawn as real objects in shadow (opaque, darkened,
   smaller, `EtageresView.BackTint`) standing on a thin back ledge, no longer as pale silhouettes that read as slots to fill. Rules unchanged.
 - 0.1.135 (two notes), awaiting the owner's verdict: Mémo Croissant's « Cherchez la paire » is bare text with the number in a flat blue disc
