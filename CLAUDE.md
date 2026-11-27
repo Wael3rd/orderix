@@ -126,8 +126,10 @@ client-trusted (known limitation).
 - "500 games" research (2026-11-27, owner's ask): 523 successful casual games with gameplay, proof and the mini-game each could give us, in
   `docs/jeux-500.md` of the Unity repo (written by `Tools/cent/cinqcents.py` from `Tools/cent/cinqcents/*.tsv`), page
   https://claude.ai/artifact/XRqrCeD4sFEzzn69yXb5Hn ; 55 new mechanics were scored and added to `cent.py` (121 candidates).
-- Open: Les Flèches redone on the owner's feedback (long bent arrows that slide out along their own path, like the « Arrows » genre; branch
-  `jeu-fleches` / `vue-fleches2`, not merged); Le Duel waits for the owner's go on taking its figures from Wikidata.
+- 0.1.129, awaiting the owner's verdict: Les Flèches (n° 65, `FlechesGame`, 68 games), redone on his feedback before shipping: long bent
+  arrows (paths of 2 to 10 cells) that slide out along their own path when the way ahead of the head is free, 3 lives, grid 90 % full,
+  5×6 to 12×15, daily rotation from 2026-12-04. Real finger touch never tried. In progress: Le Duel (n° 69, branch `jeu-duel`), figures
+  taken from Wikidata (owner's go), gap never under 10 %.
 - 0.1.127 (wave 1 of "cent jeux"), awaiting the owner's verdict: four new games, 61 in the catalogue. Les Reines (`QueensGame`/`QueensView`,
   one queen per row, column and colour zone, generator with a unique solution solvable by deduction, 5×5 to 8×8), Les Tuyaux (`PipesGame`,
   rotate pipe pieces so water reaches everything, leaks marked in coral, 4×4 to 7×7), Le Symbole Commun (`CommonSymbolGame`, two round cards,
