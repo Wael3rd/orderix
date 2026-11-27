@@ -155,6 +155,20 @@ client-trusted (known limitation).
 - 0.1.130 (one note), awaiting the owner's verdict: Le Démineur has a three-page animated lesson (`App/Modes/DemineurLesson.cs`, same card as
   `HiveLesson`: a number counts the mines of its eight neighbours, plant a flag, tap a number whose flags are complete), opened on the first
   game and by a « Règles » button beside the back button. Rules unchanged; the lesson texts were never read by the owner.
+- 0.1.137 to 0.1.141 (2026-11-27 afternoon), awaiting the owner's verdict: 76 games. Le Duel (69, `DuelGame`, 563 facts from Wikidata
+  through `Tools/duel/telecharger.py`, gap never under 10 %), Les Portes de Calcul (70, land exactly on the target), La Troupe (71, owner's
+  ask: a cluster of dots grows through gates and shoots at enemy groups, `TroupeGame.Step(dt, x)`), Les Trois Alignés (72), Soleil et Lune
+  (73), Le Puzzle (74, tabbed pieces, reuses the Image Mystère photos), Les Mots Mêlés (75), La Roue des Lettres (76). French lexicon:
+  Grammalecte 7.7 under MPL 2.0 (`Core/FrenchLexicon.cs`, `Tools/lexique/fabriquer.py` then `pluriels.py`); the derived word lists must stay
+  public: they are on this repo's `gh-pages` branch in `lexique/` (update them when the lists change). Le Mot Mystère now reads it.
+- OWNER'S ORDER (2026-11-27): no new game until he asks again. He found production far too slow; post mortem:
+  https://claude.ai/artifact/8v3ZALRSfuaz3ALR1yyVAd , measures in `docs/postmortem/2026-11-27-mesures.md`. Method changed: a game's
+  geometry is checked by off-editor tests (a pure `…Layout` class), and the whole wave gets ONE short on-screen pass in one editor
+  opening (one capture per game), never a series of captures per game; never run `tests.sh` without `--courants` from Play Mode (it hung
+  20 minutes). Proposed to him, not decided: each game declaring itself in its own file (no more shared wiring files), a game template
+  plus a test that builds every game screen, a short path for text-only notes, 64 GB of RAM.
+- Open: the phone says « Correction demandée. Elle démarre dès que le PC la voit » even on a device missing from
+  `Orderix-archive/retours/appareils-autorises.txt` (the tablet waited 22 h 48): owner agreed to fix the message, not done.
 - 0.1.128 (wave 2 of "cent jeux"), awaiting the owner's verdict: six new games, 67 in the catalogue (number 65 is kept for Les Flèches, being
   redone). Le Bonneteau (`BonneteauGame`, follow the cup hiding the ball, five rounds, + 3 s per mistake, cups drawn by `CupShape`), Les Fils
   (`FilsGame`, link same-colour dots without crossing and cover the grid, unique solution, 5×5 to 8×8, the 8×8 is generated off the main
