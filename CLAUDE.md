@@ -112,7 +112,14 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.134 (2026-11-27). Nothing verified on a phone.
+- Dev version online: 0.1.135 (2026-11-27). Nothing verified on a phone.
+- 0.1.135 (two notes), awaiting the owner's verdict: Mémo Croissant's « Cherchez la paire » is bare text with the number in a flat blue disc
+  (`MemoView.BuildPill`; rule « Consigne ou bouton » in the Unity repo's CLAUDE.md: lip, gloss, drop shadow and solid gold are for touchable
+  things only; other games still carry a raised gold info pill, asked in the note's reply). Le Bonneteau never swaps faster than the eye can
+  follow: no swap under 0.15 s (`BonneteauGame.FastestSwap`, about 7 swaps a second) and a long path takes longer (`BonneteauLayout.MaxSpeed`,
+  `StepSeconds`); 0.20 s at levels 1-2, 0.18 s at the daily puzzle, 0.15 s from level 31, then longer shuffles (14, 16, 18, 20 swaps at ranks
+  61, 101, 161, 251). This replaces the speeds of the 0.1.131 line below. To contest: the daily puzzle slows from 0.11 to 0.18 s; never judged
+  in motion. `publier.sh` in a background task needs a 30-minute timeout (the build takes 9 minutes; cut twice at 10).
 - 0.1.134 (one note from the tablet), awaiting the owner's verdict: a game's rank is spelled out, « Rang Découverte » and « 1 victoire sur 5 »
   instead of « Découverte 1 / 5 », on the result card and on the intro card (`Mastery.CountWords`, `ResultScreen.ShowMastery`). The Profile tile
   still says « Découverte · 1 / 5 ». To contest: he may have wanted numbered levels inside a rank (asked in the note's reply).
