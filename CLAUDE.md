@@ -112,7 +112,12 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.138 (2026-11-27). Nothing verified on a phone.
+- Dev version online: 0.1.139 (2026-11-27). Nothing verified on a phone.
+- 0.1.139 (one note), awaiting the owner's verdict: the game reopens after an update it installed itself, from the update that follows
+  0.1.139 (`RelaunchReceiver.java` on `MY_PACKAGE_REPLACED`, mark set by `Updater.install`): by itself when Android's « display over other
+  apps » permission is granted (Profil > Réglages > Mises à jour > « Rouvrir le jeu », test builds only, `AppUpdater.CanRelaunch`), otherwise
+  through a notification to tap. Never tried on a phone. `SYSTEM_ALERT_WINDOW` joins `REQUEST_INSTALL_PACKAGES` in the update library's
+  manifest: remove both for a Google Play build.
 - 0.1.138 (one note), awaiting the owner's verdict: the wheel is never paid any more, neither coins nor Gems (owner: « sinon ça devient du jeu
   d'argent »). One free spin a day, then « jetons de roue » (one token = one spin, the former reserve `MetaState.wheelBonus`): one every 10
   finished games, one per claimed success tier (`MetaConfig.WheelTokensPerAchievementTier`, shown on each tier of the success sheet), and the
