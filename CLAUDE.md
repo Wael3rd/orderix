@@ -112,7 +112,14 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.126 (2026-11-26). Nothing verified on a phone.
+- Dev version online: 0.1.127 (2026-11-27). Nothing verified on a phone.
+- 0.1.127 (wave 1 of "cent jeux"), awaiting the owner's verdict: four new games, 61 in the catalogue. Les Reines (`QueensGame`/`QueensView`,
+  one queen per row, column and colour zone, generator with a unique solution solvable by deduction, 5×5 to 8×8), Les Tuyaux (`PipesGame`,
+  rotate pipe pieces so water reaches everything, leaks marked in coral, 4×4 to 7×7), Le Symbole Commun (`CommonSymbolGame`, two round cards,
+  one shared symbol, ten rounds, + 3 s per mistake through the new `GameScreen.AddTime`), Le Mot Mystère (`MotMystereGame`, 4/5/6 letters,
+  six tries, AZERTY on-screen keypad). All four enter the daily rotation on 2026-12-01; par times are estimates; never played by a human.
+  Open: Le Mot Mystère accepts only 2 556 five-letter words as guesses (hand-written lexicon), so real words get « Mot inconnu »: a
+  licensed French word list is needed (owner to decide). Local merge commits: push with plain `git push`, `pull --rebase` replays them.
 - 0.1.126 (one note), awaiting the owner's verdict: the Gratte-Ciel intro card names the grid of the game about to be played (« Grille 3 x 3 » up to
   level 5, « Grille 4 x 4 » from level 6) instead of the whole journey (« 3 x 3, puis 4 x 4 », read as two grids in one game). An intro chip can
   depend on the level: `ModeInfo.LevelChips`, read through `ModeInfo.ChipsAt(level)`. Other games still show a journey range (« 4 x 4 à 6 x 6 »).
