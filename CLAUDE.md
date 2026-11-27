@@ -112,7 +112,11 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.131 (2026-11-27). Nothing verified on a phone.
+- Dev version online: 0.1.132 (2026-11-27). Nothing verified on a phone.
+- 0.1.132 (one note), awaiting the owner's verdict: Les Flèches start at the former Légende difficulty and climb one step per rank
+  (`FlechesGame.Steps`, `ConfigFor`: 12×15 at levels 1-15, daily puzzle included, then 13×16, 14×17, 15×18, 16×20, 17×21, 18×22 from level 251;
+  arrows up to 16 cells and 6 bends, deeper blocking chains). This replaces the « 5×6 to 12×15 » of the 0.1.129 line below. To contest: a
+  beginner's first game is 12×15; an 18×22 cell is about 3.5 mm on the owner's phone, never tried with a finger; par time still 60 s.
 - 0.1.131 (one note), awaiting the owner's verdict: Le Bonneteau is hardened on his words (« beaucoup trop facile », two cups above, two
   below, swaps four times faster): 7 cups on three rows (2 / 3 / 2) up to level 5, 8 (3 / 2 / 3) at levels 6-30, 9 (3 / 3 / 3) beyond
   (`BonneteauLayout.Rows`, `Fit`, `Slot`); a swap lasts 0.11 s at the daily puzzle (0.45 before), floored at 0.08 s at high levels
