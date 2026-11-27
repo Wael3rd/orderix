@@ -112,7 +112,22 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.127 (2026-11-27). Nothing verified on a phone.
+- Dev version online: 0.1.128 (2026-11-27). Nothing verified on a phone.
+- 0.1.128 (wave 2 of "cent jeux"), awaiting the owner's verdict: six new games, 67 in the catalogue (number 65 is kept for Les Flèches, being
+  redone). Le Bonneteau (`BonneteauGame`, follow the cup hiding the ball, five rounds, + 3 s per mistake, cups drawn by `CupShape`), Les Fils
+  (`FilsGame`, link same-colour dots without crossing and cover the grid, unique solution, 5×5 to 8×8, the 8×8 is generated off the main
+  thread), Le Démineur (`DemineurGame`, never a guess, start zone bounded to 20-35 % of safe cells, + 10 s per mine and lost at three,
+  Ouvrir / Drapeau selector), Les Étagères (`EtageresGame`, move objects between shelves to gather three alike, a dead end is announced and
+  « Recommencer » offered), Les Dix (`DixGame`, cross out pairs equal or summing to ten, grid built backwards so it always empties, a dead
+  end offers « Recommencer »), L'Image Mystère (`ImageMystereGame`, a photo unveils tile by tile, four answers, eight rounds, + 5 s per
+  mistake; 80 photos in `Resources/ImageMystere`, public domain or CC0 only from Wikimedia Commons, owner's decision « banques d'images
+  libres de droit », sources in `Tools/imagemystere/sources.tsv`, fetched by `telecharger.py`). All enter the daily rotation on 2026-12-03;
+  par times are estimates; never played by a human; a few photos are weak (elephant from behind, sepia Arc de triomphe).
+- "500 games" research (2026-11-27, owner's ask): 523 successful casual games with gameplay, proof and the mini-game each could give us, in
+  `docs/jeux-500.md` of the Unity repo (written by `Tools/cent/cinqcents.py` from `Tools/cent/cinqcents/*.tsv`), page
+  https://claude.ai/artifact/XRqrCeD4sFEzzn69yXb5Hn ; 55 new mechanics were scored and added to `cent.py` (121 candidates).
+- Open: Les Flèches redone on the owner's feedback (long bent arrows that slide out along their own path, like the « Arrows » genre; branch
+  `jeu-fleches` / `vue-fleches2`, not merged); Le Duel waits for the owner's go on taking its figures from Wikidata.
 - 0.1.127 (wave 1 of "cent jeux"), awaiting the owner's verdict: four new games, 61 in the catalogue. Les Reines (`QueensGame`/`QueensView`,
   one queen per row, column and colour zone, generator with a unique solution solvable by deduction, 5×5 to 8×8), Les Tuyaux (`PipesGame`,
   rotate pipe pieces so water reaches everything, leaks marked in coral, 4×4 to 7×7), Le Symbole Commun (`CommonSymbolGame`, two round cards,
@@ -379,8 +394,9 @@ client-trusted (known limitation).
   decide whether the wheel keeps giving stars.
 - "Cent jeux" (2026-11-27, owner's ask): going from 57 to 100 mini-games; the 43 new ones need not be ordering games (the 11/11
   "linked to ranking" rule no longer applies to them). List, scores against four constructed personas and build order in
-  `docs/cent-jeux.md` of the Unity repo (edit `Tools/cent/cent.py`, not the file). Wave 1 in progress: Les Reines, Le Mot Mystère,
-  Les Tuyaux, Le Symbole Commun (branches `jeu-*`, nothing merged yet); `OrderixUnity-wt\voie-4` is the lane reserved for checking
+  `docs/cent-jeux.md` of the Unity repo (edit `Tools/cent/cent.py`, not the file). Waves 1 and 2 are published (0.1.127, 0.1.128).
+  Method: one worker per game in its own worktree (`jeu-<x>`), then the same worker checks on screen in voie-4
+  (`voie.sh preparer vue-<x>` then cherry-pick), then one integration worker gathers the `vue-*` branches; `OrderixUnity-wt\voie-4` is the lane reserved for checking
   these games on screen. Companion pet prototype (3D cute recommended over voxel; gaussian splat ruled out):
   https://claude.ai/artifact/LBBdFK3eu9dnJ65jXkfUx6 — the owner has not decided anything about it.
 - Tester notes ("Corriger maintenant") run in parallel lanes since 2026-11-26 (owner: "each note as soon as it
