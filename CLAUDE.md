@@ -112,7 +112,10 @@ client-trusted (known limitation).
 
 - 2026-11-22: active work is the native Unity rebuild in `C:\Github\MobileGames\OrderixUnity` (private repo);
   this repo keeps the shared journal `docs/journal.md`.
-- Dev version online: 0.1.133 (2026-11-27). Nothing verified on a phone.
+- Dev version online: 0.1.134 (2026-11-27). Nothing verified on a phone.
+- 0.1.134 (one note from the tablet), awaiting the owner's verdict: a game's rank is spelled out, « Rang Découverte » and « 1 victoire sur 5 »
+  instead of « Découverte 1 / 5 », on the result card and on the intro card (`Mastery.CountWords`, `ResultScreen.ShowMastery`). The Profile tile
+  still says « Découverte · 1 / 5 ». To contest: he may have wanted numbered levels inside a rank (asked in the note's reply).
 - 0.1.133 (three notes), awaiting the owner's verdict: Les Dix answers touches (its cells were `Ui.Box` without `raycastTarget`, the game was
   unplayable since 0.1.128; a new game's cells must be checked with a real pointer raycast, the autopilot does not touch). L'Égalité has no
   spare tile at any level (`EquationGame.Table`; levels 11, 14, 17, 20 raise the largest number instead, up to 16); to contest: easier from
